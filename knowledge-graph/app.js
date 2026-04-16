@@ -846,7 +846,7 @@ function renderDetailPanel() {
   if (!entry) {
     elements.detailPanelCard.innerHTML = `
       <p class="detail-panel-eyebrow">Detail / Ready</p>
-      <h2 id="detail-panel-title">右侧详情</h2>
+      <h2 id="detail-panel-title">侧边详情</h2>
       <p class="detail-panel-summary">
         点击左侧任意知识项，在这里查看它的定义、上下文、关系和后续延展。后面每个节点继续补内容时，这里会直接承接。
       </p>
