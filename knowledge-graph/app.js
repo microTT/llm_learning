@@ -36,6 +36,42 @@ const STAGES = [
   },
 ];
 
+const CROSSCUT_CODES = ["F", "L", "M", "N"];
+
+const DOMAIN_GROUPS = {
+  E: [
+    {
+      title: "模态与多模态",
+      codes: ["E1", "E2", "E3", "E4", "E5"],
+    },
+    {
+      title: "决策、具身与扩展",
+      codes: ["E6", "E7", "E8"],
+    },
+  ],
+};
+
+const DOMAIN_DISPLAY = {
+  E: {
+    title: "模态、任务域与智能形态",
+    note: "把模态、多模态、决策、具身与扩展能力拆开阅读，避免混在同一层。",
+  },
+};
+
+const CROSSCUT_NOTES = {
+  F: "这是全局数据轴：训练、检索、评测、线上反馈都会经过这里。",
+  L: "这是全局运行时轴：模型访问、服务运行、推理优化和生产指标都会受它约束。",
+  M: "这是全局治理轴：模型、应用与 Agent 的评测、安全和合规边界都在这里收束。",
+  N: "这是全局产品闭环：场景、自动化等级、体验设计与团队流程最终在这里落地。",
+};
+
+const STATUS_LABELS = {
+  none: "未补充",
+  seed: "seed",
+  draft: "draft",
+  deep: "deep",
+};
+
 const elements = {
   stats: document.getElementById("hero-stats"),
   jumpbar: document.getElementById("jumpbar"),
@@ -120,11 +156,16 @@ function buildGraph(markdown, overlay) {
 
   const structureReferenceMap = buildStructureReferenceMap(domains);
   expandStructureReferences(domains, relationGroups, structureReferenceMap);
+  enrichRelationReferences(relationGroups, structureReferenceMap);
+
+  const stages = buildStages(domains, relationGroups);
+  const lookup = buildSelectionIndex(domains, relationGroups);
 
   return {
     domains,
+    stages,
     relationGroups,
-    lookup: buildSelectionIndex(domains, relationGroups),
+    lookup,
     overlay,
     stats: {
       domains: domains.length,
@@ -144,6 +185,7 @@ function parseDomainSection(section, overlayNodes) {
   const headingMatch = section.title.match(/^([A-Z])\.\s+(.+)$/);
   const code = headingMatch[1];
   const title = headingMatch[2];
+  const display = DOMAIN_DISPLAY[code];
   const subsections = splitByHeading(section.content, "### ");
   const intro = section.content.split(/^### /m)[0]?.trim() || "";
   const summary = toSummaryText(intro);
@@ -164,7 +206,10 @@ function parseDomainSection(section, overlayNodes) {
       id: code,
       code,
       title,
+      displayTitle: display?.title || title,
       fullTitle: `${code}. ${title}`,
+      displayFullTitle: `${code}. ${display?.title || title}`,
+      displayNote: display?.note || null,
       summary,
       pathKey,
       relationNotes,
@@ -221,8 +266,11 @@ function parseRelationSection(section) {
   return splitByHeading(section.content, "### ").map((group) => ({
     title: group.title,
     entries: parseBulletTree(group.content).map((item) => ({
+      rawText: item.text,
+      rawNotes: flattenBulletTree(item.children),
       text: item.text,
       notes: flattenBulletTree(item.children),
+      references: [],
     })),
   }));
 }
@@ -231,9 +279,19 @@ function buildStructureReferenceMap(domains) {
   const referenceMap = new Map();
 
   for (const domain of domains) {
-    referenceMap.set(domain.code, domain.title);
+    referenceMap.set(domain.code, {
+      code: domain.code,
+      title: domain.displayTitle,
+      pathKey: domain.pathKey,
+      type: "domain",
+    });
     for (const module of domain.modules) {
-      referenceMap.set(module.code, module.title);
+      referenceMap.set(module.code, {
+        code: module.code,
+        title: module.title,
+        pathKey: module.pathKey,
+        type: "module",
+      });
     }
   }
 
@@ -261,17 +319,107 @@ function expandStructureReferenceText(text, referenceMap) {
     return text;
   }
 
-  const keys = Array.from(referenceMap.keys()).sort((left, right) => right.length - left.length);
+  const matcher = createReferenceMatcher(referenceMap);
+  const keys = matcher.keys;
   if (!keys.length) {
     return text;
   }
 
-  const pattern = new RegExp(
-    `(?<![A-Za-z0-9])(${keys.map(escapeRegExp).join("|")})(?![A-Za-z0-9])`,
-    "g"
-  );
+  return text.replace(matcher.pattern, (match) => referenceMap.get(match)?.title || match);
+}
 
-  return text.replace(pattern, (match) => referenceMap.get(match) || match);
+function enrichRelationReferences(relationGroups, referenceMap) {
+  for (const group of relationGroups) {
+    group.entries = group.entries.map((entry) => ({
+      ...entry,
+      references: collectStructureReferences([entry.rawText, ...(entry.rawNotes || [])], referenceMap),
+    }));
+  }
+}
+
+function collectStructureReferences(texts, referenceMap) {
+  const matcher = createReferenceMatcher(referenceMap);
+  if (!matcher.keys.length) {
+    return [];
+  }
+
+  const seen = new Set();
+  const items = [];
+
+  for (const text of texts) {
+    if (!text) {
+      continue;
+    }
+
+    for (const match of text.matchAll(matcher.pattern)) {
+      const code = match[0];
+      const reference = referenceMap.get(code);
+      if (!reference || seen.has(reference.pathKey)) {
+        continue;
+      }
+      seen.add(reference.pathKey);
+      items.push(reference);
+    }
+  }
+
+  return items;
+}
+
+function createReferenceMatcher(referenceMap) {
+  const keys = Array.from(referenceMap.keys()).sort((left, right) => right.length - left.length);
+  return {
+    keys,
+    pattern: new RegExp(
+      `(?<![A-Za-z0-9])(${keys.map(escapeRegExp).join("|")})(?![A-Za-z0-9])`,
+      "g"
+    ),
+  };
+}
+
+function buildStages(domains, relationGroups) {
+  const domainMap = new Map(domains.map((domain) => [domain.code, domain]));
+
+  return STAGES.map((stage) => {
+    const stageDomains = stage.codes.map((code) => domainMap.get(code)).filter(Boolean);
+    const stageReferenceCodes = new Set(
+      stageDomains.flatMap((domain) => [domain.code, ...domain.modules.map((module) => module.code)])
+    );
+    const relationPreview = [];
+    const relationSeen = new Set();
+
+    for (const group of relationGroups) {
+      for (const entry of group.entries) {
+        const touchesStage = entry.references.some((reference) =>
+          stageReferenceCodes.has(reference.code)
+        );
+        if (!touchesStage) {
+          continue;
+        }
+
+        const key = getRelationDetailKey(group.title, entry.text);
+        if (relationSeen.has(key)) {
+          continue;
+        }
+
+        relationSeen.add(key);
+        relationPreview.push({
+          key,
+          groupTitle: group.title,
+          text: entry.text,
+          notes: entry.notes,
+          references: entry.references,
+        });
+      }
+    }
+
+    return {
+      ...stage,
+      domains: stageDomains,
+      moduleCount: stageDomains.reduce((sum, domain) => sum + domain.modules.length, 0),
+      conceptCount: stageDomains.reduce((sum, domain) => sum + domain.conceptCount, 0),
+      relationPreview,
+    };
+  }).filter((stage) => stage.domains.length);
 }
 
 function splitByHeading(markdown, marker) {
@@ -431,17 +579,20 @@ function buildSelectionIndex(domains, relationGroups) {
       key: domain.pathKey,
       type: "domain",
       eyebrow: `Domain / ${domain.code}`,
-      title: domain.fullTitle,
+      title: domain.displayFullTitle,
       pathKey: domain.pathKey,
       summary:
         domain.detail.definition ||
         domain.summary ||
         `${domain.modules.length} 个模块，${domain.conceptCount} 个术语节点。`,
       detail: domain.detail,
+      status: normalizeDetailStatus(domain.detail),
       stats: [`${domain.modules.length} 个模块`, `${domain.conceptCount} 个术语节点`],
       parentTitle: null,
       relatedNotes: domain.relationNotes,
+      relatedLinks: [],
       childTitles: domain.modules.map((module) => module.fullTitle),
+      impactScope: CROSSCUT_CODES.includes(domain.code) ? CROSSCUT_NOTES[domain.code] : domain.displayNote,
     });
 
     if (domain.relationNotes.length) {
@@ -449,14 +600,17 @@ function buildSelectionIndex(domains, relationGroups) {
         key: getDomainRelationKey(domain.pathKey),
         type: "domain-relations",
         eyebrow: `Links / ${domain.code}`,
-        title: `${domain.fullTitle} / 本层关系`,
+        title: `${domain.displayFullTitle} / 本层关系`,
         pathKey: domain.pathKey,
         summary: `${domain.relationNotes.length} 条与当前领域直接相关的结构关系。`,
         detail: {},
+        status: "none",
         stats: [`${domain.relationNotes.length} 条关系`],
-        parentTitle: domain.fullTitle,
+        parentTitle: domain.displayFullTitle,
         relatedNotes: domain.relationNotes,
+        relatedLinks: [],
         childTitles: [],
+        impactScope: CROSSCUT_CODES.includes(domain.code) ? CROSSCUT_NOTES[domain.code] : null,
       });
     }
 
@@ -473,13 +627,16 @@ function buildSelectionIndex(domains, relationGroups) {
           module.detail.definition ||
           `${module.title} 当前包含 ${conceptCount} 个术语节点，可继续向下展开。`,
         detail: module.detail,
+        status: normalizeDetailStatus(module.detail),
         stats: [
           `${conceptCount} 个术语节点`,
           detailNodes.length ? `${detailNodes.length} 个补充节点` : null,
         ].filter(Boolean),
-        parentTitle: domain.fullTitle,
+        parentTitle: domain.displayFullTitle,
         relatedNotes: [],
+        relatedLinks: [],
         childTitles: module.concepts.map((concept) => concept.title),
+        impactScope: CROSSCUT_CODES.includes(domain.code) ? CROSSCUT_NOTES[domain.code] : null,
       });
 
       walkConcepts(module.concepts, (concept) => {
@@ -491,10 +648,13 @@ function buildSelectionIndex(domains, relationGroups) {
           pathKey: concept.pathKey,
           summary: concept.detail.definition || getConceptFallbackSummary(concept),
           detail: concept.detail,
+          status: normalizeDetailStatus(concept.detail),
           stats: [concept.children.length ? `${concept.children.length} 个下级概念` : "叶子节点"],
           parentTitle: module.fullTitle,
           relatedNotes: [],
+          relatedLinks: [],
           childTitles: concept.children.map((child) => child.title),
+          impactScope: CROSSCUT_CODES.includes(domain.code) ? CROSSCUT_NOTES[domain.code] : null,
         });
       });
     }
@@ -510,15 +670,42 @@ function buildSelectionIndex(domains, relationGroups) {
         pathKey: null,
         summary: entry.notes[0] || `${group.title} 中的一条关键结构关系。`,
         detail: {},
+        status: "none",
         stats: [entry.notes.length ? `${entry.notes.length} 条补充说明` : "结构关系"],
         parentTitle: group.title,
         relatedNotes: entry.notes,
+        relatedLinks: entry.references.map((reference) => ({
+          key: reference.pathKey,
+          label:
+            reference.type === "domain"
+              ? `${reference.code}. ${reference.title}`
+              : `${reference.code}. ${reference.title}`,
+        })),
         childTitles: [],
+        impactScope: entry.references.length
+          ? `影响范围：${entry.references.map((reference) => reference.code).join(" / ")}`
+          : null,
       });
     }
   }
 
   return lookup;
+}
+
+function normalizeDetailStatus(detail) {
+  if (!detail || typeof detail !== "object") {
+    return "none";
+  }
+
+  if (detail.status === "placeholder") {
+    return "none";
+  }
+
+  if (detail.status && STATUS_LABELS[detail.status]) {
+    return detail.status;
+  }
+
+  return hasMeaningfulDetail(detail) ? "seed" : "none";
 }
 
 function getConceptFallbackSummary(concept) {
@@ -540,7 +727,7 @@ function getRelationDetailKey(groupTitle, entryText) {
 function render(graph) {
   renderStats(graph.stats);
   renderJumpbar(graph.domains);
-  renderRoadmap(graph.domains);
+  renderRoadmap(graph.stages);
   renderRelationGrid(graph.relationGroups);
 }
 
@@ -633,6 +820,7 @@ function renderDetailPanel() {
 
   const sections = [];
   const detail = entry.detail || {};
+  const statusLabel = STATUS_LABELS[entry.status] || STATUS_LABELS.none;
   const links = Array.isArray(detail.next)
     ? detail.next
         .map((pathKey) => state.graph.lookup.get(pathKey))
@@ -645,6 +833,10 @@ function renderDetailPanel() {
 
   if (entry.parentTitle) {
     sections.push(renderPanelListSection("结构位置", [entry.parentTitle]));
+  }
+
+  if (entry.impactScope) {
+    sections.push(renderPanelTextSection("影响范围", entry.impactScope));
   }
 
   if (detail.importance) {
@@ -663,6 +855,10 @@ function renderDetailPanel() {
     sections.push(renderPanelListSection("相关关系", entry.relatedNotes));
   }
 
+  if (entry.relatedLinks?.length) {
+    sections.push(renderPanelLinkSection("相关节点", entry.relatedLinks));
+  }
+
   if (entry.childTitles.length) {
     const previewChildren = entry.childTitles.slice(0, 10);
     if (entry.childTitles.length > previewChildren.length) {
@@ -678,7 +874,7 @@ function renderDetailPanel() {
   if (!sections.length) {
     sections.push(`
       <div class="detail-panel-empty">
-        当前节点还没有更深入的补充内容。后续可以直接在 <code>data/node-details.json</code> 里继续补定义、例子和延伸路径。
+        当前节点还没有更深入的补充内容。这里显示的是内容建设进度，不代表它在整张图里不重要。后续可以直接在 <code>data/node-details.json</code> 里继续补定义、例子和延伸路径。
       </div>
     `);
   }
@@ -689,14 +885,16 @@ function renderDetailPanel() {
     ${entry.pathKey ? `<p class="detail-panel-path">${escapeHtml(entry.pathKey)}</p>` : ""}
     <p class="detail-panel-summary">${escapeHtml(entry.summary)}</p>
     <div class="detail-panel-meta">
-      ${Array.from(
-        new Set([
-          ...entry.stats,
-          getTypeLabel(entry.type),
-          detail.status ? `状态：${detail.status}` : null,
-        ].filter(Boolean))
-      )
-        .map((item) => `<span>${escapeHtml(item)}</span>`)
+      ${[
+        ...entry.stats.map((item) => ({ label: item, className: "" })),
+        { label: getTypeLabel(entry.type), className: "" },
+        { label: `状态：${statusLabel}`, className: `is-${entry.status}` },
+      ]
+        .filter((item) => item.label)
+        .map(
+          (item) =>
+            `<span class="${escapeAttribute(item.className)}">${escapeHtml(item.label)}</span>`
+        )
         .join("")}
     </div>
     ${sections.join("")}
@@ -782,43 +980,70 @@ function renderJumpbar(domains) {
   elements.jumpbar.innerHTML = domains
     .map(
       (domain) => `
-        <a href="#domain-${escapeHtml(domain.code)}">${escapeHtml(domain.code)}. ${escapeHtml(domain.title)}</a>
+        <a href="#domain-${escapeHtml(domain.code)}">${escapeHtml(domain.code)}. ${escapeHtml(domain.displayTitle)}</a>
       `
     )
     .join("");
 }
 
-function renderRoadmap(domains) {
-  const domainMap = new Map(domains.map((domain) => [domain.code, domain]));
-  const stageMarkup = STAGES.map((stage) => {
-    const stageDomains = stage.codes.map((code) => domainMap.get(code)).filter(Boolean);
-    if (stageDomains.length === 0) {
-      return "";
-    }
-
-    const moduleCount = stageDomains.reduce((sum, domain) => sum + domain.modules.length, 0);
-    const conceptCount = stageDomains.reduce((sum, domain) => sum + domain.conceptCount, 0);
-
-    return `
-      <section class="stage-card" style="--stage-color: ${stage.color}">
+function renderRoadmap(stages) {
+  const stageMarkup = stages
+    .map(
+      (stage) => `
+      <section class="stage-card" style="--stage-color: ${stage.color}" id="stage-${escapeAttribute(stage.id)}">
         <header class="stage-header">
           <p class="stage-eyebrow">Stage / ${escapeHtml(stage.id)}</p>
           <h2>${escapeHtml(stage.title)}</h2>
           <p>${escapeHtml(stage.description)}</p>
           <div class="stage-meta">
-            <span>${stageDomains.length} 个领域</span>
-            <span>${moduleCount} 个模块</span>
-            <span>${conceptCount} 个术语节点</span>
+            <span>${stage.domains.length} 个领域</span>
+            <span>${stage.moduleCount} 个模块</span>
+            <span>${stage.conceptCount} 个术语节点</span>
           </div>
         </header>
+        ${renderStageRelations(stage)}
         <div class="domain-grid">
-          ${stageDomains.map(renderDomainCard).join("")}
+          ${stage.domains.map(renderDomainCard).join("")}
         </div>
       </section>
-    `;
-  }).join("");
+    `
+    )
+    .join("");
 
   elements.roadmap.innerHTML = stageMarkup;
+}
+
+function renderStageRelations(stage) {
+  if (!stage.relationPreview.length) {
+    return "";
+  }
+
+  const preview = stage.relationPreview.slice(0, 6);
+  return `
+    <section class="stage-relations" aria-label="${escapeAttribute(stage.title)} 的关键关系">
+      <div class="stage-relations-header">
+        <strong>本阶段关键连接</strong>
+        <span>${stage.relationPreview.length} 条</span>
+      </div>
+      <div class="stage-relations-list">
+        ${preview
+          .map(
+            (entry) => `
+              <button
+                type="button"
+                class="stage-relation-chip"
+                data-detail-key="${escapeAttribute(entry.key)}"
+                aria-label="查看 ${escapeAttribute(entry.text)} 的详情"
+              >
+                <span class="stage-relation-group">${escapeHtml(entry.groupTitle)}</span>
+                <span class="stage-relation-text">${escapeHtml(entry.text)}</span>
+              </button>
+            `
+          )
+          .join("")}
+      </div>
+    </section>
+  `;
 }
 
 function renderDomainCard(domain) {
@@ -826,25 +1051,76 @@ function renderDomainCard(domain) {
     <article class="domain-card" id="domain-${escapeHtml(domain.code)}">
       <header class="domain-header">
         <p class="domain-eyebrow">${escapeHtml(domain.code)} / Domain</p>
-        <h3>${escapeHtml(domain.fullTitle)}</h3>
+        <h3>${escapeHtml(domain.displayFullTitle)}</h3>
         ${domain.summary ? `<p class="domain-summary">${escapeHtml(domain.summary)}</p>` : ""}
         <div class="domain-stats">
+          ${CROSSCUT_CODES.includes(domain.code) ? `<span class="domain-badge">横切层</span>` : ""}
           <span>${domain.modules.length} 个模块</span>
           <span>${domain.conceptCount} 个术语节点</span>
         </div>
       </header>
-      <div class="module-grid">
-        ${domain.modules.map(renderModuleCard).join("")}
-      </div>
+      ${renderDomainModules(domain)}
       ${renderDomainRelations(domain)}
     </article>
   `;
+}
+
+function renderDomainModules(domain) {
+  const groups = DOMAIN_GROUPS[domain.code];
+  if (!groups?.length) {
+    return `<div class="module-grid">${domain.modules.map(renderModuleCard).join("")}</div>`;
+  }
+
+  const renderedCodes = new Set();
+  const blocks = groups
+    .map((group) => {
+      const modules = group.codes
+        .map((code) => domain.modules.find((module) => module.code === code))
+        .filter(Boolean);
+
+      if (!modules.length) {
+        return "";
+      }
+
+      modules.forEach((module) => renderedCodes.add(module.code));
+
+      return `
+        <section class="module-group">
+          <div class="module-group-header">
+            <strong>${escapeHtml(group.title)}</strong>
+            <span>${modules.length} 个模块</span>
+          </div>
+          <div class="module-grid">
+            ${modules.map(renderModuleCard).join("")}
+          </div>
+        </section>
+      `;
+    })
+    .filter(Boolean);
+
+  const leftovers = domain.modules.filter((module) => !renderedCodes.has(module.code));
+  if (leftovers.length) {
+    blocks.push(`
+      <section class="module-group">
+        <div class="module-group-header">
+          <strong>补充模块</strong>
+          <span>${leftovers.length} 个模块</span>
+        </div>
+        <div class="module-grid">
+          ${leftovers.map(renderModuleCard).join("")}
+        </div>
+      </section>
+    `);
+  }
+
+  return blocks.join("");
 }
 
 function renderModuleCard(module) {
   const detailNodes = collectDetailNodes(module);
   const conceptCount = countConcepts(module.concepts);
   const layoutStyle = getModuleLayoutStyle(module, conceptCount, detailNodes.length);
+  const status = normalizeDetailStatus(module.detail);
 
   return `
     <article
@@ -859,7 +1135,12 @@ function renderModuleCard(module) {
         role="button"
         aria-label="查看 ${escapeAttribute(module.fullTitle)} 的详情"
       >
-        <span class="module-code">${escapeHtml(module.code)}</span>
+        <div class="module-headline">
+          <span class="module-code">${escapeHtml(module.code)}</span>
+          <span class="module-status is-${escapeAttribute(status)}">${escapeHtml(
+            STATUS_LABELS[status]
+          )}</span>
+        </div>
         <h4>${escapeHtml(module.title)}</h4>
         ${module.detail.definition ? `<p class="module-summary">${escapeHtml(module.detail.definition)}</p>` : ""}
       </header>
@@ -965,6 +1246,7 @@ function renderDetailGroup(items) {
 
 function renderDetailCard(item) {
   const { detail } = item;
+  const status = normalizeDetailStatus(detail);
   const segments = [];
 
   if (detail.definition) {
@@ -1002,7 +1284,12 @@ function renderDetailCard(item) {
       role="button"
       aria-label="查看 ${escapeAttribute(item.title)} 的详情"
     >
-      <h5>${escapeHtml(item.title)}</h5>
+      <div class="detail-card-head">
+        <h5>${escapeHtml(item.title)}</h5>
+        <span class="module-status is-${escapeAttribute(status)}">${escapeHtml(
+          STATUS_LABELS[status]
+        )}</span>
+      </div>
       ${segments.join("")}
     </article>
   `;
@@ -1024,7 +1311,7 @@ function renderDomainRelations(domain) {
           data-detail-key="${escapeAttribute(getDomainRelationKey(domain.pathKey))}"
           tabindex="0"
           role="button"
-          aria-label="查看 ${escapeAttribute(domain.fullTitle)} 本层关系的详情"
+          aria-label="查看 ${escapeAttribute(domain.displayFullTitle)} 本层关系的详情"
         >
           <ul>
             ${domain.relationNotes.map((note) => `<li>${escapeHtml(note)}</li>`).join("")}
