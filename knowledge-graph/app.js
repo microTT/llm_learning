@@ -118,6 +118,9 @@ function buildGraph(markdown, overlay) {
     }
   }
 
+  const structureReferenceMap = buildStructureReferenceMap(domains);
+  expandStructureReferences(domains, relationGroups, structureReferenceMap);
+
   return {
     domains,
     relationGroups,
@@ -222,6 +225,53 @@ function parseRelationSection(section) {
       notes: flattenBulletTree(item.children),
     })),
   }));
+}
+
+function buildStructureReferenceMap(domains) {
+  const referenceMap = new Map();
+
+  for (const domain of domains) {
+    referenceMap.set(domain.code, domain.title);
+    for (const module of domain.modules) {
+      referenceMap.set(module.code, module.title);
+    }
+  }
+
+  return referenceMap;
+}
+
+function expandStructureReferences(domains, relationGroups, referenceMap) {
+  for (const domain of domains) {
+    domain.relationNotes = domain.relationNotes.map((note) =>
+      expandStructureReferenceText(note, referenceMap)
+    );
+  }
+
+  for (const group of relationGroups) {
+    group.entries = group.entries.map((entry) => ({
+      ...entry,
+      text: expandStructureReferenceText(entry.text, referenceMap),
+      notes: entry.notes.map((note) => expandStructureReferenceText(note, referenceMap)),
+    }));
+  }
+}
+
+function expandStructureReferenceText(text, referenceMap) {
+  if (!text) {
+    return text;
+  }
+
+  const keys = Array.from(referenceMap.keys()).sort((left, right) => right.length - left.length);
+  if (!keys.length) {
+    return text;
+  }
+
+  const pattern = new RegExp(
+    `(?<![A-Za-z0-9])(${keys.map(escapeRegExp).join("|")})(?![A-Za-z0-9])`,
+    "g"
+  );
+
+  return text.replace(pattern, (match) => referenceMap.get(match) || match);
 }
 
 function splitByHeading(markdown, marker) {
@@ -1140,4 +1190,8 @@ function escapeHtml(value) {
 
 function escapeAttribute(value) {
   return escapeHtml(value).replaceAll("\n", " ");
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
