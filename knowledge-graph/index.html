@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta
+      name="description"
+      content="AI 知识图谱路线图页面，基于 design.md 自动解析，适合 GitHub Pages 直接访问。"
+    />
+    <title>AI 知识图谱</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23171d29'/%3E%3Cpath d='M14 20h36v6H14zm0 18h22v6H14zm28 0h8v6h-8z' fill='%2352a7ff'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">AI Roadmap / GitHub Pages Ready</p>
+          <h1>AI 知识图谱</h1>
+          <p class="hero-text">
+            这页不再强调操作，而是强调阅读。它把
+            <code>design.md</code> 里的完整知识骨架，整理成一张可以顺着往下学、也可以按领域回看的 AI
+            路线图。
+          </p>
+          <div class="hero-tags">
+            <span>主干：基础 → 模型 → 应用 → Agent → 生产</span>
+            <span>分支：语言 / 视觉 / 音频 / 视频 / 多模态 / 决策 / 机器人</span>
+            <span>横切：数据 / 评测 / 安全 / 基础设施 / 产品</span>
+          </div>
+        </div>
+        <div class="hero-meta">
+          <div class="stats-grid" id="hero-stats"></div>
+          <p class="hero-note">
+            结构继续写在 <code>design.md</code>，节点深挖继续写在
+            <code>data/node-details.json</code>。
+          </p>
+        </div>
+      </header>
+
+      <nav class="jumpbar" id="jumpbar" aria-label="知识领域导航"></nav>
+
+      <section class="reading-strip">
+        <article class="reading-card">
+          <strong>先读主干</strong>
+          <p>按阶段把基础、学习范式、大模型、应用工程、Agent 与生产链路先串起来。</p>
+        </article>
+        <article class="reading-card">
+          <strong>再看分支</strong>
+          <p>视觉、语音、视频、多模态、强化学习、机器人都挂在同一张主图上。</p>
+        </article>
+        <article class="reading-card">
+          <strong>最后深挖节点</strong>
+          <p>后续每个词都可以继续补定义、例子、误区和下一步，页面不需要重写。</p>
+        </article>
+      </section>
+
+      <div class="content-shell">
+        <div class="content-main">
+          <main class="roadmap" id="roadmap"></main>
+
+          <section class="relation-section">
+            <div class="section-heading">
+              <p class="section-eyebrow">Cross Links</p>
+              <h2>结构之间的关键关系</h2>
+              <p>
+                这里保留跨层关系，让这张图不只是目录，而是一张真正的知识网络。
+              </p>
+            </div>
+            <div class="relation-grid" id="relation-grid"></div>
+          </section>
+        </div>
+
+        <aside class="detail-panel" id="detail-panel" aria-live="polite">
+          <div class="detail-panel-card" id="detail-panel-card">
+            <p class="detail-panel-eyebrow">Detail / Ready</p>
+            <h2>右侧详情</h2>
+            <p class="detail-panel-summary">
+              点击左侧任意知识项，在这里查看它的定义、上下文、关系和后续延展。后面每个节点继续补内容时，这里会直接承接。
+            </p>
+          </div>
+        </aside>
+      </div>
+
+      <footer class="page-footer">
+        <p>
+          当前页面展示的是“完整骨架 + 局部深挖”的第一版。后续只要继续补结构和节点细节，它会自然扩展。
+        </p>
+      </footer>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
