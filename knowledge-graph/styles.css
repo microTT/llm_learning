@@ -34,6 +34,13 @@
   --radius-lg: 20px;
   --radius-md: 14px;
   --radius-sm: 10px;
+  --space-2xs: 6px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 20px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
   color-scheme: dark;
   font-family: "Avenir Next", "IBM Plex Sans", "PingFang SC", "Noto Sans SC",
     "Helvetica Neue", sans-serif;
@@ -68,9 +75,9 @@ code {
 }
 
 .page-shell {
-  width: min(1440px, calc(100vw - 32px));
+  width: min(1440px, calc(100vw - 40px));
   margin: 0 auto;
-  padding: 20px 0 52px;
+  padding: 28px 0 64px;
 }
 
 .hero,
@@ -86,8 +93,8 @@ code {
 .hero {
   display: grid;
   grid-template-columns: minmax(0, 1.9fr) minmax(260px, 0.7fr);
-  gap: 12px;
-  padding: 16px;
+  gap: var(--space-md);
+  padding: var(--space-lg);
 }
 
 .eyebrow,
@@ -136,8 +143,8 @@ code {
 .hero-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 10px;
+  gap: var(--space-xs);
+  margin-top: var(--space-sm);
 }
 
 .hero-tags span,
@@ -156,18 +163,18 @@ code {
 .hero-meta {
   display: grid;
   align-content: start;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, max-content);
-  gap: 8px;
+  gap: var(--space-xs);
   justify-content: start;
 }
 
 .stat-card {
-  padding: 12px;
+  padding: 14px;
   border-radius: var(--radius-md);
   background: var(--surface-stat);
 }
@@ -192,9 +199,9 @@ code {
   z-index: 10;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 10px 0 0;
-  padding: 8px;
+  gap: var(--space-xs);
+  margin: 14px 0 0;
+  padding: 10px;
   border-radius: 999px;
   background: #0c1725;
 }
@@ -213,9 +220,9 @@ code {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 8px;
-  margin-top: 10px;
-  padding: 8px;
+  gap: var(--space-sm);
+  margin-top: 14px;
+  padding: var(--space-sm);
   background: var(--paper-soft);
 }
 
@@ -223,7 +230,7 @@ code {
   flex: 0 1 auto;
   width: fit-content;
   max-width: min(100%, 320px);
-  padding: 8px 10px;
+  padding: 10px 12px;
   border-radius: var(--radius-lg);
   background: var(--paper-soft);
 }
@@ -231,28 +238,28 @@ code {
 .content-shell {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
-  gap: 12px;
+  gap: var(--space-md);
   align-items: start;
-  margin-top: 12px;
+  margin-top: var(--space-md);
 }
 
 .content-main {
   min-width: 0;
   display: grid;
-  gap: 12px;
+  gap: var(--space-md);
 }
 
 .detail-panel {
   position: sticky;
-  top: 58px;
+  top: 72px;
   align-self: start;
 }
 
 .detail-panel-card {
   display: grid;
-  gap: 10px;
+  gap: var(--space-sm);
   min-height: 220px;
-  padding: 14px;
+  padding: 18px;
   border-radius: var(--radius-xl);
   background: var(--surface-panel);
 }
@@ -292,7 +299,7 @@ code {
 .detail-panel-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: var(--space-xs);
 }
 
 .detail-panel-meta span,
@@ -318,8 +325,8 @@ code {
 
 .detail-panel-section {
   display: grid;
-  gap: 6px;
-  padding: 10px;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
   border-radius: var(--radius-md);
   background: var(--surface-panel-section);
 }
@@ -330,7 +337,7 @@ code {
 }
 
 .detail-panel-empty {
-  padding: 10px;
+  padding: var(--space-sm);
   border-radius: var(--radius-md);
   background: var(--surface-panel-section);
 }
@@ -344,7 +351,7 @@ code {
 .roadmap {
   position: relative;
   display: grid;
-  gap: 10px;
+  gap: 14px;
   margin-top: 0;
 }
 
@@ -360,8 +367,8 @@ code {
 }
 
 .stage-card {
-  padding: 12px;
-  margin-left: 30px;
+  padding: 16px;
+  margin-left: 34px;
   background: var(--surface-stage);
 }
 
@@ -387,8 +394,8 @@ code {
 
 .stage-header {
   display: grid;
-  gap: 4px;
-  margin-bottom: 10px;
+  gap: var(--space-2xs);
+  margin-bottom: 14px;
 }
 
 .stage-eyebrow {
@@ -403,7 +410,7 @@ code {
 .stage-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: var(--space-xs);
 }
 
 .stage-meta span {
@@ -419,7 +426,7 @@ code {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
 .domain-card {
@@ -428,7 +435,7 @@ code {
   flex: 0 1 auto;
   width: fit-content;
   max-width: 100%;
-  padding: 10px;
+  padding: 14px;
   border-radius: var(--radius-lg);
   background: var(--surface-domain);
 }
@@ -436,8 +443,8 @@ code {
 .domain-header {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 4px 8px;
-  margin-bottom: 8px;
+  gap: 6px 10px;
+  margin-bottom: 12px;
 }
 
 .domain-eyebrow {
@@ -458,7 +465,7 @@ code {
 .domain-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: var(--space-xs);
   grid-column: 2 / 3;
   grid-row: 2 / 3;
   justify-content: flex-end;
@@ -478,8 +485,8 @@ code {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .module-card {
@@ -507,8 +514,8 @@ code {
 
 .module-header {
   display: grid;
-  gap: 4px;
-  padding: 8px 8px 0;
+  gap: var(--space-2xs);
+  padding: 10px 10px 0;
 }
 
 .module-code {
@@ -538,22 +545,22 @@ code {
 
 .module-body {
   display: grid;
-  gap: 6px;
-  padding: 6px 8px 8px;
+  gap: var(--space-xs);
+  padding: 8px 10px 10px;
 }
 
 .concept-tree {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 5px;
+  gap: 6px;
 }
 
 .concept-cluster {
   display: inline-flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 4px;
+  gap: 5px;
 }
 
 .concept-label {
@@ -561,7 +568,7 @@ code {
   align-items: center;
   width: fit-content;
   max-width: 100%;
-  padding: 4px 7px;
+  padding: 5px 8px;
   border-radius: var(--radius-sm);
   background: var(--surface-concept);
   font-size: 0.72rem;
@@ -601,12 +608,12 @@ code {
 .concept-flow {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 5px;
 }
 
 .detail-group {
-  margin-top: 8px;
-  padding-top: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
 }
 
 .detail-group summary {
@@ -638,12 +645,12 @@ code {
 
 .detail-list {
   display: grid;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .detail-card {
-  padding: 8px;
+  padding: 10px;
   border-radius: var(--radius-sm);
   background: var(--surface-detail);
   cursor: pointer;
@@ -673,14 +680,14 @@ code {
 
 .relation-section {
   margin-top: 0;
-  padding: 12px;
+  padding: 16px;
   background: #0f1928;
 }
 
 .section-heading {
   display: grid;
-  gap: 6px;
-  margin-bottom: 12px;
+  gap: var(--space-xs);
+  margin-bottom: 14px;
 }
 
 .section-heading h2 {
@@ -692,7 +699,7 @@ code {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  gap: 8px;
+  gap: 10px;
 }
 
 .relation-card {
@@ -700,7 +707,7 @@ code {
   flex: 0 1 var(--relation-basis, 260px);
   width: auto;
   max-width: min(100%, var(--relation-max, 360px));
-  padding: 10px;
+  padding: 12px;
   border-radius: var(--radius-lg);
   background: var(--relation-wash, #152233);
   overflow: hidden;
@@ -715,20 +722,20 @@ code {
 }
 
 .relation-card h3 {
-  margin: 0 0 10px;
+  margin: 0 0 12px;
   font-size: 0.88rem;
   color: var(--relation-accent-ink, var(--ink));
 }
 
 .relation-list {
   display: grid;
-  gap: 6px;
+  gap: var(--space-xs);
 }
 
 .relation-entry {
   width: fit-content;
   max-width: 100%;
-  padding: 7px 9px;
+  padding: 8px 10px;
   border-radius: var(--radius-sm);
   background: var(--relation-entry-bg, #101a28);
   position: relative;
@@ -755,8 +762,8 @@ code {
 .relation-notes {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  margin-top: 6px;
+  gap: 5px;
+  margin-top: 8px;
   color: var(--relation-accent-ink, var(--ink-soft));
   font-size: 0.74rem;
 }
@@ -837,7 +844,7 @@ code {
 
 .empty-state,
 .error-state {
-  padding: 12px;
+  padding: 14px;
   border-radius: var(--radius-md);
   color: var(--ink-soft);
   background: var(--surface-empty);
@@ -846,8 +853,8 @@ code {
 }
 
 .page-footer {
-  margin-top: 12px;
-  padding: 10px 12px;
+  margin-top: 16px;
+  padding: 12px 14px;
   background: var(--bg-strong);
 }
 
@@ -879,15 +886,15 @@ code {
 @media (max-width: 820px) {
   .page-shell {
     width: min(100vw - 20px, 100%);
-    padding-top: 16px;
-    padding-bottom: 48px;
+    padding-top: 18px;
+    padding-bottom: 52px;
   }
 
   .hero,
   .stage-card,
   .relation-section,
   .detail-panel-card {
-    padding: 14px;
+    padding: 16px;
   }
 
   .stats-grid {
@@ -904,7 +911,7 @@ code {
   }
 
   .stage-card {
-    margin-left: 20px;
+    margin-left: 22px;
   }
 
   .stage-card::before {
