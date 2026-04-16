@@ -77,6 +77,9 @@ const elements = {
   jumpbar: document.getElementById("jumpbar"),
   roadmap: document.getElementById("roadmap"),
   relationGrid: document.getElementById("relation-grid"),
+  detailDrawer: document.getElementById("detail-drawer"),
+  detailBackdrop: document.getElementById("detail-backdrop"),
+  detailClose: document.getElementById("detail-close"),
   detailPanel: document.getElementById("detail-panel"),
   detailPanelCard: document.getElementById("detail-panel-card"),
 };
@@ -84,6 +87,8 @@ const elements = {
 const state = {
   graph: null,
   activeKey: null,
+  isDrawerOpen: false,
+  lastTrigger: null,
 };
 
 bootstrap().catch((error) => {
@@ -737,6 +742,10 @@ function bindInteractions() {
     root.addEventListener("click", handleInteractiveSelection);
     root.addEventListener("keydown", handleInteractiveKeydown);
   }
+
+  elements.detailBackdrop.addEventListener("click", closeDetailDrawer);
+  elements.detailClose.addEventListener("click", closeDetailDrawer);
+  document.addEventListener("keydown", handleGlobalKeydown);
 }
 
 function handleInteractiveSelection(event) {
@@ -754,7 +763,7 @@ function handleInteractiveSelection(event) {
     return;
   }
 
-  setActiveDetail(key);
+  setActiveDetail(key, target);
 }
 
 function handleInteractiveKeydown(event) {
@@ -770,17 +779,47 @@ function handleInteractiveKeydown(event) {
   event.preventDefault();
   const key = target.dataset.pathKey || target.dataset.detailKey;
   if (key) {
-    setActiveDetail(key);
+    setActiveDetail(key, target);
   }
 }
 
-function setActiveDetail(key) {
+function handleGlobalKeydown(event) {
+  if (event.key === "Escape" && state.isDrawerOpen) {
+    closeDetailDrawer();
+  }
+}
+
+function setActiveDetail(key, trigger = null) {
   state.activeKey = key;
+  if (trigger instanceof HTMLElement) {
+    state.lastTrigger = trigger;
+  }
   renderDetailPanel();
   syncActiveElements();
+  setDrawerOpen(true);
+}
 
-  if (window.innerWidth <= 1180) {
-    elements.detailPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+function closeDetailDrawer() {
+  state.activeKey = null;
+  renderDetailPanel();
+  syncActiveElements();
+  setDrawerOpen(false);
+}
+
+function setDrawerOpen(open) {
+  state.isDrawerOpen = open;
+  elements.detailDrawer.classList.toggle("is-open", open);
+  elements.detailDrawer.setAttribute("aria-hidden", open ? "false" : "true");
+  document.body.classList.toggle("drawer-open", open);
+
+  if (open) {
+    elements.detailClose.focus({ preventScroll: true });
+    return;
+  }
+
+  const trigger = state.lastTrigger;
+  if (trigger && document.contains(trigger)) {
+    trigger.focus({ preventScroll: true });
   }
 }
 
@@ -807,7 +846,7 @@ function renderDetailPanel() {
   if (!entry) {
     elements.detailPanelCard.innerHTML = `
       <p class="detail-panel-eyebrow">Detail / Ready</p>
-      <h2>右侧详情</h2>
+      <h2 id="detail-panel-title">右侧详情</h2>
       <p class="detail-panel-summary">
         点击左侧任意知识项，在这里查看它的定义、上下文、关系和后续延展。后面每个节点继续补内容时，这里会直接承接。
       </p>
@@ -881,7 +920,7 @@ function renderDetailPanel() {
 
   elements.detailPanelCard.innerHTML = `
     <p class="detail-panel-eyebrow">${escapeHtml(entry.eyebrow)}</p>
-    <h2>${escapeHtml(entry.title)}</h2>
+    <h2 id="detail-panel-title">${escapeHtml(entry.title)}</h2>
     ${entry.pathKey ? `<p class="detail-panel-path">${escapeHtml(entry.pathKey)}</p>` : ""}
     <p class="detail-panel-summary">${escapeHtml(entry.summary)}</p>
     <div class="detail-panel-meta">

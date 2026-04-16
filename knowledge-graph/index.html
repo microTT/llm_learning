@@ -67,11 +67,36 @@
             <div class="relation-grid" id="relation-grid"></div>
           </section>
         </div>
+      </div>
 
-        <aside class="detail-panel" id="detail-panel" aria-live="polite">
-          <div class="detail-panel-card" id="detail-panel-card">
+      <div class="detail-drawer" id="detail-drawer" aria-hidden="true">
+        <button
+          type="button"
+          class="detail-drawer-backdrop"
+          id="detail-backdrop"
+          aria-label="关闭详情抽屉"
+        ></button>
+        <aside
+          class="detail-drawer-panel"
+          id="detail-panel"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="detail-panel-title"
+        >
+          <div class="detail-drawer-bar">
+            <p class="detail-drawer-label">Knowledge Detail</p>
+            <button
+              type="button"
+              class="detail-drawer-close"
+              id="detail-close"
+              aria-label="关闭详情"
+            >
+              关闭
+            </button>
+          </div>
+          <div class="detail-panel-card" id="detail-panel-card" aria-live="polite">
             <p class="detail-panel-eyebrow">Detail / Ready</p>
-            <h2>右侧详情</h2>
+            <h2 id="detail-panel-title">右侧详情</h2>
             <p class="detail-panel-summary">
               点击左侧任意知识项，在这里查看它的定义、上下文、关系和后续延展。后面每个节点继续补内容时，这里会直接承接。
             </p>
