@@ -1,76 +1,22 @@
-const STAGES = [
-  {
-    id: "foundation",
-    title: "01 基础底座",
-    description: "先把经典 AI、机器学习、深度学习和底层能力串成一条主线。",
-    color: "#96b6df",
-    codes: ["A", "B", "C", "D"],
-  },
-  {
-    id: "modalities",
-    title: "02 任务域与数据",
-    description: "然后再把语言、视觉、语音、视频、多模态以及数据横切层挂上去。",
-    color: "#88aad4",
-    codes: ["E", "F"],
-  },
-  {
-    id: "llm-system",
-    title: "03 大模型系统",
-    description: "这一段把 LLM 本体、后训练、对齐、检索和外部知识连接起来。",
-    color: "#799dc8",
-    codes: ["G", "H", "I"],
-  },
-  {
-    id: "application",
-    title: "04 应用与 Agent",
-    description: "应用工程负责稳定性，Agent 系统负责多步自治、状态和工具编排。",
-    color: "#6d90ba",
-    codes: ["J", "K"],
-  },
-  {
-    id: "production",
-    title: "05 运行、治理与产品",
-    description: "最后把运行时、基础设施、评测、安全和产品组织闭环补完整。",
-    color: "#5f82ac",
-    codes: ["L", "M", "N"],
-  },
+import { GRAPH_DEFAULT_CONFIG, buildRuntimeGraph } from "./graph-core.js";
+
+let STAGES = GRAPH_DEFAULT_CONFIG.stages;
+let CROSSCUT_CODES = GRAPH_DEFAULT_CONFIG.crosscutCodes;
+let DOMAIN_GROUPS = GRAPH_DEFAULT_CONFIG.domainGroups;
+let DOMAIN_DISPLAY = GRAPH_DEFAULT_CONFIG.domainDisplay;
+let CROSSCUT_NOTES = GRAPH_DEFAULT_CONFIG.crosscutNotes;
+let STATUS_LABELS = GRAPH_DEFAULT_CONFIG.statusLabels;
+
+const DETAIL_TEXT_FIELDS = ["definition", "importance", "minimumDemo", "hardwareBudget"];
+const DETAIL_LIST_FIELDS = [
+  "examples",
+  "pitfalls",
+  "prerequisites",
+  "coreMetrics",
+  "toolchain",
+  "failureSigns",
+  "next",
 ];
-
-const CROSSCUT_CODES = ["F", "L", "M", "N"];
-
-const DOMAIN_GROUPS = {
-  E: [
-    {
-      title: "模态与多模态",
-      codes: ["E1", "E2", "E3", "E4", "E5"],
-    },
-    {
-      title: "决策、具身与扩展",
-      codes: ["E6", "E7", "E8"],
-    },
-  ],
-};
-
-const DOMAIN_DISPLAY = {
-  E: {
-    title: "模态、任务域与智能形态",
-    note: "把模态、多模态、决策、具身与扩展能力拆开阅读，避免混在同一层。",
-  },
-};
-
-const CROSSCUT_NOTES = {
-  F: "这是全局数据轴：训练、检索、评测、线上反馈都会经过这里。",
-  L: "这是全局运行时轴：模型访问、服务运行、推理优化和生产指标都会受它约束。",
-  M: "这是全局治理轴：模型、应用与 Agent 的评测、安全和合规边界都在这里收束。",
-  N: "这是全局产品闭环：场景、自动化等级、体验设计与团队流程最终在这里落地。",
-};
-
-const STATUS_LABELS = {
-  none: "未补充",
-  seed: "seed",
-  draft: "draft",
-  deep: "deep",
-};
 
 const elements = {
   stats: document.getElementById("hero-stats"),
@@ -96,19 +42,23 @@ bootstrap().catch((error) => {
   elements.roadmap.innerHTML = `
     <div class="error-state">
       <strong>知识图谱加载失败。</strong>
-      <p>请确认 <code>design.md</code> 与 <code>data/node-details.json</code> 可访问，然后刷新页面重试。</p>
+      <p>请确认 <code>data/graph.json</code> 可访问且结构合法，然后刷新页面重试。</p>
     </div>
   `;
 });
 
 async function bootstrap() {
   renderLoading();
-  const [designText, overlay] = await Promise.all([
-    fetchText("./design.md"),
-    fetchJson("./data/node-details.json", { version: 1, nodes: {} }),
-  ]);
-  const graph = buildGraph(designText, overlay);
+  const graphSource = await fetchJson("./data/graph.json", null);
+  if (!graphSource) {
+    throw new Error("Failed to fetch ./data/graph.json");
+  }
+  const graph = buildRuntimeGraph(graphSource);
+  applyGraphConfig(graph.config);
   state.graph = graph;
+  if (graph.referenceIssues.length) {
+    console.warn("knowledge-graph: unresolved or ambiguous detail references", graph.referenceIssues);
+  }
   render(graph);
   bindInteractions();
   renderDetailPanel();
@@ -117,18 +67,19 @@ async function bootstrap() {
 function renderLoading() {
   elements.roadmap.innerHTML = `
     <div class="empty-state">
-      正在解析 <code>design.md</code>，整理 AI 知识路线图…
+      正在加载 <code>data/graph.json</code>，整理 AI 知识路线图…
     </div>
   `;
   elements.relationGrid.innerHTML = "";
 }
 
-async function fetchText(url) {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${url}: ${response.status}`);
-  }
-  return response.text();
+function applyGraphConfig(config) {
+  STAGES = config.stages;
+  CROSSCUT_CODES = config.crosscutCodes;
+  DOMAIN_GROUPS = config.domainGroups;
+  DOMAIN_DISPLAY = config.domainDisplay;
+  CROSSCUT_NOTES = config.crosscutNotes;
+  STATUS_LABELS = config.statusLabels;
 }
 
 async function fetchJson(url, fallback) {
@@ -165,12 +116,14 @@ function buildGraph(markdown, overlay) {
 
   const stages = buildStages(domains, relationGroups);
   const lookup = buildSelectionIndex(domains, relationGroups);
+  const referenceIssues = attachDetailReferences(domains, lookup);
 
   return {
     domains,
     stages,
     relationGroups,
     lookup,
+    referenceIssues,
     overlay,
     stats: {
       domains: domains.length,
@@ -541,12 +494,9 @@ function hasMeaningfulDetail(detail) {
     return false;
   }
 
-  return Boolean(
-    detail.definition ||
-      detail.importance ||
-      (Array.isArray(detail.examples) && detail.examples.length) ||
-      (Array.isArray(detail.pitfalls) && detail.pitfalls.length) ||
-      (Array.isArray(detail.next) && detail.next.length)
+  return (
+    DETAIL_TEXT_FIELDS.some((field) => hasNonEmptyText(detail[field])) ||
+    DETAIL_LIST_FIELDS.some((field) => hasNonEmptyList(detail[field]))
   );
 }
 
@@ -572,6 +522,175 @@ function collectDetailNodes(module) {
       detail: concept.detail,
     });
   });
+
+  return items;
+}
+
+function hasNonEmptyText(value) {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function hasNonEmptyList(value) {
+  return Array.isArray(value) && value.some((item) => hasNonEmptyText(item));
+}
+
+function attachDetailReferences(domains, lookup) {
+  const resolver = createDetailReferenceResolver(lookup);
+  const issues = [];
+
+  walkDetailEntries(domains, ({ pathKey, detail }) => {
+    detail.resolvedPrerequisites = resolveDetailReferences(detail.prerequisites, resolver, {
+      ownerPathKey: pathKey,
+      fieldName: "prerequisites",
+      issues,
+    });
+    detail.resolvedNext = resolveDetailReferences(detail.next, resolver, {
+      ownerPathKey: pathKey,
+      fieldName: "next",
+      issues,
+    });
+  });
+
+  return issues;
+}
+
+function walkDetailEntries(domains, visitor) {
+  for (const domain of domains) {
+    visitor({ pathKey: domain.pathKey, detail: domain.detail, type: "domain" });
+    for (const module of domain.modules) {
+      visitor({ pathKey: module.pathKey, detail: module.detail, type: "module" });
+      walkConcepts(module.concepts, (concept) => {
+        visitor({ pathKey: concept.pathKey, detail: concept.detail, type: "concept" });
+      });
+    }
+  }
+}
+
+function createDetailReferenceResolver(lookup) {
+  const byPathKey = new Map();
+  const byAlias = new Map();
+
+  for (const entry of lookup.values()) {
+    if (!entry.pathKey) {
+      continue;
+    }
+
+    byPathKey.set(normalizeReferenceKey(entry.pathKey), entry);
+
+    for (const alias of collectReferenceAliases(entry)) {
+      const aliasKey = normalizeReferenceKey(alias);
+      if (!aliasKey) {
+        continue;
+      }
+
+      const bucket = byAlias.get(aliasKey) || [];
+      bucket.push(entry);
+      byAlias.set(aliasKey, bucket);
+    }
+  }
+
+  return { byPathKey, byAlias };
+}
+
+function collectReferenceAliases(entry) {
+  const aliases = new Set();
+  const lastSegment = getLastPathSegment(entry.pathKey);
+  const pathWithoutDomain = entry.pathKey.includes("/") ? entry.pathKey.slice(entry.pathKey.indexOf("/") + 1) : "";
+
+  addReferenceAlias(aliases, entry.pathKey);
+  addReferenceAlias(aliases, pathWithoutDomain);
+  addReferenceAlias(aliases, entry.title);
+  addReferenceAlias(aliases, lastSegment);
+
+  return aliases;
+}
+
+function addReferenceAlias(aliases, value) {
+  const cleaned = cleanReferenceText(value);
+  if (!cleaned) {
+    return;
+  }
+
+  aliases.add(cleaned);
+
+  const withoutCode = cleaned.replace(/^[A-Z]\d+\.\s+/, "").trim();
+  if (withoutCode && withoutCode !== cleaned) {
+    aliases.add(withoutCode);
+  }
+
+  const parenMatch = cleaned.match(/^(.+?)[（(]([^()（）]+)[)）]$/);
+  if (!parenMatch) {
+    return;
+  }
+
+  aliases.add(parenMatch[1].trim());
+  aliases.add(parenMatch[2].trim());
+}
+
+function cleanReferenceText(value) {
+  if (!hasNonEmptyText(value)) {
+    return "";
+  }
+
+  return cleanMarkdown(String(value)).replace(/\s+/g, " ").trim();
+}
+
+function normalizeReferenceKey(value) {
+  return cleanReferenceText(value).toLowerCase();
+}
+
+function getLastPathSegment(pathKey) {
+  if (!hasNonEmptyText(pathKey)) {
+    return "";
+  }
+
+  const parts = String(pathKey).split("/");
+  return parts[parts.length - 1] || "";
+}
+
+function resolveDetailReferences(values, resolver, context) {
+  if (!Array.isArray(values)) {
+    return [];
+  }
+
+  const items = [];
+  const seen = new Set();
+
+  for (const rawValue of values) {
+    const label = cleanReferenceText(rawValue);
+    if (!label) {
+      continue;
+    }
+
+    const exactPathMatch = resolver.byPathKey.get(normalizeReferenceKey(label));
+    if (exactPathMatch) {
+      if (!seen.has(exactPathMatch.key)) {
+        seen.add(exactPathMatch.key);
+        items.push({ key: exactPathMatch.key, label: exactPathMatch.title });
+      }
+      continue;
+    }
+
+    const aliasMatches = resolver.byAlias.get(normalizeReferenceKey(label)) || [];
+    if (aliasMatches.length === 1) {
+      const [match] = aliasMatches;
+      if (!seen.has(match.key)) {
+        seen.add(match.key);
+        items.push({ key: match.key, label: match.title });
+      }
+      continue;
+    }
+
+    items.push({ label });
+    context.issues.push({
+      ownerPathKey: context.ownerPathKey,
+      fieldName: context.fieldName,
+      value: label,
+      reason: aliasMatches.length > 1 ? "ambiguous" : "unresolved",
+      matches:
+        aliasMatches.length > 1 ? aliasMatches.map((candidate) => candidate.pathKey) : undefined,
+    });
+  }
 
   return items;
 }
@@ -718,7 +837,7 @@ function getConceptFallbackSummary(concept) {
     return `当前节点下还有 ${concept.children.length} 个下级概念，可以继续沿结构往下展开。`;
   }
 
-  return "当前节点还没有补充独立说明，后续可以在 node-details.json 中继续细化定义和示例。";
+  return "当前节点还没有补充独立说明，后续可以在 data/graph.json 中继续细化定义和示例。";
 }
 
 function getDomainRelationKey(pathKey) {
@@ -860,15 +979,8 @@ function renderDetailPanel() {
   const sections = [];
   const detail = entry.detail || {};
   const statusLabel = STATUS_LABELS[entry.status] || STATUS_LABELS.none;
-  const links = Array.isArray(detail.next)
-    ? detail.next
-        .map((pathKey) => state.graph.lookup.get(pathKey))
-        .filter(Boolean)
-        .map((item) => ({
-          key: item.key,
-          label: item.title,
-        }))
-    : [];
+  const prerequisiteItems = detail.resolvedPrerequisites || [];
+  const nextItems = detail.resolvedNext || [];
 
   if (entry.parentTitle) {
     sections.push(renderPanelListSection("结构位置", [entry.parentTitle]));
@@ -880,6 +992,30 @@ function renderDetailPanel() {
 
   if (detail.importance) {
     sections.push(renderPanelTextSection("为什么重要", detail.importance));
+  }
+
+  if (prerequisiteItems.length) {
+    sections.push(renderPanelReferenceSection("前置节点", prerequisiteItems));
+  }
+
+  if (detail.minimumDemo) {
+    sections.push(renderPanelTextSection("最小实验", detail.minimumDemo));
+  }
+
+  if (Array.isArray(detail.coreMetrics) && detail.coreMetrics.length) {
+    sections.push(renderPanelListSection("核心指标", detail.coreMetrics));
+  }
+
+  if (Array.isArray(detail.toolchain) && detail.toolchain.length) {
+    sections.push(renderPanelListSection("工具链", detail.toolchain));
+  }
+
+  if (Array.isArray(detail.failureSigns) && detail.failureSigns.length) {
+    sections.push(renderPanelListSection("失败信号", detail.failureSigns));
+  }
+
+  if (detail.hardwareBudget) {
+    sections.push(renderPanelTextSection("硬件预算", detail.hardwareBudget));
   }
 
   if (Array.isArray(detail.examples) && detail.examples.length) {
@@ -895,7 +1031,7 @@ function renderDetailPanel() {
   }
 
   if (entry.relatedLinks?.length) {
-    sections.push(renderPanelLinkSection("相关节点", entry.relatedLinks));
+    sections.push(renderPanelReferenceSection("相关节点", entry.relatedLinks));
   }
 
   if (entry.childTitles.length) {
@@ -906,14 +1042,14 @@ function renderDetailPanel() {
     sections.push(renderPanelListSection("下一级结构", previewChildren));
   }
 
-  if (links.length) {
-    sections.push(renderPanelLinkSection("下一步", links));
+  if (nextItems.length) {
+    sections.push(renderPanelReferenceSection("下一步", nextItems));
   }
 
   if (!sections.length) {
     sections.push(`
       <div class="detail-panel-empty">
-        当前节点还没有更深入的补充内容。这里显示的是内容建设进度，不代表它在整张图里不重要。后续可以直接在 <code>data/node-details.json</code> 里继续补定义、例子和延伸路径。
+        当前节点还没有更深入的补充内容。这里显示的是内容建设进度，不代表它在整张图里不重要。后续可以直接在 <code>data/graph.json</code> 里继续补定义、前置、实验、指标和延伸路径。
       </div>
     `);
   }
@@ -960,7 +1096,7 @@ function renderPanelListSection(title, items) {
   `;
 }
 
-function renderPanelLinkSection(title, items) {
+function renderPanelReferenceSection(title, items) {
   return `
     <section class="detail-panel-section">
       <h3>${escapeHtml(title)}</h3>
@@ -968,13 +1104,23 @@ function renderPanelLinkSection(title, items) {
         ${items
           .map(
             (item) => `
-              <button
-                type="button"
-                class="detail-panel-link"
-                data-path-key="${escapeAttribute(item.key)}"
-              >
-                ${escapeHtml(item.label)}
-              </button>
+              ${
+                item.key
+                  ? `
+                    <button
+                      type="button"
+                      class="detail-panel-link"
+                      data-path-key="${escapeAttribute(item.key)}"
+                    >
+                      ${escapeHtml(item.label)}
+                    </button>
+                  `
+                  : `
+                    <button type="button" class="detail-panel-link" disabled>
+                      ${escapeHtml(item.label)}
+                    </button>
+                  `
+              }
             `
           )
           .join("")}
@@ -1287,12 +1433,25 @@ function renderDetailCard(item) {
   const { detail } = item;
   const status = normalizeDetailStatus(detail);
   const segments = [];
+  const prerequisiteLabels = getReferenceLabels(detail.resolvedPrerequisites, detail.prerequisites);
+  const nextLabels = getReferenceLabels(detail.resolvedNext, detail.next);
 
   if (detail.definition) {
     segments.push(`<p>${escapeHtml(detail.definition)}</p>`);
   }
   if (detail.importance) {
     segments.push(`<p><strong>为什么重要：</strong>${escapeHtml(detail.importance)}</p>`);
+  }
+  if (prerequisiteLabels.length) {
+    segments.push(`<p><strong>前置：</strong>${escapeHtml(prerequisiteLabels.join(" / "))}</p>`);
+  }
+  if (detail.minimumDemo) {
+    segments.push(`<p><strong>最小实验：</strong>${escapeHtml(detail.minimumDemo)}</p>`);
+  }
+  if (Array.isArray(detail.coreMetrics) && detail.coreMetrics.length) {
+    segments.push(`
+      <p><strong>核心指标：</strong>${escapeHtml(detail.coreMetrics.slice(0, 4).join(" / "))}</p>
+    `);
   }
   if (Array.isArray(detail.examples) && detail.examples.length) {
     segments.push(`
@@ -1309,9 +1468,9 @@ function renderDetailCard(item) {
       </ul>
     `);
   }
-  if (Array.isArray(detail.next) && detail.next.length) {
+  if (nextLabels.length) {
     segments.push(`
-      <p><strong>下一步：</strong>${escapeHtml(detail.next.join(" / "))}</p>
+      <p><strong>下一步：</strong>${escapeHtml(nextLabels.join(" / "))}</p>
     `);
   }
 
@@ -1332,6 +1491,18 @@ function renderDetailCard(item) {
       ${segments.join("")}
     </article>
   `;
+}
+
+function getReferenceLabels(resolvedItems, fallbackValues) {
+  if (Array.isArray(resolvedItems) && resolvedItems.length) {
+    return resolvedItems.map((item) => item.label);
+  }
+
+  if (!Array.isArray(fallbackValues)) {
+    return [];
+  }
+
+  return fallbackValues.map(cleanReferenceText).filter(Boolean);
 }
 
 function renderDomainRelations(domain) {

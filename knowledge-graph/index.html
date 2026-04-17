@@ -8,7 +8,7 @@
     />
     <meta
       name="description"
-      content="AI 知识图谱路线图页面，基于 design.md 自动解析，适合 GitHub Pages 直接访问。"
+      content="AI 知识图谱路线图页面，基于 graph.json 结构数据渲染，适合 GitHub Pages 直接访问。"
     />
     <title>AI 知识图谱</title>
     <link
@@ -25,7 +25,7 @@
           <h1>AI 知识图谱</h1>
           <p class="hero-text">
             这页不再强调操作，而是强调阅读。它把
-            <code>design.md</code> 里的完整知识骨架，整理成一张可以顺着往下学、也可以按领域回看的 AI
+            <code>data/graph.json</code> 里的完整知识骨架，整理成一张可以顺着往下学、也可以按领域回看的 AI
             路线图。
           </p>
           <div class="hero-tags">
@@ -37,8 +37,7 @@
         <div class="hero-meta">
           <div class="stats-grid" id="hero-stats"></div>
           <p class="hero-note">
-            结构继续写在 <code>design.md</code>，节点深挖继续写在
-            <code>data/node-details.json</code>。
+            结构与节点详情都继续写在 <code>data/graph.json</code>。
           </p>
         </div>
       </header>
@@ -48,7 +47,7 @@
       <section class="reading-strip">
         <p class="reading-note">
           <strong>阅读提示：</strong>仍然按阶段阅读主干，但每个阶段内部已经带上关键关系预览；
-          E 层会拆成更清楚的子组；右侧详情会区分结构位置、内容状态、相关节点和下一步。
+          E 层会拆成更清楚的子组；右侧详情会继续区分前置节点、最小实验、核心指标、工具链、失败信号和下一步。
         </p>
       </section>
 
@@ -98,7 +97,7 @@
             <p class="detail-panel-eyebrow">Detail / Ready</p>
             <h2 id="detail-panel-title">侧边详情</h2>
             <p class="detail-panel-summary">
-              点击左侧任意知识项，在这里查看它的定义、上下文、关系和后续延展。后面每个节点继续补内容时，这里会直接承接。
+              点击左侧任意知识项，在这里查看它的定义、前置节点、最小实验、核心指标、工具链、失败信号和后续延展。后面每个节点继续补内容时，这里会直接承接。
             </p>
           </div>
         </aside>
