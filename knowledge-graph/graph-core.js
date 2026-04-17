@@ -69,8 +69,8 @@ export const GRAPH_DEFAULT_CONFIG = {
   },
 };
 
-const DETAIL_TEXT_FIELDS = ["definition", "importance", "minimumDemo", "hardwareBudget"];
-const DETAIL_LIST_FIELDS = [
+export const DETAIL_TEXT_FIELDS = ["definition", "importance", "minimumDemo", "hardwareBudget"];
+export const DETAIL_LIST_FIELDS = [
   "examples",
   "pitfalls",
   "prerequisites",
@@ -79,6 +79,7 @@ const DETAIL_LIST_FIELDS = [
   "failureSigns",
   "next",
 ];
+export const DETAIL_ALLOWED_FIELDS = ["status", ...DETAIL_TEXT_FIELDS, ...DETAIL_LIST_FIELDS];
 
 export function createGraphConfig(overrides = {}) {
   return {
@@ -145,6 +146,7 @@ export function createGraphSourceFromMarkdown(markdown, overlay = {}) {
 
 export function buildRuntimeGraph(graphData) {
   const cloned = cloneGraphData(graphData);
+  ensureNodeDetails(cloned);
   const config = createGraphConfig(cloned.config || {});
   const domains = Array.isArray(cloned.domains) ? cloned.domains : [];
   const relationGroups = Array.isArray(cloned.relationGroups) ? cloned.relationGroups : [];
@@ -172,6 +174,50 @@ export function buildRuntimeGraph(graphData) {
       detailNodes: domains.reduce((sum, domain) => sum + countDetailNodes(domain), 0),
     },
   };
+}
+
+export function attachDetailShards(graphData, detailShards = []) {
+  const cloned = cloneGraphData(graphData);
+  ensureNodeDetails(cloned);
+  const detailMap = new Map();
+
+  for (const shard of detailShards) {
+    if (!shard || typeof shard !== "object" || !shard.nodes || typeof shard.nodes !== "object") {
+      continue;
+    }
+
+    for (const [pathKey, detail] of Object.entries(shard.nodes)) {
+      detailMap.set(pathKey, sanitizeDetail(detail));
+    }
+  }
+
+  walkGraphNodes(cloned, ({ node }) => {
+    if (detailMap.has(node.pathKey)) {
+      node.detail = detailMap.get(node.pathKey);
+    }
+  });
+
+  return cloned;
+}
+
+export function walkGraphNodes(graphData, visitor) {
+  const domains = Array.isArray(graphData?.domains) ? graphData.domains : [];
+
+  for (const domain of domains) {
+    visitor({ node: domain, type: "domain", domain, module: null, parent: null, depth: 0 });
+    for (const module of domain.modules || []) {
+      visitor({ node: module, type: "module", domain, module, parent: domain, depth: 1 });
+      walkGraphConceptNodes(module.concepts || [], visitor, { domain, module }, 2);
+    }
+  }
+}
+
+export function listGraphNodes(graphData) {
+  const items = [];
+  walkGraphNodes(graphData, (entry) => {
+    items.push(entry);
+  });
+  return items;
 }
 
 export function canonicalizeGraphSource(graphData) {
@@ -1022,6 +1068,62 @@ function flattenBulletTree(tree) {
 
 function withOverlay(node, overlay = {}) {
   return { ...node, detail: overlay };
+}
+
+function ensureNodeDetails(graphData) {
+  walkGraphNodes(graphData, ({ node }) => {
+    if (!node.detail || typeof node.detail !== "object" || Array.isArray(node.detail)) {
+      node.detail = {};
+    }
+  });
+}
+
+function sanitizeDetail(detail) {
+  if (!detail || typeof detail !== "object" || Array.isArray(detail)) {
+    return {};
+  }
+
+  const result = {};
+
+  if (hasNonEmptyText(detail.status)) {
+    result.status = detail.status.trim();
+  }
+
+  for (const field of DETAIL_TEXT_FIELDS) {
+    if (hasNonEmptyText(detail[field])) {
+      result[field] = detail[field].trim();
+    }
+  }
+
+  for (const field of DETAIL_LIST_FIELDS) {
+    if (!Array.isArray(detail[field])) {
+      continue;
+    }
+
+    const values = detail[field]
+      .map((item) => (typeof item === "string" ? item.trim() : ""))
+      .filter(Boolean);
+
+    if (values.length) {
+      result[field] = values;
+    }
+  }
+
+  return result;
+}
+
+function walkGraphConceptNodes(concepts, visitor, context, depth) {
+  for (const concept of concepts) {
+    visitor({
+      node: concept,
+      type: "concept",
+      domain: context.domain,
+      module: context.module,
+      parent: context.parent || context.module,
+      depth,
+    });
+    walkGraphConceptNodes(concept.children || [], visitor, { ...context, parent: concept }, depth + 1);
+  }
 }
 
 function walkConcepts(concepts, visitor) {

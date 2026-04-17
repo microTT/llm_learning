@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "domain-M",
+    "type": "domain-overview",
+    "label": "M. 评测、安全与治理 / 概览",
+    "domainCode": "M",
+    "domainTitle": "评测、安全与治理",
+    "moduleCode": null,
+    "moduleTitle": null,
+    "modulePathKey": null,
+    "parentPathKey": null,
+    "parentTitle": null,
+    "leafTitles": [],
+    "nodeCount": 9,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "M": {},
+    "M/M1. 模型级评测": {},
+    "M/M2. 应用级评测": {},
+    "M/M3. Agent 级评测": {},
+    "M/M4. 在线评测": {},
+    "M/M5. 安全控制": {},
+    "M/M6. Guardrails": {},
+    "M/M7. 隐私与合规": {},
+    "M/M8. 对抗测试与审计": {}
+  }
+}

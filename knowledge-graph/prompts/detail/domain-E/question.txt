@@ -1,0 +1,67 @@
+你正在补充 AI 知识图谱的一个 detail shard。只处理当前 shard，不要新增节点、不要改 pathKey。
+Shard 信息
+- shardId: domain-E
+- expected answer file: prompts/detail/domain-E/answer.md
+- label: E. 模态、任务域与智能形态 / 概览
+- type: domain-overview
+- domain: E. 模态、任务域与智能形态
+- shard owned node count: 9
+- prompt focus: 只补这个 domain 自身的全局介绍；下面列出的模块和父概念仅作为上下文参考，不需要在回答里逐个展开。
+输出要求
+- 只输出一个 JSON 对象，不要 Markdown 代码块，不要解释文字。
+- 固定输出形状：{ "shardId": "<shard-id>", "nodes": { "<pathKey>": { ...detailFields } } }
+- 只允许这些字段：status, definition, importance, minimumDemo, hardwareBudget, examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next
+- text 字段：definition, importance, minimumDemo, hardwareBudget
+- list 字段：examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next，必须是字符串数组。
+- `prerequisites` / `next` 优先使用精确 pathKey；如果没有把握，不要编造图谱里不存在的节点。
+- 对当前已经有内容的节点，以补全、校正、统一口径为主；不要为了改写而改写。
+- domain-overview 只需要返回 domain 根节点本身；不要在回答里重复输出模块或父概念节点。
+当前需要补充的全局节点
+1. [domain] E
+   - title: 模态与任务域
+   - children: E1. 语言（NLP / LLM） / E2. 视觉（CV） / E3. 音频 / 语音 / E4. 视频 / E5. 多模态 / E6. 决策与强化学习 / E7. 机器人与具身智能 / E8. 扩展领域
+   - currentDetail: {}
+本 domain 的模块上下文（仅供理解全局范围，不要在回答里展开成模块逐项说明）
+1. E1. 语言（NLP / LLM）
+   - pathKey: E/E1. 语言（NLP / LLM）
+   - concept count: 11
+   - sample children: 文本分类 / 信息抽取 / 命名实体识别 / 翻译 / 摘要 / 问答
+2. E2. 视觉（CV）
+   - pathKey: E/E2. 视觉（CV）
+   - concept count: 9
+   - sample children: 图像分类 / 目标检测 / 分割 / OCR / 文档理解 / 姿态估计 / 跟踪
+3. E3. 音频 / 语音
+   - pathKey: E/E3. 音频 / 语音
+   - concept count: 7
+   - sample children: 自动语音识别（ASR） / 说话人识别 / 音频分类 / 语音翻译 / 文本转语音（TTS） / 语音到语音
+4. E4. 视频
+   - pathKey: E/E4. 视频
+   - concept count: 6
+   - sample children: 视频理解 / 视频检索 / 视频摘要 / 动作识别 / 视频问答 / 视频生成
+5. E5. 多模态
+   - pathKey: E/E5. 多模态
+   - concept count: 7
+   - sample children: 图文 / 音文 / 视频文 / 视觉语言模型（VLM） / Omni / any-to-any 系统 / 多模态推理
+6. E6. 决策与强化学习
+   - pathKey: E/E6. 决策与强化学习
+   - concept count: 6
+   - sample children: 策略学习 / 值函数 / 奖励设计 / 探索/利用 / 在线交互决策 / 模拟环境学习
+7. E7. 机器人与具身智能
+   - pathKey: E/E7. 机器人与具身智能
+   - concept count: 8
+   - sample children: 感知 / 定位 / 建图 / 操作 / 导航 / 控制
+8. E8. 扩展领域
+   - pathKey: E/E8. 扩展领域
+   - concept count: 6
+   - sample children: 3D ML / 游戏 AI / 推荐系统 / 时间序列 / 图学习 / 科学计算 / Scientific AI
+可参考的 pathKey
+- current domain root: E
+- current domain all pathKeys: E | E/E1. 语言（NLP / LLM） | E/E1. 语言（NLP / LLM）/文本分类 | E/E1. 语言（NLP / LLM）/信息抽取 | E/E1. 语言（NLP / LLM）/命名实体识别 | E/E1. 语言（NLP / LLM）/翻译 | E/E1. 语言（NLP / LLM）/摘要 | E/E1. 语言（NLP / LLM）/问答 | E/E1. 语言（NLP / LLM）/对话 | E/E1. 语言（NLP / LLM）/检索 | E/E1. 语言（NLP / LLM）/代码生成与理解 | E/E1. 语言（NLP / LLM）/结构化解析 | E/E1. 语言（NLP / LLM）/LLM：通用语言能力模型 | E/E2. 视觉（CV） | E/E2. 视觉（CV）/图像分类 | E/E2. 视觉（CV）/目标检测 | E/E2. 视觉（CV）/分割 | E/E2. 视觉（CV）/OCR / 文档理解 | E/E2. 视觉（CV）/姿态估计 | E/E2. 视觉（CV）/跟踪 | E/E2. 视觉（CV）/图像生成 | E/E2. 视觉（CV）/图像编辑 | E/E2. 视觉（CV）/视觉检索 | E/E3. 音频 / 语音 | E/E3. 音频 / 语音/自动语音识别（ASR） | E/E3. 音频 / 语音/说话人识别 | E/E3. 音频 / 语音/音频分类 | E/E3. 音频 / 语音/语音翻译 | E/E3. 音频 / 语音/文本转语音（TTS） | E/E3. 音频 / 语音/语音到语音 | E/E3. 音频 / 语音/音乐/音频生成 | E/E4. 视频 | E/E4. 视频/视频理解 | E/E4. 视频/视频检索 | E/E4. 视频/视频摘要 | E/E4. 视频/动作识别 | E/E4. 视频/视频问答 | E/E4. 视频/视频生成 | E/E5. 多模态 | E/E5. 多模态/图文 | E/E5. 多模态/音文 | E/E5. 多模态/视频文 | E/E5. 多模态/视觉语言模型（VLM） | E/E5. 多模态/Omni / any-to-any 系统 | E/E5. 多模态/多模态推理 | E/E5. 多模态/多模态 Agent | E/E6. 决策与强化学习 | E/E6. 决策与强化学习/策略学习 | E/E6. 决策与强化学习/值函数 | E/E6. 决策与强化学习/奖励设计 | E/E6. 决策与强化学习/探索/利用 | E/E6. 决策与强化学习/在线交互决策 | E/E6. 决策与强化学习/模拟环境学习 | E/E7. 机器人与具身智能 | E/E7. 机器人与具身智能/感知 | E/E7. 机器人与具身智能/定位 | E/E7. 机器人与具身智能/建图 | E/E7. 机器人与具身智能/操作 | E/E7. 机器人与具身智能/导航 | E/E7. 机器人与具身智能/控制 | E/E7. 机器人与具身智能/技能学习 | E/E7. 机器人与具身智能/感知—规划—动作闭环 | E/E8. 扩展领域 | E/E8. 扩展领域/3D ML | E/E8. 扩展领域/游戏 AI | E/E8. 扩展领域/推荐系统 | E/E8. 扩展领域/时间序列 | E/E8. 扩展领域/图学习 | E/E8. 扩展领域/科学计算 / Scientific AI
+- sibling modules in domain: E/E1. 语言（NLP / LLM） | E/E2. 视觉（CV） | E/E3. 音频 / 语音 | E/E4. 视频 | E/E5. 多模态 | E/E6. 决策与强化学习 | E/E7. 机器人与具身智能 | E/E8. 扩展领域
+返回模板
+{
+  "shardId": "domain-E",
+  "nodes": {
+    "E": {}
+  }
+}

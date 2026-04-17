@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-K-K10-1yxw20i-1",
+    "type": "leaf-batch",
+    "label": "K10. Agent 形态分支 / Leaves",
+    "domainCode": "K",
+    "domainTitle": "Agent 系统",
+    "moduleCode": "K10",
+    "moduleTitle": "Agent 形态分支",
+    "modulePathKey": "K/K10. Agent 形态分支",
+    "parentPathKey": "K/K10. Agent 形态分支",
+    "parentTitle": "K10. Agent 形态分支",
+    "leafTitles": [
+      "Knowledge agent",
+      "Research agent",
+      "Coding agent",
+      "Workflow automation agent",
+      "Voice agent",
+      "Computer-use agent",
+      "Multi-agent organization"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "K/K10. Agent 形态分支/Knowledge agent": {},
+    "K/K10. Agent 形态分支/Research agent": {},
+    "K/K10. Agent 形态分支/Coding agent": {},
+    "K/K10. Agent 形态分支/Workflow automation agent": {},
+    "K/K10. Agent 形态分支/Voice agent": {},
+    "K/K10. Agent 形态分支/Computer-use agent": {},
+    "K/K10. Agent 形态分支/Multi-agent organization": {}
+  }
+}

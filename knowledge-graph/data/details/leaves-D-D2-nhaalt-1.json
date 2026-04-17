@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-D-D2-nhaalt-1",
+    "type": "leaf-batch",
+    "label": "D2. 架构家族 / Leaves",
+    "domainCode": "D",
+    "domainTitle": "深度学习与基础模型",
+    "moduleCode": "D2",
+    "moduleTitle": "架构家族",
+    "modulePathKey": "D/D2. 架构家族",
+    "parentPathKey": "D/D2. 架构家族",
+    "parentTitle": "D2. 架构家族",
+    "leafTitles": [
+      "MLP",
+      "CNN",
+      "RNN / LSTM / GRU",
+      "Transformer",
+      "Diffusion models",
+      "Mixture of Experts",
+      "State Space Models",
+      "Graph Neural Networks"
+    ],
+    "nodeCount": 8,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "D/D2. 架构家族/MLP": {},
+    "D/D2. 架构家族/CNN": {},
+    "D/D2. 架构家族/RNN / LSTM / GRU": {},
+    "D/D2. 架构家族/Transformer": {},
+    "D/D2. 架构家族/Diffusion models": {},
+    "D/D2. 架构家族/Mixture of Experts": {},
+    "D/D2. 架构家族/State Space Models": {},
+    "D/D2. 架构家族/Graph Neural Networks": {}
+  }
+}

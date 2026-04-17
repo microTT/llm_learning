@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-G-G8-h762r2-1",
+    "type": "leaf-batch",
+    "label": "G8. 推理模型与模型路由 / Leaves",
+    "domainCode": "G",
+    "domainTitle": "LLM 核心机制",
+    "moduleCode": "G8",
+    "moduleTitle": "推理模型与模型路由",
+    "modulePathKey": "G/G8. 推理模型与模型路由",
+    "parentPathKey": "G/G8. 推理模型与模型路由",
+    "parentTitle": "G8. 推理模型与模型路由",
+    "leafTitles": [
+      "Reasoning models vs GPT models",
+      "Planner / executor split",
+      "Verifier / judge",
+      "Test-time compute / reasoning effort",
+      "Model routing policy",
+      "什么时候不要用 reasoning model"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "G/G8. 推理模型与模型路由/Reasoning models vs GPT models": {},
+    "G/G8. 推理模型与模型路由/Planner / executor split": {},
+    "G/G8. 推理模型与模型路由/Verifier / judge": {},
+    "G/G8. 推理模型与模型路由/Test-time compute / reasoning effort": {},
+    "G/G8. 推理模型与模型路由/Model routing policy": {},
+    "G/G8. 推理模型与模型路由/什么时候不要用 reasoning model": {}
+  }
+}

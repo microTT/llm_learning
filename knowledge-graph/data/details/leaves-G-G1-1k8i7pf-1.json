@@ -1,0 +1,89 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-G-G1-1k8i7pf-1",
+    "type": "leaf-batch",
+    "label": "Tokenization pipeline / Leaves",
+    "domainCode": "G",
+    "domainTitle": "LLM 核心机制",
+    "moduleCode": "G1",
+    "moduleTitle": "语言建模基础",
+    "modulePathKey": "G/G1. 语言建模基础",
+    "parentPathKey": "G/G1. 语言建模基础/Tokenization pipeline",
+    "parentTitle": "Tokenization pipeline",
+    "leafTitles": [
+      "Normalization",
+      "Pre-tokenization",
+      "Model（BPE / WordPiece / Unigram）",
+      "Post-processing",
+      "Decoding",
+      "Special tokens / chat templates"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 2
+  },
+  "nodes": {
+    "G/G1. 语言建模基础/Tokenization pipeline/Normalization": {
+      "status": "seed",
+      "definition": "Normalization 会先把原始文本统一成 tokenizer 期待的标准形式，例如 Unicode 规范化、大小写折叠或空白清理。",
+      "importance": "它决定语义等价字符串是否会被稳定映射成相似 token 序列，也是多语言、OCR、代码拷贝文本中最容易被忽略的误差源。",
+      "minimumDemo": "对包含全角/半角、变音符号和不同空白字符的文本做 normalization 前后对比，再观察 token ids 的变化。",
+      "hardwareBudget": "CPU 即可。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Tokenization pipeline"
+      ],
+      "coreMetrics": [
+        "normalized text stability",
+        "token count delta",
+        "round-trip loss"
+      ],
+      "toolchain": [
+        "HF tokenizers normalizers",
+        "Unicode normalization helpers"
+      ],
+      "failureSigns": [
+        "视觉相同的文本被编码成差异极大的 token 序列",
+        "多语言或 OCR 数据出现高比例 OOV / 长 token 序列"
+      ],
+      "next": [
+        "G/G1. 语言建模基础/Tokenization pipeline"
+      ]
+    },
+    "G/G1. 语言建模基础/Tokenization pipeline/Pre-tokenization": {},
+    "G/G1. 语言建模基础/Tokenization pipeline/Model（BPE / WordPiece / Unigram）": {},
+    "G/G1. 语言建模基础/Tokenization pipeline/Post-processing": {},
+    "G/G1. 语言建模基础/Tokenization pipeline/Decoding": {},
+    "G/G1. 语言建模基础/Tokenization pipeline/Special tokens / chat templates": {
+      "status": "seed",
+      "definition": "Special tokens / chat templates 决定 role、分隔符、系统提示和对话历史最终如何落到模型真实可见的 token 序列里。",
+      "importance": "很多“模型突然不听话”并不是 prompt 本身的问题，而是 chat template、role token 或结束标记处理不一致导致的上下文错位。",
+      "minimumDemo": "对同一段 system/user 对话分别用不同 chat template 渲染，比较最终 token 序列、special token 插入位置和输出差异。",
+      "hardwareBudget": "CPU 即可。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Tokenization pipeline",
+        "G/G1. 语言建模基础/Tokenization pipeline/Normalization",
+        "J/J2. 结构化输出"
+      ],
+      "coreMetrics": [
+        "template fidelity",
+        "role token correctness",
+        "stop token correctness"
+      ],
+      "toolchain": [
+        "Transformers tokenizer chat templates",
+        "tiktoken",
+        "prompt inspection scripts"
+      ],
+      "failureSigns": [
+        "模型把 system 指令当成普通文本回显",
+        "tool/result 消息顺序一复杂就出现明显格式漂移"
+      ],
+      "next": [
+        "J/J1. 模型接口层",
+        "J/J2. 结构化输出",
+        "J/J3. 工具调用"
+      ]
+    }
+  }
+}

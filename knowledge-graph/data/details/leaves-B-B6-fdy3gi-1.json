@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-B-B6-fdy3gi-1",
+    "type": "leaf-batch",
+    "label": "B6. 规划 / Leaves",
+    "domainCode": "B",
+    "domainTitle": "经典 AI",
+    "moduleCode": "B6",
+    "moduleTitle": "规划",
+    "modulePathKey": "B/B6. 规划",
+    "parentPathKey": "B/B6. 规划",
+    "parentTitle": "B6. 规划",
+    "leafTitles": [
+      "Goal-based planning",
+      "Task planning",
+      "Symbolic planning",
+      "Plan search",
+      "Multi-step planning",
+      "Plan verification"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "B/B6. 规划/Goal-based planning": {},
+    "B/B6. 规划/Task planning": {},
+    "B/B6. 规划/Symbolic planning": {},
+    "B/B6. 规划/Plan search": {},
+    "B/B6. 规划/Multi-step planning": {},
+    "B/B6. 规划/Plan verification": {}
+  }
+}

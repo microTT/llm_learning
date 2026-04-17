@@ -1,0 +1,193 @@
+你正在补充 AI 知识图谱的一个 detail shard。只处理当前 shard，不要新增节点、不要改 pathKey。
+Shard 信息
+- shardId: leaves-M-M4-sx3jwy-1
+- expected answer file: prompts/detail/leaves-M-M4-sx3jwy-1/answer.md
+- label: M4. 在线评测 / Leaves
+- type: leaf-batch
+- domain: M. 评测、安全与治理
+- module: M4. 在线评测
+- parent pathKey: M/M4. 在线评测
+- parent title: M4. 在线评测
+- leaf titles: A/B tests / Human feedback / Acceptance rate / Task completion / Business KPIs / Canary / regression set / Real-user failure mining
+- shard owned node count: 7
+输出要求
+- 只输出一个 JSON 对象，不要 Markdown 代码块，不要解释文字。
+- 固定输出形状：{ "shardId": "<shard-id>", "nodes": { "<pathKey>": { ...detailFields } } }
+- 只允许这些字段：status, definition, importance, minimumDemo, hardwareBudget, examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next
+- text 字段：definition, importance, minimumDemo, hardwareBudget
+- list 字段：examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next，必须是字符串数组。
+- `prerequisites` / `next` 优先使用精确 pathKey；如果没有把握，不要编造图谱里不存在的节点。
+- 对当前已经有内容的节点，以补全、校正、统一口径为主；不要为了改写而改写。
+- 所有 target pathKey 都要保留在返回 JSON 里；如果某个节点暂时没有把握，可以保持为空对象。
+当前 shard 的目标节点
+1. [concept] M/M4. 在线评测/A/B tests
+   - title: A/B tests
+   - parent: M/M4. 在线评测
+   - currentDetail: {}
+2. [concept] M/M4. 在线评测/Human feedback
+   - title: Human feedback
+   - parent: M/M4. 在线评测
+   - currentDetail: {}
+3. [concept] M/M4. 在线评测/Acceptance rate
+   - title: Acceptance rate
+   - parent: M/M4. 在线评测
+   - currentDetail: {}
+4. [concept] M/M4. 在线评测/Task completion
+   - title: Task completion
+   - parent: M/M4. 在线评测
+   - currentDetail: {}
+5. [concept] M/M4. 在线评测/Business KPIs
+   - title: Business KPIs
+   - parent: M/M4. 在线评测
+   - currentDetail: {}
+6. [concept] M/M4. 在线评测/Canary / regression set
+   - title: Canary / regression set
+   - parent: M/M4. 在线评测
+   - currentDetail: {
+       "status": "seed",
+       "definition": "Canary / regression set 是一组体量小但高信号的固定任务，用来在模型、提示词、工具或路由策略变更后快速判断有没有明显退化。",
+       "importance": "没有这层小样本守门，团队很容易在追求新能力时把旧能力悄悄打坏，而且往往要上线后才发现。",
+       "minimumDemo": "为一个 coding assistant 维护 20~50 条高频高风险任务，每次改模型、prompt 或工具链都自动回归一次。",
+       "hardwareBudget": "CPU 或小规模 API 预算即可，关键是自动化和长期维护。",
+       "prerequisites": [
+         "M/M1. 模型级评测",
+         "M/M2. 应用级评测",
+         "M/M3. Agent 级评测/Grader rubric"
+       ],
+       "coreMetrics": [
+         "regression catch rate",
+         "run time",
+         "false alarm rate",
+         "critical path coverage"
+       ],
+       "toolchain": [
+         "eval harness",
+         "CI / nightly jobs",
+         "baseline reports"
+       ],
+       "failureSigns": [
+         "线上频繁出问题，但回归集几乎从不报警",
+         "回归集越来越大却没有关键场景优先级"
+       ],
+       "next": [
+         "M/M4. 在线评测/Real-user failure mining",
+         "N/N6. 持续改进闭环"
+       ]
+     }
+7. [concept] M/M4. 在线评测/Real-user failure mining
+   - title: Real-user failure mining
+   - parent: M/M4. 在线评测
+   - currentDetail: {
+       "status": "seed",
+       "definition": "Real-user failure mining 指从真实线上交互、trace、人工反馈和拒绝样本里持续挖掘失败案例，再把它们回流到回归集、rubric 和优化队列。",
+       "importance": "Agent 和应用系统的很多关键失败只有在线上才能暴露；如果不做 failure mining，离线 eval 很快就会和真实世界脱节。",
+       "minimumDemo": "把线上失败按 retrieval / routing / tool / approval / UX 分类，每周抽样回放，并把高频失败转成 canary case 或数据修复任务。",
+       "hardwareBudget": "硬件成本低，主要吃观测、标注和闭环流程成本。",
+       "prerequisites": [
+         "M/M3. Agent 级评测/Trace schema",
+         "M/M4. 在线评测/Canary / regression set",
+         "M/M2. 应用级评测"
+       ],
+       "coreMetrics": [
+         "failure discovery rate",
+         "time to triage",
+         "repeat failure rate",
+         "mined-case adoption rate"
+       ],
+       "toolchain": [
+         "trace store",
+         "feedback pipeline",
+         "issue tracker",
+         "eval backfill scripts"
+       ],
+       "failureSigns": [
+         "团队总在讨论“用户说不好用”，但没有结构化失败样本",
+         "相同失败一周又一周重复出现，却没有回流进回归集"
+       ],
+       "next": [
+         "M/M4. 在线评测/Canary / regression set",
+         "N/N6. 持续改进闭环",
+         "H/H7. 后训练数据构建"
+       ]
+     }
+可参考的 pathKey
+- current domain root: M
+- current domain all pathKeys: M | M/M1. 模型级评测 | M/M1. 模型级评测/语言能力 | M/M1. 模型级评测/推理能力 | M/M1. 模型级评测/多模态能力 | M/M1. 模型级评测/结构化输出正确率 | M/M1. 模型级评测/安全性 | M/M1. 模型级评测/稳定性 | M/M1. 模型级评测/延迟/成本 | M/M2. 应用级评测 | M/M2. 应用级评测/最终答案正确性 | M/M2. 应用级评测/引用真实性 | M/M2. 应用级评测/Schema adherence | M/M2. 应用级评测/Tool execution success | M/M2. 应用级评测/UX consistency | M/M2. 应用级评测/Failure recovery | M/M3. Agent 级评测 | M/M3. Agent 级评测/Trace schema | M/M3. Agent 级评测/Grader rubric | M/M3. Agent 级评测/Outcome checks | M/M3. Agent 级评测/Process checks | M/M3. Agent 级评测/Artifact checks | M/M3. Agent 级评测/Trace grading | M/M3. Agent 级评测/Tool selection correctness | M/M3. Agent 级评测/Handoff correctness | M/M3. Agent 级评测/Routing quality | M/M3. Agent 级评测/Policy compliance | M/M3. Agent 级评测/Workflow completion rate | M/M3. Agent 级评测/Approval correctness | M/M3. Agent 级评测/Failure taxonomy | M/M4. 在线评测 | M/M4. 在线评测/A/B tests | M/M4. 在线评测/Human feedback | M/M4. 在线评测/Acceptance rate | M/M4. 在线评测/Task completion | M/M4. 在线评测/Business KPIs | M/M4. 在线评测/Canary / regression set | M/M4. 在线评测/Real-user failure mining | M/M5. 安全控制 | M/M5. 安全控制/Moderation | M/M5. 安全控制/Jailbreak defense | M/M5. 安全控制/Prompt injection defense | M/M5. 安全控制/Sensitive tool controls | M/M5. 安全控制/Least privilege | M/M5. 安全控制/Sandboxing | M/M5. 安全控制/Approval gates | M/M5. 安全控制/Rate limiting | M/M6. Guardrails | M/M6. Guardrails/Input guardrails | M/M6. Guardrails/Output guardrails | M/M6. Guardrails/Tool guardrails | M/M6. Guardrails/Policy guardrails | M/M6. Guardrails/Schema validation | M/M6. Guardrails/Redaction / filtering | M/M7. 隐私与合规 | M/M7. 隐私与合规/PII handling | M/M7. 隐私与合规/Data retention | M/M7. 隐私与合规/Access control | M/M7. 隐私与合规/Audit logs | M/M7. 隐私与合规/Regulatory compliance | M/M7. 隐私与合规/Governance policies | M/M8. 对抗测试与审计 | M/M8. 对抗测试与审计/Red teaming | M/M8. 对抗测试与审计/Attack simulation | M/M8. 对抗测试与审计/Safety regression tests | M/M8. 对抗测试与审计/Incident review | M/M8. 对抗测试与审计/Postmortem
+- current module root: M/M4. 在线评测
+- current module all pathKeys: M/M4. 在线评测 | M/M4. 在线评测/A/B tests | M/M4. 在线评测/Human feedback | M/M4. 在线评测/Acceptance rate | M/M4. 在线评测/Task completion | M/M4. 在线评测/Business KPIs | M/M4. 在线评测/Canary / regression set | M/M4. 在线评测/Real-user failure mining
+- sibling modules in domain: M/M1. 模型级评测 | M/M2. 应用级评测 | M/M3. Agent 级评测 | M/M5. 安全控制 | M/M6. Guardrails | M/M7. 隐私与合规 | M/M8. 对抗测试与审计
+返回模板
+{
+  "shardId": "leaves-M-M4-sx3jwy-1",
+  "nodes": {
+    "M/M4. 在线评测/A/B tests": {},
+    "M/M4. 在线评测/Human feedback": {},
+    "M/M4. 在线评测/Acceptance rate": {},
+    "M/M4. 在线评测/Task completion": {},
+    "M/M4. 在线评测/Business KPIs": {},
+    "M/M4. 在线评测/Canary / regression set": {
+      "status": "seed",
+      "definition": "Canary / regression set 是一组体量小但高信号的固定任务，用来在模型、提示词、工具或路由策略变更后快速判断有没有明显退化。",
+      "importance": "没有这层小样本守门，团队很容易在追求新能力时把旧能力悄悄打坏，而且往往要上线后才发现。",
+      "minimumDemo": "为一个 coding assistant 维护 20~50 条高频高风险任务，每次改模型、prompt 或工具链都自动回归一次。",
+      "hardwareBudget": "CPU 或小规模 API 预算即可，关键是自动化和长期维护。",
+      "prerequisites": [
+        "M/M1. 模型级评测",
+        "M/M2. 应用级评测",
+        "M/M3. Agent 级评测/Grader rubric"
+      ],
+      "coreMetrics": [
+        "regression catch rate",
+        "run time",
+        "false alarm rate",
+        "critical path coverage"
+      ],
+      "toolchain": [
+        "eval harness",
+        "CI / nightly jobs",
+        "baseline reports"
+      ],
+      "failureSigns": [
+        "线上频繁出问题，但回归集几乎从不报警",
+        "回归集越来越大却没有关键场景优先级"
+      ],
+      "next": [
+        "M/M4. 在线评测/Real-user failure mining",
+        "N/N6. 持续改进闭环"
+      ]
+    },
+    "M/M4. 在线评测/Real-user failure mining": {
+      "status": "seed",
+      "definition": "Real-user failure mining 指从真实线上交互、trace、人工反馈和拒绝样本里持续挖掘失败案例，再把它们回流到回归集、rubric 和优化队列。",
+      "importance": "Agent 和应用系统的很多关键失败只有在线上才能暴露；如果不做 failure mining，离线 eval 很快就会和真实世界脱节。",
+      "minimumDemo": "把线上失败按 retrieval / routing / tool / approval / UX 分类，每周抽样回放，并把高频失败转成 canary case 或数据修复任务。",
+      "hardwareBudget": "硬件成本低，主要吃观测、标注和闭环流程成本。",
+      "prerequisites": [
+        "M/M3. Agent 级评测/Trace schema",
+        "M/M4. 在线评测/Canary / regression set",
+        "M/M2. 应用级评测"
+      ],
+      "coreMetrics": [
+        "failure discovery rate",
+        "time to triage",
+        "repeat failure rate",
+        "mined-case adoption rate"
+      ],
+      "toolchain": [
+        "trace store",
+        "feedback pipeline",
+        "issue tracker",
+        "eval backfill scripts"
+      ],
+      "failureSigns": [
+        "团队总在讨论“用户说不好用”，但没有结构化失败样本",
+        "相同失败一周又一周重复出现，却没有回流进回归集"
+      ],
+      "next": [
+        "M/M4. 在线评测/Canary / regression set",
+        "N/N6. 持续改进闭环",
+        "H/H7. 后训练数据构建"
+      ]
+    }
+  }
+}

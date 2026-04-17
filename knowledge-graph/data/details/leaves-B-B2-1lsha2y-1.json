@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-B-B2-1lsha2y-1",
+    "type": "leaf-batch",
+    "label": "启发式搜索 / Leaves",
+    "domainCode": "B",
+    "domainTitle": "经典 AI",
+    "moduleCode": "B2",
+    "moduleTitle": "搜索",
+    "modulePathKey": "B/B2. 搜索",
+    "parentPathKey": "B/B2. 搜索/启发式搜索",
+    "parentTitle": "启发式搜索",
+    "leafTitles": [
+      "Greedy",
+      "A*"
+    ],
+    "nodeCount": 2,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "B/B2. 搜索/启发式搜索/Greedy": {},
+    "B/B2. 搜索/启发式搜索/A*": {}
+  }
+}

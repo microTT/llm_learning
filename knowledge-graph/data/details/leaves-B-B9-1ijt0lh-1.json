@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-B-B9-1ijt0lh-1",
+    "type": "leaf-batch",
+    "label": "B9. 经典 AI 与现代 AI 的连接点 / Leaves",
+    "domainCode": "B",
+    "domainTitle": "经典 AI",
+    "moduleCode": "B9",
+    "moduleTitle": "经典 AI 与现代 AI 的连接点",
+    "modulePathKey": "B/B9. 经典 AI 与现代 AI 的连接点",
+    "parentPathKey": "B/B9. 经典 AI 与现代 AI 的连接点",
+    "parentTitle": "B9. 经典 AI 与现代 AI 的连接点",
+    "leafTitles": [
+      "搜索 → 推理模型 / tree search / verifier",
+      "规划 → Agent task decomposition",
+      "知识表示 → KG-RAG / ontology-guided systems",
+      "决策 → RL / tool selection / policy learning",
+      "多智能体 → multi-agent orchestration"
+    ],
+    "nodeCount": 5,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "B/B9. 经典 AI 与现代 AI 的连接点/搜索 → 推理模型 / tree search / verifier": {},
+    "B/B9. 经典 AI 与现代 AI 的连接点/规划 → Agent task decomposition": {},
+    "B/B9. 经典 AI 与现代 AI 的连接点/知识表示 → KG-RAG / ontology-guided systems": {},
+    "B/B9. 经典 AI 与现代 AI 的连接点/决策 → RL / tool selection / policy learning": {},
+    "B/B9. 经典 AI 与现代 AI 的连接点/多智能体 → multi-agent orchestration": {}
+  }
+}

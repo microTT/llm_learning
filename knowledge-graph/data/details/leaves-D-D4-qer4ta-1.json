@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-D-D4-qer4ta-1",
+    "type": "leaf-batch",
+    "label": "D4. 基础模型类型 / Leaves",
+    "domainCode": "D",
+    "domainTitle": "深度学习与基础模型",
+    "moduleCode": "D4",
+    "moduleTitle": "基础模型类型",
+    "modulePathKey": "D/D4. 基础模型类型",
+    "parentPathKey": "D/D4. 基础模型类型",
+    "parentTitle": "D4. 基础模型类型",
+    "leafTitles": [
+      "文本基础模型",
+      "视觉基础模型",
+      "语音 / 音频基础模型",
+      "视频基础模型",
+      "多模态基础模型",
+      "具身/世界模型（更偏前沿与系统）"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "D/D4. 基础模型类型/文本基础模型": {},
+    "D/D4. 基础模型类型/视觉基础模型": {},
+    "D/D4. 基础模型类型/语音 / 音频基础模型": {},
+    "D/D4. 基础模型类型/视频基础模型": {},
+    "D/D4. 基础模型类型/多模态基础模型": {},
+    "D/D4. 基础模型类型/具身/世界模型（更偏前沿与系统）": {}
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "domain-G",
+    "type": "domain-overview",
+    "label": "G. LLM 核心机制 / 概览",
+    "domainCode": "G",
+    "domainTitle": "LLM 核心机制",
+    "moduleCode": null,
+    "moduleTitle": null,
+    "modulePathKey": null,
+    "parentPathKey": null,
+    "parentTitle": null,
+    "leafTitles": [],
+    "nodeCount": 10,
+    "filledNodeCount": 3
+  },
+  "nodes": {
+    "G": {},
+    "G/G1. 语言建模基础": {},
+    "G/G1. 语言建模基础/Tokenization pipeline": {
+      "status": "seed",
+      "definition": "Tokenizer 不是单个算法名，而是一条把原始文本转换成 token ids 的完整流水线：规范化、切分、建模、后处理和解码都在这里发生。",
+      "importance": "这一层直接决定多语言 token 效率、代码长度成本、chat template 行为和结构化输出边界。如果 tokenizer 理解不清，后面的上下文长度、成本和模型路由都会悬空。",
+      "minimumDemo": "用 Hugging Face Tokenizers 或 tiktoken 对同一段中英混合文本分别做 encode / decode，比较 token 长度、special tokens 和 round-trip 行为。",
+      "hardwareBudget": "CPU 即可完成学习和实验，不需要专门 GPU。",
+      "examples": [
+        "同一段中文在不同 tokenizer 下可能产生完全不同的 token 长度和费用。",
+        "chat template 会把 system / user / assistant role 转成 special tokens，从而影响模型看到的真实上下文。"
+      ],
+      "pitfalls": [
+        "把 tokenizer 简化成“分词器”会漏掉 normalization、post-processing 和 decoding 的关键影响。",
+        "只比较上下文窗口大小而不比较 token efficiency，往往会误判真实可容纳的信息量。"
+      ],
+      "prerequisites": [
+        "G/G1. 语言建模基础/Token",
+        "G/G1. 语言建模基础/Vocabulary",
+        "G/G1. 语言建模基础/Embedding",
+        "G/G3. 上下文与记忆"
+      ],
+      "coreMetrics": [
+        "token length",
+        "round-trip fidelity",
+        "special token correctness",
+        "multilingual token efficiency"
+      ],
+      "toolchain": [
+        "Hugging Face Tokenizers",
+        "tiktoken",
+        "Transformers tokenizer configs"
+      ],
+      "failureSigns": [
+        "decode 后文本丢字符或异常插入 special tokens",
+        "代码、JSON、多语言文本的 token 长度异常膨胀"
+      ],
+      "next": [
+        "G/G1. 语言建模基础/Tokenization pipeline/Normalization",
+        "G/G1. 语言建模基础/Token efficiency",
+        "G/G3. 上下文与记忆"
+      ]
+    },
+    "G/G2. Transformer 机制": {
+      "status": "draft",
+      "definition": "Transformer 是大模型最核心的序列建模骨架，它通过自注意力把“当前 token 应该读取哪些上下文”变成了可学习的权重分配问题。",
+      "importance": "它同时解决了并行训练、长程依赖建模和规模扩展三个关键问题，因此几乎是今天 LLM 与多数 VLM 的共同底座。",
+      "minimumDemo": "在 PyTorch 或 notebook 中手写一个单层 self-attention，输入 3~5 个 token embedding，打印 attention weights 和输出向量。",
+      "hardwareBudget": "理解机制用 CPU/小 GPU 即可；真正做较大模型实验至少需要消费级 GPU 或高内存 Apple silicon。",
+      "examples": [
+        "Self-attention 决定每个 token 在生成时最关注哪些历史 token。",
+        "KV cache 会把已经算过的注意力键值缓存起来，从而降低长对话推理成本。"
+      ],
+      "pitfalls": [
+        "把 Transformer 等同于“只有注意力”是不准确的，前馈层、残差和归一化同样决定了训练稳定性。",
+        "上下文窗口变长不等于上下文利用一定更好，长上下文退化和检索策略仍然是独立问题。"
+      ],
+      "prerequisites": [
+        "A/A1. 数学基础/线性代数",
+        "A/A1. 数学基础/微积分与优化/导数、偏导、链式法则",
+        "G/G1. 语言建模基础/Tokenization pipeline"
+      ],
+      "coreMetrics": [
+        "training stability",
+        "context utilization",
+        "latency",
+        "KV cache hit ratio"
+      ],
+      "toolchain": [
+        "PyTorch",
+        "Transformers",
+        "attention visualization"
+      ],
+      "failureSigns": [
+        "长上下文任务准确率明显掉头",
+        "decode latency 随上下文增长过快",
+        "注意力权重异常集中或塌缩"
+      ],
+      "next": [
+        "G/G3. 上下文与记忆",
+        "G/G4. 生成与解码",
+        "L/L3. 推理优化"
+      ]
+    },
+    "G/G3. 上下文与记忆": {},
+    "G/G4. 生成与解码": {},
+    "G/G5. 能力面": {},
+    "G/G6. 局限面": {},
+    "G/G7. 模型类型细分": {},
+    "G/G8. 推理模型与模型路由": {
+      "status": "seed",
+      "definition": "这一层讨论的不是“模型越强越好”，而是如何在通用 GPT、reasoning model、planner、verifier 之间做职责拆分和路由决策。",
+      "importance": "真实系统里，规划、验证、执行和最终回答常常由不同模型承担。把 reasoning model 当成默认模型，会直接拉高成本和延迟。",
+      "minimumDemo": "做一个双模型工作流：复杂请求走 planner，普通请求直接走 GPT，并记录成本、延迟和成功率差异。",
+      "hardwareBudget": "云 API 即可；本地实验可用小模型模拟 router / verifier。",
+      "examples": [
+        "复杂任务先由 reasoning model 生成 plan，再交给便宜的 GPT 执行具体步骤。",
+        "高风险输出先过 verifier / judge，再决定是否呈现给用户。"
+      ],
+      "pitfalls": [
+        "把 reasoning model 当作所有任务的默认入口，通常会浪费 test-time compute。",
+        "没有把 planner / executor / verifier 的失败模式拆开，就很难知道路由策略到底哪里错了。"
+      ],
+      "prerequisites": [
+        "G/G7. 模型类型细分",
+        "J/J1. 模型接口层",
+        "M/M3. Agent 级评测"
+      ],
+      "coreMetrics": [
+        "route accuracy",
+        "end-to-end latency",
+        "cost per task",
+        "planner success rate"
+      ],
+      "toolchain": [
+        "Responses API",
+        "routing middleware",
+        "trace logging"
+      ],
+      "failureSigns": [
+        "简单任务也总被送进高成本 reasoning 模型",
+        "planner 输出看似合理，但 executor 成功率持续偏低"
+      ],
+      "next": [
+        "K/K5. 图式编排",
+        "K/K2. 执行形态",
+        "M/M3. Agent 级评测"
+      ]
+    }
+  }
+}

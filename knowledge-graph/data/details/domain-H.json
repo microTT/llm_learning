@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "domain-H",
+    "type": "domain-overview",
+    "label": "H. 模型适配、后训练与对齐 / 概览",
+    "domainCode": "H",
+    "domainTitle": "模型适配、后训练与对齐",
+    "moduleCode": null,
+    "moduleTitle": null,
+    "modulePathKey": null,
+    "parentPathKey": null,
+    "parentTitle": null,
+    "leafTitles": [],
+    "nodeCount": 8,
+    "filledNodeCount": 1
+  },
+  "nodes": {
+    "H": {},
+    "H/H1. 不改权重的控制": {},
+    "H/H2. 监督式后训练": {},
+    "H/H3. 偏好优化与对齐": {},
+    "H/H4. 参数高效适配": {},
+    "H/H5. 压缩与效率优化": {},
+    "H/H6. 行为优化维度": {},
+    "H/H7. 后训练数据构建": {
+      "status": "seed",
+      "definition": "后训练数据构建关心的不是“拿到数据”，而是如何把 instruction、偏好、reward、verifier 和 eval 数据整理成可训练、可评测、可复现的样本体系。",
+      "importance": "后训练效果很大程度上由数据 schema、切分方式、rubric 和 contamination 控制决定，而不是只由算法名决定。",
+      "minimumDemo": "为一个小型任务各自构造 SFT 样本、偏好对、verifier 标注和评测集，并保持 train / eval 完全隔离。",
+      "hardwareBudget": "数据构建本身主要吃人工与评测成本；小规模实验用单机 GPU 即可。",
+      "prerequisites": [
+        "F/F7. 后训练数据构建",
+        "H/H2. 监督式后训练",
+        "H/H3. 偏好优化与对齐"
+      ],
+      "coreMetrics": [
+        "label consistency",
+        "train/eval leakage rate",
+        "rubric agreement",
+        "task success delta"
+      ],
+      "toolchain": [
+        "Datasets",
+        "annotation / labeling tools",
+        "eval harness"
+      ],
+      "failureSigns": [
+        "训练后线上效果和离线 eval 差异极大",
+        "偏好数据与 verifier 标准彼此冲突"
+      ],
+      "next": [
+        "H/H2. 监督式后训练",
+        "H/H3. 偏好优化与对齐",
+        "M/M1. 模型级评测"
+      ]
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "domain-J",
+    "type": "domain-overview",
+    "label": "J. AI 应用工程 / 概览",
+    "domainCode": "J",
+    "domainTitle": "AI 应用工程",
+    "moduleCode": null,
+    "moduleTitle": null,
+    "modulePathKey": null,
+    "parentPathKey": null,
+    "parentTitle": null,
+    "leafTitles": [],
+    "nodeCount": 10,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "J": {},
+    "J/J1. 模型接口层": {},
+    "J/J2. 结构化输出": {},
+    "J/J3. 工具调用": {},
+    "J/J4. 会话与状态": {},
+    "J/J5. 流式与实时": {},
+    "J/J6. 多模态应用": {},
+    "J/J7. 工程可靠性": {},
+    "J/J8. 安全与权限": {},
+    "J/J9. 应用形态": {}
+  }
+}

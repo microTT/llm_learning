@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-K-K1-1gv8bo3-1",
+    "type": "leaf-batch",
+    "label": "K1. Agent 的最小构成 / Leaves",
+    "domainCode": "K",
+    "domainTitle": "Agent 系统",
+    "moduleCode": "K1",
+    "moduleTitle": "Agent 的最小构成",
+    "modulePathKey": "K/K1. Agent 的最小构成",
+    "parentPathKey": "K/K1. Agent 的最小构成",
+    "parentTitle": "K1. Agent 的最小构成",
+    "leafTitles": [
+      "模型（Model）",
+      "指令（Instructions）",
+      "工具（Tools）",
+      "状态 / 记忆（State / Memory）",
+      "编排（Orchestration）",
+      "Guardrails",
+      "Human review"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 1
+  },
+  "nodes": {
+    "K/K1. Agent 的最小构成/模型（Model）": {},
+    "K/K1. Agent 的最小构成/指令（Instructions）": {},
+    "K/K1. Agent 的最小构成/工具（Tools）": {
+      "status": "seed",
+      "definition": "工具是 Agent 从“只会生成文本”走向“可操作环境”的桥梁。关键不是工具数量，而是 schema、权限边界、错误恢复和观察能力。",
+      "importance": "没有工具 schema、审批边界和回滚/重试策略，Agent 很快就会在真实环境里失控。",
+      "minimumDemo": "给一个文件操作工具定义输入输出 schema、权限边界和失败返回，再把它接到最小 agent 上。",
+      "hardwareBudget": "与硬件关系弱，关键在运行时和权限设计。",
+      "prerequisites": [
+        "J/J3. 工具调用",
+        "M/M5. 安全控制"
+      ],
+      "coreMetrics": [
+        "tool success rate",
+        "schema adherence",
+        "approval correctness"
+      ],
+      "toolchain": [
+        "JSON schema",
+        "function calling",
+        "tool logs"
+      ],
+      "failureSigns": [
+        "工具调用参数经常缺字段或类型错误",
+        "副作用工具没有审批和审计记录"
+      ],
+      "next": [
+        "J/J3. 工具调用",
+        "K/K7. 工具与外部连接",
+        "M/M5. 安全控制"
+      ]
+    },
+    "K/K1. Agent 的最小构成/状态 / 记忆（State / Memory）": {},
+    "K/K1. Agent 的最小构成/编排（Orchestration）": {},
+    "K/K1. Agent 的最小构成/Guardrails": {},
+    "K/K1. Agent 的最小构成/Human review": {}
+  }
+}

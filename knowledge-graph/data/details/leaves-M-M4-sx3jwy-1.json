@@ -1,0 +1,98 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-M-M4-sx3jwy-1",
+    "type": "leaf-batch",
+    "label": "M4. 在线评测 / Leaves",
+    "domainCode": "M",
+    "domainTitle": "评测、安全与治理",
+    "moduleCode": "M4",
+    "moduleTitle": "在线评测",
+    "modulePathKey": "M/M4. 在线评测",
+    "parentPathKey": "M/M4. 在线评测",
+    "parentTitle": "M4. 在线评测",
+    "leafTitles": [
+      "A/B tests",
+      "Human feedback",
+      "Acceptance rate",
+      "Task completion",
+      "Business KPIs",
+      "Canary / regression set",
+      "Real-user failure mining"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 2
+  },
+  "nodes": {
+    "M/M4. 在线评测/A/B tests": {},
+    "M/M4. 在线评测/Human feedback": {},
+    "M/M4. 在线评测/Acceptance rate": {},
+    "M/M4. 在线评测/Task completion": {},
+    "M/M4. 在线评测/Business KPIs": {},
+    "M/M4. 在线评测/Canary / regression set": {
+      "status": "seed",
+      "definition": "Canary / regression set 是一组体量小但高信号的固定任务，用来在模型、提示词、工具或路由策略变更后快速判断有没有明显退化。",
+      "importance": "没有这层小样本守门，团队很容易在追求新能力时把旧能力悄悄打坏，而且往往要上线后才发现。",
+      "minimumDemo": "为一个 coding assistant 维护 20~50 条高频高风险任务，每次改模型、prompt 或工具链都自动回归一次。",
+      "hardwareBudget": "CPU 或小规模 API 预算即可，关键是自动化和长期维护。",
+      "prerequisites": [
+        "M/M1. 模型级评测",
+        "M/M2. 应用级评测",
+        "M/M3. Agent 级评测/Grader rubric"
+      ],
+      "coreMetrics": [
+        "regression catch rate",
+        "run time",
+        "false alarm rate",
+        "critical path coverage"
+      ],
+      "toolchain": [
+        "eval harness",
+        "CI / nightly jobs",
+        "baseline reports"
+      ],
+      "failureSigns": [
+        "线上频繁出问题，但回归集几乎从不报警",
+        "回归集越来越大却没有关键场景优先级"
+      ],
+      "next": [
+        "M/M4. 在线评测/Real-user failure mining",
+        "N/N6. 持续改进闭环"
+      ]
+    },
+    "M/M4. 在线评测/Real-user failure mining": {
+      "status": "seed",
+      "definition": "Real-user failure mining 指从真实线上交互、trace、人工反馈和拒绝样本里持续挖掘失败案例，再把它们回流到回归集、rubric 和优化队列。",
+      "importance": "Agent 和应用系统的很多关键失败只有在线上才能暴露；如果不做 failure mining，离线 eval 很快就会和真实世界脱节。",
+      "minimumDemo": "把线上失败按 retrieval / routing / tool / approval / UX 分类，每周抽样回放，并把高频失败转成 canary case 或数据修复任务。",
+      "hardwareBudget": "硬件成本低，主要吃观测、标注和闭环流程成本。",
+      "prerequisites": [
+        "M/M3. Agent 级评测/Trace schema",
+        "M/M4. 在线评测/Canary / regression set",
+        "M/M2. 应用级评测"
+      ],
+      "coreMetrics": [
+        "failure discovery rate",
+        "time to triage",
+        "repeat failure rate",
+        "mined-case adoption rate"
+      ],
+      "toolchain": [
+        "trace store",
+        "feedback pipeline",
+        "issue tracker",
+        "eval backfill scripts"
+      ],
+      "failureSigns": [
+        "团队总在讨论“用户说不好用”，但没有结构化失败样本",
+        "相同失败一周又一周重复出现，却没有回流进回归集"
+      ],
+      "next": [
+        "M/M4. 在线评测/Canary / regression set",
+        "N/N6. 持续改进闭环",
+        "H/H7. 后训练数据构建"
+      ]
+    }
+  }
+}

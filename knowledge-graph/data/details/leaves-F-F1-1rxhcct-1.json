@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-F-F1-1rxhcct-1",
+    "type": "leaf-batch",
+    "label": "F1. 数据类型 / Leaves",
+    "domainCode": "F",
+    "domainTitle": "数据层（横切层）",
+    "moduleCode": "F1",
+    "moduleTitle": "数据类型",
+    "modulePathKey": "F/F1. 数据类型",
+    "parentPathKey": "F/F1. 数据类型",
+    "parentTitle": "F1. 数据类型",
+    "leafTitles": [
+      "预训练语料",
+      "指令微调数据",
+      "偏好数据",
+      "奖励数据",
+      "工具调用数据",
+      "Agent traces",
+      "Eval datasets",
+      "知识库文档",
+      "用户行为日志",
+      "合成数据"
+    ],
+    "nodeCount": 10,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "F/F1. 数据类型/预训练语料": {},
+    "F/F1. 数据类型/指令微调数据": {},
+    "F/F1. 数据类型/偏好数据": {},
+    "F/F1. 数据类型/奖励数据": {},
+    "F/F1. 数据类型/工具调用数据": {},
+    "F/F1. 数据类型/Agent traces": {},
+    "F/F1. 数据类型/Eval datasets": {},
+    "F/F1. 数据类型/知识库文档": {},
+    "F/F1. 数据类型/用户行为日志": {},
+    "F/F1. 数据类型/合成数据": {}
+  }
+}

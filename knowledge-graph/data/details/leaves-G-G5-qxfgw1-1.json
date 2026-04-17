@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-G-G5-qxfgw1-1",
+    "type": "leaf-batch",
+    "label": "G5. 能力面 / Leaves",
+    "domainCode": "G",
+    "domainTitle": "LLM 核心机制",
+    "moduleCode": "G5",
+    "moduleTitle": "能力面",
+    "modulePathKey": "G/G5. 能力面",
+    "parentPathKey": "G/G5. 能力面",
+    "parentTitle": "G5. 能力面",
+    "leafTitles": [
+      "续写",
+      "指令跟随",
+      "摘要",
+      "翻译",
+      "归纳",
+      "提取",
+      "工具选择",
+      "多步推理",
+      "代码生成",
+      "多模态理解"
+    ],
+    "nodeCount": 10,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "G/G5. 能力面/续写": {},
+    "G/G5. 能力面/指令跟随": {},
+    "G/G5. 能力面/摘要": {},
+    "G/G5. 能力面/翻译": {},
+    "G/G5. 能力面/归纳": {},
+    "G/G5. 能力面/提取": {},
+    "G/G5. 能力面/工具选择": {},
+    "G/G5. 能力面/多步推理": {},
+    "G/G5. 能力面/代码生成": {},
+    "G/G5. 能力面/多模态理解": {}
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-F-F5-1dxq4c2-1",
+    "type": "leaf-batch",
+    "label": "F5. 数据治理 / Leaves",
+    "domainCode": "F",
+    "domainTitle": "数据层（横切层）",
+    "moduleCode": "F5",
+    "moduleTitle": "数据治理",
+    "modulePathKey": "F/F5. 数据治理",
+    "parentPathKey": "F/F5. 数据治理",
+    "parentTitle": "F5. 数据治理",
+    "leafTitles": [
+      "License",
+      "隐私",
+      "PII",
+      "数据保留",
+      "权限",
+      "数据卡 / model card 对齐",
+      "审计"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "F/F5. 数据治理/License": {},
+    "F/F5. 数据治理/隐私": {},
+    "F/F5. 数据治理/PII": {},
+    "F/F5. 数据治理/数据保留": {},
+    "F/F5. 数据治理/权限": {},
+    "F/F5. 数据治理/数据卡 / model card 对齐": {},
+    "F/F5. 数据治理/审计": {}
+  }
+}

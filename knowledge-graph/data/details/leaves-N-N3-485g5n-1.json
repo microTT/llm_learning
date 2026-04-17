@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-N-N3-485g5n-1",
+    "type": "leaf-batch",
+    "label": "N3. 决策变量 / Leaves",
+    "domainCode": "N",
+    "domainTitle": "产品、场景与组织",
+    "moduleCode": "N3",
+    "moduleTitle": "决策变量",
+    "modulePathKey": "N/N3. 决策变量",
+    "parentPathKey": "N/N3. 决策变量",
+    "parentTitle": "N3. 决策变量",
+    "leafTitles": [
+      "质量要求",
+      "延迟要求",
+      "成本预算",
+      "错误代价",
+      "安全风险",
+      "是否需要最新知识",
+      "是否需要外部动作",
+      "是否需要可审计流程"
+    ],
+    "nodeCount": 8,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "N/N3. 决策变量/质量要求": {},
+    "N/N3. 决策变量/延迟要求": {},
+    "N/N3. 决策变量/成本预算": {},
+    "N/N3. 决策变量/错误代价": {},
+    "N/N3. 决策变量/安全风险": {},
+    "N/N3. 决策变量/是否需要最新知识": {},
+    "N/N3. 决策变量/是否需要外部动作": {},
+    "N/N3. 决策变量/是否需要可审计流程": {}
+  }
+}

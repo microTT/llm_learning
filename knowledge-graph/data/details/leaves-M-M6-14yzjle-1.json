@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-M-M6-14yzjle-1",
+    "type": "leaf-batch",
+    "label": "M6. Guardrails / Leaves",
+    "domainCode": "M",
+    "domainTitle": "评测、安全与治理",
+    "moduleCode": "M6",
+    "moduleTitle": "Guardrails",
+    "modulePathKey": "M/M6. Guardrails",
+    "parentPathKey": "M/M6. Guardrails",
+    "parentTitle": "M6. Guardrails",
+    "leafTitles": [
+      "Input guardrails",
+      "Output guardrails",
+      "Tool guardrails",
+      "Policy guardrails",
+      "Schema validation",
+      "Redaction / filtering"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "M/M6. Guardrails/Input guardrails": {},
+    "M/M6. Guardrails/Output guardrails": {},
+    "M/M6. Guardrails/Tool guardrails": {},
+    "M/M6. Guardrails/Policy guardrails": {},
+    "M/M6. Guardrails/Schema validation": {},
+    "M/M6. Guardrails/Redaction / filtering": {}
+  }
+}

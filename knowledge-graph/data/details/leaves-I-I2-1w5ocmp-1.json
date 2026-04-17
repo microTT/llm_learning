@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-I-I2-1w5ocmp-1",
+    "type": "leaf-batch",
+    "label": "Parser types / Leaves",
+    "domainCode": "I",
+    "domainTitle": "检索、记忆与外部知识",
+    "moduleCode": "I2",
+    "moduleTitle": "知识库构建",
+    "modulePathKey": "I/I2. 知识库构建",
+    "parentPathKey": "I/I2. 知识库构建/Parser types",
+    "parentTitle": "Parser types",
+    "leafTitles": [
+      "Text / Markdown",
+      "PDF / Office",
+      "HTML / web content",
+      "Code / repository parsers"
+    ],
+    "nodeCount": 4,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "I/I2. 知识库构建/Parser types/Text / Markdown": {},
+    "I/I2. 知识库构建/Parser types/PDF / Office": {},
+    "I/I2. 知识库构建/Parser types/HTML / web content": {},
+    "I/I2. 知识库构建/Parser types/Code / repository parsers": {}
+  }
+}

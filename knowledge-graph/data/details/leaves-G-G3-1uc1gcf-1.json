@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-G-G3-1uc1gcf-1",
+    "type": "leaf-batch",
+    "label": "G3. 上下文与记忆 / Leaves",
+    "domainCode": "G",
+    "domainTitle": "LLM 核心机制",
+    "moduleCode": "G3",
+    "moduleTitle": "上下文与记忆",
+    "modulePathKey": "G/G3. 上下文与记忆",
+    "parentPathKey": "G/G3. 上下文与记忆",
+    "parentTitle": "G3. 上下文与记忆",
+    "leafTitles": [
+      "参数记忆（weights）",
+      "上下文记忆（prompt context）",
+      "会话记忆（session memory）",
+      "外部记忆（RAG / tools / stores）"
+    ],
+    "nodeCount": 4,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "G/G3. 上下文与记忆/参数记忆（weights）": {},
+    "G/G3. 上下文与记忆/上下文记忆（prompt context）": {},
+    "G/G3. 上下文与记忆/会话记忆（session memory）": {},
+    "G/G3. 上下文与记忆/外部记忆（RAG / tools / stores）": {}
+  }
+}

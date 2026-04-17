@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "domain-D",
+    "type": "domain-overview",
+    "label": "D. 深度学习与基础模型 / 概览",
+    "domainCode": "D",
+    "domainTitle": "深度学习与基础模型",
+    "moduleCode": null,
+    "moduleTitle": null,
+    "modulePathKey": null,
+    "parentPathKey": null,
+    "parentTitle": null,
+    "leafTitles": [],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "D": {},
+    "D/D1. 神经网络基础": {},
+    "D/D2. 架构家族": {},
+    "D/D3. 训练范式": {},
+    "D/D4. 基础模型类型": {},
+    "D/D5. 生成范式": {},
+    "D/D6. 规模化要素": {}
+  }
+}

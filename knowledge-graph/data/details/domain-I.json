@@ -1,0 +1,69 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "domain-I",
+    "type": "domain-overview",
+    "label": "I. 检索、记忆与外部知识 / 概览",
+    "domainCode": "I",
+    "domainTitle": "检索、记忆与外部知识",
+    "moduleCode": null,
+    "moduleTitle": null,
+    "modulePathKey": null,
+    "parentPathKey": null,
+    "parentTitle": null,
+    "leafTitles": [],
+    "nodeCount": 8,
+    "filledNodeCount": 1
+  },
+  "nodes": {
+    "I": {},
+    "I/I1. 表示与检索基础": {},
+    "I/I2. 知识库构建": {},
+    "I/I2. 知识库构建/Parser types": {},
+    "I/I3. RAG 管线": {
+      "status": "seed",
+      "definition": "RAG 管线的本质是把检索系统、上下文打包和模型生成串成一条可观测的数据流，让模型在回答前先读取外部知识。",
+      "importance": "它解决的是“知识更新、引用可追溯、外部文档接入”问题，而不是替代训练本身。",
+      "minimumDemo": "做一条最小 RAG：parse → chunk → embed → retrieve → rerank → pack → answer，并输出 citation spans。",
+      "hardwareBudget": "小规模原型可用云 API + 托管向量库；本地实验 CPU 即可，量大时需要更多内存和存储。",
+      "examples": [
+        "企业问答助手先检索内部文档，再把召回内容压缩进 prompt。",
+        "代码助手先检索仓库文件、再生成修复方案，并把引用文件路径返回给用户。"
+      ],
+      "pitfalls": [
+        "只做向量召回而不做 rerank，往往会把噪声文档带进上下文。",
+        "知识库数据更新频率、权限控制和 chunk 质量，都会直接决定最终回答质量。"
+      ],
+      "prerequisites": [
+        "I/I1. 表示与检索基础/Embeddings",
+        "I/I2. 知识库构建/Chunking strategy",
+        "I/I2. 知识库构建/Metadata schema"
+      ],
+      "coreMetrics": [
+        "retrieval recall@k",
+        "citation precision",
+        "answer groundedness",
+        "latency / cost"
+      ],
+      "toolchain": [
+        "embeddings",
+        "vector store",
+        "reranker",
+        "trace logging"
+      ],
+      "failureSigns": [
+        "召回正常但答案脱离证据生成",
+        "权限过滤后结果突然为空而系统没有降级策略"
+      ],
+      "next": [
+        "I/I1. 表示与检索基础",
+        "I/I4. RAG 形态",
+        "K/K7. 工具与外部连接"
+      ]
+    },
+    "I/I4. RAG 形态": {},
+    "I/I5. 记忆类型": {},
+    "I/I6. 关键质量点": {}
+  }
+}

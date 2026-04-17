@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-J-J7-1fvflk5-1",
+    "type": "leaf-batch",
+    "label": "J7. 工程可靠性 / Leaves",
+    "domainCode": "J",
+    "domainTitle": "AI 应用工程",
+    "moduleCode": "J7",
+    "moduleTitle": "工程可靠性",
+    "modulePathKey": "J/J7. 工程可靠性",
+    "parentPathKey": "J/J7. 工程可靠性",
+    "parentTitle": "J7. 工程可靠性",
+    "leafTitles": [
+      "Retry",
+      "Timeout",
+      "Idempotency",
+      "Fallback",
+      "Circuit breaking",
+      "Error classes",
+      "Observability hooks"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "J/J7. 工程可靠性/Retry": {},
+    "J/J7. 工程可靠性/Timeout": {},
+    "J/J7. 工程可靠性/Idempotency": {},
+    "J/J7. 工程可靠性/Fallback": {},
+    "J/J7. 工程可靠性/Circuit breaking": {},
+    "J/J7. 工程可靠性/Error classes": {},
+    "J/J7. 工程可靠性/Observability hooks": {}
+  }
+}

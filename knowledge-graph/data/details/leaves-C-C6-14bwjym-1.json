@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-C-C6-14bwjym-1",
+    "type": "leaf-batch",
+    "label": "C6. 与大模型的对应关系 / Leaves",
+    "domainCode": "C",
+    "domainTitle": "机器学习",
+    "moduleCode": "C6",
+    "moduleTitle": "与大模型的对应关系",
+    "modulePathKey": "C/C6. 与大模型的对应关系",
+    "parentPathKey": "C/C6. 与大模型的对应关系",
+    "parentTitle": "C6. 与大模型的对应关系",
+    "leafTitles": [
+      "预训练 ≈ 大规模自监督学习",
+      "SFT ≈ 监督学习",
+      "DPO / GRPO / RFT / RLHF ≈ 反馈/奖励驱动的后训练",
+      "Evals ≈ 面向生成式系统的扩展测试体系"
+    ],
+    "nodeCount": 4,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "C/C6. 与大模型的对应关系/预训练 ≈ 大规模自监督学习": {},
+    "C/C6. 与大模型的对应关系/SFT ≈ 监督学习": {},
+    "C/C6. 与大模型的对应关系/DPO / GRPO / RFT / RLHF ≈ 反馈/奖励驱动的后训练": {},
+    "C/C6. 与大模型的对应关系/Evals ≈ 面向生成式系统的扩展测试体系": {}
+  }
+}

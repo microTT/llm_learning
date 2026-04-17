@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-H-H7-f3nuqn-1",
+    "type": "leaf-batch",
+    "label": "H7. 后训练数据构建 / Leaves",
+    "domainCode": "H",
+    "domainTitle": "模型适配、后训练与对齐",
+    "moduleCode": "H7",
+    "moduleTitle": "后训练数据构建",
+    "modulePathKey": "H/H7. 后训练数据构建",
+    "parentPathKey": "H/H7. 后训练数据构建",
+    "parentTitle": "H7. 后训练数据构建",
+    "leafTitles": [
+      "Train / validation / test split",
+      "Instruction crafting",
+      "Multi-turn examples",
+      "Weight masking",
+      "Preference / reward / verifier data",
+      "Contamination / leakage checks",
+      "Rubric-based graders for RFT"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "H/H7. 后训练数据构建/Train / validation / test split": {},
+    "H/H7. 后训练数据构建/Instruction crafting": {},
+    "H/H7. 后训练数据构建/Multi-turn examples": {},
+    "H/H7. 后训练数据构建/Weight masking": {},
+    "H/H7. 后训练数据构建/Preference / reward / verifier data": {},
+    "H/H7. 后训练数据构建/Contamination / leakage checks": {},
+    "H/H7. 后训练数据构建/Rubric-based graders for RFT": {}
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-G-G4-1vmlrux-1",
+    "type": "leaf-batch",
+    "label": "G4. 生成与解码 / Leaves",
+    "domainCode": "G",
+    "domainTitle": "LLM 核心机制",
+    "moduleCode": "G4",
+    "moduleTitle": "生成与解码",
+    "modulePathKey": "G/G4. 生成与解码",
+    "parentPathKey": "G/G4. 生成与解码",
+    "parentTitle": "G4. 生成与解码",
+    "leafTitles": [
+      "Greedy",
+      "Sampling",
+      "Temperature",
+      "Top-k",
+      "Top-p",
+      "Stop conditions",
+      "Structured generation"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "G/G4. 生成与解码/Greedy": {},
+    "G/G4. 生成与解码/Sampling": {},
+    "G/G4. 生成与解码/Temperature": {},
+    "G/G4. 生成与解码/Top-k": {},
+    "G/G4. 生成与解码/Top-p": {},
+    "G/G4. 生成与解码/Stop conditions": {},
+    "G/G4. 生成与解码/Structured generation": {}
+  }
+}

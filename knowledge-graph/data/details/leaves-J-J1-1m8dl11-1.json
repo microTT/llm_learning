@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-J-J1-1m8dl11-1",
+    "type": "leaf-batch",
+    "label": "J1. 模型接口层 / Leaves",
+    "domainCode": "J",
+    "domainTitle": "AI 应用工程",
+    "moduleCode": "J1",
+    "moduleTitle": "模型接口层",
+    "modulePathKey": "J/J1. 模型接口层",
+    "parentPathKey": "J/J1. 模型接口层",
+    "parentTitle": "J1. 模型接口层",
+    "leafTitles": [
+      "Chat / responses",
+      "Prompt composition",
+      "System / user / tool messages",
+      "Context assembly",
+      "Input / output contracts"
+    ],
+    "nodeCount": 5,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "J/J1. 模型接口层/Chat / responses": {},
+    "J/J1. 模型接口层/Prompt composition": {},
+    "J/J1. 模型接口层/System / user / tool messages": {},
+    "J/J1. 模型接口层/Context assembly": {},
+    "J/J1. 模型接口层/Input / output contracts": {}
+  }
+}

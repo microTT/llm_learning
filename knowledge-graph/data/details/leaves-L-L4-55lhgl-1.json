@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-L-L4-55lhgl-1",
+    "type": "leaf-batch",
+    "label": "L4. 训练基础设施 / Leaves",
+    "domainCode": "L",
+    "domainTitle": "运行时与基础设施",
+    "moduleCode": "L4",
+    "moduleTitle": "训练基础设施",
+    "modulePathKey": "L/L4. 训练基础设施",
+    "parentPathKey": "L/L4. 训练基础设施",
+    "parentTitle": "L4. 训练基础设施",
+    "leafTitles": [
+      "PyTorch",
+      "Accelerate",
+      "DDP",
+      "FSDP",
+      "Checkpointing",
+      "Distributed training",
+      "Experiment tracking"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "L/L4. 训练基础设施/PyTorch": {},
+    "L/L4. 训练基础设施/Accelerate": {},
+    "L/L4. 训练基础设施/DDP": {},
+    "L/L4. 训练基础设施/FSDP": {},
+    "L/L4. 训练基础设施/Checkpointing": {},
+    "L/L4. 训练基础设施/Distributed training": {},
+    "L/L4. 训练基础设施/Experiment tracking": {}
+  }
+}

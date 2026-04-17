@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-L-L2-bmuf0w-1",
+    "type": "leaf-batch",
+    "label": "L2. 服务运行时 / Leaves",
+    "domainCode": "L",
+    "domainTitle": "运行时与基础设施",
+    "moduleCode": "L2",
+    "moduleTitle": "服务运行时",
+    "modulePathKey": "L/L2. 服务运行时",
+    "parentPathKey": "L/L2. 服务运行时",
+    "parentTitle": "L2. 服务运行时",
+    "leafTitles": [
+      "vLLM",
+      "Ollama",
+      "MLX / MLX-LM",
+      "Transformers.js",
+      "其他 OpenAI-compatible servers"
+    ],
+    "nodeCount": 5,
+    "filledNodeCount": 1
+  },
+  "nodes": {
+    "L/L2. 服务运行时/vLLM": {},
+    "L/L2. 服务运行时/Ollama": {},
+    "L/L2. 服务运行时/MLX / MLX-LM": {
+      "status": "seed",
+      "definition": "MLX / MLX-LM 是面向 Apple silicon 的本地推理与微调路线，优势在于统一内存、较低部署门槛和对开发机工作流的贴合。",
+      "importance": "如果主要开发环境是 Mac，MLX 路线几乎是学习本地 LLM 推理、量化和小规模适配的最高 ROI 入口。",
+      "minimumDemo": "在 Apple silicon 上加载同一个模型的不同量化版本，比较启动时间、吞吐和回答质量，再尝试一次小规模 LoRA/微调实验。",
+      "hardwareBudget": "这条路线最吃统一内存容量和模型量化策略；36GB 已经足够做很多 7B~14B 级实验。",
+      "prerequisites": [
+        "L/L1. 模型访问方式/本地推理",
+        "L/L6. 硬件层/Apple silicon unified memory",
+        "L/L3. 推理优化/Quantized inference"
+      ],
+      "coreMetrics": [
+        "load time",
+        "tokens/sec",
+        "memory pressure",
+        "quality drop after quantization"
+      ],
+      "toolchain": [
+        "MLX",
+        "MLX-LM",
+        "model conversion scripts",
+        "Apple activity / memory tools"
+      ],
+      "failureSigns": [
+        "统一内存迅速被吃满，系统整体变慢",
+        "模型能跑但上下文一长就明显退化或吞吐崩掉"
+      ],
+      "next": [
+        "L/L1. 模型访问方式/本地推理",
+        "H/H4. 参数高效适配",
+        "H/H5. 压缩与效率优化"
+      ]
+    },
+    "L/L2. 服务运行时/Transformers.js": {},
+    "L/L2. 服务运行时/其他 OpenAI-compatible servers": {}
+  }
+}

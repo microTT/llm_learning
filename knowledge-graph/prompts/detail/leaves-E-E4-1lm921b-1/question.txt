@@ -1,0 +1,434 @@
+你正在补充 AI 知识图谱的一个 detail shard。只处理当前 shard，不要新增节点、不要改 pathKey。
+Shard 信息
+- shardId: leaves-E-E4-1lm921b-1
+- expected answer file: prompts/detail/leaves-E-E4-1lm921b-1/answer.md
+- label: E4. 视频 / Leaves
+- type: leaf-batch
+- domain: E. 模态、任务域与智能形态
+- module: E4. 视频
+- parent pathKey: E/E4. 视频
+- parent title: E4. 视频
+- leaf titles: 视频理解 / 视频检索 / 视频摘要 / 动作识别 / 视频问答 / 视频生成
+- shard owned node count: 6
+输出要求
+- 只输出一个 JSON 对象，不要 Markdown 代码块，不要解释文字。
+- 固定输出形状：{ "shardId": "<shard-id>", "nodes": { "<pathKey>": { ...detailFields } } }
+- 只允许这些字段：status, definition, importance, minimumDemo, hardwareBudget, examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next
+- text 字段：definition, importance, minimumDemo, hardwareBudget
+- list 字段：examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next，必须是字符串数组。
+- `prerequisites` / `next` 优先使用精确 pathKey；如果没有把握，不要编造图谱里不存在的节点。
+- 对当前已经有内容的节点，以补全、校正、统一口径为主；不要为了改写而改写。
+- 所有 target pathKey 都要保留在返回 JSON 里；如果某个节点暂时没有把握，可以保持为空对象。
+当前 shard 的目标节点
+1. [concept] E/E4. 视频/视频理解
+   - title: 视频理解
+   - parent: E/E4. 视频
+   - currentDetail: {
+       "status": "seed",
+       "definition": "视频理解关注模型能否在时间维度上理解场景、事件和状态变化，而不是只看单帧内容。",
+       "importance": "它是视频摘要、问答、监控分析和行为识别的上游能力，没有稳定理解就谈不上后续压缩和检索。",
+       "minimumDemo": "对一段短视频做事件理解或时间定位，比较稀疏抽帧和长上下文输入两种方案。",
+       "hardwareBudget": "视频编码和长序列输入都较吃显存和带宽。",
+       "prerequisites": [
+         "E/E4. 视频",
+         "F/F2. 数据形态/视频",
+         "E/E2. 视觉（CV）"
+       ],
+       "coreMetrics": [
+         "event accuracy",
+         "temporal grounding",
+         "latency",
+         "context coverage"
+       ],
+       "toolchain": [
+         "video encoder",
+         "frame sampling",
+         "temporal benchmark"
+       ],
+       "failureSigns": [
+         "模型能描述画面，但说不清前后顺序和动作关系",
+         "长视频中只抓住开头和结尾，中间关键片段被忽略"
+       ],
+       "next": [
+         "E/E4. 视频/视频摘要",
+         "E/E4. 视频/视频问答",
+         "M/M2. 应用级评测"
+       ]
+     }
+2. [concept] E/E4. 视频/视频检索
+   - title: 视频检索
+   - parent: E/E4. 视频
+   - currentDetail: {
+       "status": "seed",
+       "definition": "视频检索要在大规模视频库里按文本、图像或片段语义找到最相关内容，同时保留时间定位能力。",
+       "importance": "它把视频理解和检索系统结合起来，是内容平台、监控和知识库的重要基础能力。",
+       "minimumDemo": "对一个小型视频库建立 embedding 索引，完成 text-to-video 检索并展示命中的时间片段。",
+       "hardwareBudget": "大规模视频检索主要吃编码、存储和索引成本。",
+       "prerequisites": [
+         "E/E4. 视频",
+         "I/I1. 表示与检索基础",
+         "F/F2. 数据形态/视频"
+       ],
+       "coreMetrics": [
+         "recall@k",
+         "temporal hit rate",
+         "latency",
+         "index size"
+       ],
+       "toolchain": [
+         "video embedding model",
+         "vector store",
+         "clip extraction"
+       ],
+       "failureSigns": [
+         "能找到相似画面，但时间段定位不准",
+         "视频一长，检索成本和误召同时飙升"
+       ],
+       "next": [
+         "I/I3. RAG 管线",
+         "E/E4. 视频/视频问答",
+         "L/L5. 系统基础设施"
+       ]
+     }
+3. [concept] E/E4. 视频/视频摘要
+   - title: 视频摘要
+   - parent: E/E4. 视频
+   - currentDetail: {
+       "status": "seed",
+       "definition": "视频摘要要把长视频压缩成关键事件、关键帧或可读说明，核心是信息保真与压缩效率的平衡。",
+       "importance": "它是把视频内容变成可消费信息的关键桥梁，也常常是视频问答和回顾系统的第一步。",
+       "minimumDemo": "对长视频生成关键事件摘要，并要求带时间点或关键片段引用。",
+       "hardwareBudget": "主要受长视频处理成本影响。",
+       "prerequisites": [
+         "E/E4. 视频/视频理解",
+         "F/F2. 数据形态/视频",
+         "J/J2. 结构化输出"
+       ],
+       "coreMetrics": [
+         "summary faithfulness",
+         "compression ratio",
+         "coverage",
+         "citation quality"
+       ],
+       "toolchain": [
+         "video understanding model",
+         "captioning / summarization",
+         "time span extraction"
+       ],
+       "failureSigns": [
+         "摘要流畅但漏掉关键事件",
+         "时序顺序错乱，导致回顾结论错误"
+       ],
+       "next": [
+         "E/E4. 视频/视频问答",
+         "I/I3. RAG 管线/Citation span alignment",
+         "M/M2. 应用级评测"
+       ]
+     }
+4. [concept] E/E4. 视频/动作识别
+   - title: 动作识别
+   - parent: E/E4. 视频
+   - currentDetail: {
+       "status": "seed",
+       "definition": "动作识别关心视频里发生了什么动作及其边界，是连接视频理解、姿态估计和行为分析的核心任务。",
+       "importance": "它对体育分析、监控告警、机器人模仿和人机交互都很关键。",
+       "minimumDemo": "在动作数据集上训练识别模型，并观察细粒度动作与相似动作的混淆情况。",
+       "hardwareBudget": "训练通常需要 GPU；长视频和高帧率会进一步抬高成本。",
+       "prerequisites": [
+         "E/E4. 视频",
+         "E/E2. 视觉（CV）/姿态估计",
+         "F/F2. 数据形态/视频"
+       ],
+       "coreMetrics": [
+         "top-1 accuracy",
+         "F1",
+         "temporal localization",
+         "latency"
+       ],
+       "toolchain": [
+         "video action model",
+         "pose / temporal features",
+         "clip sampling"
+       ],
+       "failureSigns": [
+         "动作类别相近时大量混淆",
+         "模型更像在识别场景而不是识别动作"
+       ],
+       "next": [
+         "E/E7. 机器人与具身智能/技能学习",
+         "E/E4. 视频/视频理解"
+       ]
+     }
+5. [concept] E/E4. 视频/视频问答
+   - title: 视频问答
+   - parent: E/E4. 视频
+   - currentDetail: {
+       "status": "seed",
+       "definition": "视频问答要求系统既理解视频内容，又能把用户问题与时间片段、事件关系和视觉证据对齐。",
+       "importance": "它是视频检索、摘要、多模态推理和应用工程交叉最紧的一类任务。",
+       "minimumDemo": "让系统回答一组带时间线的问题，并输出支持答案的片段或关键帧。",
+       "hardwareBudget": "视频+语言联合推理更吃显存和上下文预算。",
+       "prerequisites": [
+         "E/E4. 视频/视频理解",
+         "E/E5. 多模态/视觉语言模型（VLM）",
+         "J/J1. 模型接口层"
+       ],
+       "coreMetrics": [
+         "answer accuracy",
+         "groundedness",
+         "temporal evidence quality",
+         "latency"
+       ],
+       "toolchain": [
+         "video-language model",
+         "retrieval / grounding",
+         "trace logging"
+       ],
+       "failureSigns": [
+         "回答看似合理，但和视频证据对不上",
+         "问题稍复杂就退化成单帧猜测"
+       ],
+       "next": [
+         "E/E5. 多模态/多模态推理",
+         "M/M2. 应用级评测",
+         "I/I3. RAG 管线"
+       ]
+     }
+6. [concept] E/E4. 视频/视频生成
+   - title: 视频生成
+   - parent: E/E4. 视频
+   - currentDetail: {
+       "status": "seed",
+       "definition": "视频生成要同时保证单帧质量和跨帧一致性，是比图像生成更难的一类生成任务。",
+       "importance": "它把生成分支正式推进到时间维度，真实挑战不只是画面好不好看，而是运动、镜头和主体是否持续一致。",
+       "minimumDemo": "生成一个短视频片段，记录 prompt、时长、帧率和风格控制，并检查时序一致性。",
+       "hardwareBudget": "视频生成是最吃 GPU 时间和显存的任务之一。",
+       "prerequisites": [
+         "E/E4. 视频",
+         "D/D5. 生成范式/扩散生成",
+         "E/E2. 视觉（CV）/图像生成"
+       ],
+       "coreMetrics": [
+         "prompt adherence",
+         "temporal consistency",
+         "flicker rate",
+         "latency / cost"
+       ],
+       "toolchain": [
+         "video generation model",
+         "conditioning / prompt control",
+         "video QA"
+       ],
+       "failureSigns": [
+         "单帧静态质量不错，但运动过程闪烁明显",
+         "主体身份、背景或镜头逻辑在数秒内崩掉"
+       ],
+       "next": [
+         "E/E5. 多模态/Omni / any-to-any 系统",
+         "M/M2. 应用级评测",
+         "L/L1. 模型访问方式/本地推理"
+       ]
+     }
+可参考的 pathKey
+- current domain root: E
+- current domain all pathKeys: E | E/E1. 语言（NLP / LLM） | E/E1. 语言（NLP / LLM）/文本分类 | E/E1. 语言（NLP / LLM）/信息抽取 | E/E1. 语言（NLP / LLM）/命名实体识别 | E/E1. 语言（NLP / LLM）/翻译 | E/E1. 语言（NLP / LLM）/摘要 | E/E1. 语言（NLP / LLM）/问答 | E/E1. 语言（NLP / LLM）/对话 | E/E1. 语言（NLP / LLM）/检索 | E/E1. 语言（NLP / LLM）/代码生成与理解 | E/E1. 语言（NLP / LLM）/结构化解析 | E/E1. 语言（NLP / LLM）/LLM：通用语言能力模型 | E/E2. 视觉（CV） | E/E2. 视觉（CV）/图像分类 | E/E2. 视觉（CV）/目标检测 | E/E2. 视觉（CV）/分割 | E/E2. 视觉（CV）/OCR / 文档理解 | E/E2. 视觉（CV）/姿态估计 | E/E2. 视觉（CV）/跟踪 | E/E2. 视觉（CV）/图像生成 | E/E2. 视觉（CV）/图像编辑 | E/E2. 视觉（CV）/视觉检索 | E/E3. 音频 / 语音 | E/E3. 音频 / 语音/自动语音识别（ASR） | E/E3. 音频 / 语音/说话人识别 | E/E3. 音频 / 语音/音频分类 | E/E3. 音频 / 语音/语音翻译 | E/E3. 音频 / 语音/文本转语音（TTS） | E/E3. 音频 / 语音/语音到语音 | E/E3. 音频 / 语音/音乐/音频生成 | E/E4. 视频 | E/E4. 视频/视频理解 | E/E4. 视频/视频检索 | E/E4. 视频/视频摘要 | E/E4. 视频/动作识别 | E/E4. 视频/视频问答 | E/E4. 视频/视频生成 | E/E5. 多模态 | E/E5. 多模态/图文 | E/E5. 多模态/音文 | E/E5. 多模态/视频文 | E/E5. 多模态/视觉语言模型（VLM） | E/E5. 多模态/Omni / any-to-any 系统 | E/E5. 多模态/多模态推理 | E/E5. 多模态/多模态 Agent | E/E6. 决策与强化学习 | E/E6. 决策与强化学习/策略学习 | E/E6. 决策与强化学习/值函数 | E/E6. 决策与强化学习/奖励设计 | E/E6. 决策与强化学习/探索/利用 | E/E6. 决策与强化学习/在线交互决策 | E/E6. 决策与强化学习/模拟环境学习 | E/E7. 机器人与具身智能 | E/E7. 机器人与具身智能/感知 | E/E7. 机器人与具身智能/定位 | E/E7. 机器人与具身智能/建图 | E/E7. 机器人与具身智能/操作 | E/E7. 机器人与具身智能/导航 | E/E7. 机器人与具身智能/控制 | E/E7. 机器人与具身智能/技能学习 | E/E7. 机器人与具身智能/感知—规划—动作闭环 | E/E8. 扩展领域 | E/E8. 扩展领域/3D ML | E/E8. 扩展领域/游戏 AI | E/E8. 扩展领域/推荐系统 | E/E8. 扩展领域/时间序列 | E/E8. 扩展领域/图学习 | E/E8. 扩展领域/科学计算 / Scientific AI
+- current module root: E/E4. 视频
+- current module all pathKeys: E/E4. 视频 | E/E4. 视频/视频理解 | E/E4. 视频/视频检索 | E/E4. 视频/视频摘要 | E/E4. 视频/动作识别 | E/E4. 视频/视频问答 | E/E4. 视频/视频生成
+- sibling modules in domain: E/E1. 语言（NLP / LLM） | E/E2. 视觉（CV） | E/E3. 音频 / 语音 | E/E5. 多模态 | E/E6. 决策与强化学习 | E/E7. 机器人与具身智能 | E/E8. 扩展领域
+返回模板
+{
+  "shardId": "leaves-E-E4-1lm921b-1",
+  "nodes": {
+    "E/E4. 视频/视频理解": {
+      "status": "seed",
+      "definition": "视频理解关注模型能否在时间维度上理解场景、事件和状态变化，而不是只看单帧内容。",
+      "importance": "它是视频摘要、问答、监控分析和行为识别的上游能力，没有稳定理解就谈不上后续压缩和检索。",
+      "minimumDemo": "对一段短视频做事件理解或时间定位，比较稀疏抽帧和长上下文输入两种方案。",
+      "hardwareBudget": "视频编码和长序列输入都较吃显存和带宽。",
+      "prerequisites": [
+        "E/E4. 视频",
+        "F/F2. 数据形态/视频",
+        "E/E2. 视觉（CV）"
+      ],
+      "coreMetrics": [
+        "event accuracy",
+        "temporal grounding",
+        "latency",
+        "context coverage"
+      ],
+      "toolchain": [
+        "video encoder",
+        "frame sampling",
+        "temporal benchmark"
+      ],
+      "failureSigns": [
+        "模型能描述画面，但说不清前后顺序和动作关系",
+        "长视频中只抓住开头和结尾，中间关键片段被忽略"
+      ],
+      "next": [
+        "E/E4. 视频/视频摘要",
+        "E/E4. 视频/视频问答",
+        "M/M2. 应用级评测"
+      ]
+    },
+    "E/E4. 视频/视频检索": {
+      "status": "seed",
+      "definition": "视频检索要在大规模视频库里按文本、图像或片段语义找到最相关内容，同时保留时间定位能力。",
+      "importance": "它把视频理解和检索系统结合起来，是内容平台、监控和知识库的重要基础能力。",
+      "minimumDemo": "对一个小型视频库建立 embedding 索引，完成 text-to-video 检索并展示命中的时间片段。",
+      "hardwareBudget": "大规模视频检索主要吃编码、存储和索引成本。",
+      "prerequisites": [
+        "E/E4. 视频",
+        "I/I1. 表示与检索基础",
+        "F/F2. 数据形态/视频"
+      ],
+      "coreMetrics": [
+        "recall@k",
+        "temporal hit rate",
+        "latency",
+        "index size"
+      ],
+      "toolchain": [
+        "video embedding model",
+        "vector store",
+        "clip extraction"
+      ],
+      "failureSigns": [
+        "能找到相似画面，但时间段定位不准",
+        "视频一长，检索成本和误召同时飙升"
+      ],
+      "next": [
+        "I/I3. RAG 管线",
+        "E/E4. 视频/视频问答",
+        "L/L5. 系统基础设施"
+      ]
+    },
+    "E/E4. 视频/视频摘要": {
+      "status": "seed",
+      "definition": "视频摘要要把长视频压缩成关键事件、关键帧或可读说明，核心是信息保真与压缩效率的平衡。",
+      "importance": "它是把视频内容变成可消费信息的关键桥梁，也常常是视频问答和回顾系统的第一步。",
+      "minimumDemo": "对长视频生成关键事件摘要，并要求带时间点或关键片段引用。",
+      "hardwareBudget": "主要受长视频处理成本影响。",
+      "prerequisites": [
+        "E/E4. 视频/视频理解",
+        "F/F2. 数据形态/视频",
+        "J/J2. 结构化输出"
+      ],
+      "coreMetrics": [
+        "summary faithfulness",
+        "compression ratio",
+        "coverage",
+        "citation quality"
+      ],
+      "toolchain": [
+        "video understanding model",
+        "captioning / summarization",
+        "time span extraction"
+      ],
+      "failureSigns": [
+        "摘要流畅但漏掉关键事件",
+        "时序顺序错乱，导致回顾结论错误"
+      ],
+      "next": [
+        "E/E4. 视频/视频问答",
+        "I/I3. RAG 管线/Citation span alignment",
+        "M/M2. 应用级评测"
+      ]
+    },
+    "E/E4. 视频/动作识别": {
+      "status": "seed",
+      "definition": "动作识别关心视频里发生了什么动作及其边界，是连接视频理解、姿态估计和行为分析的核心任务。",
+      "importance": "它对体育分析、监控告警、机器人模仿和人机交互都很关键。",
+      "minimumDemo": "在动作数据集上训练识别模型，并观察细粒度动作与相似动作的混淆情况。",
+      "hardwareBudget": "训练通常需要 GPU；长视频和高帧率会进一步抬高成本。",
+      "prerequisites": [
+        "E/E4. 视频",
+        "E/E2. 视觉（CV）/姿态估计",
+        "F/F2. 数据形态/视频"
+      ],
+      "coreMetrics": [
+        "top-1 accuracy",
+        "F1",
+        "temporal localization",
+        "latency"
+      ],
+      "toolchain": [
+        "video action model",
+        "pose / temporal features",
+        "clip sampling"
+      ],
+      "failureSigns": [
+        "动作类别相近时大量混淆",
+        "模型更像在识别场景而不是识别动作"
+      ],
+      "next": [
+        "E/E7. 机器人与具身智能/技能学习",
+        "E/E4. 视频/视频理解"
+      ]
+    },
+    "E/E4. 视频/视频问答": {
+      "status": "seed",
+      "definition": "视频问答要求系统既理解视频内容，又能把用户问题与时间片段、事件关系和视觉证据对齐。",
+      "importance": "它是视频检索、摘要、多模态推理和应用工程交叉最紧的一类任务。",
+      "minimumDemo": "让系统回答一组带时间线的问题，并输出支持答案的片段或关键帧。",
+      "hardwareBudget": "视频+语言联合推理更吃显存和上下文预算。",
+      "prerequisites": [
+        "E/E4. 视频/视频理解",
+        "E/E5. 多模态/视觉语言模型（VLM）",
+        "J/J1. 模型接口层"
+      ],
+      "coreMetrics": [
+        "answer accuracy",
+        "groundedness",
+        "temporal evidence quality",
+        "latency"
+      ],
+      "toolchain": [
+        "video-language model",
+        "retrieval / grounding",
+        "trace logging"
+      ],
+      "failureSigns": [
+        "回答看似合理，但和视频证据对不上",
+        "问题稍复杂就退化成单帧猜测"
+      ],
+      "next": [
+        "E/E5. 多模态/多模态推理",
+        "M/M2. 应用级评测",
+        "I/I3. RAG 管线"
+      ]
+    },
+    "E/E4. 视频/视频生成": {
+      "status": "seed",
+      "definition": "视频生成要同时保证单帧质量和跨帧一致性，是比图像生成更难的一类生成任务。",
+      "importance": "它把生成分支正式推进到时间维度，真实挑战不只是画面好不好看，而是运动、镜头和主体是否持续一致。",
+      "minimumDemo": "生成一个短视频片段，记录 prompt、时长、帧率和风格控制，并检查时序一致性。",
+      "hardwareBudget": "视频生成是最吃 GPU 时间和显存的任务之一。",
+      "prerequisites": [
+        "E/E4. 视频",
+        "D/D5. 生成范式/扩散生成",
+        "E/E2. 视觉（CV）/图像生成"
+      ],
+      "coreMetrics": [
+        "prompt adherence",
+        "temporal consistency",
+        "flicker rate",
+        "latency / cost"
+      ],
+      "toolchain": [
+        "video generation model",
+        "conditioning / prompt control",
+        "video QA"
+      ],
+      "failureSigns": [
+        "单帧静态质量不错，但运动过程闪烁明显",
+        "主体身份、背景或镜头逻辑在数秒内崩掉"
+      ],
+      "next": [
+        "E/E5. 多模态/Omni / any-to-any 系统",
+        "M/M2. 应用级评测",
+        "L/L1. 模型访问方式/本地推理"
+      ]
+    }
+  }
+}

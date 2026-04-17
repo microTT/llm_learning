@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-D-D1-v803ad-1",
+    "type": "leaf-batch",
+    "label": "D1. 神经网络基础 / Leaves",
+    "domainCode": "D",
+    "domainTitle": "深度学习与基础模型",
+    "moduleCode": "D1",
+    "moduleTitle": "神经网络基础",
+    "modulePathKey": "D/D1. 神经网络基础",
+    "parentPathKey": "D/D1. 神经网络基础",
+    "parentTitle": "D1. 神经网络基础",
+    "leafTitles": [
+      "张量",
+      "参数",
+      "前向传播",
+      "反向传播",
+      "Autograd",
+      "激活函数",
+      "Normalization",
+      "Regularization",
+      "Optimizer",
+      "Checkpoint"
+    ],
+    "nodeCount": 10,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "D/D1. 神经网络基础/张量": {},
+    "D/D1. 神经网络基础/参数": {},
+    "D/D1. 神经网络基础/前向传播": {},
+    "D/D1. 神经网络基础/反向传播": {},
+    "D/D1. 神经网络基础/Autograd": {},
+    "D/D1. 神经网络基础/激活函数": {},
+    "D/D1. 神经网络基础/Normalization": {},
+    "D/D1. 神经网络基础/Regularization": {},
+    "D/D1. 神经网络基础/Optimizer": {},
+    "D/D1. 神经网络基础/Checkpoint": {}
+  }
+}

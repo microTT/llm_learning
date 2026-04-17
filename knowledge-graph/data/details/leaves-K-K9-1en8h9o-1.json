@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-K-K9-1en8h9o-1",
+    "type": "leaf-batch",
+    "label": "K9. Agent 观测与控制 / Leaves",
+    "domainCode": "K",
+    "domainTitle": "Agent 系统",
+    "moduleCode": "K9",
+    "moduleTitle": "Agent 观测与控制",
+    "modulePathKey": "K/K9. Agent 观测与控制",
+    "parentPathKey": "K/K9. Agent 观测与控制",
+    "parentTitle": "K9. Agent 观测与控制",
+    "leafTitles": [
+      "Tracing",
+      "Step logs",
+      "Tool-call records",
+      "Handoff records",
+      "Guardrail results",
+      "Auditability"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "K/K9. Agent 观测与控制/Tracing": {},
+    "K/K9. Agent 观测与控制/Step logs": {},
+    "K/K9. Agent 观测与控制/Tool-call records": {},
+    "K/K9. Agent 观测与控制/Handoff records": {},
+    "K/K9. Agent 观测与控制/Guardrail results": {},
+    "K/K9. Agent 观测与控制/Auditability": {}
+  }
+}

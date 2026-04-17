@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-J-J4-1hf74xi-1",
+    "type": "leaf-batch",
+    "label": "J4. 会话与状态 / Leaves",
+    "domainCode": "J",
+    "domainTitle": "AI 应用工程",
+    "moduleCode": "J4",
+    "moduleTitle": "会话与状态",
+    "modulePathKey": "J/J4. 会话与状态",
+    "parentPathKey": "J/J4. 会话与状态",
+    "parentTitle": "J4. 会话与状态",
+    "leafTitles": [
+      "Conversation state",
+      "Session memory",
+      "Server-managed state",
+      "Client-managed replay",
+      "Context compaction",
+      "Prompt caching",
+      "Token budgeting"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "J/J4. 会话与状态/Conversation state": {},
+    "J/J4. 会话与状态/Session memory": {},
+    "J/J4. 会话与状态/Server-managed state": {},
+    "J/J4. 会话与状态/Client-managed replay": {},
+    "J/J4. 会话与状态/Context compaction": {},
+    "J/J4. 会话与状态/Prompt caching": {},
+    "J/J4. 会话与状态/Token budgeting": {}
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-F-F7-t9zgbv-1",
+    "type": "leaf-batch",
+    "label": "F7. 后训练数据构建 / Leaves",
+    "domainCode": "F",
+    "domainTitle": "数据层（横切层）",
+    "moduleCode": "F7",
+    "moduleTitle": "后训练数据构建",
+    "modulePathKey": "F/F7. 后训练数据构建",
+    "parentPathKey": "F/F7. 后训练数据构建",
+    "parentTitle": "F7. 后训练数据构建",
+    "leafTitles": [
+      "Train / validation / test split",
+      "Instruction crafting",
+      "Multi-turn examples",
+      "Weight masking",
+      "Preference data",
+      "Reward / verifier data",
+      "Contamination / leakage checks",
+      "Rubric-based graders for RFT"
+    ],
+    "nodeCount": 8,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "F/F7. 后训练数据构建/Train / validation / test split": {},
+    "F/F7. 后训练数据构建/Instruction crafting": {},
+    "F/F7. 后训练数据构建/Multi-turn examples": {},
+    "F/F7. 后训练数据构建/Weight masking": {},
+    "F/F7. 后训练数据构建/Preference data": {},
+    "F/F7. 后训练数据构建/Reward / verifier data": {},
+    "F/F7. 后训练数据构建/Contamination / leakage checks": {},
+    "F/F7. 后训练数据构建/Rubric-based graders for RFT": {}
+  }
+}

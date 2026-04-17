@@ -1,0 +1,96 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-I-I2-jwznuy-1",
+    "type": "leaf-batch",
+    "label": "I2. 知识库构建 / Leaves",
+    "domainCode": "I",
+    "domainTitle": "检索、记忆与外部知识",
+    "moduleCode": "I2",
+    "moduleTitle": "知识库构建",
+    "modulePathKey": "I/I2. 知识库构建",
+    "parentPathKey": "I/I2. 知识库构建",
+    "parentTitle": "I2. 知识库构建",
+    "leafTitles": [
+      "数据接入",
+      "Chunking strategy",
+      "Metadata schema",
+      "Indexing",
+      "Vector store",
+      "Keyword index",
+      "Update / refresh / re-index / delete"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 2
+  },
+  "nodes": {
+    "I/I2. 知识库构建/数据接入": {},
+    "I/I2. 知识库构建/Chunking strategy": {
+      "status": "seed",
+      "definition": "Chunking strategy 决定一份文档如何被切成可索引、可检索、可引用的最小单元，它直接影响召回质量与引用对齐。",
+      "importance": "很多 RAG 问题并不是 embedding 模型不够强，而是 chunk 边界、overlap、标题继承和 metadata schema 没设计好。",
+      "minimumDemo": "用同一批文档分别跑固定长度 chunk、语义 chunk 和标题分层 chunk，比较召回与引用质量。",
+      "hardwareBudget": "CPU 即可；规模大时主要受索引和存储资源约束。",
+      "prerequisites": [
+        "I/I2. 知识库构建",
+        "I/I1. 表示与检索基础/Embeddings",
+        "I/I2. 知识库构建/Metadata schema"
+      ],
+      "coreMetrics": [
+        "retrieval recall",
+        "citation alignment",
+        "context waste ratio",
+        "index size"
+      ],
+      "toolchain": [
+        "document parser",
+        "chunking pipeline",
+        "vector store"
+      ],
+      "failureSigns": [
+        "模型总能召回相关文档，但引用段落对不上答案",
+        "上下文里出现大量不相关残片或重复内容"
+      ],
+      "next": [
+        "I/I3. RAG 管线",
+        "I/I2. 知识库构建/Metadata schema"
+      ]
+    },
+    "I/I2. 知识库构建/Metadata schema": {
+      "status": "seed",
+      "definition": "Metadata schema 决定每个 chunk 除正文外还带什么结构化上下文，例如来源、标题层级、时间戳、权限域、语言、文件路径和业务标签。",
+      "importance": "没有稳定 metadata，permission-aware retrieval、citation alignment、增量更新和失败排查都会非常脆弱。",
+      "minimumDemo": "给同一批 chunk 补上来源路径、标题层级、更新时间和权限标签，再比较检索、过滤和引用定位效果。",
+      "hardwareBudget": "CPU 即可，主要消耗在索引与存储。",
+      "prerequisites": [
+        "I/I2. 知识库构建",
+        "I/I2. 知识库构建/Chunking strategy",
+        "I/I2. 知识库构建/Vector store"
+      ],
+      "coreMetrics": [
+        "metadata completeness",
+        "filter hit rate",
+        "citation localization accuracy",
+        "re-index correctness"
+      ],
+      "toolchain": [
+        "parser pipeline",
+        "vector store metadata filters",
+        "schema validators"
+      ],
+      "failureSigns": [
+        "检索结果内容相关但无法定位原文来源",
+        "更新或删除文档后旧 chunk 长时间残留在线上"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Permission-aware retrieval",
+        "I/I3. RAG 管线/Citation span alignment"
+      ]
+    },
+    "I/I2. 知识库构建/Indexing": {},
+    "I/I2. 知识库构建/Vector store": {},
+    "I/I2. 知识库构建/Keyword index": {},
+    "I/I2. 知识库构建/Update / refresh / re-index / delete": {}
+  }
+}

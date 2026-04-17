@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-I-I5-170c52t-1",
+    "type": "leaf-batch",
+    "label": "I5. 记忆类型 / Leaves",
+    "domainCode": "I",
+    "domainTitle": "检索、记忆与外部知识",
+    "moduleCode": "I5",
+    "moduleTitle": "记忆类型",
+    "modulePathKey": "I/I5. 记忆类型",
+    "parentPathKey": "I/I5. 记忆类型",
+    "parentTitle": "I5. 记忆类型",
+    "leafTitles": [
+      "参数记忆",
+      "非参数知识库",
+      "会话记忆",
+      "用户长期记忆",
+      "任务记忆",
+      "Episodic memory",
+      "Semantic memory"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "I/I5. 记忆类型/参数记忆": {},
+    "I/I5. 记忆类型/非参数知识库": {},
+    "I/I5. 记忆类型/会话记忆": {},
+    "I/I5. 记忆类型/用户长期记忆": {},
+    "I/I5. 记忆类型/任务记忆": {},
+    "I/I5. 记忆类型/Episodic memory": {},
+    "I/I5. 记忆类型/Semantic memory": {}
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-K-K7-154n809-1",
+    "type": "leaf-batch",
+    "label": "Sandbox workspace / Leaves",
+    "domainCode": "K",
+    "domainTitle": "Agent 系统",
+    "moduleCode": "K7",
+    "moduleTitle": "工具与外部连接",
+    "modulePathKey": "K/K7. 工具与外部连接",
+    "parentPathKey": "K/K7. 工具与外部连接/Sandbox workspace",
+    "parentTitle": "Sandbox workspace",
+    "leafTitles": [
+      "Workspace filesystem",
+      "Commands / packages",
+      "Artifacts",
+      "Ports / preview",
+      "Resume same workspace after review"
+    ],
+    "nodeCount": 5,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "K/K7. 工具与外部连接/Sandbox workspace/Workspace filesystem": {},
+    "K/K7. 工具与外部连接/Sandbox workspace/Commands / packages": {},
+    "K/K7. 工具与外部连接/Sandbox workspace/Artifacts": {},
+    "K/K7. 工具与外部连接/Sandbox workspace/Ports / preview": {},
+    "K/K7. 工具与外部连接/Sandbox workspace/Resume same workspace after review": {}
+  }
+}

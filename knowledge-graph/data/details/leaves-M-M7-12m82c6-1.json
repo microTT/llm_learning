@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-M-M7-12m82c6-1",
+    "type": "leaf-batch",
+    "label": "M7. 隐私与合规 / Leaves",
+    "domainCode": "M",
+    "domainTitle": "评测、安全与治理",
+    "moduleCode": "M7",
+    "moduleTitle": "隐私与合规",
+    "modulePathKey": "M/M7. 隐私与合规",
+    "parentPathKey": "M/M7. 隐私与合规",
+    "parentTitle": "M7. 隐私与合规",
+    "leafTitles": [
+      "PII handling",
+      "Data retention",
+      "Access control",
+      "Audit logs",
+      "Regulatory compliance",
+      "Governance policies"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "M/M7. 隐私与合规/PII handling": {},
+    "M/M7. 隐私与合规/Data retention": {},
+    "M/M7. 隐私与合规/Access control": {},
+    "M/M7. 隐私与合规/Audit logs": {},
+    "M/M7. 隐私与合规/Regulatory compliance": {},
+    "M/M7. 隐私与合规/Governance policies": {}
+  }
+}

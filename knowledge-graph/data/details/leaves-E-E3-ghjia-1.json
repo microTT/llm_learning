@@ -1,0 +1,247 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-E-E3-ghjia-1",
+    "type": "leaf-batch",
+    "label": "E3. 音频 / 语音 / Leaves",
+    "domainCode": "E",
+    "domainTitle": "模态、任务域与智能形态",
+    "moduleCode": "E3",
+    "moduleTitle": "音频 / 语音",
+    "modulePathKey": "E/E3. 音频 / 语音",
+    "parentPathKey": "E/E3. 音频 / 语音",
+    "parentTitle": "E3. 音频 / 语音",
+    "leafTitles": [
+      "自动语音识别（ASR）",
+      "说话人识别",
+      "音频分类",
+      "语音翻译",
+      "文本转语音（TTS）",
+      "语音到语音",
+      "音乐/音频生成"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 7
+  },
+  "nodes": {
+    "E/E3. 音频 / 语音/自动语音识别（ASR）": {
+      "status": "seed",
+      "definition": "ASR 把连续语音转成文本，是语音产品和语音 Agent 的第一入口。",
+      "importance": "很多后续能力都建立在转写质量之上；如果 ASR 不稳定，翻译、问答、语音助手都会连锁退化。",
+      "minimumDemo": "对一批短语音做离线和流式转写，对比 WER、延迟和稳定性。",
+      "hardwareBudget": "短语音实验 CPU 也能做；流式或高并发场景更适合 GPU 或托管服务。",
+      "prerequisites": [
+        "E/E3. 音频 / 语音",
+        "F/F2. 数据形态/音频",
+        "J/J5. 流式与实时"
+      ],
+      "coreMetrics": [
+        "WER / CER",
+        "streaming latency",
+        "stability",
+        "noise robustness"
+      ],
+      "toolchain": [
+        "ASR model",
+        "audio chunking",
+        "streaming websocket"
+      ],
+      "failureSigns": [
+        "静音、口音或背景噪声一出现就大段漂移",
+        "流式结果反复重写，UI 看起来抖动严重"
+      ],
+      "next": [
+        "E/E3. 音频 / 语音/语音翻译",
+        "J/J5. 流式与实时/Voice interaction",
+        "M/M2. 应用级评测"
+      ]
+    },
+    "E/E3. 音频 / 语音/说话人识别": {
+      "status": "seed",
+      "definition": "说话人识别关心的是“谁在说话”，通常分为 speaker identification、verification 和 diarization 三类问题。",
+      "importance": "会议、客服、播客和安全场景都需要把语义内容和说话人身份对齐，否则后续摘要和审计都不可靠。",
+      "minimumDemo": "对一段多人音频做 diarization 或 speaker verification，并核对说话人切换点和身份匹配率。",
+      "hardwareBudget": "单卡 GPU 或 CPU 可做原型，主要取决于音频长度与并发。",
+      "prerequisites": [
+        "E/E3. 音频 / 语音",
+        "F/F2. 数据形态/音频",
+        "M/M2. 应用级评测"
+      ],
+      "coreMetrics": [
+        "DER",
+        "EER",
+        "speaker accuracy",
+        "latency"
+      ],
+      "toolchain": [
+        "speaker embedding model",
+        "diarization pipeline",
+        "audio segmentation"
+      ],
+      "failureSigns": [
+        "同一说话人被切成多段不同身份",
+        "背景音乐或串话一多就频繁误认"
+      ],
+      "next": [
+        "E/E3. 音频 / 语音/自动语音识别（ASR）",
+        "M/M4. 在线评测/Real-user failure mining"
+      ]
+    },
+    "E/E3. 音频 / 语音/音频分类": {
+      "status": "seed",
+      "definition": "音频分类把一段声音归到环境音、事件或类别上，例如警报、乐器、情绪或设备状态。",
+      "importance": "它把语音之外的大量非语言音频纳入 AI 可处理范围，是工业、内容审核和环境感知的重要入口。",
+      "minimumDemo": "训练一个小型音频分类器，比较不同采样率、特征表示和类别不平衡处理对结果的影响。",
+      "hardwareBudget": "单卡 GPU 足够；很多场景可直接做边缘部署。",
+      "prerequisites": [
+        "E/E3. 音频 / 语音",
+        "F/F2. 数据形态/音频",
+        "C/C5. 指标体系/Precision / Recall / F1"
+      ],
+      "coreMetrics": [
+        "F1",
+        "AUC",
+        "confusion matrix",
+        "latency"
+      ],
+      "toolchain": [
+        "audio feature extraction",
+        "classification model",
+        "augmentation"
+      ],
+      "failureSigns": [
+        "实验室环境效果好，一上真实噪声数据就掉点",
+        "相近类别之间混淆严重却没有针对性误差分析"
+      ],
+      "next": [
+        "E/E7. 机器人与具身智能/感知",
+        "L/L1. 模型访问方式/浏览器 / Edge 推理"
+      ]
+    },
+    "E/E3. 音频 / 语音/语音翻译": {
+      "status": "seed",
+      "definition": "语音翻译把说话内容跨语言迁移，可能经过 ASR→MT→TTS，也可能由端到端语音模型直接完成。",
+      "importance": "它把语音链路从“能听懂”升级成“能跨语言交流”，对实时会议、客服和国际化产品很关键。",
+      "minimumDemo": "完成一条最小语音翻译链路，比较级联方案和端到端方案的延迟与保真度。",
+      "hardwareBudget": "通常需要云 API 或中高端 GPU 才能把质量和延迟同时压住。",
+      "prerequisites": [
+        "E/E3. 音频 / 语音/自动语音识别（ASR）",
+        "E/E3. 音频 / 语音/文本转语音（TTS）",
+        "E/E3. 音频 / 语音"
+      ],
+      "coreMetrics": [
+        "translation adequacy",
+        "latency",
+        "speaker/style preservation",
+        "WER cascade impact"
+      ],
+      "toolchain": [
+        "ASR",
+        "translation model",
+        "TTS / speech output"
+      ],
+      "failureSigns": [
+        "文本翻译看着对，但语音链路整体延迟不可用",
+        "专有名词、数字和口语表达在跨语言链路里持续丢失"
+      ],
+      "next": [
+        "E/E3. 音频 / 语音/语音到语音",
+        "J/J5. 流式与实时/Voice interaction"
+      ]
+    },
+    "E/E3. 音频 / 语音/文本转语音（TTS）": {
+      "status": "seed",
+      "definition": "TTS 把文本转成语音，重点不仅是读出来，还包括自然度、韵律、情绪和可控性。",
+      "importance": "它决定语音产品最后一公里的体验，很多系统并不需要很强的对话能力，但非常需要稳定、可控、听感自然的输出。",
+      "minimumDemo": "把一组不同风格文本合成为语音，比较多说话人、语速和情绪控制效果。",
+      "hardwareBudget": "CPU 可做低吞吐原型；实时高质量合成更适合 GPU 或专用服务。",
+      "prerequisites": [
+        "E/E3. 音频 / 语音",
+        "F/F2. 数据形态/音频",
+        "J/J5. 流式与实时/Voice interaction"
+      ],
+      "coreMetrics": [
+        "MOS",
+        "pronunciation accuracy",
+        "streaming latency",
+        "speaker consistency"
+      ],
+      "toolchain": [
+        "TTS model",
+        "audio playback",
+        "text normalization"
+      ],
+      "failureSigns": [
+        "字都读对了，但韵律机械、停顿奇怪",
+        "长文本里出现明显吞字、重复或情绪漂移"
+      ],
+      "next": [
+        "E/E3. 音频 / 语音/语音到语音",
+        "J/J5. 流式与实时/Voice interaction"
+      ]
+    },
+    "E/E3. 音频 / 语音/语音到语音": {
+      "status": "seed",
+      "definition": "语音到语音把输入语音直接转成输出语音，核心难点是同时保持语义正确、交互低延迟和说话风格控制。",
+      "importance": "这是实时语音 Agent、翻译耳机和电话助手里最接近“自然对话”的能力层。",
+      "minimumDemo": "做一轮端到端语音回路，支持说话中断和继续，并记录总轮次延迟。",
+      "hardwareBudget": "对实时链路要求高，通常更依赖云服务或稳定的 GPU 推理栈。",
+      "prerequisites": [
+        "E/E3. 音频 / 语音/自动语音识别（ASR）",
+        "E/E3. 音频 / 语音/文本转语音（TTS）",
+        "J/J5. 流式与实时/Voice interaction"
+      ],
+      "coreMetrics": [
+        "end-to-end latency",
+        "semantic fidelity",
+        "barge-in success",
+        "voice consistency"
+      ],
+      "toolchain": [
+        "realtime speech pipeline",
+        "audio buffering",
+        "session state"
+      ],
+      "failureSigns": [
+        "语义基本对，但打断、重说和上下文恢复一团乱",
+        "一旦网络抖动，音频播放和文本状态明显错位"
+      ],
+      "next": [
+        "J/J5. 流式与实时/Voice interaction",
+        "J/J9. 应用形态/Voice assistant"
+      ]
+    },
+    "E/E3. 音频 / 语音/音乐/音频生成": {
+      "status": "seed",
+      "definition": "音乐/音频生成关心的是在时间维度上生成有结构、有风格、可控长度的音频内容，不只局限于语音。",
+      "importance": "它把音频分支从语音助手扩展到创作工具、配乐、SFX 和内容生成，是多模态生成的重要一角。",
+      "minimumDemo": "给定风格或文本条件生成一段短音乐 / 音频片段，并评估时长一致性与风格符合度。",
+      "hardwareBudget": "生成音频通常比做分类/ASR 更吃 GPU 时间和存储。",
+      "prerequisites": [
+        "E/E3. 音频 / 语音",
+        "F/F2. 数据形态/音频",
+        "D/D5. 生成范式"
+      ],
+      "coreMetrics": [
+        "coherence",
+        "style adherence",
+        "duration consistency",
+        "artifact rate"
+      ],
+      "toolchain": [
+        "audio generation model",
+        "conditioning pipeline",
+        "audio QA"
+      ],
+      "failureSigns": [
+        "开头像样，几十秒后结构明显塌掉",
+        "有连续爆音、重复片段或风格漂移"
+      ],
+      "next": [
+        "E/E5. 多模态/音文",
+        "M/M2. 应用级评测"
+      ]
+    }
+  }
+}

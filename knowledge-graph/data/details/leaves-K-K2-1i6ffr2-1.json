@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-K-K2-1i6ffr2-1",
+    "type": "leaf-batch",
+    "label": "Hybrid system / Leaves",
+    "domainCode": "K",
+    "domainTitle": "Agent 系统",
+    "moduleCode": "K2",
+    "moduleTitle": "执行形态",
+    "modulePathKey": "K/K2. 执行形态",
+    "parentPathKey": "K/K2. 执行形态/Hybrid system",
+    "parentTitle": "Hybrid system",
+    "leafTitles": [
+      "固定骨架 + 局部 agent 决策"
+    ],
+    "nodeCount": 1,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "K/K2. 执行形态/Hybrid system/固定骨架 + 局部 agent 决策": {}
+  }
+}

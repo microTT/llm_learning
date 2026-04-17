@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-A-A1-1jnhqme-1",
+    "type": "leaf-batch",
+    "label": "数值计算 / Leaves",
+    "domainCode": "A",
+    "domainTitle": "基础理论与计算机底座",
+    "moduleCode": "A1",
+    "moduleTitle": "数学基础",
+    "modulePathKey": "A/A1. 数学基础",
+    "parentPathKey": "A/A1. 数学基础/数值计算",
+    "parentTitle": "数值计算",
+    "leafTitles": [
+      "浮点精度",
+      "数值稳定性",
+      "近似计算",
+      "并行计算直觉"
+    ],
+    "nodeCount": 4,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "A/A1. 数学基础/数值计算/浮点精度": {},
+    "A/A1. 数学基础/数值计算/数值稳定性": {},
+    "A/A1. 数学基础/数值计算/近似计算": {},
+    "A/A1. 数学基础/数值计算/并行计算直觉": {}
+  }
+}

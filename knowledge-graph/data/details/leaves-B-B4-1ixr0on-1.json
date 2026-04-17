@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-B-B4-1ixr0on-1",
+    "type": "leaf-batch",
+    "label": "B4. 知识表示 / Leaves",
+    "domainCode": "B",
+    "domainTitle": "经典 AI",
+    "moduleCode": "B4",
+    "moduleTitle": "知识表示",
+    "modulePathKey": "B/B4. 知识表示",
+    "parentPathKey": "B/B4. 知识表示",
+    "parentTitle": "B4. 知识表示",
+    "leafTitles": [
+      "命题逻辑",
+      "一阶逻辑",
+      "规则系统",
+      "本体（Ontology）",
+      "知识图谱",
+      "语义网络",
+      "符号表示"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "B/B4. 知识表示/命题逻辑": {},
+    "B/B4. 知识表示/一阶逻辑": {},
+    "B/B4. 知识表示/规则系统": {},
+    "B/B4. 知识表示/本体（Ontology）": {},
+    "B/B4. 知识表示/知识图谱": {},
+    "B/B4. 知识表示/语义网络": {},
+    "B/B4. 知识表示/符号表示": {}
+  }
+}

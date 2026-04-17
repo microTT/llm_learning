@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-B-B2-1qivgcz-1",
+    "type": "leaf-batch",
+    "label": "无信息搜索 / Leaves",
+    "domainCode": "B",
+    "domainTitle": "经典 AI",
+    "moduleCode": "B2",
+    "moduleTitle": "搜索",
+    "modulePathKey": "B/B2. 搜索",
+    "parentPathKey": "B/B2. 搜索/无信息搜索",
+    "parentTitle": "无信息搜索",
+    "leafTitles": [
+      "BFS",
+      "DFS",
+      "Uniform Cost Search"
+    ],
+    "nodeCount": 3,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "B/B2. 搜索/无信息搜索/BFS": {},
+    "B/B2. 搜索/无信息搜索/DFS": {},
+    "B/B2. 搜索/无信息搜索/Uniform Cost Search": {}
+  }
+}

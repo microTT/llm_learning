@@ -8,7 +8,7 @@
     />
     <meta
       name="description"
-      content="AI 知识图谱路线图页面，基于 graph.json 结构数据渲染，适合 GitHub Pages 直接访问。"
+      content="AI 知识图谱路线图页面，基于 graph.json 结构骨架和 sharded detail 数据渲染，适合 GitHub Pages 直接访问。"
     />
     <title>AI 知识图谱</title>
     <link
@@ -25,8 +25,9 @@
           <h1>AI 知识图谱</h1>
           <p class="hero-text">
             这页不再强调操作，而是强调阅读。它把
-            <code>data/graph.json</code> 里的完整知识骨架，整理成一张可以顺着往下学、也可以按领域回看的 AI
-            路线图。
+            <code>data/graph.json</code> 里的完整知识骨架，配合
+            <code>data/detail-index.json</code> 和 <code>data/details/*.json</code>
+            的分片节点详情，整理成一张可以顺着往下学、也可以按领域回看的 AI 路线图。
           </p>
           <div class="hero-tags">
             <span>主干：基础 → 模型 → 应用 → Agent → 生产</span>
@@ -37,7 +38,8 @@
         <div class="hero-meta">
           <div class="stats-grid" id="hero-stats"></div>
           <p class="hero-note">
-            结构与节点详情都继续写在 <code>data/graph.json</code>。
+            结构继续写在 <code>data/graph.json</code>；节点详情继续写在
+            <code>data/detail-index.json</code> 和 <code>data/details/*.json</code>。
           </p>
         </div>
       </header>
@@ -105,7 +107,7 @@
 
       <footer class="page-footer">
         <p>
-          当前页面展示的是“完整骨架 + 局部深挖”的第一版。后续只要继续补结构和节点细节，它会自然扩展。
+          当前页面展示的是“结构骨架 + 分片 detail”的第一版。后续只要继续补结构和对应 shard，它会自然扩展。
         </p>
       </footer>
     </div>

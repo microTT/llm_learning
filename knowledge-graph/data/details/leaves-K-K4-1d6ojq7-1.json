@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-K-K4-1d6ojq7-1",
+    "type": "leaf-batch",
+    "label": "K4. 多 Agent 模式 / Leaves",
+    "domainCode": "K",
+    "domainTitle": "Agent 系统",
+    "moduleCode": "K4",
+    "moduleTitle": "多 Agent 模式",
+    "modulePathKey": "K/K4. 多 Agent 模式",
+    "parentPathKey": "K/K4. 多 Agent 模式",
+    "parentTitle": "K4. 多 Agent 模式",
+    "leafTitles": [
+      "Manager / worker",
+      "Router / specialists",
+      "Handoff",
+      "Agents-as-tools",
+      "Reviewer / critic / verifier",
+      "Debate / voting",
+      "Subgraphs"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "K/K4. 多 Agent 模式/Manager / worker": {},
+    "K/K4. 多 Agent 模式/Router / specialists": {},
+    "K/K4. 多 Agent 模式/Handoff": {},
+    "K/K4. 多 Agent 模式/Agents-as-tools": {},
+    "K/K4. 多 Agent 模式/Reviewer / critic / verifier": {},
+    "K/K4. 多 Agent 模式/Debate / voting": {},
+    "K/K4. 多 Agent 模式/Subgraphs": {}
+  }
+}

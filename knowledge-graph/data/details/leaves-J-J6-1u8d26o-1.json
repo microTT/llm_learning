@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-J-J6-1u8d26o-1",
+    "type": "leaf-batch",
+    "label": "J6. 多模态应用 / Leaves",
+    "domainCode": "J",
+    "domainTitle": "AI 应用工程",
+    "moduleCode": "J6",
+    "moduleTitle": "多模态应用",
+    "modulePathKey": "J/J6. 多模态应用",
+    "parentPathKey": "J/J6. 多模态应用",
+    "parentTitle": "J6. 多模态应用",
+    "leafTitles": [
+      "Image input",
+      "Audio input/output",
+      "File input",
+      "Mixed-modal interfaces"
+    ],
+    "nodeCount": 4,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "J/J6. 多模态应用/Image input": {},
+    "J/J6. 多模态应用/Audio input/output": {},
+    "J/J6. 多模态应用/File input": {},
+    "J/J6. 多模态应用/Mixed-modal interfaces": {}
+  }
+}

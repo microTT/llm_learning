@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-H-H5-1c40oby-1",
+    "type": "leaf-batch",
+    "label": "H5. 压缩与效率优化 / Leaves",
+    "domainCode": "H",
+    "domainTitle": "模型适配、后训练与对齐",
+    "moduleCode": "H5",
+    "moduleTitle": "压缩与效率优化",
+    "modulePathKey": "H/H5. 压缩与效率优化",
+    "parentPathKey": "H/H5. 压缩与效率优化",
+    "parentTitle": "H5. 压缩与效率优化",
+    "leafTitles": [
+      "Quantization",
+      "Distillation",
+      "Pruning",
+      "Smaller specialized models",
+      "Quantization-aware training（部分方法）"
+    ],
+    "nodeCount": 5,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "H/H5. 压缩与效率优化/Quantization": {},
+    "H/H5. 压缩与效率优化/Distillation": {},
+    "H/H5. 压缩与效率优化/Pruning": {},
+    "H/H5. 压缩与效率优化/Smaller specialized models": {},
+    "H/H5. 压缩与效率优化/Quantization-aware training（部分方法）": {}
+  }
+}

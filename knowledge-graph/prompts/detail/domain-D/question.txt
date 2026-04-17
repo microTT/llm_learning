@@ -1,0 +1,59 @@
+你正在补充 AI 知识图谱的一个 detail shard。只处理当前 shard，不要新增节点、不要改 pathKey。
+Shard 信息
+- shardId: domain-D
+- expected answer file: prompts/detail/domain-D/answer.md
+- label: D. 深度学习与基础模型 / 概览
+- type: domain-overview
+- domain: D. 深度学习与基础模型
+- shard owned node count: 7
+- prompt focus: 只补这个 domain 自身的全局介绍；下面列出的模块和父概念仅作为上下文参考，不需要在回答里逐个展开。
+输出要求
+- 只输出一个 JSON 对象，不要 Markdown 代码块，不要解释文字。
+- 固定输出形状：{ "shardId": "<shard-id>", "nodes": { "<pathKey>": { ...detailFields } } }
+- 只允许这些字段：status, definition, importance, minimumDemo, hardwareBudget, examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next
+- text 字段：definition, importance, minimumDemo, hardwareBudget
+- list 字段：examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next，必须是字符串数组。
+- `prerequisites` / `next` 优先使用精确 pathKey；如果没有把握，不要编造图谱里不存在的节点。
+- 对当前已经有内容的节点，以补全、校正、统一口径为主；不要为了改写而改写。
+- domain-overview 只需要返回 domain 根节点本身；不要在回答里重复输出模块或父概念节点。
+当前需要补充的全局节点
+1. [domain] D
+   - title: 深度学习与基础模型
+   - children: D1. 神经网络基础 / D2. 架构家族 / D3. 训练范式 / D4. 基础模型类型 / D5. 生成范式 / D6. 规模化要素
+   - currentDetail: {}
+本 domain 的模块上下文（仅供理解全局范围，不要在回答里展开成模块逐项说明）
+1. D1. 神经网络基础
+   - pathKey: D/D1. 神经网络基础
+   - concept count: 10
+   - sample children: 张量 / 参数 / 前向传播 / 反向传播 / Autograd / 激活函数
+2. D2. 架构家族
+   - pathKey: D/D2. 架构家族
+   - concept count: 8
+   - sample children: MLP / CNN / RNN / LSTM / GRU / Transformer / Diffusion models / Mixture of Experts
+3. D3. 训练范式
+   - pathKey: D/D3. 训练范式
+   - concept count: 8
+   - sample children: 从头训练 / 预训练 / 微调 / 多任务训练 / 迁移学习 / 蒸馏
+4. D4. 基础模型类型
+   - pathKey: D/D4. 基础模型类型
+   - concept count: 6
+   - sample children: 文本基础模型 / 视觉基础模型 / 语音 / 音频基础模型 / 视频基础模型 / 多模态基础模型 / 具身/世界模型（更偏前沿与系统）
+5. D5. 生成范式
+   - pathKey: D/D5. 生成范式
+   - concept count: 5
+   - sample children: 自回归生成 / 编码—解码生成 / 扩散生成 / 条件生成 / 控制生成
+6. D6. 规模化要素
+   - pathKey: D/D6. 规模化要素
+   - concept count: 6
+   - sample children: 数据规模 / 参数规模 / 训练算力 / 上下文长度 / 训练时长 / 系统优化
+可参考的 pathKey
+- current domain root: D
+- current domain all pathKeys: D | D/D1. 神经网络基础 | D/D1. 神经网络基础/张量 | D/D1. 神经网络基础/参数 | D/D1. 神经网络基础/前向传播 | D/D1. 神经网络基础/反向传播 | D/D1. 神经网络基础/Autograd | D/D1. 神经网络基础/激活函数 | D/D1. 神经网络基础/Normalization | D/D1. 神经网络基础/Regularization | D/D1. 神经网络基础/Optimizer | D/D1. 神经网络基础/Checkpoint | D/D2. 架构家族 | D/D2. 架构家族/MLP | D/D2. 架构家族/CNN | D/D2. 架构家族/RNN / LSTM / GRU | D/D2. 架构家族/Transformer | D/D2. 架构家族/Diffusion models | D/D2. 架构家族/Mixture of Experts | D/D2. 架构家族/State Space Models | D/D2. 架构家族/Graph Neural Networks | D/D3. 训练范式 | D/D3. 训练范式/从头训练 | D/D3. 训练范式/预训练 | D/D3. 训练范式/微调 | D/D3. 训练范式/多任务训练 | D/D3. 训练范式/迁移学习 | D/D3. 训练范式/蒸馏 | D/D3. 训练范式/自训练 / 伪标签 | D/D3. 训练范式/Curriculum / staged training | D/D4. 基础模型类型 | D/D4. 基础模型类型/文本基础模型 | D/D4. 基础模型类型/视觉基础模型 | D/D4. 基础模型类型/语音 / 音频基础模型 | D/D4. 基础模型类型/视频基础模型 | D/D4. 基础模型类型/多模态基础模型 | D/D4. 基础模型类型/具身/世界模型（更偏前沿与系统） | D/D5. 生成范式 | D/D5. 生成范式/自回归生成 | D/D5. 生成范式/编码—解码生成 | D/D5. 生成范式/扩散生成 | D/D5. 生成范式/条件生成 | D/D5. 生成范式/控制生成 | D/D6. 规模化要素 | D/D6. 规模化要素/数据规模 | D/D6. 规模化要素/参数规模 | D/D6. 规模化要素/训练算力 | D/D6. 规模化要素/上下文长度 | D/D6. 规模化要素/训练时长 | D/D6. 规模化要素/系统优化
+- sibling modules in domain: D/D1. 神经网络基础 | D/D2. 架构家族 | D/D3. 训练范式 | D/D4. 基础模型类型 | D/D5. 生成范式 | D/D6. 规模化要素
+返回模板
+{
+  "shardId": "domain-D",
+  "nodes": {
+    "D": {}
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-C-C2-1jxkik4-1",
+    "type": "leaf-batch",
+    "label": "C2. 学习范式 / Leaves",
+    "domainCode": "C",
+    "domainTitle": "机器学习",
+    "moduleCode": "C2",
+    "moduleTitle": "学习范式",
+    "modulePathKey": "C/C2. 学习范式",
+    "parentPathKey": "C/C2. 学习范式",
+    "parentTitle": "C2. 学习范式",
+    "leafTitles": [
+      "自监督学习",
+      "半监督学习",
+      "迁移学习",
+      "在线学习",
+      "主动学习",
+      "元学习",
+      "强化学习"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "C/C2. 学习范式/自监督学习": {},
+    "C/C2. 学习范式/半监督学习": {},
+    "C/C2. 学习范式/迁移学习": {},
+    "C/C2. 学习范式/在线学习": {},
+    "C/C2. 学习范式/主动学习": {},
+    "C/C2. 学习范式/元学习": {},
+    "C/C2. 学习范式/强化学习": {}
+  }
+}

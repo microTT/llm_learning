@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-N-N2-fi1wb8-1",
+    "type": "leaf-batch",
+    "label": "N2. 自动化等级 / Leaves",
+    "domainCode": "N",
+    "domainTitle": "产品、场景与组织",
+    "moduleCode": "N2",
+    "moduleTitle": "自动化等级",
+    "modulePathKey": "N/N2. 自动化等级",
+    "parentPathKey": "N/N2. 自动化等级",
+    "parentTitle": "N2. 自动化等级",
+    "leafTitles": [
+      "Suggestion only",
+      "Draft and review",
+      "Execute with approval",
+      "Narrow autonomous execution",
+      "Human-supervised autonomy"
+    ],
+    "nodeCount": 5,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "N/N2. 自动化等级/Suggestion only": {},
+    "N/N2. 自动化等级/Draft and review": {},
+    "N/N2. 自动化等级/Execute with approval": {},
+    "N/N2. 自动化等级/Narrow autonomous execution": {},
+    "N/N2. 自动化等级/Human-supervised autonomy": {}
+  }
+}

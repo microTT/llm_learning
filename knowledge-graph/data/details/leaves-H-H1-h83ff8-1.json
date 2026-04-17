@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-H-H1-h83ff8-1",
+    "type": "leaf-batch",
+    "label": "H1. 不改权重的控制 / Leaves",
+    "domainCode": "H",
+    "domainTitle": "模型适配、后训练与对齐",
+    "moduleCode": "H1",
+    "moduleTitle": "不改权重的控制",
+    "modulePathKey": "H/H1. 不改权重的控制",
+    "parentPathKey": "H/H1. 不改权重的控制",
+    "parentTitle": "H1. 不改权重的控制",
+    "leafTitles": [
+      "Prompt engineering",
+      "System prompt",
+      "Few-shot / in-context learning",
+      "Prompt templates",
+      "Structured outputs",
+      "Tool schemas"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "H/H1. 不改权重的控制/Prompt engineering": {},
+    "H/H1. 不改权重的控制/System prompt": {},
+    "H/H1. 不改权重的控制/Few-shot / in-context learning": {},
+    "H/H1. 不改权重的控制/Prompt templates": {},
+    "H/H1. 不改权重的控制/Structured outputs": {},
+    "H/H1. 不改权重的控制/Tool schemas": {}
+  }
+}

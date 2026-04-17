@@ -1,0 +1,65 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-G-G1-qqrpxv-1",
+    "type": "leaf-batch",
+    "label": "G1. 语言建模基础 / Leaves",
+    "domainCode": "G",
+    "domainTitle": "LLM 核心机制",
+    "moduleCode": "G1",
+    "moduleTitle": "语言建模基础",
+    "modulePathKey": "G/G1. 语言建模基础",
+    "parentPathKey": "G/G1. 语言建模基础",
+    "parentTitle": "G1. 语言建模基础",
+    "leafTitles": [
+      "Token",
+      "Vocabulary",
+      "Embedding",
+      "Positional information",
+      "Next-token prediction",
+      "Token efficiency"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 1
+  },
+  "nodes": {
+    "G/G1. 语言建模基础/Token": {},
+    "G/G1. 语言建模基础/Vocabulary": {},
+    "G/G1. 语言建模基础/Embedding": {},
+    "G/G1. 语言建模基础/Positional information": {},
+    "G/G1. 语言建模基础/Next-token prediction": {},
+    "G/G1. 语言建模基础/Token efficiency": {
+      "status": "seed",
+      "definition": "Token efficiency 关注的是同样的信息量在不同 tokenizer、语言和数据形态下会消耗多少 token，以及这会如何影响成本、上下文窗口和延迟。",
+      "importance": "只看“支持 128k 上下文”没有意义，真正决定能装下多少业务信息的是 token efficiency，尤其是中文、代码、表格和 JSON。",
+      "minimumDemo": "拿一段中文、一段代码和一段 JSON，分别统计它们在不同 tokenizer 下的 token 长度，并估算成本和可容纳上下文差异。",
+      "hardwareBudget": "CPU 即可。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Tokenization pipeline",
+        "G/G1. 语言建模基础/Embedding",
+        "G/G3. 上下文与记忆"
+      ],
+      "coreMetrics": [
+        "tokens per character",
+        "tokens per line of code",
+        "context waste ratio",
+        "cost per task"
+      ],
+      "toolchain": [
+        "tiktoken",
+        "HF tokenizers",
+        "cost / context estimators"
+      ],
+      "failureSigns": [
+        "看似不长的文档一进模型就爆 context",
+        "多语言或结构化数据的 token 成本明显高于预期"
+      ],
+      "next": [
+        "G/G3. 上下文与记忆",
+        "J/J4. 会话与状态",
+        "L/L7. 生产运行指标"
+      ]
+    }
+  }
+}

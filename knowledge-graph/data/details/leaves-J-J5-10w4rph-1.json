@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-J-J5-10w4rph-1",
+    "type": "leaf-batch",
+    "label": "J5. 流式与实时 / Leaves",
+    "domainCode": "J",
+    "domainTitle": "AI 应用工程",
+    "moduleCode": "J5",
+    "moduleTitle": "流式与实时",
+    "modulePathKey": "J/J5. 流式与实时",
+    "parentPathKey": "J/J5. 流式与实时",
+    "parentTitle": "J5. 流式与实时",
+    "leafTitles": [
+      "Streaming text",
+      "Streaming tool events",
+      "WebSocket / realtime",
+      "Voice interaction",
+      "Incremental UI updates"
+    ],
+    "nodeCount": 5,
+    "filledNodeCount": 1
+  },
+  "nodes": {
+    "J/J5. 流式与实时/Streaming text": {},
+    "J/J5. 流式与实时/Streaming tool events": {},
+    "J/J5. 流式与实时/WebSocket / realtime": {},
+    "J/J5. 流式与实时/Voice interaction": {
+      "status": "seed",
+      "definition": "Voice interaction 不是简单的 ASR + TTS 拼接，而是把语音输入、实时转写、打断、回声控制和响应节奏整合成一条低延迟交互链。",
+      "importance": "它直接决定语音产品是否像“对话”而不是“点按录音再等结果”，也是实时 agent 体验的门槛能力。",
+      "minimumDemo": "做一条最小语音回路：麦克风输入、实时转写、模型响应和语音播报，并支持用户在播报中途打断。",
+      "hardwareBudget": "本地调试主要依赖稳定麦克风、耳机和浏览器/客户端音频栈；核心瓶颈通常是实时链路延迟而不是显存。",
+      "prerequisites": [
+        "J/J5. 流式与实时/WebSocket / realtime",
+        "J/J6. 多模态应用/Audio input/output",
+        "J/J5. 流式与实时/Incremental UI updates"
+      ],
+      "coreMetrics": [
+        "speech-to-first-token latency",
+        "barge-in success rate",
+        "transcription stability",
+        "audio glitch rate"
+      ],
+      "toolchain": [
+        "realtime API / websocket runtime",
+        "microphone capture",
+        "streaming ASR/TTS",
+        "audio playback controls"
+      ],
+      "failureSigns": [
+        "用户一打断就把状态弄乱，导致上下文错位",
+        "延迟看起来不高，但语音播报节奏和 UI 反馈明显不同步"
+      ],
+      "next": [
+        "J/J9. 应用形态/Voice assistant",
+        "E/E3. 音频 / 语音",
+        "M/M2. 应用级评测"
+      ]
+    },
+    "J/J5. 流式与实时/Incremental UI updates": {}
+  }
+}

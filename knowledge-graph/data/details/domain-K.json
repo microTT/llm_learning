@@ -1,0 +1,137 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "domain-K",
+    "type": "domain-overview",
+    "label": "K. Agent 系统 / 概览",
+    "domainCode": "K",
+    "domainTitle": "Agent 系统",
+    "moduleCode": null,
+    "moduleTitle": null,
+    "modulePathKey": null,
+    "parentPathKey": null,
+    "parentTitle": null,
+    "leafTitles": [],
+    "nodeCount": 17,
+    "filledNodeCount": 3
+  },
+  "nodes": {
+    "K": {},
+    "K/K1. Agent 的最小构成": {
+      "status": "seed",
+      "definition": "一个最小可工作的 Agent 系统至少需要模型、指令、工具、状态/记忆和编排，还需要 guardrails 与 human review 来控制副作用。",
+      "importance": "这组原语把“能对话的模型”提升成“能完成多步任务的系统”，也是后续拆分单 Agent / 多 Agent / 图式编排的统一抽象。",
+      "minimumDemo": "做一个最小 coding agent：读取文件、执行 shell、保存状态，并在危险操作前请求审批。",
+      "hardwareBudget": "本地原型可从单机开始；复杂任务更依赖稳定运行时而不是更大显存。",
+      "examples": [
+        "编码 Agent 会读取代码、调用 shell、执行测试、记录状态，并在危险动作前请求审批。",
+        "研究 Agent 会决定是否检索、调用网页工具并把结果回写到长期记忆。"
+      ],
+      "pitfalls": [
+        "只有工具调用并不等于 Agent，是否存在动态决策与状态流转才是关键差异。",
+        "把所有任务都升级为 Agent 往往会让复杂度失控，很多场景其实只需要强应用工程。"
+      ],
+      "prerequisites": [
+        "J/J3. 工具调用",
+        "J/J4. 会话与状态",
+        "M/M6. Guardrails"
+      ],
+      "coreMetrics": [
+        "workflow completion rate",
+        "tool success rate",
+        "human override rate",
+        "trace completeness"
+      ],
+      "toolchain": [
+        "model orchestration runtime",
+        "tools",
+        "trace storage"
+      ],
+      "failureSigns": [
+        "模型会说步骤，但没有稳定的状态回写和恢复",
+        "副作用动作没有审批边界"
+      ],
+      "next": [
+        "J/J3. 工具调用",
+        "K/K2. 执行形态",
+        "M/M6. Guardrails"
+      ]
+    },
+    "K/K2. 执行形态": {},
+    "K/K2. 执行形态/Workflow": {},
+    "K/K2. 执行形态/Agent": {},
+    "K/K2. 执行形态/Hybrid system": {},
+    "K/K3. 单 Agent 模式": {},
+    "K/K4. 多 Agent 模式": {},
+    "K/K5. 图式编排": {},
+    "K/K6. Agent 记忆": {},
+    "K/K7. 工具与外部连接": {},
+    "K/K7. 工具与外部连接/MCP protocol stack": {
+      "status": "seed",
+      "definition": "MCP protocol stack 关注的是协议本身，而不是某一个 server：JSON-RPC 基座、生命周期、能力协商、授权、transport、roots / sampling 都在这里。",
+      "importance": "把 MCP 当成“某个工具列表”会错过它真正的工程价值：跨系统统一地暴露 resources / prompts / tools，并把权限和生命周期放进协议层。",
+      "minimumDemo": "起一个最小 MCP server，声明 resources 和 tools，再用 client 跑一次 capability negotiation 与调用。",
+      "hardwareBudget": "CPU 即可，重点是协议实现和权限配置。",
+      "prerequisites": [
+        "A/A2. 计算机基础/网络与协议/RPC / JSON-RPC",
+        "K/K7. 工具与外部连接",
+        "M/M5. 安全控制"
+      ],
+      "coreMetrics": [
+        "capability negotiation success",
+        "auth success rate",
+        "tool call latency"
+      ],
+      "toolchain": [
+        "MCP SDK / spec",
+        "JSON-RPC transport",
+        "server logs"
+      ],
+      "failureSigns": [
+        "client 能连上 transport，但拿不到能力声明",
+        "授权通过后 resources / tools 仍然不可见"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/Sandbox workspace",
+        "J/J3. 工具调用"
+      ]
+    },
+    "K/K7. 工具与外部连接/MCP servers": {},
+    "K/K7. 工具与外部连接/Sandbox workspace": {
+      "status": "seed",
+      "definition": "Sandbox workspace 是 Agent 运行时的一等资源：文件系统、命令、包、产物、端口和预览能力都应该有独立边界，而不是散落在若干工具定义里。",
+      "importance": "对 coding agent、computer-use agent、workflow agent 来说，workspace 决定了状态是否可恢复、结果是否可审计、以及审批后能否回到同一上下文继续执行。",
+      "minimumDemo": "做一个最小工作区：能写文件、执行命令、产出 artifacts，并在人工审批后恢复到同一目录状态继续运行。",
+      "hardwareBudget": "主要吃磁盘、内存和运行时隔离成本；coding agent 在本地开发机即可启动。",
+      "prerequisites": [
+        "K/K1. Agent 的最小构成",
+        "K/K7. 工具与外部连接/MCP protocol stack",
+        "M/M5. 安全控制"
+      ],
+      "coreMetrics": [
+        "workspace recovery success",
+        "artifact integrity",
+        "sandbox escape incidents"
+      ],
+      "toolchain": [
+        "filesystem sandbox",
+        "shell runtime",
+        "artifact store",
+        "preview server"
+      ],
+      "failureSigns": [
+        "审批回来后 agent 丢失上下文或找不到之前的文件",
+        "命令执行结果和产物没有稳定落盘"
+      ],
+      "next": [
+        "L/L5. 系统基础设施",
+        "M/M5. 安全控制",
+        "M/M7. 隐私与合规"
+      ]
+    },
+    "K/K8. 人在回路": {},
+    "K/K9. Agent 观测与控制": {},
+    "K/K10. Agent 形态分支": {}
+  }
+}

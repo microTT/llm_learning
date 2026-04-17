@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-L-L7-1x3u377-1",
+    "type": "leaf-batch",
+    "label": "L7. 生产运行指标 / Leaves",
+    "domainCode": "L",
+    "domainTitle": "运行时与基础设施",
+    "moduleCode": "L7",
+    "moduleTitle": "生产运行指标",
+    "modulePathKey": "L/L7. 生产运行指标",
+    "parentPathKey": "L/L7. 生产运行指标",
+    "parentTitle": "L7. 生产运行指标",
+    "leafTitles": [
+      "Latency",
+      "Throughput",
+      "Cost",
+      "Error rate",
+      "Availability",
+      "Token usage",
+      "GPU utilization",
+      "Context pressure"
+    ],
+    "nodeCount": 8,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "L/L7. 生产运行指标/Latency": {},
+    "L/L7. 生产运行指标/Throughput": {},
+    "L/L7. 生产运行指标/Cost": {},
+    "L/L7. 生产运行指标/Error rate": {},
+    "L/L7. 生产运行指标/Availability": {},
+    "L/L7. 生产运行指标/Token usage": {},
+    "L/L7. 生产运行指标/GPU utilization": {},
+    "L/L7. 生产运行指标/Context pressure": {}
+  }
+}

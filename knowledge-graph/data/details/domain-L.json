@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "domain-L",
+    "type": "domain-overview",
+    "label": "L. 运行时与基础设施 / 概览",
+    "domainCode": "L",
+    "domainTitle": "运行时与基础设施",
+    "moduleCode": null,
+    "moduleTitle": null,
+    "modulePathKey": null,
+    "parentPathKey": null,
+    "parentTitle": null,
+    "leafTitles": [],
+    "nodeCount": 8,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "L": {},
+    "L/L1. 模型访问方式": {},
+    "L/L2. 服务运行时": {},
+    "L/L3. 推理优化": {},
+    "L/L4. 训练基础设施": {},
+    "L/L5. 系统基础设施": {},
+    "L/L6. 硬件层": {},
+    "L/L7. 生产运行指标": {}
+  }
+}

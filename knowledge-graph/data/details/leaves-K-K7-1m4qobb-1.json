@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-K-K7-1m4qobb-1",
+    "type": "leaf-batch",
+    "label": "MCP servers / Leaves",
+    "domainCode": "K",
+    "domainTitle": "Agent 系统",
+    "moduleCode": "K7",
+    "moduleTitle": "工具与外部连接",
+    "modulePathKey": "K/K7. 工具与外部连接",
+    "parentPathKey": "K/K7. 工具与外部连接/MCP servers",
+    "parentTitle": "MCP servers",
+    "leafTitles": [
+      "Resources",
+      "Prompts",
+      "Tools"
+    ],
+    "nodeCount": 3,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "K/K7. 工具与外部连接/MCP servers/Resources": {},
+    "K/K7. 工具与外部连接/MCP servers/Prompts": {},
+    "K/K7. 工具与外部连接/MCP servers/Tools": {}
+  }
+}

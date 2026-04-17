@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "domain-N",
+    "type": "domain-overview",
+    "label": "N. 产品、场景与组织 / 概览",
+    "domainCode": "N",
+    "domainTitle": "产品、场景与组织",
+    "moduleCode": null,
+    "moduleTitle": null,
+    "modulePathKey": null,
+    "parentPathKey": null,
+    "parentTitle": null,
+    "leafTitles": [],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "N": {},
+    "N/N1. 场景类型": {},
+    "N/N2. 自动化等级": {},
+    "N/N3. 决策变量": {},
+    "N/N4. 体验设计": {},
+    "N/N5. 团队与流程": {},
+    "N/N6. 持续改进闭环": {}
+  }
+}

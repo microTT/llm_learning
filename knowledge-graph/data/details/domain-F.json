@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "domain-F",
+    "type": "domain-overview",
+    "label": "F. 数据层（横切层） / 概览",
+    "domainCode": "F",
+    "domainTitle": "数据层（横切层）",
+    "moduleCode": null,
+    "moduleTitle": null,
+    "modulePathKey": null,
+    "parentPathKey": null,
+    "parentTitle": null,
+    "leafTitles": [],
+    "nodeCount": 8,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "F": {},
+    "F/F1. 数据类型": {},
+    "F/F2. 数据形态": {},
+    "F/F3. 数据工程": {},
+    "F/F4. 数据质量": {},
+    "F/F5. 数据治理": {},
+    "F/F6. 数据在系统中的角色": {},
+    "F/F7. 后训练数据构建": {}
+  }
+}

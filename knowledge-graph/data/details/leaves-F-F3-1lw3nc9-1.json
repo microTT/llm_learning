@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-F-F3-1lw3nc9-1",
+    "type": "leaf-batch",
+    "label": "F3. 数据工程 / Leaves",
+    "domainCode": "F",
+    "domainTitle": "数据层（横切层）",
+    "moduleCode": "F3",
+    "moduleTitle": "数据工程",
+    "modulePathKey": "F/F3. 数据工程",
+    "parentPathKey": "F/F3. 数据工程",
+    "parentTitle": "F3. 数据工程",
+    "leafTitles": [
+      "采集",
+      "清洗",
+      "去重",
+      "过滤",
+      "切分",
+      "标注",
+      "版本管理",
+      "数据增广",
+      "合成生成",
+      "流式处理"
+    ],
+    "nodeCount": 10,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "F/F3. 数据工程/采集": {},
+    "F/F3. 数据工程/清洗": {},
+    "F/F3. 数据工程/去重": {},
+    "F/F3. 数据工程/过滤": {},
+    "F/F3. 数据工程/切分": {},
+    "F/F3. 数据工程/标注": {},
+    "F/F3. 数据工程/版本管理": {},
+    "F/F3. 数据工程/数据增广": {},
+    "F/F3. 数据工程/合成生成": {},
+    "F/F3. 数据工程/流式处理": {}
+  }
+}

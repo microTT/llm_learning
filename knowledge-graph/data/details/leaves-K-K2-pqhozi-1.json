@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-K-K2-pqhozi-1",
+    "type": "leaf-batch",
+    "label": "Workflow / Leaves",
+    "domainCode": "K",
+    "domainTitle": "Agent 系统",
+    "moduleCode": "K2",
+    "moduleTitle": "执行形态",
+    "modulePathKey": "K/K2. 执行形态",
+    "parentPathKey": "K/K2. 执行形态/Workflow",
+    "parentTitle": "Workflow",
+    "leafTitles": [
+      "固定路径",
+      "规则驱动"
+    ],
+    "nodeCount": 2,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "K/K2. 执行形态/Workflow/固定路径": {},
+    "K/K2. 执行形态/Workflow/规则驱动": {}
+  }
+}

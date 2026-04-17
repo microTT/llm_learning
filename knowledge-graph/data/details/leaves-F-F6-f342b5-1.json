@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-F-F6-f342b5-1",
+    "type": "leaf-batch",
+    "label": "F6. 数据在系统中的角色 / Leaves",
+    "domainCode": "F",
+    "domainTitle": "数据层（横切层）",
+    "moduleCode": "F6",
+    "moduleTitle": "数据在系统中的角色",
+    "modulePathKey": "F/F6. 数据在系统中的角色",
+    "parentPathKey": "F/F6. 数据在系统中的角色",
+    "parentTitle": "F6. 数据在系统中的角色",
+    "leafTitles": [
+      "预训练数据 → 决定基础能力上限",
+      "SFT 数据 → 决定任务风格与稳定性",
+      "偏好/奖励数据 → 决定对齐方向",
+      "工具 traces → 决定 Agent 行为优化",
+      "Eval datasets → 决定可重复评测",
+      "知识库文档 → 决定 RAG 质量"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "F/F6. 数据在系统中的角色/预训练数据 → 决定基础能力上限": {},
+    "F/F6. 数据在系统中的角色/SFT 数据 → 决定任务风格与稳定性": {},
+    "F/F6. 数据在系统中的角色/偏好/奖励数据 → 决定对齐方向": {},
+    "F/F6. 数据在系统中的角色/工具 traces → 决定 Agent 行为优化": {},
+    "F/F6. 数据在系统中的角色/Eval datasets → 决定可重复评测": {},
+    "F/F6. 数据在系统中的角色/知识库文档 → 决定 RAG 质量": {}
+  }
+}

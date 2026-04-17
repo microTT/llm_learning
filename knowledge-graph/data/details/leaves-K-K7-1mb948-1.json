@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-K-K7-1mb948-1",
+    "type": "leaf-batch",
+    "label": "K7. 工具与外部连接 / Leaves",
+    "domainCode": "K",
+    "domainTitle": "Agent 系统",
+    "moduleCode": "K7",
+    "moduleTitle": "工具与外部连接",
+    "modulePathKey": "K/K7. 工具与外部连接",
+    "parentPathKey": "K/K7. 工具与外部连接",
+    "parentTitle": "K7. 工具与外部连接",
+    "leafTitles": [
+      "Built-in tools",
+      "Function tools",
+      "File search / web search / code tools",
+      "Connectors",
+      "Computer / shell / browser actions"
+    ],
+    "nodeCount": 5,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "K/K7. 工具与外部连接/Built-in tools": {},
+    "K/K7. 工具与外部连接/Function tools": {},
+    "K/K7. 工具与外部连接/File search / web search / code tools": {},
+    "K/K7. 工具与外部连接/Connectors": {},
+    "K/K7. 工具与外部连接/Computer / shell / browser actions": {}
+  }
+}

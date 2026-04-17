@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-B-B3-1h1bnr4-1",
+    "type": "leaf-batch",
+    "label": "B3. 约束满足与组合问题 / Leaves",
+    "domainCode": "B",
+    "domainTitle": "经典 AI",
+    "moduleCode": "B3",
+    "moduleTitle": "约束满足与组合问题",
+    "modulePathKey": "B/B3. 约束满足与组合问题",
+    "parentPathKey": "B/B3. 约束满足与组合问题",
+    "parentTitle": "B3. 约束满足与组合问题",
+    "leafTitles": [
+      "CSP",
+      "SAT / SMT",
+      "变量、域、约束",
+      "回溯搜索",
+      "约束传播",
+      "调度、排班、组合优化"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "B/B3. 约束满足与组合问题/CSP": {},
+    "B/B3. 约束满足与组合问题/SAT / SMT": {},
+    "B/B3. 约束满足与组合问题/变量、域、约束": {},
+    "B/B3. 约束满足与组合问题/回溯搜索": {},
+    "B/B3. 约束满足与组合问题/约束传播": {},
+    "B/B3. 约束满足与组合问题/调度、排班、组合优化": {}
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-D-D6-10lrct2-1",
+    "type": "leaf-batch",
+    "label": "D6. 规模化要素 / Leaves",
+    "domainCode": "D",
+    "domainTitle": "深度学习与基础模型",
+    "moduleCode": "D6",
+    "moduleTitle": "规模化要素",
+    "modulePathKey": "D/D6. 规模化要素",
+    "parentPathKey": "D/D6. 规模化要素",
+    "parentTitle": "D6. 规模化要素",
+    "leafTitles": [
+      "数据规模",
+      "参数规模",
+      "训练算力",
+      "上下文长度",
+      "训练时长",
+      "系统优化"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "D/D6. 规模化要素/数据规模": {},
+    "D/D6. 规模化要素/参数规模": {},
+    "D/D6. 规模化要素/训练算力": {},
+    "D/D6. 规模化要素/上下文长度": {},
+    "D/D6. 规模化要素/训练时长": {},
+    "D/D6. 规模化要素/系统优化": {}
+  }
+}

@@ -1,0 +1,59 @@
+你正在补充 AI 知识图谱的一个 detail shard。只处理当前 shard，不要新增节点、不要改 pathKey。
+Shard 信息
+- shardId: domain-I
+- expected answer file: prompts/detail/domain-I/answer.md
+- label: I. 检索、记忆与外部知识 / 概览
+- type: domain-overview
+- domain: I. 检索、记忆与外部知识
+- shard owned node count: 8
+- prompt focus: 只补这个 domain 自身的全局介绍；下面列出的模块和父概念仅作为上下文参考，不需要在回答里逐个展开。
+输出要求
+- 只输出一个 JSON 对象，不要 Markdown 代码块，不要解释文字。
+- 固定输出形状：{ "shardId": "<shard-id>", "nodes": { "<pathKey>": { ...detailFields } } }
+- 只允许这些字段：status, definition, importance, minimumDemo, hardwareBudget, examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next
+- text 字段：definition, importance, minimumDemo, hardwareBudget
+- list 字段：examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next，必须是字符串数组。
+- `prerequisites` / `next` 优先使用精确 pathKey；如果没有把握，不要编造图谱里不存在的节点。
+- 对当前已经有内容的节点，以补全、校正、统一口径为主；不要为了改写而改写。
+- domain-overview 只需要返回 domain 根节点本身；不要在回答里重复输出模块或父概念节点。
+当前需要补充的全局节点
+1. [domain] I
+   - title: 检索、记忆与外部知识
+   - children: I1. 表示与检索基础 / I2. 知识库构建 / I3. RAG 管线 / I4. RAG 形态 / I5. 记忆类型 / I6. 关键质量点
+   - currentDetail: {}
+本 domain 的模块上下文（仅供理解全局范围，不要在回答里展开成模块逐项说明）
+1. I1. 表示与检索基础
+   - pathKey: I/I1. 表示与检索基础
+   - concept count: 6
+   - sample children: Embeddings / Dense retrieval / Sparse retrieval / Hybrid retrieval / Similarity search / Reranking
+2. I2. 知识库构建
+   - pathKey: I/I2. 知识库构建
+   - concept count: 12
+   - sample children: 数据接入 / Parser types / Chunking strategy / Metadata schema / Indexing / Vector store
+3. I3. RAG 管线
+   - pathKey: I/I3. RAG 管线
+   - concept count: 10
+   - sample children: Query understanding / Query rewrite / Retrieval / Permission-aware retrieval / Rerank / Context packing
+4. I4. RAG 形态
+   - pathKey: I/I4. RAG 形态
+   - concept count: 6
+   - sample children: Basic RAG / Multi-hop RAG / Query rewriting RAG / Agentic RAG / KG-RAG / Long-context + retrieval hybrid
+5. I5. 记忆类型
+   - pathKey: I/I5. 记忆类型
+   - concept count: 7
+   - sample children: 参数记忆 / 非参数知识库 / 会话记忆 / 用户长期记忆 / 任务记忆 / Episodic memory
+6. I6. 关键质量点
+   - pathKey: I/I6. 关键质量点
+   - concept count: 7
+   - sample children: 召回率 / 精准率 / Chunk 质量 / 过期知识 / 授权与权限边界 / 可追溯性
+可参考的 pathKey
+- current domain root: I
+- current domain all pathKeys: I | I/I1. 表示与检索基础 | I/I1. 表示与检索基础/Embeddings | I/I1. 表示与检索基础/Dense retrieval | I/I1. 表示与检索基础/Sparse retrieval | I/I1. 表示与检索基础/Hybrid retrieval | I/I1. 表示与检索基础/Similarity search | I/I1. 表示与检索基础/Reranking | I/I2. 知识库构建 | I/I2. 知识库构建/数据接入 | I/I2. 知识库构建/Parser types | I/I2. 知识库构建/Parser types/Text / Markdown | I/I2. 知识库构建/Parser types/PDF / Office | I/I2. 知识库构建/Parser types/HTML / web content | I/I2. 知识库构建/Parser types/Code / repository parsers | I/I2. 知识库构建/Chunking strategy | I/I2. 知识库构建/Metadata schema | I/I2. 知识库构建/Indexing | I/I2. 知识库构建/Vector store | I/I2. 知识库构建/Keyword index | I/I2. 知识库构建/Update / refresh / re-index / delete | I/I3. RAG 管线 | I/I3. RAG 管线/Query understanding | I/I3. RAG 管线/Query rewrite | I/I3. RAG 管线/Retrieval | I/I3. RAG 管线/Permission-aware retrieval | I/I3. RAG 管线/Rerank | I/I3. RAG 管线/Context packing | I/I3. RAG 管线/Citation span alignment | I/I3. RAG 管线/Generation | I/I3. RAG 管线/Citation / provenance | I/I3. RAG 管线/Post-processing | I/I4. RAG 形态 | I/I4. RAG 形态/Basic RAG | I/I4. RAG 形态/Multi-hop RAG | I/I4. RAG 形态/Query rewriting RAG | I/I4. RAG 形态/Agentic RAG | I/I4. RAG 形态/KG-RAG | I/I4. RAG 形态/Long-context + retrieval hybrid | I/I5. 记忆类型 | I/I5. 记忆类型/参数记忆 | I/I5. 记忆类型/非参数知识库 | I/I5. 记忆类型/会话记忆 | I/I5. 记忆类型/用户长期记忆 | I/I5. 记忆类型/任务记忆 | I/I5. 记忆类型/Episodic memory | I/I5. 记忆类型/Semantic memory | I/I6. 关键质量点 | I/I6. 关键质量点/召回率 | I/I6. 关键质量点/精准率 | I/I6. 关键质量点/Chunk 质量 | I/I6. 关键质量点/过期知识 | I/I6. 关键质量点/授权与权限边界 | I/I6. 关键质量点/可追溯性 | I/I6. 关键质量点/引用可信度
+- sibling modules in domain: I/I1. 表示与检索基础 | I/I2. 知识库构建 | I/I3. RAG 管线 | I/I4. RAG 形态 | I/I5. 记忆类型 | I/I6. 关键质量点
+返回模板
+{
+  "shardId": "domain-I",
+  "nodes": {
+    "I": {}
+  }
+}

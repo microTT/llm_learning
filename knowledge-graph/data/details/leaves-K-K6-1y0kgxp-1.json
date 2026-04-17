@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-K-K6-1y0kgxp-1",
+    "type": "leaf-batch",
+    "label": "K6. Agent 记忆 / Leaves",
+    "domainCode": "K",
+    "domainTitle": "Agent 系统",
+    "moduleCode": "K6",
+    "moduleTitle": "Agent 记忆",
+    "modulePathKey": "K/K6. Agent 记忆",
+    "parentPathKey": "K/K6. Agent 记忆",
+    "parentTitle": "K6. Agent 记忆",
+    "leafTitles": [
+      "Session memory",
+      "Episodic memory",
+      "Semantic memory",
+      "User memory",
+      "Task memory",
+      "Long-term distilled memory",
+      "Memory injection / compaction"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "K/K6. Agent 记忆/Session memory": {},
+    "K/K6. Agent 记忆/Episodic memory": {},
+    "K/K6. Agent 记忆/Semantic memory": {},
+    "K/K6. Agent 记忆/User memory": {},
+    "K/K6. Agent 记忆/Task memory": {},
+    "K/K6. Agent 记忆/Long-term distilled memory": {},
+    "K/K6. Agent 记忆/Memory injection / compaction": {}
+  }
+}

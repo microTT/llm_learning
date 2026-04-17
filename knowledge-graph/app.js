@@ -1,4 +1,4 @@
-import { GRAPH_DEFAULT_CONFIG, buildRuntimeGraph } from "./graph-core.js";
+import { GRAPH_DEFAULT_CONFIG, attachDetailShards, buildRuntimeGraph } from "./graph-core.js";
 
 let STAGES = GRAPH_DEFAULT_CONFIG.stages;
 let CROSSCUT_CODES = GRAPH_DEFAULT_CONFIG.crosscutCodes;
@@ -42,7 +42,7 @@ bootstrap().catch((error) => {
   elements.roadmap.innerHTML = `
     <div class="error-state">
       <strong>知识图谱加载失败。</strong>
-      <p>请确认 <code>data/graph.json</code> 可访问且结构合法，然后刷新页面重试。</p>
+      <p>请确认 <code>data/graph.json</code>、<code>data/detail-index.json</code> 和 <code>data/details/*.json</code> 可访问且结构合法，然后刷新页面重试。</p>
     </div>
   `;
 });
@@ -53,7 +53,9 @@ async function bootstrap() {
   if (!graphSource) {
     throw new Error("Failed to fetch ./data/graph.json");
   }
-  const graph = buildRuntimeGraph(graphSource);
+  const detailShards = await loadDetailShards(graphSource);
+  const hydratedGraphSource = detailShards.length ? attachDetailShards(graphSource, detailShards) : graphSource;
+  const graph = buildRuntimeGraph(hydratedGraphSource);
   applyGraphConfig(graph.config);
   state.graph = graph;
   if (graph.referenceIssues.length) {
@@ -67,7 +69,7 @@ async function bootstrap() {
 function renderLoading() {
   elements.roadmap.innerHTML = `
     <div class="empty-state">
-      正在加载 <code>data/graph.json</code>，整理 AI 知识路线图…
+      正在加载 <code>data/graph.json</code> 与 <code>data/details/*.json</code>，整理 AI 知识路线图…
     </div>
   `;
   elements.relationGrid.innerHTML = "";
@@ -92,6 +94,23 @@ async function fetchJson(url, fallback) {
   } catch (error) {
     return fallback;
   }
+}
+
+async function loadDetailShards(graphSource) {
+  if (graphSource?.details?.storage !== "sharded" || !graphSource.details.indexFile) {
+    return [];
+  }
+
+  const detailIndex = await fetchJson(`./data/${graphSource.details.indexFile}`, null);
+  if (!detailIndex?.shards?.length) {
+    return [];
+  }
+
+  const shardResults = await Promise.all(
+    detailIndex.shards.map((shard) => fetchJson(`./data/${shard.file}`, null))
+  );
+
+  return shardResults.filter(Boolean);
 }
 
 function buildGraph(markdown, overlay) {
@@ -943,7 +962,9 @@ function setDrawerOpen(open) {
 }
 
 function syncActiveElements() {
-  document.querySelectorAll(".module-card").forEach((node) => node.classList.remove("is-selected"));
+  document.querySelectorAll(".module-card, .domain-card").forEach((node) =>
+    node.classList.remove("is-selected")
+  );
 
   document.querySelectorAll("[data-path-key], [data-detail-key]").forEach((node) => {
     const key = node.dataset.pathKey || node.dataset.detailKey;
@@ -955,6 +976,10 @@ function syncActiveElements() {
 
     if (isActive && node.classList.contains("module-header")) {
       node.closest(".module-card")?.classList.add("is-selected");
+    }
+
+    if (isActive && node.classList.contains("domain-header")) {
+      node.closest(".domain-card")?.classList.add("is-selected");
     }
   });
 }
@@ -1232,14 +1257,29 @@ function renderStageRelations(stage) {
 }
 
 function renderDomainCard(domain) {
+  const status = normalizeDetailStatus(domain.detail);
   return `
     <article class="domain-card" id="domain-${escapeHtml(domain.code)}">
-      <header class="domain-header">
+      <header
+        class="domain-header"
+        data-path-key="${escapeAttribute(domain.pathKey)}"
+        tabindex="0"
+        role="button"
+        aria-label="查看 ${escapeAttribute(domain.displayFullTitle)} 的详情"
+      >
         <p class="domain-eyebrow">${escapeHtml(domain.code)} / Domain</p>
         <h3>${escapeHtml(domain.displayFullTitle)}</h3>
+        ${
+          domain.detail.definition
+            ? `<p class="domain-summary">${escapeHtml(domain.detail.definition)}</p>`
+            : ""
+        }
         ${domain.summary ? `<p class="domain-summary">${escapeHtml(domain.summary)}</p>` : ""}
         <div class="domain-stats">
           ${CROSSCUT_CODES.includes(domain.code) ? `<span class="domain-badge">横切层</span>` : ""}
+          <span class="domain-badge is-${escapeAttribute(status)}">${escapeHtml(
+            STATUS_LABELS[status]
+          )}</span>
           <span>${domain.modules.length} 个模块</span>
           <span>${domain.conceptCount} 个术语节点</span>
         </div>

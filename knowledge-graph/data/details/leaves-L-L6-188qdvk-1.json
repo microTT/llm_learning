@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-L-L6-188qdvk-1",
+    "type": "leaf-batch",
+    "label": "L6. 硬件层 / Leaves",
+    "domainCode": "L",
+    "domainTitle": "运行时与基础设施",
+    "moduleCode": "L6",
+    "moduleTitle": "硬件层",
+    "modulePathKey": "L/L6. 硬件层",
+    "parentPathKey": "L/L6. 硬件层",
+    "parentTitle": "L6. 硬件层",
+    "leafTitles": [
+      "CPU",
+      "GPU",
+      "NPU",
+      "Apple silicon unified memory",
+      "Multi-GPU",
+      "VRAM / RAM / disk constraints",
+      "Network bandwidth"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "L/L6. 硬件层/CPU": {},
+    "L/L6. 硬件层/GPU": {},
+    "L/L6. 硬件层/NPU": {},
+    "L/L6. 硬件层/Apple silicon unified memory": {},
+    "L/L6. 硬件层/Multi-GPU": {},
+    "L/L6. 硬件层/VRAM / RAM / disk constraints": {},
+    "L/L6. 硬件层/Network bandwidth": {}
+  }
+}

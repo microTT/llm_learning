@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-D-D5-dk1vqo-1",
+    "type": "leaf-batch",
+    "label": "D5. 生成范式 / Leaves",
+    "domainCode": "D",
+    "domainTitle": "深度学习与基础模型",
+    "moduleCode": "D5",
+    "moduleTitle": "生成范式",
+    "modulePathKey": "D/D5. 生成范式",
+    "parentPathKey": "D/D5. 生成范式",
+    "parentTitle": "D5. 生成范式",
+    "leafTitles": [
+      "自回归生成",
+      "编码—解码生成",
+      "扩散生成",
+      "条件生成",
+      "控制生成"
+    ],
+    "nodeCount": 5,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "D/D5. 生成范式/自回归生成": {},
+    "D/D5. 生成范式/编码—解码生成": {},
+    "D/D5. 生成范式/扩散生成": {},
+    "D/D5. 生成范式/条件生成": {},
+    "D/D5. 生成范式/控制生成": {}
+  }
+}

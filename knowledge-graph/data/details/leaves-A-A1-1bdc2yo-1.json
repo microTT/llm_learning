@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-A-A1-1bdc2yo-1",
+    "type": "leaf-batch",
+    "label": "信息论 / Leaves",
+    "domainCode": "A",
+    "domainTitle": "基础理论与计算机底座",
+    "moduleCode": "A1",
+    "moduleTitle": "数学基础",
+    "modulePathKey": "A/A1. 数学基础",
+    "parentPathKey": "A/A1. 数学基础/信息论",
+    "parentTitle": "信息论",
+    "leafTitles": [
+      "熵",
+      "交叉熵",
+      "KL 散度",
+      "互信息"
+    ],
+    "nodeCount": 4,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "A/A1. 数学基础/信息论/熵": {},
+    "A/A1. 数学基础/信息论/交叉熵": {},
+    "A/A1. 数学基础/信息论/KL 散度": {},
+    "A/A1. 数学基础/信息论/互信息": {}
+  }
+}

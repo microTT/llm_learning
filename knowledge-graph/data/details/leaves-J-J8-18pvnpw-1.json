@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-J-J8-18pvnpw-1",
+    "type": "leaf-batch",
+    "label": "J8. 安全与权限 / Leaves",
+    "domainCode": "J",
+    "domainTitle": "AI 应用工程",
+    "moduleCode": "J8",
+    "moduleTitle": "安全与权限",
+    "modulePathKey": "J/J8. 安全与权限",
+    "parentPathKey": "J/J8. 安全与权限",
+    "parentTitle": "J8. 安全与权限",
+    "leafTitles": [
+      "Auth",
+      "Secret management",
+      "Permission scopes",
+      "Sensitive action approval",
+      "Isolation boundaries"
+    ],
+    "nodeCount": 5,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "J/J8. 安全与权限/Auth": {},
+    "J/J8. 安全与权限/Secret management": {},
+    "J/J8. 安全与权限/Permission scopes": {},
+    "J/J8. 安全与权限/Sensitive action approval": {},
+    "J/J8. 安全与权限/Isolation boundaries": {}
+  }
+}

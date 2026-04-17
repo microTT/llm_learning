@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-J-J3-rtwvkk-1",
+    "type": "leaf-batch",
+    "label": "J3. 工具调用 / Leaves",
+    "domainCode": "J",
+    "domainTitle": "AI 应用工程",
+    "moduleCode": "J3",
+    "moduleTitle": "工具调用",
+    "modulePathKey": "J/J3. 工具调用",
+    "parentPathKey": "J/J3. 工具调用",
+    "parentTitle": "J3. 工具调用",
+    "leafTitles": [
+      "Function calling",
+      "Tool schema design",
+      "Tool routing",
+      "Tool execution",
+      "Tool result injection",
+      "Tool retries / fallback"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "J/J3. 工具调用/Function calling": {},
+    "J/J3. 工具调用/Tool schema design": {},
+    "J/J3. 工具调用/Tool routing": {},
+    "J/J3. 工具调用/Tool execution": {},
+    "J/J3. 工具调用/Tool result injection": {},
+    "J/J3. 工具调用/Tool retries / fallback": {}
+  }
+}

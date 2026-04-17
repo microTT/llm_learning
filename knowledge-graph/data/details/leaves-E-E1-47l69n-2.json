@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-E-E1-47l69n-2",
+    "type": "leaf-batch",
+    "label": "E1. 语言（NLP / LLM） / Leaves 2",
+    "domainCode": "E",
+    "domainTitle": "模态、任务域与智能形态",
+    "moduleCode": "E1",
+    "moduleTitle": "语言（NLP / LLM）",
+    "modulePathKey": "E/E1. 语言（NLP / LLM）",
+    "parentPathKey": "E/E1. 语言（NLP / LLM）",
+    "parentTitle": "E1. 语言（NLP / LLM）",
+    "leafTitles": [
+      "对话",
+      "检索",
+      "代码生成与理解",
+      "结构化解析",
+      "LLM：通用语言能力模型"
+    ],
+    "nodeCount": 5,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "E/E1. 语言（NLP / LLM）/对话": {},
+    "E/E1. 语言（NLP / LLM）/检索": {},
+    "E/E1. 语言（NLP / LLM）/代码生成与理解": {},
+    "E/E1. 语言（NLP / LLM）/结构化解析": {},
+    "E/E1. 语言（NLP / LLM）/LLM：通用语言能力模型": {}
+  }
+}

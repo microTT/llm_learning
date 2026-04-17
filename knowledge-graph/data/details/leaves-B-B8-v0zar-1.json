@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-B-B8-v0zar-1",
+    "type": "leaf-batch",
+    "label": "B8. 决策与多智能体 / Leaves",
+    "domainCode": "B",
+    "domainTitle": "经典 AI",
+    "moduleCode": "B8",
+    "moduleTitle": "决策与多智能体",
+    "modulePathKey": "B/B8. 决策与多智能体",
+    "parentPathKey": "B/B8. 决策与多智能体",
+    "parentTitle": "B8. 决策与多智能体",
+    "leafTitles": [
+      "决策理论",
+      "MDP",
+      "POMDP",
+      "Multi-agent decision making",
+      "博弈论直觉",
+      "协作与竞争"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "B/B8. 决策与多智能体/决策理论": {},
+    "B/B8. 决策与多智能体/MDP": {},
+    "B/B8. 决策与多智能体/POMDP": {},
+    "B/B8. 决策与多智能体/Multi-agent decision making": {},
+    "B/B8. 决策与多智能体/博弈论直觉": {},
+    "B/B8. 决策与多智能体/协作与竞争": {}
+  }
+}

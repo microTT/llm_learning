@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-B-B2-whkeud-1",
+    "type": "leaf-batch",
+    "label": "局部搜索 / Leaves",
+    "domainCode": "B",
+    "domainTitle": "经典 AI",
+    "moduleCode": "B2",
+    "moduleTitle": "搜索",
+    "modulePathKey": "B/B2. 搜索",
+    "parentPathKey": "B/B2. 搜索/局部搜索",
+    "parentTitle": "局部搜索",
+    "leafTitles": [
+      "Hill Climbing",
+      "Simulated Annealing"
+    ],
+    "nodeCount": 2,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "B/B2. 搜索/局部搜索/Hill Climbing": {},
+    "B/B2. 搜索/局部搜索/Simulated Annealing": {}
+  }
+}

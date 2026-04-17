@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-I-I1-1f2rb9f-1",
+    "type": "leaf-batch",
+    "label": "I1. 表示与检索基础 / Leaves",
+    "domainCode": "I",
+    "domainTitle": "检索、记忆与外部知识",
+    "moduleCode": "I1",
+    "moduleTitle": "表示与检索基础",
+    "modulePathKey": "I/I1. 表示与检索基础",
+    "parentPathKey": "I/I1. 表示与检索基础",
+    "parentTitle": "I1. 表示与检索基础",
+    "leafTitles": [
+      "Embeddings",
+      "Dense retrieval",
+      "Sparse retrieval",
+      "Hybrid retrieval",
+      "Similarity search",
+      "Reranking"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "I/I1. 表示与检索基础/Embeddings": {},
+    "I/I1. 表示与检索基础/Dense retrieval": {},
+    "I/I1. 表示与检索基础/Sparse retrieval": {},
+    "I/I1. 表示与检索基础/Hybrid retrieval": {},
+    "I/I1. 表示与检索基础/Similarity search": {},
+    "I/I1. 表示与检索基础/Reranking": {}
+  }
+}

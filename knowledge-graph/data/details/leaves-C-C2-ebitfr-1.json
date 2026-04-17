@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-C-C2-ebitfr-1",
+    "type": "leaf-batch",
+    "label": "监督学习 / Leaves",
+    "domainCode": "C",
+    "domainTitle": "机器学习",
+    "moduleCode": "C2",
+    "moduleTitle": "学习范式",
+    "modulePathKey": "C/C2. 学习范式",
+    "parentPathKey": "C/C2. 学习范式/监督学习",
+    "parentTitle": "监督学习",
+    "leafTitles": [
+      "回归",
+      "分类",
+      "排序"
+    ],
+    "nodeCount": 3,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "C/C2. 学习范式/监督学习/回归": {},
+    "C/C2. 学习范式/监督学习/分类": {},
+    "C/C2. 学习范式/监督学习/排序": {}
+  }
+}

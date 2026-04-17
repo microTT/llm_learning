@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-I-I6-yh7i5b-1",
+    "type": "leaf-batch",
+    "label": "I6. 关键质量点 / Leaves",
+    "domainCode": "I",
+    "domainTitle": "检索、记忆与外部知识",
+    "moduleCode": "I6",
+    "moduleTitle": "关键质量点",
+    "modulePathKey": "I/I6. 关键质量点",
+    "parentPathKey": "I/I6. 关键质量点",
+    "parentTitle": "I6. 关键质量点",
+    "leafTitles": [
+      "召回率",
+      "精准率",
+      "Chunk 质量",
+      "过期知识",
+      "授权与权限边界",
+      "可追溯性",
+      "引用可信度"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "I/I6. 关键质量点/召回率": {},
+    "I/I6. 关键质量点/精准率": {},
+    "I/I6. 关键质量点/Chunk 质量": {},
+    "I/I6. 关键质量点/过期知识": {},
+    "I/I6. 关键质量点/授权与权限边界": {},
+    "I/I6. 关键质量点/可追溯性": {},
+    "I/I6. 关键质量点/引用可信度": {}
+  }
+}

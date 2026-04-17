@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-C-C5-14frcqx-1",
+    "type": "leaf-batch",
+    "label": "C5. 指标体系 / Leaves",
+    "domainCode": "C",
+    "domainTitle": "机器学习",
+    "moduleCode": "C5",
+    "moduleTitle": "指标体系",
+    "modulePathKey": "C/C5. 指标体系",
+    "parentPathKey": "C/C5. 指标体系",
+    "parentTitle": "C5. 指标体系",
+    "leafTitles": [
+      "Accuracy",
+      "Precision / Recall / F1",
+      "AUC",
+      "MSE / MAE",
+      "Ranking metrics",
+      "Calibration",
+      "Cost-sensitive metrics"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "C/C5. 指标体系/Accuracy": {},
+    "C/C5. 指标体系/Precision / Recall / F1": {},
+    "C/C5. 指标体系/AUC": {},
+    "C/C5. 指标体系/MSE / MAE": {},
+    "C/C5. 指标体系/Ranking metrics": {},
+    "C/C5. 指标体系/Calibration": {},
+    "C/C5. 指标体系/Cost-sensitive metrics": {}
+  }
+}

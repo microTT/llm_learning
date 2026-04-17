@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-N-N4-o1c0ks-1",
+    "type": "leaf-batch",
+    "label": "N4. 体验设计 / Leaves",
+    "domainCode": "N",
+    "domainTitle": "产品、场景与组织",
+    "moduleCode": "N4",
+    "moduleTitle": "体验设计",
+    "modulePathKey": "N/N4. 体验设计",
+    "parentPathKey": "N/N4. 体验设计",
+    "parentTitle": "N4. 体验设计",
+    "leafTitles": [
+      "信任",
+      "透明度",
+      "引用",
+      "控制权",
+      "可撤销",
+      "纠错入口",
+      "长任务可见性"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "N/N4. 体验设计/信任": {},
+    "N/N4. 体验设计/透明度": {},
+    "N/N4. 体验设计/引用": {},
+    "N/N4. 体验设计/控制权": {},
+    "N/N4. 体验设计/可撤销": {},
+    "N/N4. 体验设计/纠错入口": {},
+    "N/N4. 体验设计/长任务可见性": {}
+  }
+}

@@ -1,0 +1,74 @@
+你正在补充 AI 知识图谱的一个 detail shard。只处理当前 shard，不要新增节点、不要改 pathKey。
+Shard 信息
+- shardId: leaves-D-D3-12hzr8h-1
+- expected answer file: prompts/detail/leaves-D-D3-12hzr8h-1/answer.md
+- label: D3. 训练范式 / Leaves
+- type: leaf-batch
+- domain: D. 深度学习与基础模型
+- module: D3. 训练范式
+- parent pathKey: D/D3. 训练范式
+- parent title: D3. 训练范式
+- leaf titles: 从头训练 / 预训练 / 微调 / 多任务训练 / 迁移学习 / 蒸馏 / 自训练 / 伪标签 / Curriculum / staged training
+- shard owned node count: 8
+输出要求
+- 只输出一个 JSON 对象，不要 Markdown 代码块，不要解释文字。
+- 固定输出形状：{ "shardId": "<shard-id>", "nodes": { "<pathKey>": { ...detailFields } } }
+- 只允许这些字段：status, definition, importance, minimumDemo, hardwareBudget, examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next
+- text 字段：definition, importance, minimumDemo, hardwareBudget
+- list 字段：examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next，必须是字符串数组。
+- `prerequisites` / `next` 优先使用精确 pathKey；如果没有把握，不要编造图谱里不存在的节点。
+- 对当前已经有内容的节点，以补全、校正、统一口径为主；不要为了改写而改写。
+- 所有 target pathKey 都要保留在返回 JSON 里；如果某个节点暂时没有把握，可以保持为空对象。
+当前 shard 的目标节点
+1. [concept] D/D3. 训练范式/从头训练
+   - title: 从头训练
+   - parent: D/D3. 训练范式
+   - currentDetail: {}
+2. [concept] D/D3. 训练范式/预训练
+   - title: 预训练
+   - parent: D/D3. 训练范式
+   - currentDetail: {}
+3. [concept] D/D3. 训练范式/微调
+   - title: 微调
+   - parent: D/D3. 训练范式
+   - currentDetail: {}
+4. [concept] D/D3. 训练范式/多任务训练
+   - title: 多任务训练
+   - parent: D/D3. 训练范式
+   - currentDetail: {}
+5. [concept] D/D3. 训练范式/迁移学习
+   - title: 迁移学习
+   - parent: D/D3. 训练范式
+   - currentDetail: {}
+6. [concept] D/D3. 训练范式/蒸馏
+   - title: 蒸馏
+   - parent: D/D3. 训练范式
+   - currentDetail: {}
+7. [concept] D/D3. 训练范式/自训练 / 伪标签
+   - title: 自训练 / 伪标签
+   - parent: D/D3. 训练范式
+   - currentDetail: {}
+8. [concept] D/D3. 训练范式/Curriculum / staged training
+   - title: Curriculum / staged training
+   - parent: D/D3. 训练范式
+   - currentDetail: {}
+可参考的 pathKey
+- current domain root: D
+- current domain all pathKeys: D | D/D1. 神经网络基础 | D/D1. 神经网络基础/张量 | D/D1. 神经网络基础/参数 | D/D1. 神经网络基础/前向传播 | D/D1. 神经网络基础/反向传播 | D/D1. 神经网络基础/Autograd | D/D1. 神经网络基础/激活函数 | D/D1. 神经网络基础/Normalization | D/D1. 神经网络基础/Regularization | D/D1. 神经网络基础/Optimizer | D/D1. 神经网络基础/Checkpoint | D/D2. 架构家族 | D/D2. 架构家族/MLP | D/D2. 架构家族/CNN | D/D2. 架构家族/RNN / LSTM / GRU | D/D2. 架构家族/Transformer | D/D2. 架构家族/Diffusion models | D/D2. 架构家族/Mixture of Experts | D/D2. 架构家族/State Space Models | D/D2. 架构家族/Graph Neural Networks | D/D3. 训练范式 | D/D3. 训练范式/从头训练 | D/D3. 训练范式/预训练 | D/D3. 训练范式/微调 | D/D3. 训练范式/多任务训练 | D/D3. 训练范式/迁移学习 | D/D3. 训练范式/蒸馏 | D/D3. 训练范式/自训练 / 伪标签 | D/D3. 训练范式/Curriculum / staged training | D/D4. 基础模型类型 | D/D4. 基础模型类型/文本基础模型 | D/D4. 基础模型类型/视觉基础模型 | D/D4. 基础模型类型/语音 / 音频基础模型 | D/D4. 基础模型类型/视频基础模型 | D/D4. 基础模型类型/多模态基础模型 | D/D4. 基础模型类型/具身/世界模型（更偏前沿与系统） | D/D5. 生成范式 | D/D5. 生成范式/自回归生成 | D/D5. 生成范式/编码—解码生成 | D/D5. 生成范式/扩散生成 | D/D5. 生成范式/条件生成 | D/D5. 生成范式/控制生成 | D/D6. 规模化要素 | D/D6. 规模化要素/数据规模 | D/D6. 规模化要素/参数规模 | D/D6. 规模化要素/训练算力 | D/D6. 规模化要素/上下文长度 | D/D6. 规模化要素/训练时长 | D/D6. 规模化要素/系统优化
+- current module root: D/D3. 训练范式
+- current module all pathKeys: D/D3. 训练范式 | D/D3. 训练范式/从头训练 | D/D3. 训练范式/预训练 | D/D3. 训练范式/微调 | D/D3. 训练范式/多任务训练 | D/D3. 训练范式/迁移学习 | D/D3. 训练范式/蒸馏 | D/D3. 训练范式/自训练 / 伪标签 | D/D3. 训练范式/Curriculum / staged training
+- sibling modules in domain: D/D1. 神经网络基础 | D/D2. 架构家族 | D/D4. 基础模型类型 | D/D5. 生成范式 | D/D6. 规模化要素
+返回模板
+{
+  "shardId": "leaves-D-D3-12hzr8h-1",
+  "nodes": {
+    "D/D3. 训练范式/从头训练": {},
+    "D/D3. 训练范式/预训练": {},
+    "D/D3. 训练范式/微调": {},
+    "D/D3. 训练范式/多任务训练": {},
+    "D/D3. 训练范式/迁移学习": {},
+    "D/D3. 训练范式/蒸馏": {},
+    "D/D3. 训练范式/自训练 / 伪标签": {},
+    "D/D3. 训练范式/Curriculum / staged training": {}
+  }
+}

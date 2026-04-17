@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-H-H6-18dbbbu-1",
+    "type": "leaf-batch",
+    "label": "H6. 行为优化维度 / Leaves",
+    "domainCode": "H",
+    "domainTitle": "模型适配、后训练与对齐",
+    "moduleCode": "H6",
+    "moduleTitle": "行为优化维度",
+    "modulePathKey": "H/H6. 行为优化维度",
+    "parentPathKey": "H/H6. 行为优化维度",
+    "parentTitle": "H6. 行为优化维度",
+    "leafTitles": [
+      "更准确",
+      "更稳定",
+      "更短/更长",
+      "更结构化",
+      "更会调用工具",
+      "更适应特定领域",
+      "更便宜 / 更快"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "H/H6. 行为优化维度/更准确": {},
+    "H/H6. 行为优化维度/更稳定": {},
+    "H/H6. 行为优化维度/更短/更长": {},
+    "H/H6. 行为优化维度/更结构化": {},
+    "H/H6. 行为优化维度/更会调用工具": {},
+    "H/H6. 行为优化维度/更适应特定领域": {},
+    "H/H6. 行为优化维度/更便宜 / 更快": {}
+  }
+}

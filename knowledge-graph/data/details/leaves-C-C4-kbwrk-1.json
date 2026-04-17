@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-C-C4-kbwrk-1",
+    "type": "leaf-batch",
+    "label": "C4. 共性问题 / Leaves",
+    "domainCode": "C",
+    "domainTitle": "机器学习",
+    "moduleCode": "C4",
+    "moduleTitle": "共性问题",
+    "modulePathKey": "C/C4. 共性问题",
+    "parentPathKey": "C/C4. 共性问题",
+    "parentTitle": "C4. 共性问题",
+    "leafTitles": [
+      "过拟合 / 欠拟合",
+      "偏差 / 方差",
+      "类别不平衡",
+      "特征工程",
+      "数据泄漏",
+      "校准",
+      "鲁棒性",
+      "可解释性"
+    ],
+    "nodeCount": 8,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "C/C4. 共性问题/过拟合 / 欠拟合": {},
+    "C/C4. 共性问题/偏差 / 方差": {},
+    "C/C4. 共性问题/类别不平衡": {},
+    "C/C4. 共性问题/特征工程": {},
+    "C/C4. 共性问题/数据泄漏": {},
+    "C/C4. 共性问题/校准": {},
+    "C/C4. 共性问题/鲁棒性": {},
+    "C/C4. 共性问题/可解释性": {}
+  }
+}

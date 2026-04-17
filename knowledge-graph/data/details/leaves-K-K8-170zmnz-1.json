@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-K-K8-170zmnz-1",
+    "type": "leaf-batch",
+    "label": "K8. 人在回路 / Leaves",
+    "domainCode": "K",
+    "domainTitle": "Agent 系统",
+    "moduleCode": "K8",
+    "moduleTitle": "人在回路",
+    "modulePathKey": "K/K8. 人在回路",
+    "parentPathKey": "K/K8. 人在回路",
+    "parentTitle": "K8. 人在回路",
+    "leafTitles": [
+      "Approval before side effects",
+      "Escalation",
+      "Review queues",
+      "Human override",
+      "Manual correction",
+      "HITL checkpoints"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "K/K8. 人在回路/Approval before side effects": {},
+    "K/K8. 人在回路/Escalation": {},
+    "K/K8. 人在回路/Review queues": {},
+    "K/K8. 人在回路/Human override": {},
+    "K/K8. 人在回路/Manual correction": {},
+    "K/K8. 人在回路/HITL checkpoints": {}
+  }
+}

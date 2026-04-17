@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-K-K3-mqdcm5-1",
+    "type": "leaf-batch",
+    "label": "K3. 单 Agent 模式 / Leaves",
+    "domainCode": "K",
+    "domainTitle": "Agent 系统",
+    "moduleCode": "K3",
+    "moduleTitle": "单 Agent 模式",
+    "modulePathKey": "K/K3. 单 Agent 模式",
+    "parentPathKey": "K/K3. 单 Agent 模式",
+    "parentTitle": "K3. 单 Agent 模式",
+    "leafTitles": [
+      "ReAct / reason-act loop",
+      "Plan-then-act",
+      "Reflect / retry",
+      "Tool-using agent",
+      "Retrieval-first agent",
+      "Verification loop"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "K/K3. 单 Agent 模式/ReAct / reason-act loop": {},
+    "K/K3. 单 Agent 模式/Plan-then-act": {},
+    "K/K3. 单 Agent 模式/Reflect / retry": {},
+    "K/K3. 单 Agent 模式/Tool-using agent": {},
+    "K/K3. 单 Agent 模式/Retrieval-first agent": {},
+    "K/K3. 单 Agent 模式/Verification loop": {}
+  }
+}

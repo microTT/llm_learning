@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-I-I3-6k04nt-1",
+    "type": "leaf-batch",
+    "label": "I3. RAG 管线 / Leaves",
+    "domainCode": "I",
+    "domainTitle": "检索、记忆与外部知识",
+    "moduleCode": "I3",
+    "moduleTitle": "RAG 管线",
+    "modulePathKey": "I/I3. RAG 管线",
+    "parentPathKey": "I/I3. RAG 管线",
+    "parentTitle": "I3. RAG 管线",
+    "leafTitles": [
+      "Query understanding",
+      "Query rewrite",
+      "Retrieval",
+      "Permission-aware retrieval",
+      "Rerank",
+      "Context packing",
+      "Citation span alignment",
+      "Generation",
+      "Citation / provenance",
+      "Post-processing"
+    ],
+    "nodeCount": 10,
+    "filledNodeCount": 1
+  },
+  "nodes": {
+    "I/I3. RAG 管线/Query understanding": {},
+    "I/I3. RAG 管线/Query rewrite": {},
+    "I/I3. RAG 管线/Retrieval": {},
+    "I/I3. RAG 管线/Permission-aware retrieval": {
+      "status": "seed",
+      "definition": "Permission-aware retrieval 指检索阶段就按用户、租户、项目或文档权限过滤候选结果，而不是先检索再在回答阶段“希望模型别看到”。",
+      "importance": "RAG 一旦接入企业文档，权限边界就是第一性约束；如果这一步做错，回答质量问题会直接升级成安全事故。",
+      "minimumDemo": "为同一知识库构造两组不同权限用户，确保两人检索同一问题时召回集合不同且引用来源不越权。",
+      "hardwareBudget": "与硬件关系不大，重点在权限模型和索引设计。",
+      "prerequisites": [
+        "I/I2. 知识库构建/Metadata schema",
+        "I/I3. RAG 管线",
+        "J/J8. 安全与权限"
+      ],
+      "coreMetrics": [
+        "unauthorized recall rate",
+        "authorized recall rate",
+        "filter latency",
+        "citation permission correctness"
+      ],
+      "toolchain": [
+        "vector store filters",
+        "ACL / permission service",
+        "audit logs"
+      ],
+      "failureSigns": [
+        "答案没直接泄露，但 citation 或 chunk preview 泄露了受限内容",
+        "权限过滤后 recall 断崖式下降，系统却没有降级路径"
+      ],
+      "next": [
+        "J/J8. 安全与权限",
+        "M/M5. 安全控制",
+        "M/M7. 隐私与合规"
+      ]
+    },
+    "I/I3. RAG 管线/Rerank": {},
+    "I/I3. RAG 管线/Context packing": {},
+    "I/I3. RAG 管线/Citation span alignment": {},
+    "I/I3. RAG 管线/Generation": {},
+    "I/I3. RAG 管线/Citation / provenance": {},
+    "I/I3. RAG 管线/Post-processing": {}
+  }
+}

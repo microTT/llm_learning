@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-F-F2-1rx2c1j-1",
+    "type": "leaf-batch",
+    "label": "F2. 数据形态 / Leaves",
+    "domainCode": "F",
+    "domainTitle": "数据层（横切层）",
+    "moduleCode": "F2",
+    "moduleTitle": "数据形态",
+    "modulePathKey": "F/F2. 数据形态",
+    "parentPathKey": "F/F2. 数据形态",
+    "parentTitle": "F2. 数据形态",
+    "leafTitles": [
+      "文本",
+      "图像",
+      "音频",
+      "视频",
+      "多模态对",
+      "JSON / schema data",
+      "图结构",
+      "时间序列",
+      "代码",
+      "交互轨迹"
+    ],
+    "nodeCount": 10,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "F/F2. 数据形态/文本": {},
+    "F/F2. 数据形态/图像": {},
+    "F/F2. 数据形态/音频": {},
+    "F/F2. 数据形态/视频": {},
+    "F/F2. 数据形态/多模态对": {},
+    "F/F2. 数据形态/JSON / schema data": {},
+    "F/F2. 数据形态/图结构": {},
+    "F/F2. 数据形态/时间序列": {},
+    "F/F2. 数据形态/代码": {},
+    "F/F2. 数据形态/交互轨迹": {}
+  }
+}

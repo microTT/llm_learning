@@ -1,0 +1,96 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-L-L3-1hn2gmn-1",
+    "type": "leaf-batch",
+    "label": "L3. 推理优化 / Leaves 1",
+    "domainCode": "L",
+    "domainTitle": "运行时与基础设施",
+    "moduleCode": "L3",
+    "moduleTitle": "推理优化",
+    "modulePathKey": "L/L3. 推理优化",
+    "parentPathKey": "L/L3. 推理优化",
+    "parentTitle": "L3. 推理优化",
+    "leafTitles": [
+      "PagedAttention",
+      "Continuous batching",
+      "Chunked prefill",
+      "KV cache",
+      "Prefix cache",
+      "Prefix cache sharing / invalidation",
+      "KV offload"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 2
+  },
+  "nodes": {
+    "L/L3. 推理优化/PagedAttention": {
+      "status": "seed",
+      "definition": "PagedAttention 通过把 KV cache 组织成分页块，减少长上下文推理时的大块连续内存需求，让 serving 更容易在动态 batch 下复用内存。",
+      "importance": "这是现代高并发 serving 从“能跑”走向“能稳定高利用率运行”的关键术语之一，也是理解 vLLM 这类系统的入口。",
+      "minimumDemo": "对比普通 KV cache 管理和 paged cache 的显存占用与吞吐差异，至少观察长上下文和动态 batch 场景。",
+      "hardwareBudget": "需要能跑推理服务的 GPU；消费级 GPU 已能观察趋势，生产调优通常需要更大显存。",
+      "prerequisites": [
+        "G/G2. Transformer 机制",
+        "L/L3. 推理优化/KV cache",
+        "L/L3. 推理优化/Continuous batching"
+      ],
+      "coreMetrics": [
+        "throughput",
+        "memory fragmentation",
+        "KV cache utilization",
+        "p95 latency"
+      ],
+      "toolchain": [
+        "vLLM",
+        "GPU profiler",
+        "serving benchmark"
+      ],
+      "failureSigns": [
+        "动态并发下显存碎片严重",
+        "batch 一增大就出现明显抖动或 OOM"
+      ],
+      "next": [
+        "L/L3. 推理优化/Continuous batching",
+        "L/L3. 推理优化/KV offload"
+      ]
+    },
+    "L/L3. 推理优化/Continuous batching": {
+      "status": "seed",
+      "definition": "Continuous batching 让推理服务不必等整批请求一起结束再接下一批，而是在解码过程中持续把新请求插入可执行队列里。",
+      "importance": "它是现代在线 serving 的核心能力之一，因为真实流量不是整齐批处理；没有 continuous batching，吞吐和尾延迟通常都会明显变差。",
+      "minimumDemo": "用在线 serving benchmark 对比 static batch 和 continuous batch，在混合短请求/长请求场景下观察吞吐与 p95 latency。",
+      "hardwareBudget": "需要可观测 GPU 推理环境；消费级 GPU 足够看趋势，生产优化更依赖稳定并发流量。",
+      "prerequisites": [
+        "L/L3. 推理优化/PagedAttention",
+        "L/L3. 推理优化/KV cache",
+        "L/L3. 推理优化/Concurrency control"
+      ],
+      "coreMetrics": [
+        "throughput",
+        "queue wait time",
+        "p95 latency",
+        "GPU utilization"
+      ],
+      "toolchain": [
+        "vLLM",
+        "serving benchmark",
+        "GPU metrics dashboard"
+      ],
+      "failureSigns": [
+        "短请求总被长请求拖住，排队时间异常长",
+        "GPU 利用率不低，但用户侧尾延迟仍明显恶化"
+      ],
+      "next": [
+        "L/L3. 推理优化/Chunked prefill",
+        "L/L7. 生产运行指标"
+      ]
+    },
+    "L/L3. 推理优化/Chunked prefill": {},
+    "L/L3. 推理优化/KV cache": {},
+    "L/L3. 推理优化/Prefix cache": {},
+    "L/L3. 推理优化/Prefix cache sharing / invalidation": {},
+    "L/L3. 推理优化/KV offload": {}
+  }
+}

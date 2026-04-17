@@ -1,0 +1,63 @@
+你正在补充 AI 知识图谱的一个 detail shard。只处理当前 shard，不要新增节点、不要改 pathKey。
+Shard 信息
+- shardId: domain-L
+- expected answer file: prompts/detail/domain-L/answer.md
+- label: L. 运行时与基础设施 / 概览
+- type: domain-overview
+- domain: L. 运行时与基础设施
+- shard owned node count: 8
+- prompt focus: 只补这个 domain 自身的全局介绍；下面列出的模块和父概念仅作为上下文参考，不需要在回答里逐个展开。
+输出要求
+- 只输出一个 JSON 对象，不要 Markdown 代码块，不要解释文字。
+- 固定输出形状：{ "shardId": "<shard-id>", "nodes": { "<pathKey>": { ...detailFields } } }
+- 只允许这些字段：status, definition, importance, minimumDemo, hardwareBudget, examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next
+- text 字段：definition, importance, minimumDemo, hardwareBudget
+- list 字段：examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next，必须是字符串数组。
+- `prerequisites` / `next` 优先使用精确 pathKey；如果没有把握，不要编造图谱里不存在的节点。
+- 对当前已经有内容的节点，以补全、校正、统一口径为主；不要为了改写而改写。
+- domain-overview 只需要返回 domain 根节点本身；不要在回答里重复输出模块或父概念节点。
+当前需要补充的全局节点
+1. [domain] L
+   - title: 运行时与基础设施
+   - children: L1. 模型访问方式 / L2. 服务运行时 / L3. 推理优化 / L4. 训练基础设施 / L5. 系统基础设施 / L6. 硬件层 / L7. 生产运行指标
+   - currentDetail: {}
+本 domain 的模块上下文（仅供理解全局范围，不要在回答里展开成模块逐项说明）
+1. L1. 模型访问方式
+   - pathKey: L/L1. 模型访问方式
+   - concept count: 5
+   - sample children: 云 API / 自托管推理 / 本地推理 / 浏览器 / Edge 推理 / 混合推理
+2. L2. 服务运行时
+   - pathKey: L/L2. 服务运行时
+   - concept count: 5
+   - sample children: vLLM / Ollama / MLX / MLX-LM / Transformers.js / 其他 OpenAI-compatible servers
+3. L3. 推理优化
+   - pathKey: L/L3. 推理优化
+   - concept count: 13
+   - sample children: PagedAttention / Continuous batching / Chunked prefill / KV cache / Prefix cache / Prefix cache sharing / invalidation
+4. L4. 训练基础设施
+   - pathKey: L/L4. 训练基础设施
+   - concept count: 7
+   - sample children: PyTorch / Accelerate / DDP / FSDP / Checkpointing / Distributed training
+5. L5. 系统基础设施
+   - pathKey: L/L5. 系统基础设施
+   - concept count: 7
+   - sample children: SQL / NoSQL / Vector DB / Object storage / Cache / Queue / Artifact storage
+6. L6. 硬件层
+   - pathKey: L/L6. 硬件层
+   - concept count: 7
+   - sample children: CPU / GPU / NPU / Apple silicon unified memory / Multi-GPU / VRAM / RAM / disk constraints
+7. L7. 生产运行指标
+   - pathKey: L/L7. 生产运行指标
+   - concept count: 8
+   - sample children: Latency / Throughput / Cost / Error rate / Availability / Token usage
+可参考的 pathKey
+- current domain root: L
+- current domain all pathKeys: L | L/L1. 模型访问方式 | L/L1. 模型访问方式/云 API | L/L1. 模型访问方式/自托管推理 | L/L1. 模型访问方式/本地推理 | L/L1. 模型访问方式/浏览器 / Edge 推理 | L/L1. 模型访问方式/混合推理 | L/L2. 服务运行时 | L/L2. 服务运行时/vLLM | L/L2. 服务运行时/Ollama | L/L2. 服务运行时/MLX / MLX-LM | L/L2. 服务运行时/Transformers.js | L/L2. 服务运行时/其他 OpenAI-compatible servers | L/L3. 推理优化 | L/L3. 推理优化/PagedAttention | L/L3. 推理优化/Continuous batching | L/L3. 推理优化/Chunked prefill | L/L3. 推理优化/KV cache | L/L3. 推理优化/Prefix cache | L/L3. 推理优化/Prefix cache sharing / invalidation | L/L3. 推理优化/KV offload | L/L3. 推理优化/Speculative decoding | L/L3. 推理优化/Quantized inference | L/L3. 推理优化/Context length management | L/L3. 推理优化/Compiled graphs / kernels | L/L3. 推理优化/Concurrency control | L/L3. 推理优化/Throughput / latency tuning | L/L4. 训练基础设施 | L/L4. 训练基础设施/PyTorch | L/L4. 训练基础设施/Accelerate | L/L4. 训练基础设施/DDP | L/L4. 训练基础设施/FSDP | L/L4. 训练基础设施/Checkpointing | L/L4. 训练基础设施/Distributed training | L/L4. 训练基础设施/Experiment tracking | L/L5. 系统基础设施 | L/L5. 系统基础设施/SQL / NoSQL | L/L5. 系统基础设施/Vector DB | L/L5. 系统基础设施/Object storage | L/L5. 系统基础设施/Cache | L/L5. 系统基础设施/Queue | L/L5. 系统基础设施/Artifact storage | L/L5. 系统基础设施/Container / deployment layer | L/L6. 硬件层 | L/L6. 硬件层/CPU | L/L6. 硬件层/GPU | L/L6. 硬件层/NPU | L/L6. 硬件层/Apple silicon unified memory | L/L6. 硬件层/Multi-GPU | L/L6. 硬件层/VRAM / RAM / disk constraints | L/L6. 硬件层/Network bandwidth | L/L7. 生产运行指标 | L/L7. 生产运行指标/Latency | L/L7. 生产运行指标/Throughput | L/L7. 生产运行指标/Cost | L/L7. 生产运行指标/Error rate | L/L7. 生产运行指标/Availability | L/L7. 生产运行指标/Token usage | L/L7. 生产运行指标/GPU utilization | L/L7. 生产运行指标/Context pressure
+- sibling modules in domain: L/L1. 模型访问方式 | L/L2. 服务运行时 | L/L3. 推理优化 | L/L4. 训练基础设施 | L/L5. 系统基础设施 | L/L6. 硬件层 | L/L7. 生产运行指标
+返回模板
+{
+  "shardId": "domain-L",
+  "nodes": {
+    "L": {}
+  }
+}

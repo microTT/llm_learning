@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-N-N1-78ntg8-1",
+    "type": "leaf-batch",
+    "label": "N1. 场景类型 / Leaves",
+    "domainCode": "N",
+    "domainTitle": "产品、场景与组织",
+    "moduleCode": "N1",
+    "moduleTitle": "场景类型",
+    "modulePathKey": "N/N1. 场景类型",
+    "parentPathKey": "N/N1. 场景类型",
+    "parentTitle": "N1. 场景类型",
+    "leafTitles": [
+      "问答 / 检索",
+      "助手 / Copilot",
+      "编码",
+      "数据分析",
+      "文档处理",
+      "工作流自动化",
+      "研究",
+      "多模态交互",
+      "机器人 / 具身任务"
+    ],
+    "nodeCount": 9,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "N/N1. 场景类型/问答 / 检索": {},
+    "N/N1. 场景类型/助手 / Copilot": {},
+    "N/N1. 场景类型/编码": {},
+    "N/N1. 场景类型/数据分析": {},
+    "N/N1. 场景类型/文档处理": {},
+    "N/N1. 场景类型/工作流自动化": {},
+    "N/N1. 场景类型/研究": {},
+    "N/N1. 场景类型/多模态交互": {},
+    "N/N1. 场景类型/机器人 / 具身任务": {}
+  }
+}

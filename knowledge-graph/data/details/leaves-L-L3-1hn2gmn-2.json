@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-L-L3-1hn2gmn-2",
+    "type": "leaf-batch",
+    "label": "L3. 推理优化 / Leaves 2",
+    "domainCode": "L",
+    "domainTitle": "运行时与基础设施",
+    "moduleCode": "L3",
+    "moduleTitle": "推理优化",
+    "modulePathKey": "L/L3. 推理优化",
+    "parentPathKey": "L/L3. 推理优化",
+    "parentTitle": "L3. 推理优化",
+    "leafTitles": [
+      "Speculative decoding",
+      "Quantized inference",
+      "Context length management",
+      "Compiled graphs / kernels",
+      "Concurrency control",
+      "Throughput / latency tuning"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "L/L3. 推理优化/Speculative decoding": {},
+    "L/L3. 推理优化/Quantized inference": {},
+    "L/L3. 推理优化/Context length management": {},
+    "L/L3. 推理优化/Compiled graphs / kernels": {},
+    "L/L3. 推理优化/Concurrency control": {},
+    "L/L3. 推理优化/Throughput / latency tuning": {}
+  }
+}

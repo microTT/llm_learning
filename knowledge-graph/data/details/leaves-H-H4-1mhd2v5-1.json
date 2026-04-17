@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-H-H4-1mhd2v5-1",
+    "type": "leaf-batch",
+    "label": "H4. 参数高效适配 / Leaves",
+    "domainCode": "H",
+    "domainTitle": "模型适配、后训练与对齐",
+    "moduleCode": "H4",
+    "moduleTitle": "参数高效适配",
+    "modulePathKey": "H/H4. 参数高效适配",
+    "parentPathKey": "H/H4. 参数高效适配",
+    "parentTitle": "H4. 参数高效适配",
+    "leafTitles": [
+      "Adapter",
+      "LoRA",
+      "QLoRA",
+      "其他 PEFT 变体"
+    ],
+    "nodeCount": 4,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "H/H4. 参数高效适配/Adapter": {},
+    "H/H4. 参数高效适配/LoRA": {},
+    "H/H4. 参数高效适配/QLoRA": {},
+    "H/H4. 参数高效适配/其他 PEFT 变体": {}
+  }
+}

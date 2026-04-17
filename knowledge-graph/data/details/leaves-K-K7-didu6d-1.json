@@ -1,0 +1,62 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-K-K7-didu6d-1",
+    "type": "leaf-batch",
+    "label": "MCP protocol stack / Leaves",
+    "domainCode": "K",
+    "domainTitle": "Agent 系统",
+    "moduleCode": "K7",
+    "moduleTitle": "工具与外部连接",
+    "modulePathKey": "K/K7. 工具与外部连接",
+    "parentPathKey": "K/K7. 工具与外部连接/MCP protocol stack",
+    "parentTitle": "MCP protocol stack",
+    "leafTitles": [
+      "Base protocol（JSON-RPC）",
+      "Lifecycle & capability negotiation",
+      "Authorization",
+      "Transports（stdio / HTTP）",
+      "Roots / sampling",
+      "Logging / argument completion"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 1
+  },
+  "nodes": {
+    "K/K7. 工具与外部连接/MCP protocol stack/Base protocol（JSON-RPC）": {},
+    "K/K7. 工具与外部连接/MCP protocol stack/Lifecycle & capability negotiation": {
+      "status": "seed",
+      "definition": "Lifecycle & capability negotiation 决定 client 和 server 在连接建立后如何宣布自己支持的能力、版本和可调用对象，以及何时刷新这些能力。",
+      "importance": "这一步是 MCP 和“裸 JSON-RPC 工具调用”最大的差别之一；没有能力协商，client 无法可靠发现 resources、prompts、tools 与扩展能力。",
+      "minimumDemo": "让一个最小 client 连接 server，打印 initialize / capability negotiation 结果，并在能力变更后重新同步一次。",
+      "hardwareBudget": "CPU 即可。",
+      "prerequisites": [
+        "K/K7. 工具与外部连接/MCP protocol stack",
+        "K/K7. 工具与外部连接/MCP protocol stack/Base protocol（JSON-RPC）"
+      ],
+      "coreMetrics": [
+        "initialize success rate",
+        "capability sync correctness",
+        "reconnect recovery time"
+      ],
+      "toolchain": [
+        "MCP SDK",
+        "JSON-RPC inspector",
+        "server/client debug logs"
+      ],
+      "failureSigns": [
+        "transport 正常但 client 永远看不到新加的 tools/resources",
+        "server 重启后 client 状态没刷新，继续拿旧能力集执行"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/MCP protocol stack",
+        "K/K7. 工具与外部连接/MCP servers"
+      ]
+    },
+    "K/K7. 工具与外部连接/MCP protocol stack/Authorization": {},
+    "K/K7. 工具与外部连接/MCP protocol stack/Transports（stdio / HTTP）": {},
+    "K/K7. 工具与外部连接/MCP protocol stack/Roots / sampling": {},
+    "K/K7. 工具与外部连接/MCP protocol stack/Logging / argument completion": {}
+  }
+}

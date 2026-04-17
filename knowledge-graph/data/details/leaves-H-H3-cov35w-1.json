@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-H-H3-cov35w-1",
+    "type": "leaf-batch",
+    "label": "H3. 偏好优化与对齐 / Leaves",
+    "domainCode": "H",
+    "domainTitle": "模型适配、后训练与对齐",
+    "moduleCode": "H3",
+    "moduleTitle": "偏好优化与对齐",
+    "modulePathKey": "H/H3. 偏好优化与对齐",
+    "parentPathKey": "H/H3. 偏好优化与对齐",
+    "parentTitle": "H3. 偏好优化与对齐",
+    "leafTitles": [
+      "Reward modeling",
+      "DPO",
+      "Online DPO",
+      "GRPO",
+      "RLHF",
+      "RFT",
+      "Policy / constitutional alignment"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "H/H3. 偏好优化与对齐/Reward modeling": {},
+    "H/H3. 偏好优化与对齐/DPO": {},
+    "H/H3. 偏好优化与对齐/Online DPO": {},
+    "H/H3. 偏好优化与对齐/GRPO": {},
+    "H/H3. 偏好优化与对齐/RLHF": {},
+    "H/H3. 偏好优化与对齐/RFT": {},
+    "H/H3. 偏好优化与对齐/Policy / constitutional alignment": {}
+  }
+}

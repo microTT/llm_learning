@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-C-C2-69pqzl-1",
+    "type": "leaf-batch",
+    "label": "无监督学习 / Leaves",
+    "domainCode": "C",
+    "domainTitle": "机器学习",
+    "moduleCode": "C2",
+    "moduleTitle": "学习范式",
+    "modulePathKey": "C/C2. 学习范式",
+    "parentPathKey": "C/C2. 学习范式/无监督学习",
+    "parentTitle": "无监督学习",
+    "leafTitles": [
+      "聚类",
+      "降维",
+      "密度估计"
+    ],
+    "nodeCount": 3,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "C/C2. 学习范式/无监督学习/聚类": {},
+    "C/C2. 学习范式/无监督学习/降维": {},
+    "C/C2. 学习范式/无监督学习/密度估计": {}
+  }
+}

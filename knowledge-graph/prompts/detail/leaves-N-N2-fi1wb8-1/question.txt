@@ -1,0 +1,59 @@
+你正在补充 AI 知识图谱的一个 detail shard。只处理当前 shard，不要新增节点、不要改 pathKey。
+Shard 信息
+- shardId: leaves-N-N2-fi1wb8-1
+- expected answer file: prompts/detail/leaves-N-N2-fi1wb8-1/answer.md
+- label: N2. 自动化等级 / Leaves
+- type: leaf-batch
+- domain: N. 产品、场景与组织
+- module: N2. 自动化等级
+- parent pathKey: N/N2. 自动化等级
+- parent title: N2. 自动化等级
+- leaf titles: Suggestion only / Draft and review / Execute with approval / Narrow autonomous execution / Human-supervised autonomy
+- shard owned node count: 5
+输出要求
+- 只输出一个 JSON 对象，不要 Markdown 代码块，不要解释文字。
+- 固定输出形状：{ "shardId": "<shard-id>", "nodes": { "<pathKey>": { ...detailFields } } }
+- 只允许这些字段：status, definition, importance, minimumDemo, hardwareBudget, examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next
+- text 字段：definition, importance, minimumDemo, hardwareBudget
+- list 字段：examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next，必须是字符串数组。
+- `prerequisites` / `next` 优先使用精确 pathKey；如果没有把握，不要编造图谱里不存在的节点。
+- 对当前已经有内容的节点，以补全、校正、统一口径为主；不要为了改写而改写。
+- 所有 target pathKey 都要保留在返回 JSON 里；如果某个节点暂时没有把握，可以保持为空对象。
+当前 shard 的目标节点
+1. [concept] N/N2. 自动化等级/Suggestion only
+   - title: Suggestion only
+   - parent: N/N2. 自动化等级
+   - currentDetail: {}
+2. [concept] N/N2. 自动化等级/Draft and review
+   - title: Draft and review
+   - parent: N/N2. 自动化等级
+   - currentDetail: {}
+3. [concept] N/N2. 自动化等级/Execute with approval
+   - title: Execute with approval
+   - parent: N/N2. 自动化等级
+   - currentDetail: {}
+4. [concept] N/N2. 自动化等级/Narrow autonomous execution
+   - title: Narrow autonomous execution
+   - parent: N/N2. 自动化等级
+   - currentDetail: {}
+5. [concept] N/N2. 自动化等级/Human-supervised autonomy
+   - title: Human-supervised autonomy
+   - parent: N/N2. 自动化等级
+   - currentDetail: {}
+可参考的 pathKey
+- current domain root: N
+- current domain all pathKeys: N | N/N1. 场景类型 | N/N1. 场景类型/问答 / 检索 | N/N1. 场景类型/助手 / Copilot | N/N1. 场景类型/编码 | N/N1. 场景类型/数据分析 | N/N1. 场景类型/文档处理 | N/N1. 场景类型/工作流自动化 | N/N1. 场景类型/研究 | N/N1. 场景类型/多模态交互 | N/N1. 场景类型/机器人 / 具身任务 | N/N2. 自动化等级 | N/N2. 自动化等级/Suggestion only | N/N2. 自动化等级/Draft and review | N/N2. 自动化等级/Execute with approval | N/N2. 自动化等级/Narrow autonomous execution | N/N2. 自动化等级/Human-supervised autonomy | N/N3. 决策变量 | N/N3. 决策变量/质量要求 | N/N3. 决策变量/延迟要求 | N/N3. 决策变量/成本预算 | N/N3. 决策变量/错误代价 | N/N3. 决策变量/安全风险 | N/N3. 决策变量/是否需要最新知识 | N/N3. 决策变量/是否需要外部动作 | N/N3. 决策变量/是否需要可审计流程 | N/N4. 体验设计 | N/N4. 体验设计/信任 | N/N4. 体验设计/透明度 | N/N4. 体验设计/引用 | N/N4. 体验设计/控制权 | N/N4. 体验设计/可撤销 | N/N4. 体验设计/纠错入口 | N/N4. 体验设计/长任务可见性 | N/N5. 团队与流程 | N/N5. 团队与流程/产品经理 | N/N5. 团队与流程/应用工程师 | N/N5. 团队与流程/模型工程师 | N/N5. 团队与流程/数据工程师 | N/N5. 团队与流程/Eval / QA | N/N5. 团队与流程/安全 / Policy | N/N5. 团队与流程/运维 / 平台 | N/N6. 持续改进闭环 | N/N6. 持续改进闭环/用户问题 / 场景 | N/N6. 持续改进闭环/日志与 traces | N/N6. 持续改进闭环/数据沉淀 | N/N6. 持续改进闭环/新 evals | N/N6. 持续改进闭环/Prompt / tool / routing 改进 | N/N6. 持续改进闭环/Fine-tuning / distillation | N/N6. 持续改进闭环/部署新版本 | N/N6. 持续改进闭环/再评测
+- current module root: N/N2. 自动化等级
+- current module all pathKeys: N/N2. 自动化等级 | N/N2. 自动化等级/Suggestion only | N/N2. 自动化等级/Draft and review | N/N2. 自动化等级/Execute with approval | N/N2. 自动化等级/Narrow autonomous execution | N/N2. 自动化等级/Human-supervised autonomy
+- sibling modules in domain: N/N1. 场景类型 | N/N3. 决策变量 | N/N4. 体验设计 | N/N5. 团队与流程 | N/N6. 持续改进闭环
+返回模板
+{
+  "shardId": "leaves-N-N2-fi1wb8-1",
+  "nodes": {
+    "N/N2. 自动化等级/Suggestion only": {},
+    "N/N2. 自动化等级/Draft and review": {},
+    "N/N2. 自动化等级/Execute with approval": {},
+    "N/N2. 自动化等级/Narrow autonomous execution": {},
+    "N/N2. 自动化等级/Human-supervised autonomy": {}
+  }
+}

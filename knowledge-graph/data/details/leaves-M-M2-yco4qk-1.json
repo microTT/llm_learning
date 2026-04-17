@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-M-M2-yco4qk-1",
+    "type": "leaf-batch",
+    "label": "M2. 应用级评测 / Leaves",
+    "domainCode": "M",
+    "domainTitle": "评测、安全与治理",
+    "moduleCode": "M2",
+    "moduleTitle": "应用级评测",
+    "modulePathKey": "M/M2. 应用级评测",
+    "parentPathKey": "M/M2. 应用级评测",
+    "parentTitle": "M2. 应用级评测",
+    "leafTitles": [
+      "最终答案正确性",
+      "引用真实性",
+      "Schema adherence",
+      "Tool execution success",
+      "UX consistency",
+      "Failure recovery"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "M/M2. 应用级评测/最终答案正确性": {},
+    "M/M2. 应用级评测/引用真实性": {},
+    "M/M2. 应用级评测/Schema adherence": {},
+    "M/M2. 应用级评测/Tool execution success": {},
+    "M/M2. 应用级评测/UX consistency": {},
+    "M/M2. 应用级评测/Failure recovery": {}
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-J-J9-1854q0c-1",
+    "type": "leaf-batch",
+    "label": "J9. 应用形态 / Leaves",
+    "domainCode": "J",
+    "domainTitle": "AI 应用工程",
+    "moduleCode": "J9",
+    "moduleTitle": "应用形态",
+    "modulePathKey": "J/J9. 应用形态",
+    "parentPathKey": "J/J9. 应用形态",
+    "parentTitle": "J9. 应用形态",
+    "leafTitles": [
+      "Chat app",
+      "Copilot",
+      "Search / QA",
+      "Document assistant",
+      "Coding assistant",
+      "Workflow assistant",
+      "Voice assistant"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 1
+  },
+  "nodes": {
+    "J/J9. 应用形态/Chat app": {},
+    "J/J9. 应用形态/Copilot": {},
+    "J/J9. 应用形态/Search / QA": {},
+    "J/J9. 应用形态/Document assistant": {},
+    "J/J9. 应用形态/Coding assistant": {
+      "status": "seed",
+      "definition": "Coding assistant 的关键不只是“能写代码”，而是能在文件系统、命令执行、评测回路和人工审批之间稳定工作。",
+      "importance": "这是当前最容易验证 agent 能力上限的应用形态之一，因为任务、工具、产物和验收标准都相对清晰。",
+      "minimumDemo": "让 assistant 在一个受控仓库里完成“读文件 → 改代码 → 跑验证 → 输出结果”的闭环，并记录完整 trace。",
+      "hardwareBudget": "开发机即可启动原型；更关键的是稳定的工作区隔离、测试环境和产物展示能力。",
+      "examples": [
+        "读取仓库、修改代码、运行测试，再把 diff 和验证结果展示给用户。",
+        "先生成修复计划，再进入受控工作区执行，并在危险操作前暂停审批。"
+      ],
+      "pitfalls": [
+        "只看最终 patch 是否通过，而不看 trace、tool usage 和恢复能力，会误判系统成熟度。",
+        "没有工作区隔离、审批边界和失败回滚，coding assistant 很快就会从效率工具变成风险源。"
+      ],
+      "prerequisites": [
+        "J/J3. 工具调用",
+        "K/K1. Agent 的最小构成",
+        "K/K7. 工具与外部连接/Sandbox workspace"
+      ],
+      "coreMetrics": [
+        "task completion rate",
+        "patch acceptance rate",
+        "tool success rate",
+        "human override rate"
+      ],
+      "toolchain": [
+        "workspace sandbox",
+        "shell / test runner",
+        "diff viewer",
+        "trace store"
+      ],
+      "failureSigns": [
+        "能提出方案，但改完代码后没有稳定验证结果",
+        "审批回来后丢失工作区状态或覆盖用户现有改动"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/Sandbox workspace",
+        "M/M3. Agent 级评测/Trace schema",
+        "M/M3. Agent 级评测/Grader rubric"
+      ]
+    },
+    "J/J9. 应用形态/Workflow assistant": {},
+    "J/J9. 应用形态/Voice assistant": {}
+  }
+}

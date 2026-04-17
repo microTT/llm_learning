@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-G-G6-15f1gji-1",
+    "type": "leaf-batch",
+    "label": "G6. 局限面 / Leaves",
+    "domainCode": "G",
+    "domainTitle": "LLM 核心机制",
+    "moduleCode": "G6",
+    "moduleTitle": "局限面",
+    "modulePathKey": "G/G6. 局限面",
+    "parentPathKey": "G/G6. 局限面",
+    "parentTitle": "G6. 局限面",
+    "leafTitles": [
+      "幻觉",
+      "过期知识",
+      "长上下文退化",
+      "工具误用",
+      "受提示与检索质量影响",
+      "受数据分布影响"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "G/G6. 局限面/幻觉": {},
+    "G/G6. 局限面/过期知识": {},
+    "G/G6. 局限面/长上下文退化": {},
+    "G/G6. 局限面/工具误用": {},
+    "G/G6. 局限面/受提示与检索质量影响": {},
+    "G/G6. 局限面/受数据分布影响": {}
+  }
+}

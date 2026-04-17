@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-M-M8-jnkzm6-1",
+    "type": "leaf-batch",
+    "label": "M8. 对抗测试与审计 / Leaves",
+    "domainCode": "M",
+    "domainTitle": "评测、安全与治理",
+    "moduleCode": "M8",
+    "moduleTitle": "对抗测试与审计",
+    "modulePathKey": "M/M8. 对抗测试与审计",
+    "parentPathKey": "M/M8. 对抗测试与审计",
+    "parentTitle": "M8. 对抗测试与审计",
+    "leafTitles": [
+      "Red teaming",
+      "Attack simulation",
+      "Safety regression tests",
+      "Incident review",
+      "Postmortem"
+    ],
+    "nodeCount": 5,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "M/M8. 对抗测试与审计/Red teaming": {},
+    "M/M8. 对抗测试与审计/Attack simulation": {},
+    "M/M8. 对抗测试与审计/Safety regression tests": {},
+    "M/M8. 对抗测试与审计/Incident review": {},
+    "M/M8. 对抗测试与审计/Postmortem": {}
+  }
+}

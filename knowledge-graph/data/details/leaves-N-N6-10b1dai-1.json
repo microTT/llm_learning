@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-N-N6-10b1dai-1",
+    "type": "leaf-batch",
+    "label": "N6. 持续改进闭环 / Leaves",
+    "domainCode": "N",
+    "domainTitle": "产品、场景与组织",
+    "moduleCode": "N6",
+    "moduleTitle": "持续改进闭环",
+    "modulePathKey": "N/N6. 持续改进闭环",
+    "parentPathKey": "N/N6. 持续改进闭环",
+    "parentTitle": "N6. 持续改进闭环",
+    "leafTitles": [
+      "用户问题 / 场景",
+      "日志与 traces",
+      "数据沉淀",
+      "新 evals",
+      "Prompt / tool / routing 改进",
+      "Fine-tuning / distillation",
+      "部署新版本",
+      "再评测"
+    ],
+    "nodeCount": 8,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "N/N6. 持续改进闭环/用户问题 / 场景": {},
+    "N/N6. 持续改进闭环/日志与 traces": {},
+    "N/N6. 持续改进闭环/数据沉淀": {},
+    "N/N6. 持续改进闭环/新 evals": {},
+    "N/N6. 持续改进闭环/Prompt / tool / routing 改进": {},
+    "N/N6. 持续改进闭环/Fine-tuning / distillation": {},
+    "N/N6. 持续改进闭环/部署新版本": {},
+    "N/N6. 持续改进闭环/再评测": {}
+  }
+}

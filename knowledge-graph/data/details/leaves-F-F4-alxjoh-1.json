@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-F-F4-alxjoh-1",
+    "type": "leaf-batch",
+    "label": "F4. 数据质量 / Leaves",
+    "domainCode": "F",
+    "domainTitle": "数据层（横切层）",
+    "moduleCode": "F4",
+    "moduleTitle": "数据质量",
+    "modulePathKey": "F/F4. 数据质量",
+    "parentPathKey": "F/F4. 数据质量",
+    "parentTitle": "F4. 数据质量",
+    "leafTitles": [
+      "覆盖度",
+      "正确性",
+      "一致性",
+      "多样性",
+      "噪声控制",
+      "分布匹配",
+      "偏差与公平性",
+      "时效性"
+    ],
+    "nodeCount": 8,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "F/F4. 数据质量/覆盖度": {},
+    "F/F4. 数据质量/正确性": {},
+    "F/F4. 数据质量/一致性": {},
+    "F/F4. 数据质量/多样性": {},
+    "F/F4. 数据质量/噪声控制": {},
+    "F/F4. 数据质量/分布匹配": {},
+    "F/F4. 数据质量/偏差与公平性": {},
+    "F/F4. 数据质量/时效性": {}
+  }
+}

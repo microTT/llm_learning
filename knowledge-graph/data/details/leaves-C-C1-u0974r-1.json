@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-C-C1-u0974r-1",
+    "type": "leaf-batch",
+    "label": "C1. 问题设定 / Leaves",
+    "domainCode": "C",
+    "domainTitle": "机器学习",
+    "moduleCode": "C1",
+    "moduleTitle": "问题设定",
+    "modulePathKey": "C/C1. 问题设定",
+    "parentPathKey": "C/C1. 问题设定",
+    "parentTitle": "C1. 问题设定",
+    "leafTitles": [
+      "特征（Features）",
+      "标签（Labels）",
+      "目标函数",
+      "训练集 / 验证集 / 测试集",
+      "IID 假设",
+      "分布漂移",
+      "泛化"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "C/C1. 问题设定/特征（Features）": {},
+    "C/C1. 问题设定/标签（Labels）": {},
+    "C/C1. 问题设定/目标函数": {},
+    "C/C1. 问题设定/训练集 / 验证集 / 测试集": {},
+    "C/C1. 问题设定/IID 假设": {},
+    "C/C1. 问题设定/分布漂移": {},
+    "C/C1. 问题设定/泛化": {}
+  }
+}

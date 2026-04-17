@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-E-E1-47l69n-1",
+    "type": "leaf-batch",
+    "label": "E1. 语言（NLP / LLM） / Leaves 1",
+    "domainCode": "E",
+    "domainTitle": "模态、任务域与智能形态",
+    "moduleCode": "E1",
+    "moduleTitle": "语言（NLP / LLM）",
+    "modulePathKey": "E/E1. 语言（NLP / LLM）",
+    "parentPathKey": "E/E1. 语言（NLP / LLM）",
+    "parentTitle": "E1. 语言（NLP / LLM）",
+    "leafTitles": [
+      "文本分类",
+      "信息抽取",
+      "命名实体识别",
+      "翻译",
+      "摘要",
+      "问答"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "E/E1. 语言（NLP / LLM）/文本分类": {},
+    "E/E1. 语言（NLP / LLM）/信息抽取": {},
+    "E/E1. 语言（NLP / LLM）/命名实体识别": {},
+    "E/E1. 语言（NLP / LLM）/翻译": {},
+    "E/E1. 语言（NLP / LLM）/摘要": {},
+    "E/E1. 语言（NLP / LLM）/问答": {}
+  }
+}

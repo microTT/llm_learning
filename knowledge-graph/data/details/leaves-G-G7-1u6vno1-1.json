@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-G-G7-1u6vno1-1",
+    "type": "leaf-batch",
+    "label": "G7. 模型类型细分 / Leaves",
+    "domainCode": "G",
+    "domainTitle": "LLM 核心机制",
+    "moduleCode": "G7",
+    "moduleTitle": "模型类型细分",
+    "modulePathKey": "G/G7. 模型类型细分",
+    "parentPathKey": "G/G7. 模型类型细分",
+    "parentTitle": "G7. 模型类型细分",
+    "leafTitles": [
+      "通用对话模型",
+      "推理强化模型",
+      "代码模型",
+      "多模态模型",
+      "小模型 / 边缘模型",
+      "专项模型"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "G/G7. 模型类型细分/通用对话模型": {},
+    "G/G7. 模型类型细分/推理强化模型": {},
+    "G/G7. 模型类型细分/代码模型": {},
+    "G/G7. 模型类型细分/多模态模型": {},
+    "G/G7. 模型类型细分/小模型 / 边缘模型": {},
+    "G/G7. 模型类型细分/专项模型": {}
+  }
+}

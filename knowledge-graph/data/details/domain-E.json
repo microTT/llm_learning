@@ -1,0 +1,255 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "domain-E",
+    "type": "domain-overview",
+    "label": "E. 模态、任务域与智能形态 / 概览",
+    "domainCode": "E",
+    "domainTitle": "模态、任务域与智能形态",
+    "moduleCode": null,
+    "moduleTitle": null,
+    "modulePathKey": null,
+    "parentPathKey": null,
+    "parentTitle": null,
+    "leafTitles": [],
+    "nodeCount": 9,
+    "filledNodeCount": 7
+  },
+  "nodes": {
+    "E": {},
+    "E/E1. 语言（NLP / LLM）": {},
+    "E/E2. 视觉（CV）": {
+      "status": "seed",
+      "definition": "视觉分支覆盖从图像感知、结构理解到生成、编辑和检索的完整链路，是非语言 AI 里最成熟、最容易工程化的一条主线。",
+      "importance": "如果这张图谱要叫“AI 全图”，视觉不能只停留在任务清单；它也需要和语言分支一样，把任务、模型、数据、评测和部署串成闭环。",
+      "minimumDemo": "做一条最小视觉工作流：准备图像数据，跑一个分类或 OCR 基线，记录离线指标，再把模型接成可调用服务。",
+      "hardwareBudget": "图像级任务单卡 GPU 就能起步；生成、检索和较大视觉基础模型会更吃显存和存储。",
+      "prerequisites": [
+        "D/D4. 基础模型类型/视觉基础模型",
+        "F/F2. 数据形态/图像",
+        "L/L2. 服务运行时"
+      ],
+      "coreMetrics": [
+        "task accuracy",
+        "latency",
+        "dataset coverage",
+        "deployment stability"
+      ],
+      "toolchain": [
+        "PyTorch",
+        "Transformers / timm",
+        "OpenCV",
+        "serving runtime"
+      ],
+      "failureSigns": [
+        "离线指标看起来正常，但线上图像分布一变就明显退化",
+        "只关注模型结构，忽略标注质量、后处理和部署延迟"
+      ],
+      "next": [
+        "E/E2. 视觉（CV）/OCR / 文档理解",
+        "E/E2. 视觉（CV）/图像生成",
+        "E/E2. 视觉（CV）/视觉检索",
+        "E/E5. 多模态"
+      ]
+    },
+    "E/E3. 音频 / 语音": {
+      "status": "seed",
+      "definition": "音频 / 语音分支覆盖听、说、翻译、生成和交互式语音链路，是最容易和实时系统、Agent、端侧设备耦合的一条非语言主线。",
+      "importance": "它天然要求低延迟、流式、打断处理和噪声鲁棒性，所以很适合把“模型能力”和“系统工程能力”一起暴露出来。",
+      "minimumDemo": "搭一条最小语音链路：采集音频、转写或合成、评估延迟和质量，再接进简单交互界面。",
+      "hardwareBudget": "单卡 GPU 或云 API 足以起步；实时多路与长时音频更吃吞吐和内存。",
+      "prerequisites": [
+        "D/D4. 基础模型类型/语音 / 音频基础模型",
+        "F/F2. 数据形态/音频",
+        "J/J5. 流式与实时"
+      ],
+      "coreMetrics": [
+        "quality",
+        "latency",
+        "noise robustness",
+        "streaming stability"
+      ],
+      "toolchain": [
+        "audio models",
+        "streaming runtime",
+        "audio preprocessing",
+        "playback / capture tools"
+      ],
+      "failureSigns": [
+        "离线 demo 正常，一到实时语音就明显错位或卡顿",
+        "在噪声、口音和设备变化下质量迅速失控"
+      ],
+      "next": [
+        "E/E3. 音频 / 语音/自动语音识别（ASR）",
+        "E/E3. 音频 / 语音/文本转语音（TTS）",
+        "J/J5. 流式与实时/Voice interaction",
+        "E/E5. 多模态"
+      ]
+    },
+    "E/E4. 视频": {
+      "status": "seed",
+      "definition": "视频分支是在视觉基础上加入时间维度，核心挑战从单帧识别扩展到时序建模、长序列检索和生成稳定性。",
+      "importance": "视频任务天然把感知、检索、摘要、问答、生成和时序评测连在一起，是最能暴露工程复杂度的模态之一。",
+      "minimumDemo": "做一个最小视频工作流：抽帧或时序编码，完成理解/摘要任务，再观察长视频下的成本和延迟。",
+      "hardwareBudget": "视频任务普遍更吃 GPU、存储和带宽，长视频与生成尤其明显。",
+      "prerequisites": [
+        "D/D4. 基础模型类型/视频基础模型",
+        "F/F2. 数据形态/视频",
+        "L/L2. 服务运行时"
+      ],
+      "coreMetrics": [
+        "temporal quality",
+        "latency",
+        "context coverage",
+        "storage / throughput"
+      ],
+      "toolchain": [
+        "video processing",
+        "video model",
+        "frame sampling",
+        "serving / storage"
+      ],
+      "failureSigns": [
+        "单帧效果好，但一进入长视频或复杂动作就明显失真",
+        "视频 I/O 和特征缓存成本被低估，系统很快变慢"
+      ],
+      "next": [
+        "E/E4. 视频/视频理解",
+        "E/E4. 视频/视频生成",
+        "E/E5. 多模态"
+      ]
+    },
+    "E/E5. 多模态": {
+      "status": "seed",
+      "definition": "多模态分支讨论的不是单一模态本身，而是不同模态如何共享表示、共同推理、共同决策，以及如何进入 Agent 系统。",
+      "importance": "它是语言、视觉、语音、视频分支真正汇合的地方，也是未来产品形态最容易发生变化的一层。",
+      "minimumDemo": "做一个图文或音文任务，用统一模型同时看输入内容和文本问题，再输出结构化结果。",
+      "hardwareBudget": "多模态基础模型通常比单模态模型更吃显存、上下文和 I/O。",
+      "prerequisites": [
+        "D/D4. 基础模型类型/多模态基础模型",
+        "F/F2. 数据形态/多模态对",
+        "E/E2. 视觉（CV）",
+        "E/E3. 音频 / 语音",
+        "E/E4. 视频"
+      ],
+      "coreMetrics": [
+        "cross-modal alignment",
+        "reasoning quality",
+        "latency",
+        "groundedness"
+      ],
+      "toolchain": [
+        "VLM / multimodal model",
+        "preprocessing for each modality",
+        "trace / eval harness"
+      ],
+      "failureSigns": [
+        "模型单模态能力都不错，但一跨模态就严重幻觉",
+        "输入链路复杂后上下文拼接和引用质量迅速变差"
+      ],
+      "next": [
+        "E/E5. 多模态/视觉语言模型（VLM）",
+        "E/E5. 多模态/多模态推理",
+        "E/E5. 多模态/多模态 Agent"
+      ]
+    },
+    "E/E6. 决策与强化学习": {
+      "status": "seed",
+      "definition": "这一分支关注系统如何在交互、反馈和长期目标下学习决策，而不是只做一次性预测。",
+      "importance": "它是游戏、推荐、广告、机器人、具身智能和部分推理/Agent 优化的重要理论与工程入口。",
+      "minimumDemo": "在一个小型环境里跑策略学习，记录 reward、探索策略和训练曲线，再做一次离线评测。",
+      "hardwareBudget": "模拟环境和长时间训练会持续消耗 GPU/CPU 资源，真实线上交互成本更高。",
+      "prerequisites": [
+        "B/B8. 决策与多智能体",
+        "C/C2. 学习范式/强化学习",
+        "F/F2. 数据形态/交互轨迹"
+      ],
+      "coreMetrics": [
+        "episode return",
+        "sample efficiency",
+        "stability",
+        "online safety"
+      ],
+      "toolchain": [
+        "RL framework",
+        "simulator",
+        "experiment tracking"
+      ],
+      "failureSigns": [
+        "reward 曲线好看，但策略一上线就崩",
+        "系统把奖励函数漏洞学得很快，却没学会真正目标"
+      ],
+      "next": [
+        "E/E6. 决策与强化学习/策略学习",
+        "E/E6. 决策与强化学习/奖励设计",
+        "E/E7. 机器人与具身智能"
+      ]
+    },
+    "E/E7. 机器人与具身智能": {
+      "status": "seed",
+      "definition": "机器人与具身智能把感知、状态估计、规划、控制和技能学习放进物理世界，是 AI 从“只在信息空间做决策”走向“在现实世界行动”的分支。",
+      "importance": "它天然要求把任务、模型、数据、评测和部署一起做，因为错误不再只是答案错，而是会直接变成物理风险和成本。",
+      "minimumDemo": "用仿真或简化机器人任务打通一条感知→规划→动作闭环，并记录每一步观测和评测结果。",
+      "hardwareBudget": "计算只是其中一部分，真实硬件、仿真、传感器和安全测试成本通常更高。",
+      "prerequisites": [
+        "E/E6. 决策与强化学习",
+        "D/D4. 基础模型类型/具身/世界模型（更偏前沿与系统）",
+        "F/F2. 数据形态/交互轨迹"
+      ],
+      "coreMetrics": [
+        "task success rate",
+        "safety",
+        "latency",
+        "sim-to-real gap"
+      ],
+      "toolchain": [
+        "simulator / robotics stack",
+        "perception models",
+        "planner / controller",
+        "telemetry"
+      ],
+      "failureSigns": [
+        "单模块都能跑，但一串起来闭环就不稳定",
+        "仿真成功率高，真实执行成功率却明显偏低"
+      ],
+      "next": [
+        "E/E7. 机器人与具身智能/感知—规划—动作闭环",
+        "E/E7. 机器人与具身智能/技能学习",
+        "M/M5. 安全控制"
+      ]
+    },
+    "E/E8. 扩展领域": {
+      "status": "seed",
+      "definition": "扩展领域承接那些不完全属于传统 NLP/CV/语音/视频主线，但在产业和研究中高度重要的 AI 方向。",
+      "importance": "这些方向提醒我们：AI 全图不等于 LLM 外加几个模态，很多行业价值来自结构数据、时序、图、仿真和科学计算。",
+      "minimumDemo": "针对一个扩展领域选最小任务，分别明确任务、模型、数据、指标和部署方式，而不是只背术语名字。",
+      "hardwareBudget": "更依赖领域数据和系统设计，算力需求高度依任务而异。",
+      "prerequisites": [
+        "D/D2. 架构家族",
+        "F/F2. 数据形态",
+        "M/M1. 模型级评测"
+      ],
+      "coreMetrics": [
+        "task-specific quality",
+        "data fit",
+        "deployment cost",
+        "generalization"
+      ],
+      "toolchain": [
+        "domain-specific models",
+        "eval harness",
+        "serving / batch pipeline"
+      ],
+      "failureSigns": [
+        "拿通用大模型直接套，结果既不准也不经济",
+        "领域问题明明吃结构数据或时序信息，却被错误地当成纯文本任务"
+      ],
+      "next": [
+        "E/E8. 扩展领域/3D ML",
+        "E/E8. 扩展领域/推荐系统",
+        "E/E8. 扩展领域/科学计算 / Scientific AI"
+      ]
+    }
+  }
+}

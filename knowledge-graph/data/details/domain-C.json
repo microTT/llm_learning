@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "domain-C",
+    "type": "domain-overview",
+    "label": "C. 机器学习 / 概览",
+    "domainCode": "C",
+    "domainTitle": "机器学习",
+    "moduleCode": null,
+    "moduleTitle": null,
+    "modulePathKey": null,
+    "parentPathKey": null,
+    "parentTitle": null,
+    "leafTitles": [],
+    "nodeCount": 9,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "C": {},
+    "C/C1. 问题设定": {},
+    "C/C2. 学习范式": {},
+    "C/C2. 学习范式/监督学习": {},
+    "C/C2. 学习范式/无监督学习": {},
+    "C/C3. 经典模型家族": {},
+    "C/C4. 共性问题": {},
+    "C/C5. 指标体系": {},
+    "C/C6. 与大模型的对应关系": {}
+  }
+}

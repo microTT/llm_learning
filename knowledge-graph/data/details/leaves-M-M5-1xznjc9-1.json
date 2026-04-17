@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-M-M5-1xznjc9-1",
+    "type": "leaf-batch",
+    "label": "M5. 安全控制 / Leaves",
+    "domainCode": "M",
+    "domainTitle": "评测、安全与治理",
+    "moduleCode": "M5",
+    "moduleTitle": "安全控制",
+    "modulePathKey": "M/M5. 安全控制",
+    "parentPathKey": "M/M5. 安全控制",
+    "parentTitle": "M5. 安全控制",
+    "leafTitles": [
+      "Moderation",
+      "Jailbreak defense",
+      "Prompt injection defense",
+      "Sensitive tool controls",
+      "Least privilege",
+      "Sandboxing",
+      "Approval gates",
+      "Rate limiting"
+    ],
+    "nodeCount": 8,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "M/M5. 安全控制/Moderation": {},
+    "M/M5. 安全控制/Jailbreak defense": {},
+    "M/M5. 安全控制/Prompt injection defense": {},
+    "M/M5. 安全控制/Sensitive tool controls": {},
+    "M/M5. 安全控制/Least privilege": {},
+    "M/M5. 安全控制/Sandboxing": {},
+    "M/M5. 安全控制/Approval gates": {},
+    "M/M5. 安全控制/Rate limiting": {}
+  }
+}

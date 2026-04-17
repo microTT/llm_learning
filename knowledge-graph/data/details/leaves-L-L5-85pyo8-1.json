@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-L-L5-85pyo8-1",
+    "type": "leaf-batch",
+    "label": "L5. 系统基础设施 / Leaves",
+    "domainCode": "L",
+    "domainTitle": "运行时与基础设施",
+    "moduleCode": "L5",
+    "moduleTitle": "系统基础设施",
+    "modulePathKey": "L/L5. 系统基础设施",
+    "parentPathKey": "L/L5. 系统基础设施",
+    "parentTitle": "L5. 系统基础设施",
+    "leafTitles": [
+      "SQL / NoSQL",
+      "Vector DB",
+      "Object storage",
+      "Cache",
+      "Queue",
+      "Artifact storage",
+      "Container / deployment layer"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "L/L5. 系统基础设施/SQL / NoSQL": {},
+    "L/L5. 系统基础设施/Vector DB": {},
+    "L/L5. 系统基础设施/Object storage": {},
+    "L/L5. 系统基础设施/Cache": {},
+    "L/L5. 系统基础设施/Queue": {},
+    "L/L5. 系统基础设施/Artifact storage": {},
+    "L/L5. 系统基础设施/Container / deployment layer": {}
+  }
+}

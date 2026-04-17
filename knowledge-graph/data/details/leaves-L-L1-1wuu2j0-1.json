@@ -1,0 +1,112 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-L-L1-1wuu2j0-1",
+    "type": "leaf-batch",
+    "label": "L1. 模型访问方式 / Leaves",
+    "domainCode": "L",
+    "domainTitle": "运行时与基础设施",
+    "moduleCode": "L1",
+    "moduleTitle": "模型访问方式",
+    "modulePathKey": "L/L1. 模型访问方式",
+    "parentPathKey": "L/L1. 模型访问方式",
+    "parentTitle": "L1. 模型访问方式",
+    "leafTitles": [
+      "云 API",
+      "自托管推理",
+      "本地推理",
+      "浏览器 / Edge 推理",
+      "混合推理"
+    ],
+    "nodeCount": 5,
+    "filledNodeCount": 2
+  },
+  "nodes": {
+    "L/L1. 模型访问方式/云 API": {},
+    "L/L1. 模型访问方式/自托管推理": {},
+    "L/L1. 模型访问方式/本地推理": {
+      "status": "seed",
+      "definition": "本地推理指模型权重和推理 runtime 直接运行在开发机或边缘设备上，而不是每次请求都走云 API。",
+      "importance": "它最适合做隐私敏感、低网络依赖、快速迭代的工作流，也特别适合前端工程师先把推理链路、缓存和交互体验跑通。",
+      "minimumDemo": "分别在 Apple silicon 和独显机器上启动一个本地模型，记录首 token 延迟、吞吐、内存占用和上下文上限，再和云 API 做对比。",
+      "hardwareBudget": "36GB 统一内存的 Apple silicon 和 3080 级显卡都足够做本地原型；瓶颈通常出在上下文长度、量化策略和并发，而不是能否“跑起来”。",
+      "examples": [
+        "在 Apple silicon 上用 MLX-LM 跑 7B 级模型做代码补全或本地问答。",
+        "在 3080 上用 Ollama 或 vLLM 做离线评测、小规模 agent 回放和 prompt 调试。"
+      ],
+      "pitfalls": [
+        "只看参数量而不看量化方式、上下文长度和显存占用，通常会高估本地可跑范围。",
+        "把本地推理等同于“完全离线”也不准确，真实系统里常常是本地模型与云 API 混合路由。"
+      ],
+      "prerequisites": [
+        "L/L1. 模型访问方式",
+        "L/L3. 推理优化",
+        "L/L6. 硬件层/Apple silicon unified memory"
+      ],
+      "coreMetrics": [
+        "first-token latency",
+        "tokens/sec",
+        "VRAM / RAM footprint",
+        "max usable context"
+      ],
+      "toolchain": [
+        "Ollama",
+        "MLX / MLX-LM",
+        "vLLM",
+        "local benchmark scripts"
+      ],
+      "failureSigns": [
+        "模型能启动但上下文一拉长就频繁 OOM",
+        "量化后速度提升不明显，但质量明显下滑"
+      ],
+      "next": [
+        "L/L2. 服务运行时/MLX / MLX-LM",
+        "L/L2. 服务运行时/Ollama",
+        "L/L3. 推理优化/Quantized inference"
+      ]
+    },
+    "L/L1. 模型访问方式/浏览器 / Edge 推理": {
+      "status": "seed",
+      "definition": "浏览器 / Edge 推理把模型执行放到 Web 运行时里，通过 WebGPU、WASM 或专门的 edge runtime 直接完成推理，而不是把所有请求都转发到后端。",
+      "importance": "这条路线非常适合前端工程师，因为它把模型能力直接接到 UI、交互和端侧资源管理上，能最快验证“AI 能不能成为产品默认能力”。",
+      "minimumDemo": "在一个静态页面里接入浏览器侧模型，完成一次本地推理，并记录模型加载时间、首 token 时间和页面交互是否卡顿。",
+      "hardwareBudget": "重点不是大显卡，而是用户设备的浏览器支持、显存共享和下载体积预算。",
+      "examples": [
+        "用 Transformers.js + WebGPU 在浏览器里跑小模型做摘要、分类或 embedding。",
+        "把轻量推理放在 edge worker 上，先做路由、过滤或 fallback，再决定是否调用大模型。"
+      ],
+      "pitfalls": [
+        "只看到 demo 跑通，而忽略模型下载体积、冷启动、浏览器兼容性和端侧内存上限。",
+        "把浏览器推理理解成“前端替代后端”，实际上它更常见的角色是补充云模型，而不是完全替代。"
+      ],
+      "prerequisites": [
+        "L/L1. 模型访问方式",
+        "J/J5. 流式与实时",
+        "L/L2. 服务运行时/Transformers.js"
+      ],
+      "coreMetrics": [
+        "model download size",
+        "cold start time",
+        "UI responsiveness",
+        "device compatibility"
+      ],
+      "toolchain": [
+        "Transformers.js",
+        "WebGPU",
+        "Web Worker",
+        "browser performance profiler"
+      ],
+      "failureSigns": [
+        "模型加载时阻塞主线程，页面明显掉帧",
+        "不同浏览器或显卡环境下结果和速度差异极大"
+      ],
+      "next": [
+        "L/L2. 服务运行时/Transformers.js",
+        "J/J5. 流式与实时/Incremental UI updates",
+        "J/J9. 应用形态/Coding assistant"
+      ]
+    },
+    "L/L1. 模型访问方式/混合推理": {}
+  }
+}

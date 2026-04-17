@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-A-A2-15um9jp-1",
+    "type": "leaf-batch",
+    "label": "数据系统 / Leaves",
+    "domainCode": "A",
+    "domainTitle": "基础理论与计算机底座",
+    "moduleCode": "A2",
+    "moduleTitle": "计算机基础",
+    "modulePathKey": "A/A2. 计算机基础",
+    "parentPathKey": "A/A2. 计算机基础/数据系统",
+    "parentTitle": "数据系统",
+    "leafTitles": [
+      "SQL",
+      "NoSQL",
+      "缓存",
+      "消息队列",
+      "对象存储",
+      "向量存储"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "A/A2. 计算机基础/数据系统/SQL": {},
+    "A/A2. 计算机基础/数据系统/NoSQL": {},
+    "A/A2. 计算机基础/数据系统/缓存": {},
+    "A/A2. 计算机基础/数据系统/消息队列": {},
+    "A/A2. 计算机基础/数据系统/对象存储": {},
+    "A/A2. 计算机基础/数据系统/向量存储": {}
+  }
+}

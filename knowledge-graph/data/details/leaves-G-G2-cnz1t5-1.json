@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-G-G2-cnz1t5-1",
+    "type": "leaf-batch",
+    "label": "G2. Transformer 机制 / Leaves",
+    "domainCode": "G",
+    "domainTitle": "LLM 核心机制",
+    "moduleCode": "G2",
+    "moduleTitle": "Transformer 机制",
+    "modulePathKey": "G/G2. Transformer 机制",
+    "parentPathKey": "G/G2. Transformer 机制",
+    "parentTitle": "G2. Transformer 机制",
+    "leafTitles": [
+      "Self-attention",
+      "Multi-head attention",
+      "Feed-forward blocks",
+      "Residual / normalization",
+      "长上下文处理",
+      "KV cache"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "G/G2. Transformer 机制/Self-attention": {},
+    "G/G2. Transformer 机制/Multi-head attention": {},
+    "G/G2. Transformer 机制/Feed-forward blocks": {},
+    "G/G2. Transformer 机制/Residual / normalization": {},
+    "G/G2. Transformer 机制/长上下文处理": {},
+    "G/G2. Transformer 机制/KV cache": {}
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-D-D3-12hzr8h-1",
+    "type": "leaf-batch",
+    "label": "D3. 训练范式 / Leaves",
+    "domainCode": "D",
+    "domainTitle": "深度学习与基础模型",
+    "moduleCode": "D3",
+    "moduleTitle": "训练范式",
+    "modulePathKey": "D/D3. 训练范式",
+    "parentPathKey": "D/D3. 训练范式",
+    "parentTitle": "D3. 训练范式",
+    "leafTitles": [
+      "从头训练",
+      "预训练",
+      "微调",
+      "多任务训练",
+      "迁移学习",
+      "蒸馏",
+      "自训练 / 伪标签",
+      "Curriculum / staged training"
+    ],
+    "nodeCount": 8,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "D/D3. 训练范式/从头训练": {},
+    "D/D3. 训练范式/预训练": {},
+    "D/D3. 训练范式/微调": {},
+    "D/D3. 训练范式/多任务训练": {},
+    "D/D3. 训练范式/迁移学习": {},
+    "D/D3. 训练范式/蒸馏": {},
+    "D/D3. 训练范式/自训练 / 伪标签": {},
+    "D/D3. 训练范式/Curriculum / staged training": {}
+  }
+}

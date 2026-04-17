@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-M-M1-1lohovz-1",
+    "type": "leaf-batch",
+    "label": "M1. 模型级评测 / Leaves",
+    "domainCode": "M",
+    "domainTitle": "评测、安全与治理",
+    "moduleCode": "M1",
+    "moduleTitle": "模型级评测",
+    "modulePathKey": "M/M1. 模型级评测",
+    "parentPathKey": "M/M1. 模型级评测",
+    "parentTitle": "M1. 模型级评测",
+    "leafTitles": [
+      "语言能力",
+      "推理能力",
+      "多模态能力",
+      "结构化输出正确率",
+      "安全性",
+      "稳定性",
+      "延迟/成本"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "M/M1. 模型级评测/语言能力": {},
+    "M/M1. 模型级评测/推理能力": {},
+    "M/M1. 模型级评测/多模态能力": {},
+    "M/M1. 模型级评测/结构化输出正确率": {},
+    "M/M1. 模型级评测/安全性": {},
+    "M/M1. 模型级评测/稳定性": {},
+    "M/M1. 模型级评测/延迟/成本": {}
+  }
+}

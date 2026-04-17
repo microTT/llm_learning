@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-C-C3-z9hu17-1",
+    "type": "leaf-batch",
+    "label": "C3. 经典模型家族 / Leaves",
+    "domainCode": "C",
+    "domainTitle": "机器学习",
+    "moduleCode": "C3",
+    "moduleTitle": "经典模型家族",
+    "modulePathKey": "C/C3. 经典模型家族",
+    "parentPathKey": "C/C3. 经典模型家族",
+    "parentTitle": "C3. 经典模型家族",
+    "leafTitles": [
+      "线性回归 / 逻辑回归",
+      "决策树",
+      "随机森林",
+      "GBDT",
+      "SVM / 核方法",
+      "朴素贝叶斯",
+      "聚类模型",
+      "矩阵分解 / 表示学习"
+    ],
+    "nodeCount": 8,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "C/C3. 经典模型家族/线性回归 / 逻辑回归": {},
+    "C/C3. 经典模型家族/决策树": {},
+    "C/C3. 经典模型家族/随机森林": {},
+    "C/C3. 经典模型家族/GBDT": {},
+    "C/C3. 经典模型家族/SVM / 核方法": {},
+    "C/C3. 经典模型家族/朴素贝叶斯": {},
+    "C/C3. 经典模型家族/聚类模型": {},
+    "C/C3. 经典模型家族/矩阵分解 / 表示学习": {}
+  }
+}

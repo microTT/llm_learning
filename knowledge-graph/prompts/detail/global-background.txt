@@ -1,0 +1,44 @@
+你正在为一个长期维护的 AI 知识图谱补充内容。以下背景在每个调研任务中都成立：
+
+项目背景
+- 这不是临时问答，而是在维护一张可持续扩展的 AI 学习图谱。
+- 结构主源是 `data/graph.json`，节点 detail 是分片存放的。
+- 当前图谱规模：14 个 domain，138 个 detail shard。
+- 每次任务都必须尊重现有 pathKey，不新增节点，不改节点路径，不重命名已有结构。
+
+结构主线
+- 主干顺序固定为：基础 → 模型 → 应用 → Agent → 生产。
+- 横切层包括：数据、评测、安全、基础设施、产品。
+- 当前 domain 列表：
+- A. 基础理论与计算机底座: 3 个模块，63 个术语节点
+- B. 经典 AI: 9 个模块，63 个术语节点
+- C. 机器学习: 6 个模块，49 个术语节点
+- D. 深度学习与基础模型: 6 个模块，43 个术语节点
+- E. 模态、任务域与智能形态: 8 个模块，60 个术语节点
+- F. 数据层（横切层）: 7 个模块，59 个术语节点
+- G. LLM 核心机制: 8 个模块，58 个术语节点
+- H. 模型适配、后训练与对齐: 7 个模块，42 个术语节点
+- I. 检索、记忆与外部知识: 6 个模块，48 个术语节点
+- J. AI 应用工程: 9 个模块，52 个术语节点
+- K. Agent 系统: 10 个模块，84 个术语节点
+- L. 运行时与基础设施: 7 个模块，52 个术语节点
+- M. 评测、安全与治理: 8 个模块，58 个术语节点
+- N. 产品、场景与组织: 6 个模块，44 个术语节点
+
+内容补充原则
+- 你的目标是补 detail，不是重写图谱结构。
+- 优先补：定义、重要性、前置节点、最小实验、核心指标、工具链、失败信号、下一步。
+- `prerequisites` 和 `next` 优先引用现有精确 pathKey；如果没有把握，不要编造不存在的节点。
+- 保持工程化和可学习性，避免空泛教材式表述。
+- 如果当前任务是 domain-overview，只写 domain 根节点的全局介绍，不要展开成模块逐项说明。
+- 如果当前任务是 leaf-batch，只处理当前批次列出的叶子节点，不跨父节点扩写。
+
+detail 字段约定
+- 允许字段：status, definition, importance, minimumDemo, hardwareBudget, examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next
+- text 字段：definition, importance, minimumDemo, hardwareBudget
+- list 字段必须是字符串数组：examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next
+
+风格要求
+- 默认面向工程学习者，不写宣传文案。
+- 优先给出能落地验证的描述，而不是只给概念定义。
+- 尽量让术语之间形成学习路径，而不是孤立词条。

@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-K-K5-15tj062-1",
+    "type": "leaf-batch",
+    "label": "K5. 图式编排 / Leaves",
+    "domainCode": "K",
+    "domainTitle": "Agent 系统",
+    "moduleCode": "K5",
+    "moduleTitle": "图式编排",
+    "modulePathKey": "K/K5. 图式编排",
+    "parentPathKey": "K/K5. 图式编排",
+    "parentTitle": "K5. 图式编排",
+    "leafTitles": [
+      "State",
+      "Nodes",
+      "Edges",
+      "Conditional branches",
+      "Loops",
+      "Parallel execution",
+      "Checkpoints",
+      "Resumability"
+    ],
+    "nodeCount": 8,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "K/K5. 图式编排/State": {},
+    "K/K5. 图式编排/Nodes": {},
+    "K/K5. 图式编排/Edges": {},
+    "K/K5. 图式编排/Conditional branches": {},
+    "K/K5. 图式编排/Loops": {},
+    "K/K5. 图式编排/Parallel execution": {},
+    "K/K5. 图式编排/Checkpoints": {},
+    "K/K5. 图式编排/Resumability": {}
+  }
+}

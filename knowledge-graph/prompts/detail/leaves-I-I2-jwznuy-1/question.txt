@@ -1,0 +1,189 @@
+你正在补充 AI 知识图谱的一个 detail shard。只处理当前 shard，不要新增节点、不要改 pathKey。
+Shard 信息
+- shardId: leaves-I-I2-jwznuy-1
+- expected answer file: prompts/detail/leaves-I-I2-jwznuy-1/answer.md
+- label: I2. 知识库构建 / Leaves
+- type: leaf-batch
+- domain: I. 检索、记忆与外部知识
+- module: I2. 知识库构建
+- parent pathKey: I/I2. 知识库构建
+- parent title: I2. 知识库构建
+- leaf titles: 数据接入 / Chunking strategy / Metadata schema / Indexing / Vector store / Keyword index / Update / refresh / re-index / delete
+- shard owned node count: 7
+输出要求
+- 只输出一个 JSON 对象，不要 Markdown 代码块，不要解释文字。
+- 固定输出形状：{ "shardId": "<shard-id>", "nodes": { "<pathKey>": { ...detailFields } } }
+- 只允许这些字段：status, definition, importance, minimumDemo, hardwareBudget, examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next
+- text 字段：definition, importance, minimumDemo, hardwareBudget
+- list 字段：examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next，必须是字符串数组。
+- `prerequisites` / `next` 优先使用精确 pathKey；如果没有把握，不要编造图谱里不存在的节点。
+- 对当前已经有内容的节点，以补全、校正、统一口径为主；不要为了改写而改写。
+- 所有 target pathKey 都要保留在返回 JSON 里；如果某个节点暂时没有把握，可以保持为空对象。
+当前 shard 的目标节点
+1. [concept] I/I2. 知识库构建/数据接入
+   - title: 数据接入
+   - parent: I/I2. 知识库构建
+   - currentDetail: {}
+2. [concept] I/I2. 知识库构建/Chunking strategy
+   - title: Chunking strategy
+   - parent: I/I2. 知识库构建
+   - currentDetail: {
+       "status": "seed",
+       "definition": "Chunking strategy 决定一份文档如何被切成可索引、可检索、可引用的最小单元，它直接影响召回质量与引用对齐。",
+       "importance": "很多 RAG 问题并不是 embedding 模型不够强，而是 chunk 边界、overlap、标题继承和 metadata schema 没设计好。",
+       "minimumDemo": "用同一批文档分别跑固定长度 chunk、语义 chunk 和标题分层 chunk，比较召回与引用质量。",
+       "hardwareBudget": "CPU 即可；规模大时主要受索引和存储资源约束。",
+       "prerequisites": [
+         "I/I2. 知识库构建",
+         "I/I1. 表示与检索基础/Embeddings",
+         "I/I2. 知识库构建/Metadata schema"
+       ],
+       "coreMetrics": [
+         "retrieval recall",
+         "citation alignment",
+         "context waste ratio",
+         "index size"
+       ],
+       "toolchain": [
+         "document parser",
+         "chunking pipeline",
+         "vector store"
+       ],
+       "failureSigns": [
+         "模型总能召回相关文档，但引用段落对不上答案",
+         "上下文里出现大量不相关残片或重复内容"
+       ],
+       "next": [
+         "I/I3. RAG 管线",
+         "I/I2. 知识库构建/Metadata schema"
+       ]
+     }
+3. [concept] I/I2. 知识库构建/Metadata schema
+   - title: Metadata schema
+   - parent: I/I2. 知识库构建
+   - currentDetail: {
+       "status": "seed",
+       "definition": "Metadata schema 决定每个 chunk 除正文外还带什么结构化上下文，例如来源、标题层级、时间戳、权限域、语言、文件路径和业务标签。",
+       "importance": "没有稳定 metadata，permission-aware retrieval、citation alignment、增量更新和失败排查都会非常脆弱。",
+       "minimumDemo": "给同一批 chunk 补上来源路径、标题层级、更新时间和权限标签，再比较检索、过滤和引用定位效果。",
+       "hardwareBudget": "CPU 即可，主要消耗在索引与存储。",
+       "prerequisites": [
+         "I/I2. 知识库构建",
+         "I/I2. 知识库构建/Chunking strategy",
+         "I/I2. 知识库构建/Vector store"
+       ],
+       "coreMetrics": [
+         "metadata completeness",
+         "filter hit rate",
+         "citation localization accuracy",
+         "re-index correctness"
+       ],
+       "toolchain": [
+         "parser pipeline",
+         "vector store metadata filters",
+         "schema validators"
+       ],
+       "failureSigns": [
+         "检索结果内容相关但无法定位原文来源",
+         "更新或删除文档后旧 chunk 长时间残留在线上"
+       ],
+       "next": [
+         "I/I3. RAG 管线/Permission-aware retrieval",
+         "I/I3. RAG 管线/Citation span alignment"
+       ]
+     }
+4. [concept] I/I2. 知识库构建/Indexing
+   - title: Indexing
+   - parent: I/I2. 知识库构建
+   - currentDetail: {}
+5. [concept] I/I2. 知识库构建/Vector store
+   - title: Vector store
+   - parent: I/I2. 知识库构建
+   - currentDetail: {}
+6. [concept] I/I2. 知识库构建/Keyword index
+   - title: Keyword index
+   - parent: I/I2. 知识库构建
+   - currentDetail: {}
+7. [concept] I/I2. 知识库构建/Update / refresh / re-index / delete
+   - title: Update / refresh / re-index / delete
+   - parent: I/I2. 知识库构建
+   - currentDetail: {}
+可参考的 pathKey
+- current domain root: I
+- current domain all pathKeys: I | I/I1. 表示与检索基础 | I/I1. 表示与检索基础/Embeddings | I/I1. 表示与检索基础/Dense retrieval | I/I1. 表示与检索基础/Sparse retrieval | I/I1. 表示与检索基础/Hybrid retrieval | I/I1. 表示与检索基础/Similarity search | I/I1. 表示与检索基础/Reranking | I/I2. 知识库构建 | I/I2. 知识库构建/数据接入 | I/I2. 知识库构建/Parser types | I/I2. 知识库构建/Parser types/Text / Markdown | I/I2. 知识库构建/Parser types/PDF / Office | I/I2. 知识库构建/Parser types/HTML / web content | I/I2. 知识库构建/Parser types/Code / repository parsers | I/I2. 知识库构建/Chunking strategy | I/I2. 知识库构建/Metadata schema | I/I2. 知识库构建/Indexing | I/I2. 知识库构建/Vector store | I/I2. 知识库构建/Keyword index | I/I2. 知识库构建/Update / refresh / re-index / delete | I/I3. RAG 管线 | I/I3. RAG 管线/Query understanding | I/I3. RAG 管线/Query rewrite | I/I3. RAG 管线/Retrieval | I/I3. RAG 管线/Permission-aware retrieval | I/I3. RAG 管线/Rerank | I/I3. RAG 管线/Context packing | I/I3. RAG 管线/Citation span alignment | I/I3. RAG 管线/Generation | I/I3. RAG 管线/Citation / provenance | I/I3. RAG 管线/Post-processing | I/I4. RAG 形态 | I/I4. RAG 形态/Basic RAG | I/I4. RAG 形态/Multi-hop RAG | I/I4. RAG 形态/Query rewriting RAG | I/I4. RAG 形态/Agentic RAG | I/I4. RAG 形态/KG-RAG | I/I4. RAG 形态/Long-context + retrieval hybrid | I/I5. 记忆类型 | I/I5. 记忆类型/参数记忆 | I/I5. 记忆类型/非参数知识库 | I/I5. 记忆类型/会话记忆 | I/I5. 记忆类型/用户长期记忆 | I/I5. 记忆类型/任务记忆 | I/I5. 记忆类型/Episodic memory | I/I5. 记忆类型/Semantic memory | I/I6. 关键质量点 | I/I6. 关键质量点/召回率 | I/I6. 关键质量点/精准率 | I/I6. 关键质量点/Chunk 质量 | I/I6. 关键质量点/过期知识 | I/I6. 关键质量点/授权与权限边界 | I/I6. 关键质量点/可追溯性 | I/I6. 关键质量点/引用可信度
+- current module root: I/I2. 知识库构建
+- current module all pathKeys: I/I2. 知识库构建 | I/I2. 知识库构建/数据接入 | I/I2. 知识库构建/Parser types | I/I2. 知识库构建/Parser types/Text / Markdown | I/I2. 知识库构建/Parser types/PDF / Office | I/I2. 知识库构建/Parser types/HTML / web content | I/I2. 知识库构建/Parser types/Code / repository parsers | I/I2. 知识库构建/Chunking strategy | I/I2. 知识库构建/Metadata schema | I/I2. 知识库构建/Indexing | I/I2. 知识库构建/Vector store | I/I2. 知识库构建/Keyword index | I/I2. 知识库构建/Update / refresh / re-index / delete
+- sibling modules in domain: I/I1. 表示与检索基础 | I/I3. RAG 管线 | I/I4. RAG 形态 | I/I5. 记忆类型 | I/I6. 关键质量点
+返回模板
+{
+  "shardId": "leaves-I-I2-jwznuy-1",
+  "nodes": {
+    "I/I2. 知识库构建/数据接入": {},
+    "I/I2. 知识库构建/Chunking strategy": {
+      "status": "seed",
+      "definition": "Chunking strategy 决定一份文档如何被切成可索引、可检索、可引用的最小单元，它直接影响召回质量与引用对齐。",
+      "importance": "很多 RAG 问题并不是 embedding 模型不够强，而是 chunk 边界、overlap、标题继承和 metadata schema 没设计好。",
+      "minimumDemo": "用同一批文档分别跑固定长度 chunk、语义 chunk 和标题分层 chunk，比较召回与引用质量。",
+      "hardwareBudget": "CPU 即可；规模大时主要受索引和存储资源约束。",
+      "prerequisites": [
+        "I/I2. 知识库构建",
+        "I/I1. 表示与检索基础/Embeddings",
+        "I/I2. 知识库构建/Metadata schema"
+      ],
+      "coreMetrics": [
+        "retrieval recall",
+        "citation alignment",
+        "context waste ratio",
+        "index size"
+      ],
+      "toolchain": [
+        "document parser",
+        "chunking pipeline",
+        "vector store"
+      ],
+      "failureSigns": [
+        "模型总能召回相关文档，但引用段落对不上答案",
+        "上下文里出现大量不相关残片或重复内容"
+      ],
+      "next": [
+        "I/I3. RAG 管线",
+        "I/I2. 知识库构建/Metadata schema"
+      ]
+    },
+    "I/I2. 知识库构建/Metadata schema": {
+      "status": "seed",
+      "definition": "Metadata schema 决定每个 chunk 除正文外还带什么结构化上下文，例如来源、标题层级、时间戳、权限域、语言、文件路径和业务标签。",
+      "importance": "没有稳定 metadata，permission-aware retrieval、citation alignment、增量更新和失败排查都会非常脆弱。",
+      "minimumDemo": "给同一批 chunk 补上来源路径、标题层级、更新时间和权限标签，再比较检索、过滤和引用定位效果。",
+      "hardwareBudget": "CPU 即可，主要消耗在索引与存储。",
+      "prerequisites": [
+        "I/I2. 知识库构建",
+        "I/I2. 知识库构建/Chunking strategy",
+        "I/I2. 知识库构建/Vector store"
+      ],
+      "coreMetrics": [
+        "metadata completeness",
+        "filter hit rate",
+        "citation localization accuracy",
+        "re-index correctness"
+      ],
+      "toolchain": [
+        "parser pipeline",
+        "vector store metadata filters",
+        "schema validators"
+      ],
+      "failureSigns": [
+        "检索结果内容相关但无法定位原文来源",
+        "更新或删除文档后旧 chunk 长时间残留在线上"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Permission-aware retrieval",
+        "I/I3. RAG 管线/Citation span alignment"
+      ]
+    },
+    "I/I2. 知识库构建/Indexing": {},
+    "I/I2. 知识库构建/Vector store": {},
+    "I/I2. 知识库构建/Keyword index": {},
+    "I/I2. 知识库构建/Update / refresh / re-index / delete": {}
+  }
+}

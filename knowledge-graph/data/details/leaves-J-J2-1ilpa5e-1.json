@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-J-J2-1ilpa5e-1",
+    "type": "leaf-batch",
+    "label": "J2. 结构化输出 / Leaves",
+    "domainCode": "J",
+    "domainTitle": "AI 应用工程",
+    "moduleCode": "J2",
+    "moduleTitle": "结构化输出",
+    "modulePathKey": "J/J2. 结构化输出",
+    "parentPathKey": "J/J2. 结构化输出",
+    "parentTitle": "J2. 结构化输出",
+    "leafTitles": [
+      "JSON mode",
+      "JSON Schema",
+      "Typed outputs",
+      "Validation",
+      "Parsing",
+      "Error recovery"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "J/J2. 结构化输出/JSON mode": {},
+    "J/J2. 结构化输出/JSON Schema": {},
+    "J/J2. 结构化输出/Typed outputs": {},
+    "J/J2. 结构化输出/Validation": {},
+    "J/J2. 结构化输出/Parsing": {},
+    "J/J2. 结构化输出/Error recovery": {}
+  }
+}

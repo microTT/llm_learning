@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-H-H2-1m21ex1-1",
+    "type": "leaf-batch",
+    "label": "H2. 监督式后训练 / Leaves",
+    "domainCode": "H",
+    "domainTitle": "模型适配、后训练与对齐",
+    "moduleCode": "H2",
+    "moduleTitle": "监督式后训练",
+    "modulePathKey": "H/H2. 监督式后训练",
+    "parentPathKey": "H/H2. 监督式后训练",
+    "parentTitle": "H2. 监督式后训练",
+    "leafTitles": [
+      "SFT",
+      "Domain fine-tuning",
+      "Style fine-tuning",
+      "Tool / function-calling fine-tuning",
+      "Vision fine-tuning",
+      "Task-specific tuning"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "H/H2. 监督式后训练/SFT": {},
+    "H/H2. 监督式后训练/Domain fine-tuning": {},
+    "H/H2. 监督式后训练/Style fine-tuning": {},
+    "H/H2. 监督式后训练/Tool / function-calling fine-tuning": {},
+    "H/H2. 监督式后训练/Vision fine-tuning": {},
+    "H/H2. 监督式后训练/Task-specific tuning": {}
+  }
+}

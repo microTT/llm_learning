@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-N-N5-1anvi4w-1",
+    "type": "leaf-batch",
+    "label": "N5. 团队与流程 / Leaves",
+    "domainCode": "N",
+    "domainTitle": "产品、场景与组织",
+    "moduleCode": "N5",
+    "moduleTitle": "团队与流程",
+    "modulePathKey": "N/N5. 团队与流程",
+    "parentPathKey": "N/N5. 团队与流程",
+    "parentTitle": "N5. 团队与流程",
+    "leafTitles": [
+      "产品经理",
+      "应用工程师",
+      "模型工程师",
+      "数据工程师",
+      "Eval / QA",
+      "安全 / Policy",
+      "运维 / 平台"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "N/N5. 团队与流程/产品经理": {},
+    "N/N5. 团队与流程/应用工程师": {},
+    "N/N5. 团队与流程/模型工程师": {},
+    "N/N5. 团队与流程/数据工程师": {},
+    "N/N5. 团队与流程/Eval / QA": {},
+    "N/N5. 团队与流程/安全 / Policy": {},
+    "N/N5. 团队与流程/运维 / 平台": {}
+  }
+}

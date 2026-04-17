@@ -1,0 +1,146 @@
+你正在补充 AI 知识图谱的一个 detail shard。只处理当前 shard，不要新增节点、不要改 pathKey。
+Shard 信息
+- shardId: leaves-I-I3-6k04nt-1
+- expected answer file: prompts/detail/leaves-I-I3-6k04nt-1/answer.md
+- label: I3. RAG 管线 / Leaves
+- type: leaf-batch
+- domain: I. 检索、记忆与外部知识
+- module: I3. RAG 管线
+- parent pathKey: I/I3. RAG 管线
+- parent title: I3. RAG 管线
+- leaf titles: Query understanding / Query rewrite / Retrieval / Permission-aware retrieval / Rerank / Context packing / Citation span alignment / Generation / Citation / provenance / Post-processing
+- shard owned node count: 10
+输出要求
+- 只输出一个 JSON 对象，不要 Markdown 代码块，不要解释文字。
+- 固定输出形状：{ "shardId": "<shard-id>", "nodes": { "<pathKey>": { ...detailFields } } }
+- 只允许这些字段：status, definition, importance, minimumDemo, hardwareBudget, examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next
+- text 字段：definition, importance, minimumDemo, hardwareBudget
+- list 字段：examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next，必须是字符串数组。
+- `prerequisites` / `next` 优先使用精确 pathKey；如果没有把握，不要编造图谱里不存在的节点。
+- 对当前已经有内容的节点，以补全、校正、统一口径为主；不要为了改写而改写。
+- 所有 target pathKey 都要保留在返回 JSON 里；如果某个节点暂时没有把握，可以保持为空对象。
+当前 shard 的目标节点
+1. [concept] I/I3. RAG 管线/Query understanding
+   - title: Query understanding
+   - parent: I/I3. RAG 管线
+   - currentDetail: {}
+2. [concept] I/I3. RAG 管线/Query rewrite
+   - title: Query rewrite
+   - parent: I/I3. RAG 管线
+   - currentDetail: {}
+3. [concept] I/I3. RAG 管线/Retrieval
+   - title: Retrieval
+   - parent: I/I3. RAG 管线
+   - currentDetail: {}
+4. [concept] I/I3. RAG 管线/Permission-aware retrieval
+   - title: Permission-aware retrieval
+   - parent: I/I3. RAG 管线
+   - currentDetail: {
+       "status": "seed",
+       "definition": "Permission-aware retrieval 指检索阶段就按用户、租户、项目或文档权限过滤候选结果，而不是先检索再在回答阶段“希望模型别看到”。",
+       "importance": "RAG 一旦接入企业文档，权限边界就是第一性约束；如果这一步做错，回答质量问题会直接升级成安全事故。",
+       "minimumDemo": "为同一知识库构造两组不同权限用户，确保两人检索同一问题时召回集合不同且引用来源不越权。",
+       "hardwareBudget": "与硬件关系不大，重点在权限模型和索引设计。",
+       "prerequisites": [
+         "I/I2. 知识库构建/Metadata schema",
+         "I/I3. RAG 管线",
+         "J/J8. 安全与权限"
+       ],
+       "coreMetrics": [
+         "unauthorized recall rate",
+         "authorized recall rate",
+         "filter latency",
+         "citation permission correctness"
+       ],
+       "toolchain": [
+         "vector store filters",
+         "ACL / permission service",
+         "audit logs"
+       ],
+       "failureSigns": [
+         "答案没直接泄露，但 citation 或 chunk preview 泄露了受限内容",
+         "权限过滤后 recall 断崖式下降，系统却没有降级路径"
+       ],
+       "next": [
+         "J/J8. 安全与权限",
+         "M/M5. 安全控制",
+         "M/M7. 隐私与合规"
+       ]
+     }
+5. [concept] I/I3. RAG 管线/Rerank
+   - title: Rerank
+   - parent: I/I3. RAG 管线
+   - currentDetail: {}
+6. [concept] I/I3. RAG 管线/Context packing
+   - title: Context packing
+   - parent: I/I3. RAG 管线
+   - currentDetail: {}
+7. [concept] I/I3. RAG 管线/Citation span alignment
+   - title: Citation span alignment
+   - parent: I/I3. RAG 管线
+   - currentDetail: {}
+8. [concept] I/I3. RAG 管线/Generation
+   - title: Generation
+   - parent: I/I3. RAG 管线
+   - currentDetail: {}
+9. [concept] I/I3. RAG 管线/Citation / provenance
+   - title: Citation / provenance
+   - parent: I/I3. RAG 管线
+   - currentDetail: {}
+10. [concept] I/I3. RAG 管线/Post-processing
+   - title: Post-processing
+   - parent: I/I3. RAG 管线
+   - currentDetail: {}
+可参考的 pathKey
+- current domain root: I
+- current domain all pathKeys: I | I/I1. 表示与检索基础 | I/I1. 表示与检索基础/Embeddings | I/I1. 表示与检索基础/Dense retrieval | I/I1. 表示与检索基础/Sparse retrieval | I/I1. 表示与检索基础/Hybrid retrieval | I/I1. 表示与检索基础/Similarity search | I/I1. 表示与检索基础/Reranking | I/I2. 知识库构建 | I/I2. 知识库构建/数据接入 | I/I2. 知识库构建/Parser types | I/I2. 知识库构建/Parser types/Text / Markdown | I/I2. 知识库构建/Parser types/PDF / Office | I/I2. 知识库构建/Parser types/HTML / web content | I/I2. 知识库构建/Parser types/Code / repository parsers | I/I2. 知识库构建/Chunking strategy | I/I2. 知识库构建/Metadata schema | I/I2. 知识库构建/Indexing | I/I2. 知识库构建/Vector store | I/I2. 知识库构建/Keyword index | I/I2. 知识库构建/Update / refresh / re-index / delete | I/I3. RAG 管线 | I/I3. RAG 管线/Query understanding | I/I3. RAG 管线/Query rewrite | I/I3. RAG 管线/Retrieval | I/I3. RAG 管线/Permission-aware retrieval | I/I3. RAG 管线/Rerank | I/I3. RAG 管线/Context packing | I/I3. RAG 管线/Citation span alignment | I/I3. RAG 管线/Generation | I/I3. RAG 管线/Citation / provenance | I/I3. RAG 管线/Post-processing | I/I4. RAG 形态 | I/I4. RAG 形态/Basic RAG | I/I4. RAG 形态/Multi-hop RAG | I/I4. RAG 形态/Query rewriting RAG | I/I4. RAG 形态/Agentic RAG | I/I4. RAG 形态/KG-RAG | I/I4. RAG 形态/Long-context + retrieval hybrid | I/I5. 记忆类型 | I/I5. 记忆类型/参数记忆 | I/I5. 记忆类型/非参数知识库 | I/I5. 记忆类型/会话记忆 | I/I5. 记忆类型/用户长期记忆 | I/I5. 记忆类型/任务记忆 | I/I5. 记忆类型/Episodic memory | I/I5. 记忆类型/Semantic memory | I/I6. 关键质量点 | I/I6. 关键质量点/召回率 | I/I6. 关键质量点/精准率 | I/I6. 关键质量点/Chunk 质量 | I/I6. 关键质量点/过期知识 | I/I6. 关键质量点/授权与权限边界 | I/I6. 关键质量点/可追溯性 | I/I6. 关键质量点/引用可信度
+- current module root: I/I3. RAG 管线
+- current module all pathKeys: I/I3. RAG 管线 | I/I3. RAG 管线/Query understanding | I/I3. RAG 管线/Query rewrite | I/I3. RAG 管线/Retrieval | I/I3. RAG 管线/Permission-aware retrieval | I/I3. RAG 管线/Rerank | I/I3. RAG 管线/Context packing | I/I3. RAG 管线/Citation span alignment | I/I3. RAG 管线/Generation | I/I3. RAG 管线/Citation / provenance | I/I3. RAG 管线/Post-processing
+- sibling modules in domain: I/I1. 表示与检索基础 | I/I2. 知识库构建 | I/I4. RAG 形态 | I/I5. 记忆类型 | I/I6. 关键质量点
+返回模板
+{
+  "shardId": "leaves-I-I3-6k04nt-1",
+  "nodes": {
+    "I/I3. RAG 管线/Query understanding": {},
+    "I/I3. RAG 管线/Query rewrite": {},
+    "I/I3. RAG 管线/Retrieval": {},
+    "I/I3. RAG 管线/Permission-aware retrieval": {
+      "status": "seed",
+      "definition": "Permission-aware retrieval 指检索阶段就按用户、租户、项目或文档权限过滤候选结果，而不是先检索再在回答阶段“希望模型别看到”。",
+      "importance": "RAG 一旦接入企业文档，权限边界就是第一性约束；如果这一步做错，回答质量问题会直接升级成安全事故。",
+      "minimumDemo": "为同一知识库构造两组不同权限用户，确保两人检索同一问题时召回集合不同且引用来源不越权。",
+      "hardwareBudget": "与硬件关系不大，重点在权限模型和索引设计。",
+      "prerequisites": [
+        "I/I2. 知识库构建/Metadata schema",
+        "I/I3. RAG 管线",
+        "J/J8. 安全与权限"
+      ],
+      "coreMetrics": [
+        "unauthorized recall rate",
+        "authorized recall rate",
+        "filter latency",
+        "citation permission correctness"
+      ],
+      "toolchain": [
+        "vector store filters",
+        "ACL / permission service",
+        "audit logs"
+      ],
+      "failureSigns": [
+        "答案没直接泄露，但 citation 或 chunk preview 泄露了受限内容",
+        "权限过滤后 recall 断崖式下降，系统却没有降级路径"
+      ],
+      "next": [
+        "J/J8. 安全与权限",
+        "M/M5. 安全控制",
+        "M/M7. 隐私与合规"
+      ]
+    },
+    "I/I3. RAG 管线/Rerank": {},
+    "I/I3. RAG 管线/Context packing": {},
+    "I/I3. RAG 管线/Citation span alignment": {},
+    "I/I3. RAG 管线/Generation": {},
+    "I/I3. RAG 管线/Citation / provenance": {},
+    "I/I3. RAG 管线/Post-processing": {}
+  }
+}

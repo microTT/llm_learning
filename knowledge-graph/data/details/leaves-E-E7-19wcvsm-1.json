@@ -1,0 +1,281 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-E-E7-19wcvsm-1",
+    "type": "leaf-batch",
+    "label": "E7. 机器人与具身智能 / Leaves",
+    "domainCode": "E",
+    "domainTitle": "模态、任务域与智能形态",
+    "moduleCode": "E7",
+    "moduleTitle": "机器人与具身智能",
+    "modulePathKey": "E/E7. 机器人与具身智能",
+    "parentPathKey": "E/E7. 机器人与具身智能",
+    "parentTitle": "E7. 机器人与具身智能",
+    "leafTitles": [
+      "感知",
+      "定位",
+      "建图",
+      "操作",
+      "导航",
+      "控制",
+      "技能学习",
+      "感知—规划—动作闭环"
+    ],
+    "nodeCount": 8,
+    "filledNodeCount": 8
+  },
+  "nodes": {
+    "E/E7. 机器人与具身智能/感知": {
+      "status": "seed",
+      "definition": "机器人感知把相机、深度、激光、IMU 等多源输入转成可供决策使用的状态表示。",
+      "importance": "没有稳定感知，后续定位、规划和控制都建立在错误世界模型上。",
+      "minimumDemo": "在仿真或真实传感器数据上做物体识别/状态估计，并把结果输入后续规划模块。",
+      "hardwareBudget": "实时传感器处理更看重 I/O、延迟和边缘计算能力。",
+      "prerequisites": [
+        "E/E7. 机器人与具身智能",
+        "E/E2. 视觉（CV）",
+        "F/F2. 数据形态/交互轨迹"
+      ],
+      "coreMetrics": [
+        "perception accuracy",
+        "latency",
+        "sensor robustness",
+        "state quality"
+      ],
+      "toolchain": [
+        "sensor stack",
+        "CV models",
+        "telemetry / visualization"
+      ],
+      "failureSigns": [
+        "静态感知看着正常，一进入动态场景就抖动明显",
+        "不同传感器之间时间同步和坐标对齐不稳定"
+      ],
+      "next": [
+        "E/E7. 机器人与具身智能/定位",
+        "E/E7. 机器人与具身智能/建图"
+      ]
+    },
+    "E/E7. 机器人与具身智能/定位": {
+      "status": "seed",
+      "definition": "定位回答的是“我现在在哪”，是导航、建图和闭环控制的基础状态变量。",
+      "importance": "定位漂了，机器人就可能走对策略却去错地方。",
+      "minimumDemo": "在一个仿真地图里做定位估计，并比较带噪声和不带噪声时的误差变化。",
+      "hardwareBudget": "边缘计算即可，但要求稳定实时性和传感器同步。",
+      "prerequisites": [
+        "E/E7. 机器人与具身智能/感知",
+        "E/E7. 机器人与具身智能",
+        "B/B8. 决策与多智能体/POMDP"
+      ],
+      "coreMetrics": [
+        "localization error",
+        "drift",
+        "relocalization success",
+        "latency"
+      ],
+      "toolchain": [
+        "robotics localization stack",
+        "sensor fusion",
+        "simulator"
+      ],
+      "failureSigns": [
+        "短路径正常，长路径累计误差快速发散",
+        "环境变化或遮挡后无法重新定位"
+      ],
+      "next": [
+        "E/E7. 机器人与具身智能/建图",
+        "E/E7. 机器人与具身智能/导航"
+      ]
+    },
+    "E/E7. 机器人与具身智能/建图": {
+      "status": "seed",
+      "definition": "建图把环境结构整理成可搜索、可定位、可规划的表示，是机器人理解空间的重要中间层。",
+      "importance": "没有地图或空间表征，导航和长期任务很难稳定执行。",
+      "minimumDemo": "在仿真环境里累积传感器观测并生成地图，再用这个地图做路径搜索。",
+      "hardwareBudget": "更吃持续感知、存储和实时处理能力。",
+      "prerequisites": [
+        "E/E7. 机器人与具身智能/定位",
+        "E/E7. 机器人与具身智能/感知",
+        "B/B2. 搜索"
+      ],
+      "coreMetrics": [
+        "map quality",
+        "coverage",
+        "loop closure quality",
+        "memory cost"
+      ],
+      "toolchain": [
+        "mapping / SLAM stack",
+        "simulator",
+        "visualization tools"
+      ],
+      "failureSigns": [
+        "地图局部看起来对，但全局结构扭曲",
+        "回到同一区域时无法稳定闭环"
+      ],
+      "next": [
+        "E/E7. 机器人与具身智能/导航",
+        "E/E7. 机器人与具身智能/感知—规划—动作闭环"
+      ]
+    },
+    "E/E7. 机器人与具身智能/操作": {
+      "status": "seed",
+      "definition": "操作任务关注机器人如何与对象发生接触并完成抓取、放置、装配等动作，是具身任务里最难的一类问题。",
+      "importance": "它把感知、状态估计、技能、控制和安全要求都拉到同一场景里，是评估具身智能成熟度的关键任务。",
+      "minimumDemo": "在仿真里完成一个抓取或搬运任务，记录成功率、碰撞和恢复行为。",
+      "hardwareBudget": "仿真和真实机械臂测试都昂贵，真实部署的硬件成本和安全成本很高。",
+      "prerequisites": [
+        "E/E7. 机器人与具身智能",
+        "E/E7. 机器人与具身智能/感知",
+        "E/E7. 机器人与具身智能/控制"
+      ],
+      "coreMetrics": [
+        "task success rate",
+        "grasp success",
+        "collision rate",
+        "recovery rate"
+      ],
+      "toolchain": [
+        "robot simulator",
+        "manipulation policy",
+        "controller"
+      ],
+      "failureSigns": [
+        "识别到目标了，但末端执行器总到不了正确位置",
+        "轻微扰动就导致整条操作链失败"
+      ],
+      "next": [
+        "E/E7. 机器人与具身智能/技能学习",
+        "E/E7. 机器人与具身智能/感知—规划—动作闭环"
+      ]
+    },
+    "E/E7. 机器人与具身智能/导航": {
+      "status": "seed",
+      "definition": "导航要求系统在空间里安全、有效地到达目标位置，是机器人系统里最典型的闭环任务。",
+      "importance": "它把感知、定位、建图、规划和控制全部绑定到一起，是具身系统最容易暴露系统性缺陷的任务。",
+      "minimumDemo": "在仿真环境里完成一次从起点到目标点的导航，并统计路径长度、碰撞和到达率。",
+      "hardwareBudget": "实时控制和感知对边缘算力与传感器稳定性要求高。",
+      "prerequisites": [
+        "E/E7. 机器人与具身智能/定位",
+        "E/E7. 机器人与具身智能/建图",
+        "B/B6. 规划"
+      ],
+      "coreMetrics": [
+        "success rate",
+        "path efficiency",
+        "collision rate",
+        "latency"
+      ],
+      "toolchain": [
+        "navigation stack",
+        "planner",
+        "controller",
+        "simulator"
+      ],
+      "failureSigns": [
+        "路径能规划出来，但执行阶段频繁碰撞或迷路",
+        "局部避障正常，长期任务却经常回不到全局目标"
+      ],
+      "next": [
+        "E/E7. 机器人与具身智能/感知—规划—动作闭环",
+        "E/E7. 机器人与具身智能/控制"
+      ]
+    },
+    "E/E7. 机器人与具身智能/控制": {
+      "status": "seed",
+      "definition": "控制负责把高层目标和规划结果变成底层执行信号，是机器人真正产生稳定动作的最后一层。",
+      "importance": "规划再好，如果控制层不稳，现实世界里还是会抖、偏、撞或者过冲。",
+      "minimumDemo": "在仿真里让机器人跟踪给定轨迹或姿态目标，并分析误差与稳定性。",
+      "hardwareBudget": "对实时性要求极高，常常比大模型算力更受限于控制频率和系统延迟。",
+      "prerequisites": [
+        "E/E7. 机器人与具身智能",
+        "E/E7. 机器人与具身智能/导航",
+        "E/E7. 机器人与具身智能/操作"
+      ],
+      "coreMetrics": [
+        "tracking error",
+        "overshoot",
+        "stability",
+        "control frequency"
+      ],
+      "toolchain": [
+        "controller",
+        "telemetry",
+        "simulator"
+      ],
+      "failureSigns": [
+        "指令正确但执行明显振荡或超调",
+        "环境稍有扰动就无法维持稳定控制"
+      ],
+      "next": [
+        "E/E7. 机器人与具身智能/感知—规划—动作闭环",
+        "M/M5. 安全控制"
+      ]
+    },
+    "E/E7. 机器人与具身智能/技能学习": {
+      "status": "seed",
+      "definition": "技能学习关心机器人如何把可复用动作模式学成稳定技能，而不是每次都从零开始规划。",
+      "importance": "它是把低层动作和高层任务连接起来的关键层，也决定机器人能否逐步积累能力而不是每次重新适应。",
+      "minimumDemo": "通过模仿学习或 RL 学出一个可复用技能，再测试它在新初始状态下的泛化。",
+      "hardwareBudget": "持续试错和轨迹数据会拉高计算与标注成本。",
+      "prerequisites": [
+        "E/E7. 机器人与具身智能",
+        "E/E6. 决策与强化学习/策略学习",
+        "F/F2. 数据形态/交互轨迹"
+      ],
+      "coreMetrics": [
+        "skill success rate",
+        "generalization",
+        "sample efficiency",
+        "reusability"
+      ],
+      "toolchain": [
+        "imitation / RL pipeline",
+        "simulator",
+        "trajectory dataset"
+      ],
+      "failureSigns": [
+        "技能在训练起点表现好，换姿态或物体就完全失效",
+        "学到的是脆弱动作片段，而不是稳定技能"
+      ],
+      "next": [
+        "E/E7. 机器人与具身智能/操作",
+        "E/E7. 机器人与具身智能/感知—规划—动作闭环"
+      ]
+    },
+    "E/E7. 机器人与具身智能/感知—规划—动作闭环": {
+      "status": "seed",
+      "definition": "这是具身系统最重要的系统级概念：感知更新世界状态，规划生成动作意图，执行再回到新的观测，形成持续闭环。",
+      "importance": "单个模块性能好并不代表闭环系统能工作；闭环稳定性才是真正决定机器人能否落地的标准。",
+      "minimumDemo": "把感知、规划、控制串成一条完整闭环，在仿真里跑多轮任务并分析失败点属于哪一层。",
+      "hardwareBudget": "系统级闭环实验会同时消耗仿真、控制和观测资源，真实硬件调试成本更高。",
+      "prerequisites": [
+        "E/E7. 机器人与具身智能/感知",
+        "E/E7. 机器人与具身智能/导航",
+        "E/E7. 机器人与具身智能/控制"
+      ],
+      "coreMetrics": [
+        "end-to-end success rate",
+        "recovery rate",
+        "latency budget",
+        "failure attribution"
+      ],
+      "toolchain": [
+        "robotics stack",
+        "trace logging",
+        "simulator",
+        "safety checks"
+      ],
+      "failureSigns": [
+        "各模块单测都过，但闭环执行频繁死锁或发散",
+        "出了问题后无法快速定位是感知、规划还是控制环节"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Trace schema",
+        "M/M5. 安全控制",
+        "N/N6. 持续改进闭环"
+      ]
+    }
+  }
+}

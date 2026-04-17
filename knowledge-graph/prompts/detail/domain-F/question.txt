@@ -1,0 +1,63 @@
+你正在补充 AI 知识图谱的一个 detail shard。只处理当前 shard，不要新增节点、不要改 pathKey。
+Shard 信息
+- shardId: domain-F
+- expected answer file: prompts/detail/domain-F/answer.md
+- label: F. 数据层（横切层） / 概览
+- type: domain-overview
+- domain: F. 数据层（横切层）
+- shard owned node count: 8
+- prompt focus: 只补这个 domain 自身的全局介绍；下面列出的模块和父概念仅作为上下文参考，不需要在回答里逐个展开。
+输出要求
+- 只输出一个 JSON 对象，不要 Markdown 代码块，不要解释文字。
+- 固定输出形状：{ "shardId": "<shard-id>", "nodes": { "<pathKey>": { ...detailFields } } }
+- 只允许这些字段：status, definition, importance, minimumDemo, hardwareBudget, examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next
+- text 字段：definition, importance, minimumDemo, hardwareBudget
+- list 字段：examples, pitfalls, prerequisites, coreMetrics, toolchain, failureSigns, next，必须是字符串数组。
+- `prerequisites` / `next` 优先使用精确 pathKey；如果没有把握，不要编造图谱里不存在的节点。
+- 对当前已经有内容的节点，以补全、校正、统一口径为主；不要为了改写而改写。
+- domain-overview 只需要返回 domain 根节点本身；不要在回答里重复输出模块或父概念节点。
+当前需要补充的全局节点
+1. [domain] F
+   - title: 数据层（横切层）
+   - children: F1. 数据类型 / F2. 数据形态 / F3. 数据工程 / F4. 数据质量 / F5. 数据治理 / F6. 数据在系统中的角色 / F7. 后训练数据构建
+   - currentDetail: {}
+本 domain 的模块上下文（仅供理解全局范围，不要在回答里展开成模块逐项说明）
+1. F1. 数据类型
+   - pathKey: F/F1. 数据类型
+   - concept count: 10
+   - sample children: 预训练语料 / 指令微调数据 / 偏好数据 / 奖励数据 / 工具调用数据 / Agent traces
+2. F2. 数据形态
+   - pathKey: F/F2. 数据形态
+   - concept count: 10
+   - sample children: 文本 / 图像 / 音频 / 视频 / 多模态对 / JSON / schema data
+3. F3. 数据工程
+   - pathKey: F/F3. 数据工程
+   - concept count: 10
+   - sample children: 采集 / 清洗 / 去重 / 过滤 / 切分 / 标注
+4. F4. 数据质量
+   - pathKey: F/F4. 数据质量
+   - concept count: 8
+   - sample children: 覆盖度 / 正确性 / 一致性 / 多样性 / 噪声控制 / 分布匹配
+5. F5. 数据治理
+   - pathKey: F/F5. 数据治理
+   - concept count: 7
+   - sample children: License / 隐私 / PII / 数据保留 / 权限 / 数据卡 / model card 对齐
+6. F6. 数据在系统中的角色
+   - pathKey: F/F6. 数据在系统中的角色
+   - concept count: 6
+   - sample children: 预训练数据 → 决定基础能力上限 / SFT 数据 → 决定任务风格与稳定性 / 偏好/奖励数据 → 决定对齐方向 / 工具 traces → 决定 Agent 行为优化 / Eval datasets → 决定可重复评测 / 知识库文档 → 决定 RAG 质量
+7. F7. 后训练数据构建
+   - pathKey: F/F7. 后训练数据构建
+   - concept count: 8
+   - sample children: Train / validation / test split / Instruction crafting / Multi-turn examples / Weight masking / Preference data / Reward / verifier data
+可参考的 pathKey
+- current domain root: F
+- current domain all pathKeys: F | F/F1. 数据类型 | F/F1. 数据类型/预训练语料 | F/F1. 数据类型/指令微调数据 | F/F1. 数据类型/偏好数据 | F/F1. 数据类型/奖励数据 | F/F1. 数据类型/工具调用数据 | F/F1. 数据类型/Agent traces | F/F1. 数据类型/Eval datasets | F/F1. 数据类型/知识库文档 | F/F1. 数据类型/用户行为日志 | F/F1. 数据类型/合成数据 | F/F2. 数据形态 | F/F2. 数据形态/文本 | F/F2. 数据形态/图像 | F/F2. 数据形态/音频 | F/F2. 数据形态/视频 | F/F2. 数据形态/多模态对 | F/F2. 数据形态/JSON / schema data | F/F2. 数据形态/图结构 | F/F2. 数据形态/时间序列 | F/F2. 数据形态/代码 | F/F2. 数据形态/交互轨迹 | F/F3. 数据工程 | F/F3. 数据工程/采集 | F/F3. 数据工程/清洗 | F/F3. 数据工程/去重 | F/F3. 数据工程/过滤 | F/F3. 数据工程/切分 | F/F3. 数据工程/标注 | F/F3. 数据工程/版本管理 | F/F3. 数据工程/数据增广 | F/F3. 数据工程/合成生成 | F/F3. 数据工程/流式处理 | F/F4. 数据质量 | F/F4. 数据质量/覆盖度 | F/F4. 数据质量/正确性 | F/F4. 数据质量/一致性 | F/F4. 数据质量/多样性 | F/F4. 数据质量/噪声控制 | F/F4. 数据质量/分布匹配 | F/F4. 数据质量/偏差与公平性 | F/F4. 数据质量/时效性 | F/F5. 数据治理 | F/F5. 数据治理/License | F/F5. 数据治理/隐私 | F/F5. 数据治理/PII | F/F5. 数据治理/数据保留 | F/F5. 数据治理/权限 | F/F5. 数据治理/数据卡 / model card 对齐 | F/F5. 数据治理/审计 | F/F6. 数据在系统中的角色 | F/F6. 数据在系统中的角色/预训练数据 → 决定基础能力上限 | F/F6. 数据在系统中的角色/SFT 数据 → 决定任务风格与稳定性 | F/F6. 数据在系统中的角色/偏好/奖励数据 → 决定对齐方向 | F/F6. 数据在系统中的角色/工具 traces → 决定 Agent 行为优化 | F/F6. 数据在系统中的角色/Eval datasets → 决定可重复评测 | F/F6. 数据在系统中的角色/知识库文档 → 决定 RAG 质量 | F/F7. 后训练数据构建 | F/F7. 后训练数据构建/Train / validation / test split | F/F7. 后训练数据构建/Instruction crafting | F/F7. 后训练数据构建/Multi-turn examples | F/F7. 后训练数据构建/Weight masking | F/F7. 后训练数据构建/Preference data | F/F7. 后训练数据构建/Reward / verifier data | F/F7. 后训练数据构建/Contamination / leakage checks | F/F7. 后训练数据构建/Rubric-based graders for RFT
+- sibling modules in domain: F/F1. 数据类型 | F/F2. 数据形态 | F/F3. 数据工程 | F/F4. 数据质量 | F/F5. 数据治理 | F/F6. 数据在系统中的角色 | F/F7. 后训练数据构建
+返回模板
+{
+  "shardId": "domain-F",
+  "nodes": {
+    "F": {}
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-M-M3-kxt1tw-2",
+    "type": "leaf-batch",
+    "label": "M3. Agent 级评测 / Leaves 2",
+    "domainCode": "M",
+    "domainTitle": "评测、安全与治理",
+    "moduleCode": "M3",
+    "moduleTitle": "Agent 级评测",
+    "modulePathKey": "M/M3. Agent 级评测",
+    "parentPathKey": "M/M3. Agent 级评测",
+    "parentTitle": "M3. Agent 级评测",
+    "leafTitles": [
+      "Handoff correctness",
+      "Routing quality",
+      "Policy compliance",
+      "Workflow completion rate",
+      "Approval correctness",
+      "Failure taxonomy"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "M/M3. Agent 级评测/Handoff correctness": {},
+    "M/M3. Agent 级评测/Routing quality": {},
+    "M/M3. Agent 级评测/Policy compliance": {},
+    "M/M3. Agent 级评测/Workflow completion rate": {},
+    "M/M3. Agent 级评测/Approval correctness": {},
+    "M/M3. Agent 级评测/Failure taxonomy": {}
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-B-B2-doqzvx-1",
+    "type": "leaf-batch",
+    "label": "对抗搜索 / Leaves",
+    "domainCode": "B",
+    "domainTitle": "经典 AI",
+    "moduleCode": "B2",
+    "moduleTitle": "搜索",
+    "modulePathKey": "B/B2. 搜索",
+    "parentPathKey": "B/B2. 搜索/对抗搜索",
+    "parentTitle": "对抗搜索",
+    "leafTitles": [
+      "Minimax",
+      "Alpha-Beta Pruning",
+      "Monte Carlo Tree Search"
+    ],
+    "nodeCount": 3,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "B/B2. 搜索/对抗搜索/Minimax": {},
+    "B/B2. 搜索/对抗搜索/Alpha-Beta Pruning": {},
+    "B/B2. 搜索/对抗搜索/Monte Carlo Tree Search": {}
+  }
+}

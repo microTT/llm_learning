@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-I-I4-wc8dyp-1",
+    "type": "leaf-batch",
+    "label": "I4. RAG 形态 / Leaves",
+    "domainCode": "I",
+    "domainTitle": "检索、记忆与外部知识",
+    "moduleCode": "I4",
+    "moduleTitle": "RAG 形态",
+    "modulePathKey": "I/I4. RAG 形态",
+    "parentPathKey": "I/I4. RAG 形态",
+    "parentTitle": "I4. RAG 形态",
+    "leafTitles": [
+      "Basic RAG",
+      "Multi-hop RAG",
+      "Query rewriting RAG",
+      "Agentic RAG",
+      "KG-RAG",
+      "Long-context + retrieval hybrid"
+    ],
+    "nodeCount": 6,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "I/I4. RAG 形态/Basic RAG": {},
+    "I/I4. RAG 形态/Multi-hop RAG": {},
+    "I/I4. RAG 形态/Query rewriting RAG": {},
+    "I/I4. RAG 形态/Agentic RAG": {},
+    "I/I4. RAG 形态/KG-RAG": {},
+    "I/I4. RAG 形态/Long-context + retrieval hybrid": {}
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": 1,
+    "updatedAt": "2026-04-17",
+    "shardId": "leaves-B-B1-1fdfy2l-1",
+    "type": "leaf-batch",
+    "label": "B1. 智能体观 / Leaves",
+    "domainCode": "B",
+    "domainTitle": "经典 AI",
+    "moduleCode": "B1",
+    "moduleTitle": "智能体观",
+    "modulePathKey": "B/B1. 智能体观",
+    "parentPathKey": "B/B1. 智能体观",
+    "parentTitle": "B1. 智能体观",
+    "leafTitles": [
+      "环境（Environment）",
+      "状态（State）",
+      "动作（Action）",
+      "目标（Goal）",
+      "效用（Utility）",
+      "策略（Policy）",
+      "感知—决策—行动闭环"
+    ],
+    "nodeCount": 7,
+    "filledNodeCount": 0
+  },
+  "nodes": {
+    "B/B1. 智能体观/环境（Environment）": {},
+    "B/B1. 智能体观/状态（State）": {},
+    "B/B1. 智能体观/动作（Action）": {},
+    "B/B1. 智能体观/目标（Goal）": {},
+    "B/B1. 智能体观/效用（Utility）": {},
+    "B/B1. 智能体观/策略（Policy）": {},
+    "B/B1. 智能体观/感知—决策—行动闭环": {}
+  }
+}
