@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-18",
     "shardId": "domain-F",
     "type": "domain-overview",
     "label": "F. 数据层（横切层） / 概览",

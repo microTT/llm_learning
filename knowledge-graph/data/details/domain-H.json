@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-18",
     "shardId": "domain-H",
     "type": "domain-overview",
     "label": "H. 模型适配、后训练与对齐 / 概览",
