@@ -992,7 +992,7 @@ function renderDetailPanel() {
       <p class="detail-panel-eyebrow">Detail / Ready</p>
       <h2 id="detail-panel-title">侧边详情</h2>
       <p class="detail-panel-summary">
-        点击左侧任意知识项，在这里查看它的定义、上下文、关系和后续延展。后面每个节点继续补内容时，这里会直接承接。
+        点击左侧任意知识项，在这里按“是什么 / 解决了什么问题 / 示例”三段式阅读。后面每个节点继续补内容时，这里会直接承接。
       </p>
       <div class="detail-panel-empty">
         当前还没有选中具体节点。
@@ -1001,83 +1001,8 @@ function renderDetailPanel() {
     return;
   }
 
-  const sections = [];
-  const detail = entry.detail || {};
   const statusLabel = STATUS_LABELS[entry.status] || STATUS_LABELS.none;
-  const prerequisiteItems = detail.resolvedPrerequisites || [];
-  const nextItems = detail.resolvedNext || [];
-
-  if (entry.parentTitle) {
-    sections.push(renderPanelListSection("结构位置", [entry.parentTitle]));
-  }
-
-  if (entry.impactScope) {
-    sections.push(renderPanelTextSection("影响范围", entry.impactScope));
-  }
-
-  if (detail.importance) {
-    sections.push(renderPanelTextSection("为什么重要", detail.importance));
-  }
-
-  if (prerequisiteItems.length) {
-    sections.push(renderPanelReferenceSection("前置节点", prerequisiteItems));
-  }
-
-  if (detail.minimumDemo) {
-    sections.push(renderPanelTextSection("最小实验", detail.minimumDemo));
-  }
-
-  if (Array.isArray(detail.coreMetrics) && detail.coreMetrics.length) {
-    sections.push(renderPanelListSection("核心指标", detail.coreMetrics));
-  }
-
-  if (Array.isArray(detail.toolchain) && detail.toolchain.length) {
-    sections.push(renderPanelListSection("工具链", detail.toolchain));
-  }
-
-  if (Array.isArray(detail.failureSigns) && detail.failureSigns.length) {
-    sections.push(renderPanelListSection("失败信号", detail.failureSigns));
-  }
-
-  if (detail.hardwareBudget) {
-    sections.push(renderPanelTextSection("硬件预算", detail.hardwareBudget));
-  }
-
-  if (Array.isArray(detail.examples) && detail.examples.length) {
-    sections.push(renderPanelListSection("例子", detail.examples));
-  }
-
-  if (Array.isArray(detail.pitfalls) && detail.pitfalls.length) {
-    sections.push(renderPanelListSection("常见误区", detail.pitfalls));
-  }
-
-  if (entry.relatedNotes.length) {
-    sections.push(renderPanelListSection("相关关系", entry.relatedNotes));
-  }
-
-  if (entry.relatedLinks?.length) {
-    sections.push(renderPanelReferenceSection("相关节点", entry.relatedLinks));
-  }
-
-  if (entry.childTitles.length) {
-    const previewChildren = entry.childTitles.slice(0, 10);
-    if (entry.childTitles.length > previewChildren.length) {
-      previewChildren.push(`还有 ${entry.childTitles.length - previewChildren.length} 项未展开`);
-    }
-    sections.push(renderPanelListSection("下一级结构", previewChildren));
-  }
-
-  if (nextItems.length) {
-    sections.push(renderPanelReferenceSection("下一步", nextItems));
-  }
-
-  if (!sections.length) {
-    sections.push(`
-      <div class="detail-panel-empty">
-        当前节点还没有更深入的补充内容。这里显示的是内容建设进度，不代表它在整张图里不重要。后续可以直接在 <code>data/graph.json</code> 里继续补定义、前置、实验、指标和延伸路径。
-      </div>
-    `);
-  }
+  const sections = buildDetailTriad(entry);
 
   elements.detailPanelCard.innerHTML = `
     <p class="detail-panel-eyebrow">${escapeHtml(entry.eyebrow)}</p>
@@ -1097,61 +1022,195 @@ function renderDetailPanel() {
         )
         .join("")}
     </div>
-    ${sections.join("")}
+    ${sections
+      .map((section) => renderPanelCompositeSection(section.title, section.blocks, section.emptyText))
+      .join("")}
   `;
 }
 
-function renderPanelTextSection(title, text) {
+function buildDetailTriad(entry) {
+  const detail = entry.detail || {};
+  const prerequisiteItems = detail.resolvedPrerequisites || [];
+  const nextItems = detail.resolvedNext || [];
+  const previewChildren = getPreviewChildren(entry.childTitles, 10);
+
+  const whatBlocks = [];
+  const problemBlocks = [];
+  const exampleBlocks = [];
+
+  const definitionText = detail.definition || entry.summary;
+  if (definitionText) {
+    whatBlocks.push({ type: "text", content: definitionText });
+  }
+
+  if (entry.parentTitle) {
+    whatBlocks.push({ type: "list", label: "结构位置", items: [entry.parentTitle] });
+  }
+
+  if (previewChildren.length) {
+    whatBlocks.push({ type: "list", label: "下一级结构", items: previewChildren });
+  }
+
+  if (entry.impactScope) {
+    problemBlocks.push({ type: "text", label: "影响范围", content: entry.impactScope });
+  }
+
+  if (detail.importance) {
+    problemBlocks.push({ type: "text", label: "核心价值", content: detail.importance });
+  }
+
+  if (prerequisiteItems.length) {
+    problemBlocks.push({ type: "refs", label: "理解前置", items: prerequisiteItems });
+  }
+
+  if (entry.relatedNotes.length) {
+    problemBlocks.push({ type: "list", label: "相关关系", items: entry.relatedNotes });
+  }
+
+  if (entry.relatedLinks?.length) {
+    problemBlocks.push({ type: "refs", label: "关联节点", items: entry.relatedLinks });
+  }
+
+  if (nextItems.length) {
+    problemBlocks.push({ type: "refs", label: "继续延展", items: nextItems });
+  }
+
+  if (detail.minimumDemo) {
+    exampleBlocks.push({ type: "text", label: "最小实验", content: detail.minimumDemo });
+  }
+
+  if (Array.isArray(detail.examples) && detail.examples.length) {
+    exampleBlocks.push({ type: "list", label: "例子", items: detail.examples });
+  }
+
+  if (Array.isArray(detail.toolchain) && detail.toolchain.length) {
+    exampleBlocks.push({ type: "list", label: "常用工具", items: detail.toolchain });
+  }
+
+  if (Array.isArray(detail.coreMetrics) && detail.coreMetrics.length) {
+    exampleBlocks.push({ type: "list", label: "观察指标", items: detail.coreMetrics });
+  }
+
+  if (detail.hardwareBudget) {
+    exampleBlocks.push({ type: "text", label: "资源需求", content: detail.hardwareBudget });
+  }
+
+  if (Array.isArray(detail.failureSigns) && detail.failureSigns.length) {
+    exampleBlocks.push({ type: "list", label: "失败信号", items: detail.failureSigns });
+  }
+
+  if (Array.isArray(detail.pitfalls) && detail.pitfalls.length) {
+    exampleBlocks.push({ type: "list", label: "常见误区", items: detail.pitfalls });
+  }
+
+  return [
+    {
+      title: "是什么",
+      blocks: whatBlocks,
+      emptyText: "当前节点还没有更具体的定义补充。",
+    },
+    {
+      title: "解决了什么问题",
+      blocks: problemBlocks,
+      emptyText: "当前节点还没有补充它的价值、边界或相关问题。",
+    },
+    {
+      title: "示例",
+      blocks: exampleBlocks,
+      emptyText: "当前节点还没有补充例子或最小实验。",
+    },
+  ];
+}
+
+function getPreviewChildren(childTitles, limit) {
+  if (!Array.isArray(childTitles) || !childTitles.length) {
+    return [];
+  }
+
+  const previewChildren = childTitles.slice(0, limit);
+  if (childTitles.length > previewChildren.length) {
+    previewChildren.push(`还有 ${childTitles.length - previewChildren.length} 项未展开`);
+  }
+
+  return previewChildren;
+}
+
+function renderPanelCompositeSection(title, blocks, emptyText) {
   return `
     <section class="detail-panel-section">
       <h3>${escapeHtml(title)}</h3>
-      <p>${escapeHtml(text)}</p>
+      ${
+        blocks.length
+          ? `<div class="detail-panel-blocks">${blocks.map(renderPanelBlock).join("")}</div>`
+          : `<p class="detail-panel-placeholder">${escapeHtml(emptyText)}</p>`
+      }
     </section>
   `;
 }
 
-function renderPanelListSection(title, items) {
-  return `
-    <section class="detail-panel-section">
-      <h3>${escapeHtml(title)}</h3>
-      <ul>
-        ${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
-      </ul>
-    </section>
-  `;
-}
+function renderPanelBlock(block) {
+  const label = block.label
+    ? `<p class="detail-panel-block-label">${escapeHtml(block.label)}</p>`
+    : "";
 
-function renderPanelReferenceSection(title, items) {
-  return `
-    <section class="detail-panel-section">
-      <h3>${escapeHtml(title)}</h3>
-      <div class="detail-panel-links">
-        ${items
-          .map(
-            (item) => `
-              ${
-                item.key
-                  ? `
-                    <button
-                      type="button"
-                      class="detail-panel-link"
-                      data-path-key="${escapeAttribute(item.key)}"
-                    >
-                      ${escapeHtml(item.label)}
-                    </button>
-                  `
-                  : `
-                    <button type="button" class="detail-panel-link" disabled>
-                      ${escapeHtml(item.label)}
-                    </button>
-                  `
-              }
-            `
-          )
-          .join("")}
+  if (block.type === "text") {
+    return `
+      <div class="detail-panel-block">
+        ${label}
+        <p>${escapeHtml(block.content)}</p>
       </div>
-    </section>
-  `;
+    `;
+  }
+
+  if (block.type === "list") {
+    return `
+      <div class="detail-panel-block">
+        ${label}
+        <ul>
+          ${block.items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+        </ul>
+      </div>
+    `;
+  }
+
+  if (block.type === "refs") {
+    return `
+      <div class="detail-panel-block">
+        ${label}
+        <div class="detail-panel-links">
+          ${renderPanelReferenceLinks(block.items)}
+        </div>
+      </div>
+    `;
+  }
+
+  return "";
+}
+
+function renderPanelReferenceLinks(items) {
+  return items
+    .map(
+      (item) => `
+        ${
+          item.key
+            ? `
+              <button
+                type="button"
+                class="detail-panel-link"
+                data-path-key="${escapeAttribute(item.key)}"
+              >
+                ${escapeHtml(item.label)}
+              </button>
+            `
+            : `
+              <button type="button" class="detail-panel-link" disabled>
+                ${escapeHtml(item.label)}
+              </button>
+            `
+        }
+      `
+    )
+    .join("");
 }
 
 function getTypeLabel(type) {

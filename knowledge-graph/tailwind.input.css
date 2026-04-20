@@ -512,8 +512,24 @@
     @apply m-0 text-sm font-semibold text-ink;
   }
 
+  .detail-panel-blocks {
+    @apply grid gap-3;
+  }
+
+  .detail-panel-block {
+    @apply grid gap-2;
+  }
+
+  .detail-panel-block-label {
+    @apply m-0 text-xs font-semibold uppercase tracking-[0.12em] text-ink-accent;
+  }
+
   .detail-panel-section ul {
     @apply m-0 list-disc space-y-1 pl-5;
+  }
+
+  .detail-panel-placeholder {
+    @apply m-0 text-sm leading-6 text-ink-soft;
   }
 
   .detail-panel-empty,
