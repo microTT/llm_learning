@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-G-G3-1uc1gcf-1",
     "type": "leaf-batch",
     "label": "G3. 上下文与记忆 / Leaves",
@@ -19,12 +19,90 @@
       "外部记忆（RAG / tools / stores）"
     ],
     "nodeCount": 4,
-    "filledNodeCount": 0
+    "filledNodeCount": 4
   },
   "nodes": {
-    "G/G3. 上下文与记忆/参数记忆（weights）": {},
-    "G/G3. 上下文与记忆/上下文记忆（prompt context）": {},
-    "G/G3. 上下文与记忆/会话记忆（session memory）": {},
-    "G/G3. 上下文与记忆/外部记忆（RAG / tools / stores）": {}
+    "G/G3. 上下文与记忆/参数记忆（weights）": {
+      "status": "draft",
+      "definition": "参数记忆指模型在训练过程中写进权重里的统计规律、知识和行为偏好，它不是某次会话专属状态，而是模型的长期内化部分。",
+      "importance": "它决定模型无需外部资料时的基础能力上限，但也天然有过时、不可精确编辑和难以解释的问题。",
+      "minimumDemo": "比较模型直接回答与引用最新外部资料后的差异，观察参数记忆与最新事实的边界。",
+      "hardwareBudget": "本身不增加推理链路复杂度，但要更新它通常需要再训练或后训练。",
+      "prerequisites": [
+        "D/D3. 训练范式/预训练",
+        "F/F6. 数据在系统中的角色/预训练数据 → 决定基础能力上限"
+      ],
+      "coreMetrics": [
+        "base knowledge coverage",
+        "staleness",
+        "editing cost"
+      ],
+      "next": [
+        "G/G3. 上下文与记忆/上下文记忆（prompt context）",
+        "F/F1. 数据类型/知识库文档"
+      ]
+    },
+    "G/G3. 上下文与记忆/上下文记忆（prompt context）": {
+      "status": "draft",
+      "definition": "上下文记忆指当前请求里显式提供给模型的 token 序列，包括问题、指令、检索资料、历史片段和工具结果。",
+      "importance": "它是最直接、最可控、最容易试验的记忆层，但也最受 token 窗口、排序和上下文污染影响。",
+      "minimumDemo": "给同一问题分别提供短上下文、长上下文和带噪音上下文，比较答案质量和格式稳定性。",
+      "hardwareBudget": "token 越多，成本和时延越高。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Token efficiency",
+        "G/G2. Transformer 机制/长上下文处理"
+      ],
+      "coreMetrics": [
+        "context hit rate",
+        "token cost",
+        "constraint retention"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Context packing",
+        "J/J4. 会话与状态"
+      ]
+    },
+    "G/G3. 上下文与记忆/会话记忆（session memory）": {
+      "status": "draft",
+      "definition": "会话记忆指某个用户或会话内累积起来的状态，例如历史轮次、临时约束、偏好和任务进展，它通常由应用层维护而不是完全由模型自动保存。",
+      "importance": "没有会话记忆，多轮系统很容易每轮都像第一次见到用户；但会话记忆管理不当，又会造成越界继承、状态污染和 token 浪费。",
+      "minimumDemo": "构造一个三轮任务，让系统在第二、三轮显式引用前文约束，再测试截断历史或压缩状态后的效果变化。",
+      "hardwareBudget": "主要消耗在存储、注入和上下文管理，而不是模型本体。",
+      "prerequisites": [
+        "G/G3. 上下文与记忆/上下文记忆（prompt context）",
+        "K/K6. Agent 记忆/Session memory"
+      ],
+      "coreMetrics": [
+        "conversation coherence",
+        "state carryover",
+        "context budget usage"
+      ],
+      "next": [
+        "J/J4. 会话与状态",
+        "K/K6. Agent 记忆/Memory injection / compaction"
+      ]
+    },
+    "G/G3. 上下文与记忆/外部记忆（RAG / tools / stores）": {
+      "status": "draft",
+      "definition": "外部记忆指模型通过检索、数据库、工具或持久化存储获得的外部信息，它不在参数里，也不一定全部放进当前 prompt，而是按需接入。",
+      "importance": "这是让系统获得最新知识、精确事实和长期状态的主要手段，也是把大模型接到真实业务世界的关键接口。",
+      "minimumDemo": "让系统先尝试直接回答，再走检索或工具调用回答，比较正确率、时延和引用质量。",
+      "hardwareBudget": "增加的是检索、工具和状态存储链路成本，而不是单次前向计算成本。",
+      "prerequisites": [
+        "I/I3. RAG 管线",
+        "K/K7. 工具与外部连接",
+        "J/J3. 工具调用/Function calling"
+      ],
+      "coreMetrics": [
+        "retrieval usefulness",
+        "tool success rate",
+        "freshness",
+        "end-to-end latency"
+      ],
+      "next": [
+        "I/I4. RAG 形态/Agentic RAG",
+        "K/K7. 工具与外部连接/File search / web search / code tools"
+      ]
+    }
   }
 }

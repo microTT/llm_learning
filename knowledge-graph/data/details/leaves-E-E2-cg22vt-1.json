@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-E-E2-cg22vt-1",
     "type": "leaf-batch",
     "label": "E2. 视觉（CV） / Leaves",
@@ -28,10 +28,10 @@
   },
   "nodes": {
     "E/E2. 视觉（CV）/图像分类": {
-      "status": "seed",
+      "status": "draft",
       "definition": "图像分类回答的是“这张图属于哪个类”，是视觉任务里最基础也最适合搭建第一条数据—模型—评测—部署闭环的入口。",
-      "importance": "它是理解视觉数据集、标签体系、训练范式和线上监控最便宜的切入点，也是很多更复杂任务的上游基线。",
-      "minimumDemo": "用一个小型图像数据集训练分类模型，输出 top-1 / top-5 指标，并部署成批量预测脚本或简单 API。",
+      "importance": "它是理解视觉数据集、标签体系、训练范式和线上监控最便宜的切入点，也是很多更复杂任务的上游基线和 sanity check。",
+      "minimumDemo": "用一个小型图像数据集训练分类模型，输出 top-1 / top-5 指标，并部署成批量预测脚本或简单 API，再对长尾类别和拍摄条件变化做误差分析。",
       "hardwareBudget": "单卡 GPU 足够完成原型；很多小模型甚至可以在 CPU 或边缘设备上部署。",
       "prerequisites": [
         "E/E2. 视觉（CV）",
@@ -61,10 +61,10 @@
       ]
     },
     "E/E2. 视觉（CV）/目标检测": {
-      "status": "seed",
+      "status": "draft",
       "definition": "目标检测不仅要判断类别，还要给出目标的位置，是从“看懂整张图”走向“定位局部对象”的关键步骤。",
       "importance": "很多真实视觉应用关心的不是整图标签，而是具体物体在哪里、数量多少、后续是否要触发动作或告警。",
-      "minimumDemo": "在一个带 bounding box 标注的数据集上训练检测模型，输出 mAP 与可视化结果，再做一次简单阈值/后处理调优。",
+      "minimumDemo": "在一个带 bounding box 标注的数据集上训练检测模型，输出 mAP 与可视化结果，再做一次简单阈值/后处理调优并分析误检来源。",
       "hardwareBudget": "训练和部署通常需要单卡到多卡 GPU；实时场景更关注吞吐与延迟。",
       "prerequisites": [
         "E/E2. 视觉（CV）",
@@ -94,10 +94,10 @@
       ]
     },
     "E/E2. 视觉（CV）/分割": {
-      "status": "seed",
+      "status": "draft",
       "definition": "分割把像素级区域分出来，比检测更细，适合文档版面、医疗、工业质检和交互式编辑等场景。",
-      "importance": "它体现了视觉系统从“知道物体在哪”进一步走向“知道区域边界和结构”的能力。",
-      "minimumDemo": "跑一个语义或实例分割模型，比较 IoU / Dice，并把 mask 可视化叠到原图上。",
+      "importance": "它体现了视觉系统从“知道物体在哪”进一步走向“知道区域边界和结构”的能力，也是编辑、文档和医疗场景里常见的中间层。",
+      "minimumDemo": "跑一个语义或实例分割模型，比较 IoU / Dice，并把 mask 可视化叠到原图上，检查边界误差集中在哪里。",
       "hardwareBudget": "单卡 GPU 可做原型；高分辨率或交互式场景会额外吃显存和吞吐。",
       "prerequisites": [
         "E/E2. 视觉（CV）",
@@ -126,10 +126,10 @@
       ]
     },
     "E/E2. 视觉（CV）/OCR / 文档理解": {
-      "status": "seed",
+      "status": "draft",
       "definition": "OCR / 文档理解不仅识别文字，还要理解布局、表格、键值关系和页面结构，是视觉进入企业文档流的典型入口。",
       "importance": "它直接连到检索、知识库构建、结构化抽取和办公自动化，是视觉分支里最容易和 LLM、RAG、Agent 结合的一条路线。",
-      "minimumDemo": "选一批票据或 PDF 页面，做 OCR + 字段抽取，输出文字、版面块和结构化 JSON。",
+      "minimumDemo": "选一批票据或 PDF 页面，做 OCR + 字段抽取，输出文字、版面块和结构化 JSON，并检查版面错误如何传导到字段抽取。",
       "hardwareBudget": "CPU 可做基础 OCR；复杂版面理解和大批量处理更适合 GPU 或云服务。",
       "prerequisites": [
         "E/E2. 视觉（CV）",
@@ -159,10 +159,10 @@
       ]
     },
     "E/E2. 视觉（CV）/姿态估计": {
-      "status": "seed",
+      "status": "draft",
       "definition": "姿态估计把人体或物体关键点结构化出来，是行为理解、动作分析和交互系统的重要中间表示。",
       "importance": "它让视觉系统从“看到对象”升级到“理解对象如何运动”，对体育、AR、机器人和视频理解都很关键。",
-      "minimumDemo": "对一段人体动作视频做关键点检测与可视化，再统计关键点误差或动作分类效果。",
+      "minimumDemo": "对一段人体动作视频做关键点检测与可视化，再统计关键点误差、抖动和动作分类效果。",
       "hardwareBudget": "单卡 GPU 足够做原型；实时多路视频会更吃吞吐。",
       "prerequisites": [
         "E/E2. 视觉（CV）",
@@ -190,10 +190,10 @@
       ]
     },
     "E/E2. 视觉（CV）/跟踪": {
-      "status": "seed",
+      "status": "draft",
       "definition": "跟踪关注同一对象在连续帧里如何保持身份一致，是视频和具身系统里把单帧感知转成连续状态的关键步骤。",
       "importance": "没有稳定跟踪，检测结果就无法可靠地进入计数、告警、导航或行为分析。",
-      "minimumDemo": "对一段监控或运动视频跑检测+跟踪，观察轨迹和 ID 切换情况。",
+      "minimumDemo": "对一段监控或运动视频跑检测+跟踪，观察轨迹、遮挡恢复和 ID 切换情况。",
       "hardwareBudget": "实时多目标跟踪更看重视频吞吐和内存带宽。",
       "prerequisites": [
         "E/E2. 视觉（CV）/目标检测",
@@ -222,10 +222,10 @@
       ]
     },
     "E/E2. 视觉（CV）/图像生成": {
-      "status": "seed",
+      "status": "draft",
       "definition": "图像生成把文本、条件图像或结构控制信号转换成新图像，是扩散模型最典型的应用任务之一。",
       "importance": "它让视觉分支不再只做识别，也进入内容生成、创意工具和可控编辑，是现代多模态产品的重要能力层。",
-      "minimumDemo": "跑一次 text-to-image 或 image-to-image 生成，并记录提示词、seed、采样步数和输出结果。",
+      "minimumDemo": "跑一次 text-to-image 或 image-to-image 生成，并记录提示词、seed、采样步数和输出结果，再分析 prompt adherence 和局部结构失败模式。",
       "hardwareBudget": "生成任务比识别更吃 GPU 显存和推理时间，本地通常需要中高端 GPU 或量化/蒸馏路线。",
       "prerequisites": [
         "E/E2. 视觉（CV）",
@@ -254,10 +254,10 @@
       ]
     },
     "E/E2. 视觉（CV）/图像编辑": {
-      "status": "seed",
+      "status": "draft",
       "definition": "图像编辑强调对已有图像做局部或全局可控修改，例如修图、换背景、局部生成、结构保持和 instruction-based editing。",
       "importance": "它比纯生成更接近真实工作流，因为用户往往不是要“从零出图”，而是要修改已有素材。",
-      "minimumDemo": "完成一次局部编辑：先做选区/遮罩，再按指令修改，并比较编辑区域与未编辑区域的一致性。",
+      "minimumDemo": "完成一次局部编辑：先做选区或遮罩，再按指令修改，并比较编辑区域与未编辑区域的一致性和主体保持度。",
       "hardwareBudget": "与图像生成类似，核心瓶颈仍是显存和推理时长。",
       "prerequisites": [
         "E/E2. 视觉（CV）/图像生成",
@@ -286,10 +286,10 @@
       ]
     },
     "E/E2. 视觉（CV）/视觉检索": {
-      "status": "seed",
+      "status": "draft",
       "definition": "视觉检索关心的是按图搜图、图文互搜或从大规模图库里找到语义最相关的候选内容。",
       "importance": "它把视觉能力和检索系统直接接起来，是多模态搜索、商品识别、图库管理和 RAG 扩展的重要节点。",
-      "minimumDemo": "用 embedding 建一个小型图像库，完成 text-to-image 或 image-to-image 检索，并评估 recall@k。",
+      "minimumDemo": "用 embedding 建一个小型图像库，完成 text-to-image 或 image-to-image 检索，并评估 recall@k 与 rerank 后效果。",
       "hardwareBudget": "小规模原型 CPU 即可；大规模图库主要吃索引、存储和向量检索成本。",
       "prerequisites": [
         "E/E2. 视觉（CV）",

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-B-B2-doqzvx-1",
     "type": "leaf-batch",
     "label": "对抗搜索 / Leaves",
@@ -18,11 +18,158 @@
       "Monte Carlo Tree Search"
     ],
     "nodeCount": 3,
-    "filledNodeCount": 0
+    "filledNodeCount": 3
   },
   "nodes": {
-    "B/B2. 搜索/对抗搜索/Minimax": {},
-    "B/B2. 搜索/对抗搜索/Alpha-Beta Pruning": {},
-    "B/B2. 搜索/对抗搜索/Monte Carlo Tree Search": {}
+    "B/B2. 搜索/对抗搜索/Minimax": {
+      "status": "draft",
+      "definition": "Minimax 是零和、轮流行动博弈中的基础对抗搜索方法。它假设我方总想最大化收益、对手总想最小化收益，于是沿博弈树向下展开局面，并从叶子开始回传价值：MAX 层取最大，MIN 层取最小，最终得到在最坏情况下仍最优的动作。",
+      "importance": "它把“对手不是环境噪声，而是主动反制者”这个思想形式化了，是理解博弈树、对抗规划、值回传和稳健决策的起点。后续的 Alpha-Beta、MCTS，乃至很多 LLM self-play、tree search 与 verifier 机制，都能看成在 Minimax 框架上的加速、近似或扩展。",
+      "minimumDemo": "实现一个井字棋或小型取石子游戏。显式定义终局收益、轮次和合法动作，再用递归写 Minimax，输出每个根动作的回传价值，验证系统会选择保证不输或尽量赢的着法。",
+      "hardwareBudget": "CPU 即可；普通笔记本足够。教学规模游戏树通常在秒级内可跑完，瓶颈主要来自分支因子和搜索深度。",
+      "examples": [
+        "井字棋的完备求解",
+        "小型棋类或回合制游戏的对抗决策",
+        "安全攻防或资源争夺的简化博弈模型",
+        "把 verifier 看成反方评审者的搜索式推理实验"
+      ],
+      "pitfalls": [
+        "把非零和或同时行动问题硬套成标准 Minimax",
+        "叶节点评估函数过于粗糙，导致中途截断时质量很差",
+        "未正确区分 MAX/MIN 轮次",
+        "搜索深度稍一增加就组合爆炸"
+      ],
+      "prerequisites": [
+        "B/B2. 搜索",
+        "B/B1. 智能体观/效用（Utility）",
+        "B/B8. 决策与多智能体/博弈论直觉"
+      ],
+      "coreMetrics": [
+        "搜索深度",
+        "展开节点数",
+        "平均分支因子",
+        "终局正确率",
+        "截断评估误差"
+      ],
+      "toolchain": [
+        "递归搜索框架",
+        "局面生成器",
+        "终局评估函数",
+        "缓存或 transposition table",
+        "博弈树可视化"
+      ],
+      "failureSigns": [
+        "明明有必胜或保平着法却选错",
+        "搜索结果对同一局面不稳定",
+        "深度增加后运行时间爆炸",
+        "中途截断后动作质量断崖下降"
+      ],
+      "next": [
+        "B/B2. 搜索/对抗搜索/Alpha-Beta Pruning",
+        "B/B2. 搜索/对抗搜索/Monte Carlo Tree Search",
+        "B/B8. 决策与多智能体/博弈论直觉",
+        "B/B9. 经典 AI 与现代 AI 的连接点/搜索 → 推理模型 / tree search / verifier"
+      ]
+    },
+    "B/B2. 搜索/对抗搜索/Alpha-Beta Pruning": {
+      "status": "draft",
+      "definition": "Alpha-Beta Pruning 是 Minimax 的等价加速方法。它在搜索过程中维护当前已知的下界 alpha 和上界 beta；一旦发现某个分支不可能优于已有选择，就提前剪掉，不再继续展开，从而在不改变最终最优决策的前提下减少搜索量。",
+      "importance": "它证明了对抗搜索性能不只取决于算法定义，还取决于剪枝与动作排序。Alpha-Beta 是经典博弈程序真正可用起来的关键一步，也是理解 branch-and-bound、搜索预算管理和“顺序影响效率”的代表性案例。",
+      "minimumDemo": "在已有井字棋或小型棋类 Minimax 代码上加入 alpha 和 beta 参数，记录剪枝前后的展开节点数。再对比随机动作排序与“优先尝试更强动作”排序，观察排序质量如何显著影响剪枝效果。",
+      "hardwareBudget": "CPU 即可；普通笔记本足够。和 Minimax 相比不需要额外硬件，但能在相同预算下支持更深搜索。",
+      "examples": [
+        "国际象棋或黑白棋程序中的基本剪枝",
+        "小型博弈环境中在相同时间预算下搜索更深层次",
+        "把候选推理步骤先按置信度排序后做树搜索裁剪",
+        "任何具有上界/下界的 branch-and-bound 风格搜索"
+      ],
+      "pitfalls": [
+        "alpha/beta 更新位置写错，导致错误剪枝",
+        "以为加了 Alpha-Beta 就一定快，忽视动作排序质量",
+        "剪枝逻辑与 transposition table 结合不当",
+        "把近似评估误差当成剪枝逻辑问题"
+      ],
+      "prerequisites": [
+        "B/B2. 搜索/对抗搜索/Minimax",
+        "B/B2. 搜索",
+        "A/A2. 计算机基础/数据结构与算法"
+      ],
+      "coreMetrics": [
+        "剪枝率",
+        "展开节点数下降比例",
+        "在固定预算下可达搜索深度",
+        "动作排序收益",
+        "最终决策是否与 Minimax 一致"
+      ],
+      "toolchain": [
+        "Minimax 基线实现",
+        "节点计数器",
+        "动作排序启发式",
+        "可选 transposition table",
+        "profiling"
+      ],
+      "failureSigns": [
+        "结果与原始 Minimax 不一致",
+        "节点数几乎没下降，说明排序过差或实现有误",
+        "深度一加就出现莫名错误局面值",
+        "不同遍历顺序下程序行为异常波动"
+      ],
+      "next": [
+        "B/B2. 搜索/对抗搜索/Monte Carlo Tree Search",
+        "B/B6. 规划/Plan search",
+        "B/B8. 决策与多智能体/博弈论直觉",
+        "B/B9. 经典 AI 与现代 AI 的连接点/搜索 → 推理模型 / tree search / verifier"
+      ]
+    },
+    "B/B2. 搜索/对抗搜索/Monte Carlo Tree Search": {
+      "status": "draft",
+      "definition": "Monte Carlo Tree Search（MCTS）是一类用采样近似大规模博弈树或决策树价值的搜索方法。它通常循环执行选择、扩展、模拟、回传四步，用 UCT 等策略在探索新分支和利用高价值分支之间平衡，因此不必像 Minimax 那样穷举整棵树。",
+      "importance": "当动作空间大、深度深或评估函数难以精确写出时，MCTS 往往比固定深度 Minimax 更实用。它是 AlphaGo 类系统、规划式 RL 和很多 LLM tree search 原型的直接祖先，也帮助把经典搜索过渡到统计采样与学习辅助搜索。",
+      "minimumDemo": "做一个可枚举动作但树较大的小游戏或随机决策环境，实现 MCTS 主循环与 UCT 选择公式。先不给任何策略网络，只用随机 rollout，观察访问次数最多或平均回报最高的根动作如何逐步稳定。",
+      "hardwareBudget": "CPU 即可开始；普通笔记本足够做教学实验。预算主要取决于 rollout 次数和每次模拟成本；当模拟器昂贵或要接模型评估时，时间开销会迅速上升。",
+      "examples": [
+        "围棋、Hex 等大分支博弈",
+        "复杂规划问题中的采样树搜索",
+        "代码生成或数学推理中的候选轨迹采样与回传",
+        "结合 value model 的决策树评估"
+      ],
+      "pitfalls": [
+        "rollout 质量太差，导致回报信号噪声极大",
+        "把访问次数最多和平均回报最高的动作混用却没说明策略",
+        "UCT 常数调得不合适，探索/利用严重失衡",
+        "树结构缓存与状态去重不足，重复模拟过多"
+      ],
+      "prerequisites": [
+        "B/B2. 搜索/对抗搜索/Minimax",
+        "B/B2. 搜索/对抗搜索/Alpha-Beta Pruning",
+        "A/A1. 数学基础/概率统计/随机变量、分布、采样"
+      ],
+      "coreMetrics": [
+        "rollout 次数",
+        "每个根动作访问次数",
+        "平均回报与方差",
+        "在固定预算下的胜率",
+        "单次模拟成本"
+      ],
+      "toolchain": [
+        "树节点数据结构",
+        "随机或启发式 rollout 策略",
+        "UCT 公式实现",
+        "访问计数与回报统计",
+        "可选策略/价值模型接口"
+      ],
+      "failureSigns": [
+        "增加 rollout 次数后动作选择仍高度随机",
+        "搜索预算大部分花在明显无价值分支",
+        "根动作访问分布异常集中或完全平均",
+        "模拟器噪声大到回传值几乎不可用"
+      ],
+      "next": [
+        "B/B8. 决策与多智能体/MDP",
+        "B/B8. 决策与多智能体/Multi-agent decision making",
+        "B/B9. 经典 AI 与现代 AI 的连接点/搜索 → 推理模型 / tree search / verifier",
+        "J/J4. 会话与状态/Context compaction"
+      ]
+    }
   }
 }

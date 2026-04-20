@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-F-F7-t9zgbv-1",
     "type": "leaf-batch",
     "label": "F7. 后训练数据构建 / Leaves",
@@ -23,16 +23,162 @@
       "Rubric-based graders for RFT"
     ],
     "nodeCount": 8,
-    "filledNodeCount": 0
+    "filledNodeCount": 8
   },
   "nodes": {
-    "F/F7. 后训练数据构建/Train / validation / test split": {},
-    "F/F7. 后训练数据构建/Instruction crafting": {},
-    "F/F7. 后训练数据构建/Multi-turn examples": {},
-    "F/F7. 后训练数据构建/Weight masking": {},
-    "F/F7. 后训练数据构建/Preference data": {},
-    "F/F7. 后训练数据构建/Reward / verifier data": {},
-    "F/F7. 后训练数据构建/Contamination / leakage checks": {},
-    "F/F7. 后训练数据构建/Rubric-based graders for RFT": {}
+    "F/F7. 后训练数据构建/Train / validation / test split": {
+      "status": "draft",
+      "definition": "后训练里的 split 不只是随机切分，而是要确保任务、场景、用户和模板在 train、validation、test 之间边界清楚，避免模板和答案泄漏。",
+      "importance": "如果切分不严，后训练实验的提升很可能只是记住了验证集模式，而不是学会了任务。",
+      "minimumDemo": "对一批 SFT 样本按任务和来源切分，而不是单纯随机切分，再检查模板和答案是否跨集合复现。",
+      "hardwareBudget": "几乎没有额外硬件成本。",
+      "prerequisites": [
+        "C/C1. 问题设定/训练集 / 验证集 / 测试集",
+        "F/F3. 数据工程/切分"
+      ],
+      "coreMetrics": [
+        "split purity",
+        "template leakage rate"
+      ],
+      "next": [
+        "F/F7. 后训练数据构建/Contamination / leakage checks",
+        "F/F6. 数据在系统中的角色/Eval datasets → 决定可重复评测"
+      ]
+    },
+    "F/F7. 后训练数据构建/Instruction crafting": {
+      "status": "draft",
+      "definition": "Instruction crafting 是把任务目标、约束、输入字段、上下文和期望输出写成模型容易学习的样本模板，而不是把原始文档直接喂给模型。",
+      "importance": "同样的原始内容，因为指令模板写法不同，模型会学到完全不同的风格、边界和稳定性。",
+      "minimumDemo": "为同一任务写两种不同风格的 instruction 模板，比较模型输出格式和遵循程度。",
+      "hardwareBudget": "主要是数据设计和试错成本。",
+      "prerequisites": [
+        "F/F1. 数据类型/指令微调数据",
+        "H/H2. 监督式后训练/SFT"
+      ],
+      "coreMetrics": [
+        "template clarity",
+        "instruction adherence"
+      ],
+      "next": [
+        "F/F7. 后训练数据构建/Multi-turn examples",
+        "F/F6. 数据在系统中的角色/SFT 数据 → 决定任务风格与稳定性"
+      ]
+    },
+    "F/F7. 后训练数据构建/Multi-turn examples": {
+      "status": "draft",
+      "definition": "Multi-turn examples 把单轮问答扩展成多轮对话、澄清、追问、工具往返或上下文延续，让模型学会在过程里保持状态和边界。",
+      "importance": "很多真实助手任务不是一次输入一次输出，多轮样本决定模型是否会澄清、是否能承接历史以及是否会在长流程中漂移。",
+      "minimumDemo": "把单轮样本改写成包含澄清问题和后续跟进的两到三轮对话，观察模型在上下文延续上的变化。",
+      "hardwareBudget": "主要是编写和审核成本。",
+      "prerequisites": [
+        "F/F7. 后训练数据构建/Instruction crafting",
+        "F/F2. 数据形态/交互轨迹"
+      ],
+      "coreMetrics": [
+        "dialogue coherence",
+        "state carryover quality"
+      ],
+      "next": [
+        "F/F1. 数据类型/Agent traces",
+        "J/J3. 工具调用/Tool result injection"
+      ]
+    },
+    "F/F7. 后训练数据构建/Weight masking": {
+      "status": "draft",
+      "definition": "Weight masking 指在训练样本里只让一部分 token 参与损失，例如只学习 assistant 回复，不学习 system、user 或某些上下文字段。",
+      "importance": "如果不区分哪些 token 应该学习，模型可能把上下文噪声、示例前缀甚至标注说明也当作目标行为记住。",
+      "minimumDemo": "比较“全部 token 都参与损失”和“只对回答部分计算损失”两种设置的训练行为差异。",
+      "hardwareBudget": "几乎没有额外硬件成本，但会影响训练效果。",
+      "prerequisites": [
+        "F/F7. 后训练数据构建/Instruction crafting",
+        "H/H2. 监督式后训练/SFT"
+      ],
+      "coreMetrics": [
+        "target token ratio",
+        "format leakage rate"
+      ],
+      "next": [
+        "F/F4. 数据质量/一致性",
+        "F/F6. 数据在系统中的角色/SFT 数据 → 决定任务风格与稳定性"
+      ]
+    },
+    "F/F7. 后训练数据构建/Preference data": {
+      "status": "draft",
+      "definition": "这里的 preference data 特指已构造成对或可排序的后训练样本，明确表达哪个回答更好以及为什么更好。",
+      "importance": "偏好优化不依赖单一标准答案，关键在于比较信号是否稳定、是否覆盖真实冲突场景。",
+      "minimumDemo": "针对同一问题准备两到三个候选回答，并用统一标准给出偏好顺序。",
+      "hardwareBudget": "主要是标注和审核成本。",
+      "prerequisites": [
+        "F/F1. 数据类型/偏好数据",
+        "H/H3. 偏好优化与对齐/DPO"
+      ],
+      "coreMetrics": [
+        "pair quality",
+        "preference agreement"
+      ],
+      "next": [
+        "H/H3. 偏好优化与对齐/Online DPO",
+        "F/F4. 数据质量/正确性"
+      ]
+    },
+    "F/F7. 后训练数据构建/Reward / verifier data": {
+      "status": "draft",
+      "definition": "Reward / verifier data 是为 reward model、grader 或 verifier 准备的评分样本，强调打分标准、评分维度和可复核性。",
+      "importance": "一旦 reward 或 verifier 数据质量不稳，系统会学会优化错误目标，甚至出现明显的奖励黑客行为。",
+      "minimumDemo": "为一批回答按 rubric 打分，并比较不同评分者或不同 verifier 之间的一致性。",
+      "hardwareBudget": "主要在审核和打分流程。",
+      "prerequisites": [
+        "F/F1. 数据类型/奖励数据",
+        "H/H3. 偏好优化与对齐/Reward modeling",
+        "B/B9. 经典 AI 与现代 AI 的连接点/搜索 → 推理模型 / tree search / verifier"
+      ],
+      "coreMetrics": [
+        "grader agreement",
+        "reward fidelity"
+      ],
+      "next": [
+        "H/H3. 偏好优化与对齐/RFT",
+        "F/F7. 后训练数据构建/Rubric-based graders for RFT"
+      ]
+    },
+    "F/F7. 后训练数据构建/Contamination / leakage checks": {
+      "status": "draft",
+      "definition": "污染与泄漏检查用于确认训练样本没有把验证集、测试集、基准题或线上回归集的信息提前带进训练过程。",
+      "importance": "这是后训练实验可信度的底线；如果污染没控制住，后面的所有指标都失去解释力。",
+      "minimumDemo": "对训练样本和评测样本做重复、近重复和模板重复检查，并单独标记高风险样本。",
+      "hardwareBudget": "主要是检索和比对计算成本。",
+      "prerequisites": [
+        "F/F7. 后训练数据构建/Train / validation / test split",
+        "C/C4. 共性问题/数据泄漏"
+      ],
+      "coreMetrics": [
+        "contamination rate",
+        "duplicate overlap"
+      ],
+      "next": [
+        "M/M1. 模型级评测",
+        "F/F6. 数据在系统中的角色/Eval datasets → 决定可重复评测"
+      ]
+    },
+    "F/F7. 后训练数据构建/Rubric-based graders for RFT": {
+      "status": "draft",
+      "definition": "Rubric-based graders for RFT 是把“好答案”的标准拆成可判分维度，让模型或人工 grader 按 rubric 对样本打分，再把分数用于 RFT 或 verifier 流程。",
+      "importance": "没有明确 rubric，RFT 往往会退化成模糊偏好信号；rubric 足够清楚时，系统才能围绕具体目标做优化。",
+      "minimumDemo": "为一个任务写出 3 到 5 个评分维度，例如正确性、完整性、格式和安全性，并用它给样本打分。",
+      "hardwareBudget": "主要是 rubric 设计和抽检成本。",
+      "prerequisites": [
+        "F/F7. 后训练数据构建/Reward / verifier data",
+        "H/H3. 偏好优化与对齐/RFT"
+      ],
+      "coreMetrics": [
+        "rubric clarity",
+        "grader agreement",
+        "score stability"
+      ],
+      "next": [
+        "M/M2. 应用级评测/最终答案正确性",
+        "H/H3. 偏好优化与对齐/GRPO"
+      ]
+    }
   }
 }

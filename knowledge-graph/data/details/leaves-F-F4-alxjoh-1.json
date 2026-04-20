@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-F-F4-alxjoh-1",
     "type": "leaf-batch",
     "label": "F4. 数据质量 / Leaves",
@@ -23,16 +23,167 @@
       "时效性"
     ],
     "nodeCount": 8,
-    "filledNodeCount": 0
+    "filledNodeCount": 8
   },
   "nodes": {
-    "F/F4. 数据质量/覆盖度": {},
-    "F/F4. 数据质量/正确性": {},
-    "F/F4. 数据质量/一致性": {},
-    "F/F4. 数据质量/多样性": {},
-    "F/F4. 数据质量/噪声控制": {},
-    "F/F4. 数据质量/分布匹配": {},
-    "F/F4. 数据质量/偏差与公平性": {},
-    "F/F4. 数据质量/时效性": {}
+    "F/F4. 数据质量/覆盖度": {
+      "status": "draft",
+      "definition": "覆盖度衡量数据是否真正覆盖了任务、场景、语言、用户群体、工具分支或长尾异常，而不是只覆盖最常见样本。",
+      "importance": "覆盖不足会让模型在线上显得“看起来会，遇到边角就不会”，这是很多能力上限问题的真实来源。",
+      "minimumDemo": "列出任务维度和场景维度，检查每一类在数据集中是否都有足够代表样本。",
+      "hardwareBudget": "主要是统计分析和人工审查成本。",
+      "prerequisites": [
+        "F/F1. 数据类型/预训练语料",
+        "F/F1. 数据类型/Eval datasets"
+      ],
+      "coreMetrics": [
+        "scenario coverage",
+        "class coverage",
+        "long-tail coverage"
+      ],
+      "next": [
+        "F/F6. 数据在系统中的角色/预训练数据 → 决定基础能力上限",
+        "F/F3. 数据工程/数据增广"
+      ]
+    },
+    "F/F4. 数据质量/正确性": {
+      "status": "draft",
+      "definition": "正确性关注样本内容、标签、答案、工具参数或引用事实是否真的对，不只是格式看起来合理。",
+      "importance": "错误数据会把模型直接推向错误方向，尤其在偏好优化、工具调用和 verifier 训练里，错误监督信号的破坏性很高。",
+      "minimumDemo": "从数据集中随机抽样，人工核对事实、标签和执行结果，统计真正的错误比例。",
+      "hardwareBudget": "主要是人工审核和辅助校验成本。",
+      "prerequisites": [
+        "F/F3. 数据工程/过滤",
+        "M/M2. 应用级评测/最终答案正确性"
+      ],
+      "coreMetrics": [
+        "label accuracy",
+        "fact error rate",
+        "tool result validity"
+      ],
+      "next": [
+        "F/F7. 后训练数据构建/Reward / verifier data",
+        "H/H3. 偏好优化与对齐/Reward modeling"
+      ]
+    },
+    "F/F4. 数据质量/一致性": {
+      "status": "draft",
+      "definition": "一致性指相同规则、相似样本和不同标注者之间是否遵循同一套口径，避免同类样本被给出冲突答案或冲突标签。",
+      "importance": "一致性差会让模型学到互相矛盾的监督信号，也会让评测结果难以解释。",
+      "minimumDemo": "让两位标注者独立标一批样本，比较冲突率，并检查同类工具调用或偏好样本是否遵循统一标准。",
+      "hardwareBudget": "主要是复标和仲裁成本。",
+      "prerequisites": [
+        "F/F3. 数据工程/标注",
+        "F/F1. 数据类型/Agent traces"
+      ],
+      "coreMetrics": [
+        "agreement rate",
+        "schema consistency",
+        "format consistency"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Trace grading",
+        "F/F1. 数据类型/偏好数据"
+      ]
+    },
+    "F/F4. 数据质量/多样性": {
+      "status": "draft",
+      "definition": "多样性衡量样本是否来自足够丰富的表达方式、任务模式、输入长度、用户风格和错误分布，而不是高度同质化。",
+      "importance": "没有多样性，模型往往只会学到模板化解法，在真实输入稍有变化时就退化。",
+      "minimumDemo": "对样本按来源、风格、长度和场景分桶，检查是否过度集中在少数模板里。",
+      "hardwareBudget": "主要是统计和抽样成本。",
+      "prerequisites": [
+        "F/F3. 数据工程/去重",
+        "F/F3. 数据工程/数据增广"
+      ],
+      "coreMetrics": [
+        "source diversity",
+        "style diversity",
+        "template concentration"
+      ],
+      "next": [
+        "F/F1. 数据类型/预训练语料",
+        "F/F4. 数据质量/覆盖度"
+      ]
+    },
+    "F/F4. 数据质量/噪声控制": {
+      "status": "draft",
+      "definition": "噪声控制关注如何识别和限制低质样本、无关样本、错标样本、格式污染和执行失败记录的比例。",
+      "importance": "少量高质量数据通常比大量噪声数据更有用；噪声会稀释有效信号，还会引入难以察觉的训练偏差。",
+      "minimumDemo": "抽样标记一批样本中的无效、错标和低质比例，并基于规则或模型做一轮噪声过滤前后对比。",
+      "hardwareBudget": "主要消耗在抽样检查和过滤规则维护上。",
+      "prerequisites": [
+        "F/F3. 数据工程/清洗",
+        "F/F3. 数据工程/过滤"
+      ],
+      "coreMetrics": [
+        "noise rate",
+        "low-quality removal rate"
+      ],
+      "next": [
+        "F/F3. 数据工程/过滤",
+        "F/F4. 数据质量/正确性"
+      ]
+    },
+    "F/F4. 数据质量/分布匹配": {
+      "status": "draft",
+      "definition": "分布匹配关注训练、验证、测试、线上流量和目标任务之间的样本分布是否一致，避免用不代表真实世界的数据做出错误结论。",
+      "importance": "很多离线指标和线上效果脱节，本质就是训练或评测数据分布和真实使用分布不匹配。",
+      "minimumDemo": "比较训练集、评测集和线上日志在问题类型、长度、用户群体和成功率上的分布差异。",
+      "hardwareBudget": "主要是统计和监控分析成本。",
+      "prerequisites": [
+        "F/F3. 数据工程/切分",
+        "F/F1. 数据类型/用户行为日志"
+      ],
+      "coreMetrics": [
+        "distribution drift",
+        "train-serving skew",
+        "segment gap"
+      ],
+      "next": [
+        "F/F7. 后训练数据构建/Train / validation / test split",
+        "F/F7. 后训练数据构建/Contamination / leakage checks",
+        "M/M4. 在线评测/Business KPIs"
+      ]
+    },
+    "F/F4. 数据质量/偏差与公平性": {
+      "status": "draft",
+      "definition": "偏差与公平性关注数据是否系统性偏向某些群体、来源、语言、地区或价值取向，以及这种偏差是否会在模型行为里被放大。",
+      "importance": "很多所谓模型偏见，其根源并不只在算法，而是在训练和评测数据对不同群体覆盖不足或标签标准本身不公平。",
+      "minimumDemo": "按用户群体、语言或场景切片比较模型或数据质量指标，查看是否存在稳定差异。",
+      "hardwareBudget": "主要是切片分析、人审和治理成本。",
+      "prerequisites": [
+        "F/F4. 数据质量/覆盖度",
+        "C/C4. 共性问题/偏差 / 方差"
+      ],
+      "coreMetrics": [
+        "segment disparity",
+        "fairness gap",
+        "representation balance"
+      ],
+      "next": [
+        "M/M8. 对抗测试与审计/Red teaming",
+        "F/F5. 数据治理/审计"
+      ]
+    },
+    "F/F4. 数据质量/时效性": {
+      "status": "draft",
+      "definition": "时效性衡量数据是否足够新、是否能及时反映知识变化、产品变化和用户行为变化，避免系统长期依赖过期样本。",
+      "importance": "对文档问答、工具调用、业务规则和线上反馈来说，旧数据往往不是“有点过时”，而是直接误导系统。",
+      "minimumDemo": "为知识库或日志数据记录更新时间，检查回答错误是否集中在最近变更过但尚未同步的数据上。",
+      "hardwareBudget": "主要是更新管线和监控成本。",
+      "prerequisites": [
+        "F/F3. 数据工程/流式处理",
+        "F/F1. 数据类型/知识库文档"
+      ],
+      "coreMetrics": [
+        "freshness lag",
+        "stale data rate"
+      ],
+      "next": [
+        "F/F6. 数据在系统中的角色/知识库文档 → 决定 RAG 质量",
+        "M/M4. 在线评测/A/B tests"
+      ]
+    }
   }
 }

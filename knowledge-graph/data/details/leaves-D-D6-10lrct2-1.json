@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-D-D6-10lrct2-1",
     "type": "leaf-batch",
     "label": "D6. 规模化要素 / Leaves",
@@ -21,14 +21,222 @@
       "系统优化"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "D/D6. 规模化要素/数据规模": {},
-    "D/D6. 规模化要素/参数规模": {},
-    "D/D6. 规模化要素/训练算力": {},
-    "D/D6. 规模化要素/上下文长度": {},
-    "D/D6. 规模化要素/训练时长": {},
-    "D/D6. 规模化要素/系统优化": {}
+    "D/D6. 规模化要素/数据规模": {
+      "status": "draft",
+      "definition": "数据规模描述训练数据的数量、覆盖范围和多样性，是决定模型泛化能力和知识覆盖的重要因素。",
+      "importance": "模型不是只靠参数变强，数据质量与规模往往同样关键。数据不足时，盲目增大参数常常收益有限。",
+      "minimumDemo": "在同一模型上用不同数据量训练，观察指标和过拟合趋势变化。",
+      "hardwareBudget": "小实验成本低；大规模数据带来存储和吞吐压力。",
+      "examples": [
+        "更多语料改善语言泛化",
+        "更多图像类别改善视觉迁移"
+      ],
+      "pitfalls": [
+        "只追求量，忽略数据质量和重复率",
+        "数据增长但分布没扩展"
+      ],
+      "prerequisites": [
+        "C/C1. 问题设定/训练集 / 验证集 / 测试集",
+        "D/D3. 训练范式/预训练"
+      ],
+      "coreMetrics": [
+        "数据量",
+        "多样性",
+        "重复率"
+      ],
+      "toolchain": [
+        "data pipelines"
+      ],
+      "failureSigns": [
+        "数据变多但能力几乎不长"
+      ],
+      "next": [
+        "D/D6. 规模化要素/参数规模",
+        "D/D6. 规模化要素/训练算力"
+      ]
+    },
+    "D/D6. 规模化要素/参数规模": {
+      "status": "draft",
+      "definition": "参数规模是模型可学习权重的总量，影响表示容量、记忆能力、训练成本和推理成本。",
+      "importance": "它是“模型多大”最直接的量化方式，但参数越大并不自动等于更好，需要和数据、训练和系统优化一起看。",
+      "minimumDemo": "比较小模型和大模型在同任务上的收益与资源差异。",
+      "hardwareBudget": "参数增大通常直接推高显存和服务成本。",
+      "examples": [
+        "7B vs 70B LLM",
+        "小 CNN vs 大 ViT"
+      ],
+      "pitfalls": [
+        "只增参数不增数据",
+        "忽视 serving 成本"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/参数",
+        "D/D6. 规模化要素/数据规模"
+      ],
+      "coreMetrics": [
+        "params",
+        "显存占用",
+        "推理延迟"
+      ],
+      "toolchain": [
+        "model summaries",
+        "profilers"
+      ],
+      "failureSigns": [
+        "能力小涨，成本暴涨"
+      ],
+      "next": [
+        "D/D2. 架构家族/Mixture of Experts",
+        "H/H5. 压缩与效率优化/Quantization"
+      ]
+    },
+    "D/D6. 规模化要素/训练算力": {
+      "status": "draft",
+      "definition": "训练算力包括 GPU/TPU 资源、并行方式和实际训练吞吐，是决定大模型训练可行性与周期的硬约束。",
+      "importance": "很多训练路线不是理论上不可行，而是算力和系统不允许。理解训练算力，才能正确判断计划是否现实。",
+      "minimumDemo": "记录一次小训练实验的 samples/s、显存和总时长，形成最基础的资源-效果直觉。",
+      "hardwareBudget": "本概念本身就在讨论预算与资源。",
+      "examples": [
+        "单卡训练",
+        "多卡分布式训练",
+        "云训练集群"
+      ],
+      "pitfalls": [
+        "只看 GPU 数量，不看吞吐瓶颈",
+        "数据和通信拖慢整体训练"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/Optimizer",
+        "D/D6. 规模化要素/系统优化"
+      ],
+      "coreMetrics": [
+        "throughput",
+        "GPU 利用率",
+        "训练总时长"
+      ],
+      "toolchain": [
+        "distributed training stacks",
+        "profilers"
+      ],
+      "failureSigns": [
+        "GPU 很多但利用率很低"
+      ],
+      "next": [
+        "D/D6. 规模化要素/系统优化",
+        "L/L3. 推理优化/Throughput / latency tuning"
+      ]
+    },
+    "D/D6. 规模化要素/上下文长度": {
+      "status": "draft",
+      "definition": "上下文长度指模型单次能处理的输入上下文窗口大小，直接影响长文本、长对话和复杂工具上下文处理能力。",
+      "importance": "长上下文是大模型应用的重要能力，但它也会显著提高显存占用、推理延迟和系统复杂度。",
+      "minimumDemo": "比较同一模型在短上下文和长上下文任务下的效果与 latency 变化。",
+      "hardwareBudget": "更长上下文通常需要更多显存和更强推理优化。",
+      "examples": [
+        "长文档问答",
+        "长对话历史",
+        "RAG context packing"
+      ],
+      "pitfalls": [
+        "把长上下文当成无限外部记忆",
+        "忽视前面 token 对后面 token 成本的累积影响"
+      ],
+      "prerequisites": [
+        "G/G3. 上下文与记忆/上下文记忆（prompt context）",
+        "I/I3. RAG 管线/Context packing"
+      ],
+      "coreMetrics": [
+        "max context",
+        "latency",
+        "memory usage"
+      ],
+      "toolchain": [
+        "KV cache",
+        "context management"
+      ],
+      "failureSigns": [
+        "长上下文下又慢又不一定更准"
+      ],
+      "next": [
+        "L/L3. 推理优化/Context length management",
+        "L/L3. 推理优化/KV cache"
+      ]
+    },
+    "D/D6. 规模化要素/训练时长": {
+      "status": "draft",
+      "definition": "训练时长指模型在既定数据、算力和配方下需要运行多久才能达到目标收敛状态。",
+      "importance": "它直接影响实验迭代速度、预算和项目可控性，也是判断训练策略是否现实的重要维度。",
+      "minimumDemo": "比较不同 batch size 或学习率配方下达到同一验证指标所需的训练时间。",
+      "hardwareBudget": "和算力预算直接相关。",
+      "examples": [
+        "预训练几周/几月",
+        "小规模微调几小时"
+      ],
+      "pitfalls": [
+        "只看最终结果，不看达到结果所需时间",
+        "没有 early stop 或回滚策略"
+      ],
+      "prerequisites": [
+        "D/D6. 规模化要素/训练算力",
+        "D/D1. 神经网络基础/Checkpoint"
+      ],
+      "coreMetrics": [
+        "time-to-quality",
+        "wall clock time"
+      ],
+      "toolchain": [
+        "experiment tracking"
+      ],
+      "failureSigns": [
+        "训练计划拖得太长，无法支撑实际迭代"
+      ],
+      "next": [
+        "D/D6. 规模化要素/系统优化",
+        "M/M1. 模型级评测/延迟/成本"
+      ]
+    },
+    "D/D6. 规模化要素/系统优化": {
+      "status": "draft",
+      "definition": "系统优化指围绕训练和推理的并行、缓存、内核优化、批处理、内存管理和运行时工程手段，用来提高吞吐、降低延迟和减少资源浪费。",
+      "importance": "在大模型系统里，很多性能提升并不来自模型本体，而来自系统优化。没有这层，规模化能力往往落不到产品现实。",
+      "minimumDemo": "比较开启和不开启一种推理优化（如 KV cache 或 continuous batching）时的吞吐和延迟差异。",
+      "hardwareBudget": "通常为了更有效地利用既有硬件，而不是直接增加硬件。",
+      "examples": [
+        "KV cache",
+        "continuous batching",
+        "paged attention",
+        "量化推理"
+      ],
+      "pitfalls": [
+        "只做模型优化，不做系统 profiling",
+        "局部优化带来整体复杂度爆炸"
+      ],
+      "prerequisites": [
+        "D/D6. 规模化要素/训练算力",
+        "D/D6. 规模化要素/上下文长度"
+      ],
+      "coreMetrics": [
+        "throughput",
+        "latency",
+        "memory efficiency"
+      ],
+      "toolchain": [
+        "vLLM",
+        "profilers",
+        "runtime tuning"
+      ],
+      "failureSigns": [
+        "GPU 很贵，但实际服务吞吐和延迟都很差"
+      ],
+      "next": [
+        "L/L2. 服务运行时/vLLM",
+        "L/L3. 推理优化/PagedAttention",
+        "L/L3. 推理优化/Continuous batching",
+        "L/L3. 推理优化/Quantized inference"
+      ]
+    }
   }
 }

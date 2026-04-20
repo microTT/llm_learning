@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-B-B8-v0zar-1",
     "type": "leaf-batch",
     "label": "B8. 决策与多智能体 / Leaves",
@@ -21,14 +21,259 @@
       "协作与竞争"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "B/B8. 决策与多智能体/决策理论": {},
-    "B/B8. 决策与多智能体/MDP": {},
-    "B/B8. 决策与多智能体/POMDP": {},
-    "B/B8. 决策与多智能体/Multi-agent decision making": {},
-    "B/B8. 决策与多智能体/博弈论直觉": {},
-    "B/B8. 决策与多智能体/协作与竞争": {}
+    "B/B8. 决策与多智能体/决策理论": {
+      "status": "draft",
+      "definition": "决策理论研究在存在收益、代价、风险和不确定性的情况下，主体如何比较不同动作并选择更优方案。它用效用、期望、风险偏好和信息价值等概念组织行动选择。",
+      "importance": "它是把搜索和推理推进到“应该怎么做”的基础语言。无论是经典规划、RL、tool selection 还是业务策略优化，都离不开决策理论中的偏好建模和长期收益权衡。",
+      "minimumDemo": "列出两个以上行动方案，给定各自收益、成本和失败概率，计算期望效用并比较不同风险偏好下的最优选择是否变化。",
+      "hardwareBudget": "几乎无门槛；纸笔或普通笔记本即可。",
+      "examples": [
+        "是否调用高风险高收益工具",
+        "库存补货决策",
+        "客服路由到人工还是自动系统"
+      ],
+      "pitfalls": [
+        "把所有目标压成单一分数却不解释权重",
+        "忽略长期后果",
+        "效用函数和真实业务目标脱节"
+      ],
+      "prerequisites": [
+        "B/B1. 智能体观/效用（Utility）",
+        "B/B7. 不确定性与概率推理/在不确定条件下推理"
+      ],
+      "coreMetrics": [
+        "期望效用",
+        "风险暴露",
+        "后悔值",
+        "长期收益"
+      ],
+      "toolchain": [
+        "Notebook",
+        "仿真器",
+        "效用分析表"
+      ],
+      "failureSigns": [
+        "策略总在追短期局部最优",
+        "风险项被系统性低估",
+        "权重一调就行为剧烈变化"
+      ],
+      "next": [
+        "B/B8. 决策与多智能体/MDP",
+        "B/B8. 决策与多智能体/POMDP",
+        "C/C2. 学习范式/强化学习"
+      ]
+    },
+    "B/B8. 决策与多智能体/MDP": {
+      "status": "draft",
+      "definition": "MDP（Markov Decision Process）用状态、动作、转移概率和奖励函数描述完全可观测的序贯决策问题。它假设当前状态已经包含做决策所需的全部信息，因此未来只依赖当前状态和动作。",
+      "importance": "它是现代强化学习最标准的理论基座，也是把经典决策理论形式化成可计算问题的核心框架。很多 agent 环境如果能被建成近似 MDP，后续策略优化和价值评估就有了清晰抓手。",
+      "minimumDemo": "做一个小型 gridworld 或库存控制环境，定义状态、动作、奖励和转移，再比较随机策略和简单贪心策略的累计回报。",
+      "hardwareBudget": "CPU 即可；普通笔记本足够。",
+      "examples": [
+        "库存控制",
+        "离散导航",
+        "广告投放或推荐中的序贯选择"
+      ],
+      "pitfalls": [
+        "状态并不马尔可夫却硬按 MDP 处理",
+        "奖励设计和真实目标不一致",
+        "把模拟器当真实环境而不验证偏差"
+      ],
+      "prerequisites": [
+        "B/B1. 智能体观/状态（State）",
+        "B/B1. 智能体观/动作（Action）",
+        "B/B8. 决策与多智能体/决策理论"
+      ],
+      "coreMetrics": [
+        "累计回报",
+        "策略收敛性",
+        "状态覆盖率",
+        "奖励稀疏度"
+      ],
+      "toolchain": [
+        "Gymnasium",
+        "策略评估脚本",
+        "仿真环境"
+      ],
+      "failureSigns": [
+        "状态看似充分但策略仍高度不稳",
+        "长期回报无法提升",
+        "奖励被投机取巧"
+      ],
+      "next": [
+        "C/C2. 学习范式/强化学习",
+        "B/B8. 决策与多智能体/POMDP",
+        "B/B9. 经典 AI 与现代 AI 的连接点/决策 → RL / tool selection / policy learning"
+      ]
+    },
+    "B/B8. 决策与多智能体/POMDP": {
+      "status": "draft",
+      "definition": "POMDP（Partially Observable MDP）处理的是部分可观测的序贯决策问题：主体看不到完整状态，只能基于观测和历史维护信念状态，再选择动作。",
+      "importance": "现实中很多 agent、机器人和交互系统都更像 POMDP 而不是 MDP。它帮助系统正视“我并不知道真实世界全貌”这一事实，也是把会话记忆、belief state 和长期决策接起来的关键框架。",
+      "minimumDemo": "在一个只能看到局部视野的 gridworld 中，让主体根据历史观测估计当前位置或环境状态，再选择动作，比较有无记忆时的表现差异。",
+      "hardwareBudget": "CPU 即可；普通笔记本足够。",
+      "examples": [
+        "对话系统中的隐式用户意图推断",
+        "机器人局部视野导航",
+        "不完整日志下的运维决策"
+      ],
+      "pitfalls": [
+        "把观测直接当状态",
+        "belief state 没有显式维护",
+        "环境部分可观测性被忽略"
+      ],
+      "prerequisites": [
+        "B/B7. 不确定性与概率推理/在不确定条件下推理",
+        "B/B8. 决策与多智能体/MDP",
+        "J/J4. 会话与状态/Session memory"
+      ],
+      "coreMetrics": [
+        "belief 更新质量",
+        "部分可观测场景成功率",
+        "记忆利用率",
+        "累计回报"
+      ],
+      "toolchain": [
+        "仿真环境",
+        "belief state 更新脚本",
+        "日志"
+      ],
+      "failureSigns": [
+        "系统忘记关键历史信息",
+        "局部观测下动作高度随机",
+        "一旦遮挡或缺信息就失效"
+      ],
+      "next": [
+        "K/K6. Agent 记忆/Session memory",
+        "K/K6. Agent 记忆/Task memory",
+        "B/B9. 经典 AI 与现代 AI 的连接点/决策 → RL / tool selection / policy learning"
+      ]
+    },
+    "B/B8. 决策与多智能体/Multi-agent decision making": {
+      "status": "draft",
+      "definition": "Multi-agent decision making 关注多个主体在共享环境中同时或交替做决策时的策略设计、信息分配和协调机制。每个主体的动作都会改变其他主体的最佳选择。",
+      "importance": "一旦系统从单一智能体扩展为 manager-worker、specialists、协作机器人或对手博弈，多主体决策就变成核心问题。它是多 agent orchestration、任务分工和协作/竞争设计的经典底座。",
+      "minimumDemo": "做一个双主体资源分配或协作搬运环境，分别测试集中式控制和分散式决策，观察信息共享和目标设计对整体结果的影响。",
+      "hardwareBudget": "CPU 即可；普通笔记本足够。",
+      "examples": [
+        "manager-worker agent 协作",
+        "多机器人协同",
+        "多角色业务流程编排"
+      ],
+      "pitfalls": [
+        "主体之间目标函数不一致",
+        "共享状态和通信协议设计不清",
+        "局部最优导致整体失败"
+      ],
+      "prerequisites": [
+        "B/B8. 决策与多智能体/MDP",
+        "B/B8. 决策与多智能体/协作与竞争",
+        "K/K4. 多 Agent 模式/Manager / worker"
+      ],
+      "coreMetrics": [
+        "整体回报",
+        "协同效率",
+        "冲突率",
+        "通信开销"
+      ],
+      "toolchain": [
+        "多主体模拟器",
+        "协作日志",
+        "trace 分析"
+      ],
+      "failureSigns": [
+        "主体相互阻塞",
+        "角色切分后效果反而下降",
+        "协作完全依赖手工规则"
+      ],
+      "next": [
+        "K/K4. 多 Agent 模式/Manager / worker",
+        "K/K4. 多 Agent 模式/Router / specialists",
+        "B/B9. 经典 AI 与现代 AI 的连接点/多智能体 → multi-agent orchestration"
+      ]
+    },
+    "B/B8. 决策与多智能体/博弈论直觉": {
+      "status": "draft",
+      "definition": "博弈论直觉关注的是当多个主体都在为自身目标做优化时，策略之间如何相互影响，何时会合作、何时会竞争、何时会形成稳定均衡或陷入冲突。",
+      "importance": "它帮助从“对手只是环境的一部分”升级到“对手也在思考”。理解博弈论直觉后，Minimax、协作与竞争、多 agent routing 以及策略稳定性分析都会更有抓手。",
+      "minimumDemo": "用囚徒困境或简单竞价例子，比较一次性决策和重复博弈下策略行为的差异，观察合作和背叛如何出现。",
+      "hardwareBudget": "几乎无门槛；纸笔或普通笔记本即可。",
+      "examples": [
+        "囚徒困境",
+        "竞价与资源争夺",
+        "多 agent 角色竞争"
+      ],
+      "pitfalls": [
+        "把博弈论当成公式记忆，不联系真实策略互动",
+        "忽视信息不对称和重复互动",
+        "把零和和非零和问题混成一类"
+      ],
+      "prerequisites": [
+        "B/B2. 搜索/对抗搜索/Minimax",
+        "B/B8. 决策与多智能体/决策理论"
+      ],
+      "coreMetrics": [
+        "均衡稳定性",
+        "合作收益",
+        "竞争代价"
+      ],
+      "toolchain": [
+        "简单对局脚本",
+        "收益矩阵分析"
+      ],
+      "failureSigns": [
+        "策略解释只停留在表面现象",
+        "换一个 payoff 结构就完全失去直觉"
+      ],
+      "next": [
+        "B/B8. 决策与多智能体/协作与竞争",
+        "B/B9. 经典 AI 与现代 AI 的连接点/多智能体 → multi-agent orchestration"
+      ]
+    },
+    "B/B8. 决策与多智能体/协作与竞争": {
+      "status": "draft",
+      "definition": "协作与竞争描述多个主体之间既可能共享部分目标，又可能在资源、时机或信息上相互冲突的关系结构。系统需要设计协调机制、激励或边界，避免整体失效。",
+      "importance": "真实系统几乎都不是纯协作或纯竞争。无论是多机器人、多 agent，还是组织内多个流程角色，都会处在协作与竞争并存的状态；这也是多主体系统设计最容易被低估的部分。",
+      "minimumDemo": "在一个共享资源环境中，让两个主体既要完成各自任务，又要避免互相抢占资源，比较无协调和有协调机制时的差异。",
+      "hardwareBudget": "CPU 即可；普通笔记本足够。",
+      "examples": [
+        "多 agent 共用工具或上下文窗口",
+        "多机器人共享通道",
+        "组织内多个审批角色的目标冲突"
+      ],
+      "pitfalls": [
+        "默认大家目标一致",
+        "没有冲突解决机制",
+        "通信协议过于脆弱"
+      ],
+      "prerequisites": [
+        "B/B8. 决策与多智能体/Multi-agent decision making",
+        "B/B8. 决策与多智能体/博弈论直觉"
+      ],
+      "coreMetrics": [
+        "冲突率",
+        "协作成功率",
+        "资源利用率",
+        "恢复成本"
+      ],
+      "toolchain": [
+        "多主体日志",
+        "协调策略脚本",
+        "trace 可视化"
+      ],
+      "failureSigns": [
+        "主体间反复互相覆盖或阻塞",
+        "一旦资源紧张整体性能断崖下降",
+        "协调成本超过收益"
+      ],
+      "next": [
+        "K/K4. 多 Agent 模式/Handoff",
+        "K/K4. 多 Agent 模式/Debate / voting",
+        "B/B9. 经典 AI 与现代 AI 的连接点/多智能体 → multi-agent orchestration"
+      ]
+    }
   }
 }

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-D-D5-dk1vqo-1",
     "type": "leaf-batch",
     "label": "D5. 生成范式 / Leaves",
@@ -20,13 +20,185 @@
       "控制生成"
     ],
     "nodeCount": 5,
-    "filledNodeCount": 0
+    "filledNodeCount": 5
   },
   "nodes": {
-    "D/D5. 生成范式/自回归生成": {},
-    "D/D5. 生成范式/编码—解码生成": {},
-    "D/D5. 生成范式/扩散生成": {},
-    "D/D5. 生成范式/条件生成": {},
-    "D/D5. 生成范式/控制生成": {}
+    "D/D5. 生成范式/自回归生成": {
+      "status": "draft",
+      "definition": "自回归生成按顺序逐步预测下一个 token、像素块或离散单元，每一步都基于已经生成的上下文。",
+      "importance": "它是当前 LLM 的主流生成机制，直接决定了上下文依赖方式、采样策略和推理延迟。",
+      "minimumDemo": "在一个小文本模型上观察 next-token prediction 和逐 token 采样过程。",
+      "hardwareBudget": "CPU 即可理解；实用推理更依赖 GPU 和 serving 优化。",
+      "examples": [
+        "LLM 回复生成",
+        "代码补全"
+      ],
+      "pitfalls": [
+        "采样设置不当导致重复或发散",
+        "逐 token 推理带来高延迟"
+      ],
+      "prerequisites": [
+        "D/D2. 架构家族/Transformer",
+        "G/G1. 语言建模基础"
+      ],
+      "coreMetrics": [
+        "perplexity",
+        "生成延迟",
+        "任务完成率"
+      ],
+      "toolchain": [
+        "sampling params",
+        "KV cache"
+      ],
+      "failureSigns": [
+        "高重复、跑偏、尾部发散"
+      ],
+      "next": [
+        "E/E1. 语言（NLP / LLM）/LLM：通用语言能力模型",
+        "L/L3. 推理优化/KV cache"
+      ]
+    },
+    "D/D5. 生成范式/编码—解码生成": {
+      "status": "draft",
+      "definition": "编码—解码生成先把输入编码成中间表示，再由解码器基于该表示生成输出，常用于有明确输入到输出映射的任务。",
+      "importance": "它是翻译、摘要、语音转文本等条件生成任务的经典范式，也帮助理解为什么有的模型天然面向 seq2seq。",
+      "minimumDemo": "观察一个翻译模型如何把源句编码，再逐步解码目标句。",
+      "hardwareBudget": "CPU/GPU 视模型大小而定。",
+      "examples": [
+        "机器翻译",
+        "摘要",
+        "语音识别"
+      ],
+      "pitfalls": [
+        "把它和通用自回归模型简单等同",
+        "忽略输入压缩造成的信息瓶颈"
+      ],
+      "prerequisites": [
+        "D/D2. 架构家族/Transformer",
+        "E/E1. 语言（NLP / LLM）/翻译"
+      ],
+      "coreMetrics": [
+        "seq2seq 质量",
+        "条件一致性"
+      ],
+      "toolchain": [
+        "encoder-decoder architectures"
+      ],
+      "failureSigns": [
+        "输入覆盖不全，生成遗漏关键信息"
+      ],
+      "next": [
+        "E/E1. 语言（NLP / LLM）/摘要",
+        "E/E3. 音频 / 语音/自动语音识别（ASR）"
+      ]
+    },
+    "D/D5. 生成范式/扩散生成": {
+      "status": "draft",
+      "definition": "扩散生成通过学习逆转逐步加噪过程来生成样本，通常以噪声预测和多步采样为核心。",
+      "importance": "它在图像和视频生成中非常重要，代表了与自回归不同的质量/速度/控制权衡。",
+      "minimumDemo": "比较不同采样步数下扩散模型生成图像的质量和速度变化。",
+      "hardwareBudget": "GPU 更合适。",
+      "examples": [
+        "文生图",
+        "图像编辑",
+        "视频生成"
+      ],
+      "pitfalls": [
+        "忽视采样开销",
+        "把扩散路线误认为所有生成任务通用"
+      ],
+      "prerequisites": [
+        "D/D2. 架构家族/Diffusion models",
+        "D/D4. 基础模型类型/视觉基础模型"
+      ],
+      "coreMetrics": [
+        "质量",
+        "采样速度",
+        "稳定性"
+      ],
+      "toolchain": [
+        "Diffusers"
+      ],
+      "failureSigns": [
+        "速度慢到不适合交互式使用"
+      ],
+      "next": [
+        "E/E2. 视觉（CV）/图像生成",
+        "E/E2. 视觉（CV）/图像编辑"
+      ]
+    },
+    "D/D5. 生成范式/条件生成": {
+      "status": "draft",
+      "definition": "条件生成指模型根据给定条件信号生成输出，条件可以是文本、标签、图像、音频或结构化控制变量。",
+      "importance": "它把“通用生成”变成“可按需求生成”，是实际产品化最常见的生成组织方式之一。",
+      "minimumDemo": "比较无条件生成与文本条件生成的输出差异，观察条件对结果的约束程度。",
+      "hardwareBudget": "视具体模型而定。",
+      "examples": [
+        "text-to-image",
+        "image captioning",
+        "conditional speech generation"
+      ],
+      "pitfalls": [
+        "条件信号弱导致输出漂移",
+        "误把条件存在当成控制稳定"
+      ],
+      "prerequisites": [
+        "D/D5. 生成范式/自回归生成",
+        "D/D5. 生成范式/扩散生成"
+      ],
+      "coreMetrics": [
+        "条件一致性",
+        "任务完成率"
+      ],
+      "toolchain": [
+        "prompting",
+        "conditioning interfaces"
+      ],
+      "failureSigns": [
+        "条件写得很清楚，输出却经常跑偏"
+      ],
+      "next": [
+        "D/D5. 生成范式/控制生成",
+        "J/J1. 模型接口层/Prompt composition"
+      ]
+    },
+    "D/D5. 生成范式/控制生成": {
+      "status": "draft",
+      "definition": "控制生成强调对输出结构、内容、风格、步骤或工具行为施加更细粒度约束，而不仅仅给一个宽泛条件。",
+      "importance": "很多工程系统真正需要的不是“能生成”，而是“按约束生成”。控制生成直接连接到结构化输出、工具调用和 agent planning。",
+      "minimumDemo": "比较自由文本生成与 schema/函数调用约束下生成的差异。",
+      "hardwareBudget": "视系统复杂度而定。",
+      "examples": [
+        "schema constrained decoding",
+        "tool calling",
+        "可控图像编辑"
+      ],
+      "pitfalls": [
+        "控制接口很多，但鲁棒性不足",
+        "只做格式控制，不保证语义正确"
+      ],
+      "prerequisites": [
+        "D/D5. 生成范式/条件生成",
+        "J/J1. 模型接口层/Input / output contracts"
+      ],
+      "coreMetrics": [
+        "schema adherence",
+        "tool success",
+        "约束满足率"
+      ],
+      "toolchain": [
+        "structured decoding",
+        "tool contracts"
+      ],
+      "failureSigns": [
+        "格式对了但语义错",
+        "工具调用频繁失败"
+      ],
+      "next": [
+        "M/M2. 应用级评测/Schema adherence",
+        "M/M2. 应用级评测/Tool execution success",
+        "K/K2. 执行形态/Agent/动态决定工具"
+      ]
+    }
   }
 }

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-E-E1-47l69n-2",
     "type": "leaf-batch",
     "label": "E1. 语言（NLP / LLM） / Leaves 2",
@@ -20,13 +20,196 @@
       "LLM：通用语言能力模型"
     ],
     "nodeCount": 5,
-    "filledNodeCount": 0
+    "filledNodeCount": 5
   },
   "nodes": {
-    "E/E1. 语言（NLP / LLM）/对话": {},
-    "E/E1. 语言（NLP / LLM）/检索": {},
-    "E/E1. 语言（NLP / LLM）/代码生成与理解": {},
-    "E/E1. 语言（NLP / LLM）/结构化解析": {},
-    "E/E1. 语言（NLP / LLM）/LLM：通用语言能力模型": {}
+    "E/E1. 语言（NLP / LLM）/对话": {
+      "status": "draft",
+      "definition": "对话任务要求系统在多轮交互中维持上下文、目标和语气一致性，同时处理澄清、追问、纠错和任务推进。",
+      "importance": "它是助手产品最直观的界面，但真正的难点不在“会说话”，而在多轮状态管理、工具调用与失败恢复。",
+      "minimumDemo": "实现一个多轮对话原型，记录会话记忆、上下文拼接和用户追问后的回答质量变化。",
+      "hardwareBudget": "API 或本地小模型即可起步。",
+      "examples": [
+        "客服助手",
+        "Copilot",
+        "多轮问答"
+      ],
+      "pitfalls": [
+        "把所有对话历史都无脑拼进上下文",
+        "角色设定和任务边界不明确"
+      ],
+      "prerequisites": [
+        "G/G3. 上下文与记忆/会话记忆（session memory）",
+        "J/J1. 模型接口层/System / user / tool messages"
+      ],
+      "coreMetrics": [
+        "多轮任务完成率",
+        "用户满意度",
+        "上下文一致性"
+      ],
+      "toolchain": [
+        "chat runtime",
+        "memory management"
+      ],
+      "failureSigns": [
+        "一轮正常，三轮以后明显失忆或跑偏"
+      ],
+      "next": [
+        "J/J1. 模型接口层/Context assembly",
+        "N/N1. 场景类型/助手 / Copilot"
+      ]
+    },
+    "E/E1. 语言（NLP / LLM）/检索": {
+      "status": "draft",
+      "definition": "检索任务关注如何从外部知识源中找回与用户问题最相关的信息，再供下游阅读、回答或决策使用。",
+      "importance": "它是 RAG 和知识型系统的关键中间层，把参数记忆和外部记忆连接起来。",
+      "minimumDemo": "搭一个最小检索流程：embedding / 索引 / query / rerank / top-k 返回。",
+      "hardwareBudget": "CPU 足够做基础索引；规模大时更关注存储和吞吐。",
+      "examples": [
+        "FAQ 检索",
+        "文档检索",
+        "代码库检索"
+      ],
+      "pitfalls": [
+        "只做向量检索，不做 rerank 和权限控制",
+        "命中率和最终问答质量割裂"
+      ],
+      "prerequisites": [
+        "I/I1. 表示与检索基础/Dense retrieval",
+        "I/I3. RAG 管线/Retrieval"
+      ],
+      "coreMetrics": [
+        "Recall@k",
+        "NDCG",
+        "最终任务增益"
+      ],
+      "toolchain": [
+        "vector store",
+        "reranker",
+        "query rewrite"
+      ],
+      "failureSigns": [
+        "看起来检到了很多，但真正有用文档经常不在 top-k"
+      ],
+      "next": [
+        "I/I1. 表示与检索基础/Reranking",
+        "I/I3. RAG 管线/Rerank",
+        "N/N1. 场景类型/问答 / 检索"
+      ]
+    },
+    "E/E1. 语言（NLP / LLM）/代码生成与理解": {
+      "status": "draft",
+      "definition": "代码生成与理解任务要求模型阅读、解释、补全、重构或生成代码，同时保持语义正确和工程可执行性。",
+      "importance": "它是 LLM 最具生产力的一类应用之一，也天然暴露出结构约束、上下文管理、工具执行和评测难题。",
+      "minimumDemo": "给一个小仓库片段，要求模型解释函数、补一个单元测试或修一个小 bug，并验证结果。",
+      "hardwareBudget": "API 或本地代码模型均可起步。",
+      "examples": [
+        "代码补全",
+        "测试生成",
+        "重构建议",
+        "bug 修复"
+      ],
+      "pitfalls": [
+        "只看输出像不像代码，不验证是否能运行",
+        "忽视仓库上下文和依赖约束"
+      ],
+      "prerequisites": [
+        "J/J1. 模型接口层/Context assembly",
+        "M/M2. 应用级评测/Tool execution success"
+      ],
+      "coreMetrics": [
+        "通过率",
+        "可执行性",
+        "回归率"
+      ],
+      "toolchain": [
+        "repo context",
+        "tests",
+        "code execution"
+      ],
+      "failureSigns": [
+        "生成代码看起来像对的，但一跑就坏"
+      ],
+      "next": [
+        "N/N1. 场景类型/编码",
+        "M/M2. 应用级评测/Tool execution success"
+      ]
+    },
+    "E/E1. 语言（NLP / LLM）/结构化解析": {
+      "status": "draft",
+      "definition": "结构化解析把自然语言或半结构化内容转成 JSON、schema 对象、字段列表或可执行参数，是语言系统进入工具和工作流的关键接口。",
+      "importance": "很多 agent 和自动化系统失败，不是语言模型不会理解，而是它无法稳定地产生可被程序消费的结果。",
+      "minimumDemo": "设计一个 JSON Schema，让模型把用户意图解析成结构化参数，再做严格验证和错误恢复。",
+      "hardwareBudget": "API 或本地小模型即可。",
+      "examples": [
+        "工单字段解析",
+        "函数调用参数生成",
+        "表单自动填写前解析"
+      ],
+      "pitfalls": [
+        "只靠 prompt 约束格式，不做 schema 校验",
+        "把 JSON 能 parse 当成语义正确"
+      ],
+      "prerequisites": [
+        "J/J2. 结构化输出/JSON Schema",
+        "J/J2. 结构化输出/Validation"
+      ],
+      "coreMetrics": [
+        "schema adherence",
+        "field accuracy",
+        "error recovery rate"
+      ],
+      "toolchain": [
+        "JSON Schema",
+        "typed outputs",
+        "validators"
+      ],
+      "failureSigns": [
+        "格式稳定了，但字段含义仍然经常错"
+      ],
+      "next": [
+        "J/J2. 结构化输出/Typed outputs",
+        "M/M2. 应用级评测/Schema adherence"
+      ]
+    },
+    "E/E1. 语言（NLP / LLM）/LLM：通用语言能力模型": {
+      "status": "draft",
+      "definition": "通用语言能力模型是经过大规模预训练与后训练形成的文本基础模型，能够在同一模型中统一承载理解、生成、推理、工具调用和多任务迁移。",
+      "importance": "它是当前语言系统的大一统底座，很多具体 NLP 任务都可以退化成对它的提示、检索、微调或工具约束问题。",
+      "minimumDemo": "拿一个通用 LLM，同步尝试分类、摘要、问答和结构化输出四类任务，观察同一模型如何跨任务复用。",
+      "hardwareBudget": "API 最低门槛；本地推理取决于模型规模和量化方案。",
+      "examples": [
+        "通用助手模型",
+        "代码 LLM",
+        "长上下文知识助手"
+      ],
+      "pitfalls": [
+        "把它当成无所不能的黑盒",
+        "忽视系统级约束仍然需要检索、工具和评测"
+      ],
+      "prerequisites": [
+        "D/D4. 基础模型类型/文本基础模型",
+        "C/C6. 与大模型的对应关系/SFT ≈ 监督学习"
+      ],
+      "coreMetrics": [
+        "语言能力",
+        "推理能力",
+        "结构化输出正确率",
+        "延迟/成本"
+      ],
+      "toolchain": [
+        "LLM runtime / API",
+        "prompting",
+        "eval harness"
+      ],
+      "failureSigns": [
+        "看似全能，但具体任务一落地就缺检索、工具或约束"
+      ],
+      "next": [
+        "J/J1. 模型接口层/Prompt composition",
+        "M/M1. 模型级评测/语言能力",
+        "N/N1. 场景类型/助手 / Copilot"
+      ]
+    }
   }
 }

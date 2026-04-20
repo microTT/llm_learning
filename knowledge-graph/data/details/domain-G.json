@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-18",
+    "updatedAt": "2026-04-20",
     "shardId": "domain-G",
     "type": "domain-overview",
     "label": "G. LLM 核心机制 / 概览",
@@ -14,7 +14,7 @@
     "parentTitle": null,
     "leafTitles": [],
     "nodeCount": 10,
-    "filledNodeCount": 4
+    "filledNodeCount": 10
   },
   "nodes": {
     "G": {
@@ -158,49 +158,262 @@
         "L/L3. 推理优化"
       ]
     },
-    "G/G3. 上下文与记忆": {},
-    "G/G4. 生成与解码": {},
-    "G/G5. 能力面": {},
-    "G/G6. 局限面": {},
-    "G/G7. 模型类型细分": {},
-    "G/G8. 推理模型与模型路由": {
-      "status": "seed",
-      "definition": "这一层讨论的不是“模型越强越好”，而是如何在通用 GPT、reasoning model、planner、verifier 之间做职责拆分和路由决策。",
-      "importance": "真实系统里，规划、验证、执行和最终回答常常由不同模型承担。把 reasoning model 当成默认模型，会直接拉高成本和延迟。",
-      "minimumDemo": "做一个双模型工作流：复杂请求走 planner，普通请求直接走 GPT，并记录成本、延迟和成功率差异。",
-      "hardwareBudget": "云 API 即可；本地实验可用小模型模拟 router / verifier。",
+    "G/G3. 上下文与记忆": {
+      "status": "draft",
+      "definition": "上下文与记忆关注模型到底“把什么记在参数里、把什么放在当前 prompt 里、把什么挂在会话状态里、又把什么交给外部检索和工具系统”。它讨论的不是一个单独的数据结构，而是多层记忆边界如何共同决定回答质量、成本和稳定性。",
+      "importance": "很多关于“模型记不住”“长对话失忆”“RAG 为什么有时有效有时无效”的问题，本质都属于这一层。只有把参数记忆、上下文记忆、会话记忆和外部记忆区分开，才能知道应该补训练、补上下文、补状态管理，还是补检索与工具。",
+      "minimumDemo": "挑一组问题，分别做四种实验：1）只靠模型直接回答；2）把相关信息塞进 prompt；3）做多轮对话并保留会话状态；4）通过检索或工具拿外部信息。比较正确率、token 成本、时延和稳定性，从而看清不同记忆层的边界。",
+      "hardwareBudget": "理解机制本身不需要训练级硬件。真正增加成本的是长上下文 token 消耗、会话状态存储、RAG 检索链路和工具调用次数，而不是某个“记忆模块”本身的计算。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Token efficiency",
+        "G/G2. Transformer 机制",
+        "I/I3. RAG 管线"
+      ],
+      "coreMetrics": [
+        "context hit rate",
+        "memory recall quality",
+        "token cost",
+        "latency",
+        "staleness / freshness",
+        "conversation coherence"
+      ],
+      "toolchain": [
+        "prompt inspection",
+        "session store",
+        "RAG stack",
+        "trace logging"
+      ],
+      "failureSigns": [
+        "模型单轮能答，多轮一长就丢关键约束",
+        "把大量资料塞进上下文后变慢且更不准",
+        "外部检索明明命中了，但答案没有用到检索内容",
+        "不同会话之间用户偏好和任务状态混在一起"
+      ],
+      "next": [
+        "G/G3. 上下文与记忆/参数记忆（weights）",
+        "G/G3. 上下文与记忆/上下文记忆（prompt context）",
+        "G/G3. 上下文与记忆/会话记忆（session memory）",
+        "G/G3. 上下文与记忆/外部记忆（RAG / tools / stores）"
+      ]
+    },
+    "G/G4. 生成与解码": {
+      "status": "draft",
+      "definition": "生成与解码关注的是：模型给出了下一 token 的概率分布后，系统到底如何从中选 token、何时停止、如何约束输出格式，以及这些选择会如何改变质量、稳定性、多样性和成本。",
+      "importance": "很多人把大模型输出当作“模型自然生成的结果”，但实际可用性很大程度取决于解码设置。相同模型在 greedy、sampling、structured generation 下可能表现得像三个完全不同的系统。",
+      "minimumDemo": "对同一组问题分别用 greedy、temperature sampling、top-p sampling 和结构化生成跑一轮，记录正确率、格式成功率、输出方差、首 token 延迟和总时延，比较不同解码策略的权衡。",
+      "hardwareBudget": "解码实验本身硬件要求不高，但会直接影响 token 数、重试率和推理时延，因此会在 API 成本和服务吞吐上放大差异。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Next-token prediction",
+        "G/G2. Transformer 机制",
+        "J/J2. 结构化输出"
+      ],
+      "coreMetrics": [
+        "format success rate",
+        "answer variance",
+        "latency",
+        "token cost",
+        "hallucination rate"
+      ],
+      "toolchain": [
+        "API sampling controls",
+        "structured output validators",
+        "trace / retry logs"
+      ],
+      "failureSigns": [
+        "同一输入反复重试输出差异极大",
+        "一调高 temperature 就开始漏字段或乱格式",
+        "stop 条件设置不当导致截断、重复或输出过长",
+        "结构化输出看似成功，但字段值经常语义错误"
+      ],
+      "next": [
+        "G/G4. 生成与解码/Greedy",
+        "G/G4. 生成与解码/Sampling",
+        "G/G4. 生成与解码/Structured generation",
+        "J/J2. 结构化输出"
+      ]
+    },
+    "G/G5. 能力面": {
+      "status": "draft",
+      "definition": "能力面讨论的是大模型作为统一序列预测器，在不同任务结构下会表现出哪些稳定能力，例如续写、指令跟随、摘要、翻译、提取、代码生成、多步推理和多模态理解。它强调的不是任务清单本身，而是这些能力背后分别依赖参数记忆、上下文利用、解码设置、工具接入还是外部知识。",
+      "importance": "如果不把“能力”拆开看，团队很容易用一个模糊结论概括整个模型，例如“模型很强”或“模型不稳定”。但真实系统里，不同能力的边界、成本和失败模式完全不同：有的更像模式补全，有的更依赖结构约束，有的高度依赖工具和外部知识，有的则受到解码和测试时计算强烈影响。",
+      "minimumDemo": "选 8 到 10 个小任务，分别覆盖续写、摘要、提取、结构化输出、工具选择和多步推理。对同一模型在固定 prompt 下做批量对照，记录正确率、输出方差、token 成本和失败类型，观察哪些能力稳定来自模型本体，哪些必须依赖外部系统辅助。",
+      "hardwareBudget": "理解能力边界本身不需要大硬件。多数对照实验通过云 API 或本地小模型即可完成；真正增加成本的是多轮采样、长上下文、多模态输入和需要 verifier / tool 的任务。",
+      "prerequisites": [
+        "G/G2. Transformer 机制",
+        "G/G3. 上下文与记忆",
+        "G/G4. 生成与解码"
+      ],
+      "coreMetrics": [
+        "task success rate",
+        "output stability",
+        "schema adherence",
+        "groundedness",
+        "latency / cost"
+      ],
+      "toolchain": [
+        "eval harness",
+        "prompt suite",
+        "structured output checks",
+        "trace logging"
+      ],
+      "failureSigns": [
+        "同一模型在不同任务上强弱极不均衡，却被当成单一能力讨论",
+        "把工具、检索和模型本体贡献混在一起评估",
+        "只看少数漂亮 demo，忽略批量稳定性和方差"
+      ],
+      "next": [
+        "G/G5. 能力面/指令跟随",
+        "G/G5. 能力面/提取",
+        "G/G5. 能力面/多步推理",
+        "M/M1. 模型级评测"
+      ]
+    },
+    "G/G6. 局限面": {
+      "status": "draft",
+      "definition": "局限面讨论的是大模型当前为何会在某些情况下系统性失真，例如幻觉、过期知识、长上下文退化、工具误用，以及对 prompt、检索质量和训练分布的高度敏感。它不是“坏例子集合”，而是对失败边界的结构化认识。",
+      "importance": "如果只补能力，不补局限，工程上就会持续把失败归因给偶然 prompt 或单次 bad case，无法形成可靠改进路径。真正的产品系统，需要知道哪些问题应该用后训练解决，哪些要靠 RAG、工具、路由、结构约束或 guardrails 兜底。",
+      "minimumDemo": "为同一组任务构造几类典型失败条件：知识过期、上下文超长、检索噪声、错误工具结果和分布外样本。分别观察模型输出怎么退化，再把失败映射到最可能的修复层。",
+      "hardwareBudget": "局限分析本身不吃大硬件，更多成本在设计失败样本、批量复现和建立诊断链路。",
+      "prerequisites": [
+        "G/G3. 上下文与记忆",
+        "G/G4. 生成与解码",
+        "M/M1. 模型级评测"
+      ],
+      "coreMetrics": [
+        "hallucination rate",
+        "staleness rate",
+        "tool misuse rate",
+        "long-context drop",
+        "distribution shift gap"
+      ],
+      "toolchain": [
+        "failure set",
+        "retrieval ablations",
+        "tool traces",
+        "eval dashboards"
+      ],
+      "failureSigns": [
+        "系统有失败，但无法归类和复现",
+        "上线后频繁出现分布外输入崩溃或错误自信输出",
+        "把所有问题都归咎为提示词没写好"
+      ],
+      "next": [
+        "G/G6. 局限面/幻觉",
+        "G/G6. 局限面/长上下文退化",
+        "G/G6. 局限面/工具误用",
+        "M/M8. 对抗测试与审计"
+      ]
+    },
+    "G/G7. 模型类型细分": {
+      "status": "draft",
+      "definition": "模型类型细分讨论的是：同样都叫“大模型”，但它们面向的优化目标、输入模态、推理预算和部署场景其实差异很大。通用对话模型、推理强化模型、代码模型、多模态模型、小模型和专项模型并不是简单的“强弱排序”，而是不同任务边界下的不同工程选择。",
+      "importance": "如果不先把模型类型分清，团队很容易把所有问题都丢给一个默认模型，结果同时吃到成本高、延迟慢、质量不稳和部署不匹配这几种问题。理解这一层后，才能谈模型路由、planner/executor 拆分、端侧部署和专项模型补位。",
+      "minimumDemo": "选一组覆盖问答、代码补全、图文理解、结构化提取和低延迟分类的小任务，分别用通用模型、推理模型、代码模型和小模型跑一遍，记录正确率、时延、成本和输出稳定性。对比后总结：哪些任务适合默认走通用模型，哪些必须切推理或专项模型，哪些更适合让小模型前置过滤。",
+      "hardwareBudget": "学习这一层不需要训练级硬件，但不同模型类型会明显改变推理资源需求。通用 API 足够做大多数对照实验；如果想体验本地部署差异，小模型 / 量化模型可以在 CPU 或轻量 GPU 上跑，而多模态和长上下文模型会更快触及显存、带宽和吞吐瓶颈。",
       "examples": [
-        "复杂任务先由 reasoning model 生成 plan，再交给便宜的 GPT 执行具体步骤。",
-        "高风险输出先过 verifier / judge，再决定是否呈现给用户。"
+        "同一批客服问答，通用对话模型已经够用，但一上推理模型只会增加时延和费用。",
+        "修复代码仓库里的局部 bug 时，代码模型通常比通用聊天模型更擅长遵守接口和 edit locality。",
+        "图像问答任务必须交给多模态模型，纯文本模型即使语言能力强也拿不到视觉证据。",
+        "移动端离线分类或语音唤醒场景，更重要的是体积、延迟和功耗，而不是最强通用能力。",
+        "专项抽取或审核任务中，窄领域模型常常比通用模型更稳定、更便宜。"
       ],
       "pitfalls": [
-        "把 reasoning model 当作所有任务的默认入口，通常会浪费 test-time compute。",
-        "没有把 planner / executor / verifier 的失败模式拆开，就很难知道路由策略到底哪里错了。"
+        "把模型类型理解成排行榜，而不是任务边界和资源约束下的取舍。",
+        "把推理模型当成默认主力，忽略简单任务对低成本高吞吐的需求。",
+        "只看 benchmark 分数，不看模态、时延、上下文长度和工具需求是否匹配真实场景。",
+        "在需要高稳定结构化输出的任务里，盲目依赖通用对话模型而不考虑专项模型或约束生成。",
+        "把小模型只当成“弱模型”，忽略它们在边缘部署、预过滤和路由前置中的价值。"
+      ],
+      "prerequisites": [
+        "G/G5. 能力面",
+        "G/G6. 局限面",
+        "E/E5. 多模态/视觉语言模型（VLM）",
+        "L/L3. 推理优化/Quantized inference"
+      ],
+      "coreMetrics": [
+        "task success rate by model type",
+        "latency / throughput",
+        "cost per request",
+        "memory footprint",
+        "stability / variance",
+        "deployment fit"
+      ],
+      "toolchain": [
+        "multi-model eval harness",
+        "latency / cost dashboards",
+        "local inference runners",
+        "routing and fallback middleware"
+      ],
+      "failureSigns": [
+        "同类任务在不同模型之间反复手工切换，但没有稳定选择规则。",
+        "高成本模型承担了大量低复杂度请求，吞吐和预算持续吃紧。",
+        "图像、代码和结构化任务都走同一模型，却在关键场景上频繁失误。",
+        "部署目标是边缘或私有环境，却选了资源完全不匹配的模型族。"
+      ],
+      "next": [
+        "G/G7. 模型类型细分/通用对话模型",
+        "G/G7. 模型类型细分/推理强化模型",
+        "G/G7. 模型类型细分/代码模型",
+        "G/G7. 模型类型细分/多模态模型",
+        "G/G7. 模型类型细分/小模型 / 边缘模型",
+        "G/G7. 模型类型细分/专项模型",
+        "G/G8. 推理模型与模型路由"
+      ]
+    },
+    "G/G8. 推理模型与模型路由": {
+      "status": "draft",
+      "definition": "推理模型与模型路由讨论的不是“哪个模型最强”，而是如何把通用对话模型、推理强化模型、planner、executor、verifier 和小模型组合成一条可控的执行链。它关注的是：哪些任务应该走更深的 test-time compute，哪些任务应该直接用便宜模型完成，以及系统如何在正确率、延迟、成本和风险之间做实时取舍。",
+      "importance": "真实系统里，复杂度判断、规划、执行、验证和最终呈现常常由不同组件完成。如果没有路由策略，团队通常会退化成两个极端：要么所有请求都进高成本推理模型，要么为了省钱把复杂任务也硬塞给通用模型，结果不是浪费预算，就是稳定性和正确率持续失控。",
+      "minimumDemo": "做一条三段式对照链路：1）所有请求都走通用对话模型；2）复杂任务先走 planner 再交 executor；3）高风险输出先过 verifier。准备一组简单问答、结构化提取和多步规划任务，记录路由命中率、端到端时延、每次请求成本、最终成功率和 verifier 拦截率。",
+      "hardwareBudget": "云 API 足够完成绝大多数实验；本地实验可以用小模型模拟 router、planner 或 verifier，但真正的瓶颈通常不是显卡，而是多模型串联后增加的调用次数、上下文拼接成本和 tracing / retry 开销。",
+      "examples": [
+        "复杂任务先由推理模型拆解计划，再让便宜模型按计划执行每一步工具调用。",
+        "敏感审批场景里，生成模型先产出草案，再由 verifier 检查证据和政策一致性。",
+        "普通 FAQ 和提取类请求直接走通用模型，只有检测到复杂规划需求时才升级到 reasoning model。",
+        "高吞吐系统里先让小模型做预分类，再把少量难样本转发到大模型。"
+      ],
+      "pitfalls": [
+        "把 reasoning model 当作所有任务的默认入口，通常只会浪费 test-time compute。",
+        "只看最终成功率，不记录 planner、executor、verifier 各自的失败模式。",
+        "把路由写成一次性硬编码规则，任务分布一变就整体失效。",
+        "没有给 verifier 明确证据和判定标准，导致它只是另一层不稳定生成。"
       ],
       "prerequisites": [
         "G/G7. 模型类型细分",
-        "J/J1. 模型接口层",
-        "M/M3. Agent 级评测"
+        "J/J3. 工具调用/Tool routing",
+        "M/M3. Agent 级评测/Routing quality"
       ],
       "coreMetrics": [
         "route accuracy",
         "end-to-end latency",
         "cost per task",
-        "planner success rate"
+        "planner success rate",
+        "verifier precision / recall",
+        "fallback rate"
       ],
       "toolchain": [
-        "Responses API",
+        "Responses / chat APIs",
         "routing middleware",
-        "trace logging"
+        "trace logging",
+        "eval harness",
+        "policy and fallback rules"
       ],
       "failureSigns": [
         "简单任务也总被送进高成本 reasoning 模型",
-        "planner 输出看似合理，但 executor 成功率持续偏低"
+        "planner 输出看似合理，但 executor 成功率持续偏低",
+        "verifier 经常拦错或放过明显错误，说明判定标准失真",
+        "路由命中率和成本长期漂移，但系统没有被及时校准"
       ],
       "next": [
-        "K/K5. 图式编排",
-        "K/K2. 执行形态",
-        "M/M3. Agent 级评测"
+        "G/G8. 推理模型与模型路由/Reasoning models vs GPT models",
+        "G/G8. 推理模型与模型路由/Planner / executor split",
+        "G/G8. 推理模型与模型路由/Verifier / judge",
+        "G/G8. 推理模型与模型路由/Test-time compute / reasoning effort",
+        "G/G8. 推理模型与模型路由/Model routing policy",
+        "G/G8. 推理模型与模型路由/什么时候不要用 reasoning model",
+        "K/K2. 执行形态/Hybrid system",
+        "K/K5. 图式编排/Conditional branches",
+        "M/M3. Agent 级评测/Routing quality"
       ]
     }
   }

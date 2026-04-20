@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-F-F6-f342b5-1",
     "type": "leaf-batch",
     "label": "F6. 数据在系统中的角色 / Leaves",
@@ -21,14 +21,128 @@
       "知识库文档 → 决定 RAG 质量"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "F/F6. 数据在系统中的角色/预训练数据 → 决定基础能力上限": {},
-    "F/F6. 数据在系统中的角色/SFT 数据 → 决定任务风格与稳定性": {},
-    "F/F6. 数据在系统中的角色/偏好/奖励数据 → 决定对齐方向": {},
-    "F/F6. 数据在系统中的角色/工具 traces → 决定 Agent 行为优化": {},
-    "F/F6. 数据在系统中的角色/Eval datasets → 决定可重复评测": {},
-    "F/F6. 数据在系统中的角色/知识库文档 → 决定 RAG 质量": {}
+    "F/F6. 数据在系统中的角色/预训练数据 → 决定基础能力上限": {
+      "status": "draft",
+      "definition": "预训练数据主要影响模型的通用表示、知识覆盖和基础语言/视觉/多模态能力，是能力上限最底层的来源。",
+      "importance": "如果基础能力上限不够，后续再用少量后训练数据也很难补出真正稳定的通才能力。",
+      "minimumDemo": "比较不同规模或不同覆盖面的预训练语料对迁移任务的影响。",
+      "hardwareBudget": "真正放大成本的是预训练本身。",
+      "prerequisites": [
+        "F/F1. 数据类型/预训练语料",
+        "D/D3. 训练范式/预训练"
+      ],
+      "coreMetrics": [
+        "knowledge coverage",
+        "transfer quality"
+      ],
+      "next": [
+        "D/D6. 规模化要素/数据规模",
+        "F/F4. 数据质量/覆盖度"
+      ]
+    },
+    "F/F6. 数据在系统中的角色/SFT 数据 → 决定任务风格与稳定性": {
+      "status": "draft",
+      "definition": "SFT 数据主要塑造助手的任务适配能力、输出格式、语气风格和常见流程的稳定执行方式。",
+      "importance": "很多“模型听不懂需求”或“输出格式不稳定”的问题，根源不在预训练，而在 SFT 数据覆盖和口径不够稳。",
+      "minimumDemo": "对同一基础模型分别使用不同风格的 SFT 样本微调，比较回答风格和格式一致性。",
+      "hardwareBudget": "中小规模即可见到明显效果。",
+      "prerequisites": [
+        "F/F1. 数据类型/指令微调数据",
+        "H/H2. 监督式后训练/SFT"
+      ],
+      "coreMetrics": [
+        "format consistency",
+        "instruction following"
+      ],
+      "next": [
+        "F/F7. 后训练数据构建/Instruction crafting",
+        "F/F4. 数据质量/一致性"
+      ]
+    },
+    "F/F6. 数据在系统中的角色/偏好/奖励数据 → 决定对齐方向": {
+      "status": "draft",
+      "definition": "偏好和奖励数据决定系统把什么行为视为更好、更安全或更符合目标，它们塑造的是方向，而不是单一标准答案。",
+      "importance": "同样一个基础模型，因为偏好和奖励信号不同，最终会形成完全不同的助手风格和风险偏置。",
+      "minimumDemo": "为同一批回答给出不同偏好排序标准，观察训练后的行为取向差异。",
+      "hardwareBudget": "成本主要在标注和审核，而不是训练本身。",
+      "prerequisites": [
+        "F/F1. 数据类型/偏好数据",
+        "F/F1. 数据类型/奖励数据",
+        "H/H3. 偏好优化与对齐/DPO"
+      ],
+      "coreMetrics": [
+        "alignment gain",
+        "reward fidelity"
+      ],
+      "next": [
+        "H/H3. 偏好优化与对齐/RLHF",
+        "F/F4. 数据质量/正确性"
+      ]
+    },
+    "F/F6. 数据在系统中的角色/工具 traces → 决定 Agent 行为优化": {
+      "status": "draft",
+      "definition": "工具 traces 记录的是系统如何选工具、如何传参、如何读回结果以及在哪一步失败，它们决定 agent 类系统能否从过程上持续优化，而不只是优化最终文本输出。",
+      "importance": "Agent 系统很多问题只会出现在中间步骤里，没有 trace，团队就只能看到“失败了”，却看不到失败发生在哪一跳。",
+      "minimumDemo": "对一次工具调用任务保留完整 trace，并用它分析选择错误、参数错误和恢复策略不足。",
+      "hardwareBudget": "主要是存储和分析成本。",
+      "prerequisites": [
+        "F/F1. 数据类型/工具调用数据",
+        "F/F1. 数据类型/Agent traces",
+        "J/J3. 工具调用/Tool execution"
+      ],
+      "coreMetrics": [
+        "tool success rate",
+        "trace completeness",
+        "recovery success rate"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Trace grading",
+        "J/J3. 工具调用/Tool retries / fallback"
+      ]
+    },
+    "F/F6. 数据在系统中的角色/Eval datasets → 决定可重复评测": {
+      "status": "draft",
+      "definition": "Eval datasets 的作用不是让模型变强，而是让团队能稳定复现问题、比较版本并对优化结果建立可信判断。",
+      "importance": "没有独立评测集，团队会不断被训练口径、抽样偏差和记忆污染误导，无法知道系统究竟有没有真实进步。",
+      "minimumDemo": "把一套固定评测集接入每轮模型或应用发布，比较结果是否可重复、是否能发现回归。",
+      "hardwareBudget": "更多是维护和运行评测的成本。",
+      "prerequisites": [
+        "F/F1. 数据类型/Eval datasets",
+        "M/M1. 模型级评测",
+        "M/M2. 应用级评测"
+      ],
+      "coreMetrics": [
+        "reproducibility",
+        "regression detection rate"
+      ],
+      "next": [
+        "F/F7. 后训练数据构建/Contamination / leakage checks",
+        "F/F3. 数据工程/切分"
+      ]
+    },
+    "F/F6. 数据在系统中的角色/知识库文档 → 决定 RAG 质量": {
+      "status": "draft",
+      "definition": "知识库文档在 RAG 系统里承担的是外部事实来源角色，它们决定系统能否找到、引用并组合出最新、可追溯的答案。",
+      "importance": "RAG 质量不只取决于检索器和模型，底层文档是否新、是否干净、是否切得合理，往往决定最终 groundedness 上限。",
+      "minimumDemo": "对同一组问题分别使用未经清洗和经过去重切块的知识库文档做 RAG，对比命中率和答案可引用性。",
+      "hardwareBudget": "主要花在 parsing、索引和更新管线。",
+      "prerequisites": [
+        "F/F1. 数据类型/知识库文档",
+        "I/I2. 知识库构建/Chunking strategy",
+        "I/I3. RAG 管线/Context packing"
+      ],
+      "coreMetrics": [
+        "retrieval hit rate",
+        "citation usefulness",
+        "freshness lag"
+      ],
+      "next": [
+        "I/I2. 知识库构建/Vector store",
+        "F/F4. 数据质量/时效性"
+      ]
+    }
   }
 }

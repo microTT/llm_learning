@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-F-F2-1rx2c1j-1",
     "type": "leaf-batch",
     "label": "F2. 数据形态 / Leaves",
@@ -25,18 +25,189 @@
       "交互轨迹"
     ],
     "nodeCount": 10,
-    "filledNodeCount": 0
+    "filledNodeCount": 10
   },
   "nodes": {
-    "F/F2. 数据形态/文本": {},
-    "F/F2. 数据形态/图像": {},
-    "F/F2. 数据形态/音频": {},
-    "F/F2. 数据形态/视频": {},
-    "F/F2. 数据形态/多模态对": {},
-    "F/F2. 数据形态/JSON / schema data": {},
-    "F/F2. 数据形态/图结构": {},
-    "F/F2. 数据形态/时间序列": {},
-    "F/F2. 数据形态/代码": {},
-    "F/F2. 数据形态/交互轨迹": {}
+    "F/F2. 数据形态/文本": {
+      "status": "draft",
+      "definition": "文本是最常见的数据形态，既可以是原始自然语言，也可以是半结构化内容、prompt、日志和文档块。",
+      "importance": "很多系统最终都会退回到文本表示，因此文本形态处理质量直接影响训练、检索和推理效果。",
+      "minimumDemo": "对同一批文本做清洗、切分和 token 统计，观察不同处理方式对下游的影响。",
+      "prerequisites": [
+        "E/E1. 语言（NLP / LLM）",
+        "I/I2. 知识库构建/Parser types/Text / Markdown"
+      ],
+      "coreMetrics": [
+        "token length",
+        "parse success"
+      ],
+      "next": [
+        "F/F3. 数据工程/切分",
+        "G/G1. 语言建模基础/Tokenization pipeline"
+      ]
+    },
+    "F/F2. 数据形态/图像": {
+      "status": "draft",
+      "definition": "图像形态包含像素、分辨率、颜色空间和布局结构，常用于分类、检测、OCR、生成和检索。",
+      "importance": "图像不是“文件能打开就行”，其分辨率、压缩和标注形式都会直接影响视觉模型表现。",
+      "minimumDemo": "对一批图像做尺寸、通道和标注格式检查，比较预处理前后的训练稳定性。",
+      "prerequisites": [
+        "E/E2. 视觉（CV）",
+        "D/D4. 基础模型类型/视觉基础模型"
+      ],
+      "coreMetrics": [
+        "resolution distribution",
+        "annotation coverage"
+      ],
+      "next": [
+        "F/F3. 数据工程/清洗",
+        "E/E2. 视觉（CV）/图像分类"
+      ]
+    },
+    "F/F2. 数据形态/音频": {
+      "status": "draft",
+      "definition": "音频形态关注采样率、声道、时长、噪声和切分方式，是语音与一般音频任务的基础承载形式。",
+      "importance": "采样率和切片方式稍有不一致，ASR、TTS 和音频分类都会明显受影响。",
+      "minimumDemo": "对一批音频做采样率统一、静音切分和时长分布分析。",
+      "prerequisites": [
+        "E/E3. 音频 / 语音",
+        "D/D4. 基础模型类型/语音 / 音频基础模型"
+      ],
+      "coreMetrics": [
+        "sample rate consistency",
+        "duration coverage"
+      ],
+      "next": [
+        "F/F3. 数据工程/清洗",
+        "J/J6. 多模态应用/Audio input/output"
+      ]
+    },
+    "F/F2. 数据形态/视频": {
+      "status": "draft",
+      "definition": "视频形态在图像基础上增加时间维度，因此要同时处理帧率、时长、编码、镜头和时序标注。",
+      "importance": "视频的真正难点往往不在单帧，而在如何组织和抽样长序列。",
+      "minimumDemo": "对一批视频统计帧率、时长和关键帧抽样覆盖，比较不同采样策略的上下文损失。",
+      "prerequisites": [
+        "E/E4. 视频",
+        "D/D4. 基础模型类型/视频基础模型"
+      ],
+      "coreMetrics": [
+        "frame coverage",
+        "clip length",
+        "storage cost"
+      ],
+      "next": [
+        "F/F3. 数据工程/切分",
+        "E/E4. 视频/视频理解"
+      ]
+    },
+    "F/F2. 数据形态/多模态对": {
+      "status": "draft",
+      "definition": "多模态对是把文本、图像、音频、视频等不同模态按语义或时间关系绑定在一起的数据单元，例如图文对、音文对、视频文对。",
+      "importance": "多模态系统能不能学到真正的对齐，首先取决于这种配对是否正确和有代表性。",
+      "minimumDemo": "抽样检查一批图文或视频文对，确认它们是否真的在语义和时间上对应。",
+      "prerequisites": [
+        "E/E5. 多模态",
+        "D/D4. 基础模型类型/多模态基础模型"
+      ],
+      "coreMetrics": [
+        "alignment quality",
+        "pair completeness"
+      ],
+      "next": [
+        "F/F4. 数据质量/一致性",
+        "E/E5. 多模态/图文"
+      ]
+    },
+    "F/F2. 数据形态/JSON / schema data": {
+      "status": "draft",
+      "definition": "JSON / schema data 是已经被结构化表达的数据形态，强调字段、类型、嵌套关系和约束，而不是自然语言表述。",
+      "importance": "它是程序可消费输出和高可靠系统接口的核心形态，也是很多训练和评测样本的最终落地形式。",
+      "minimumDemo": "给一批结构化样本做 schema 校验，统计字段缺失和类型不匹配情况。",
+      "prerequisites": [
+        "J/J2. 结构化输出/JSON Schema",
+        "E/E1. 语言（NLP / LLM）/结构化解析"
+      ],
+      "coreMetrics": [
+        "schema validity",
+        "field completeness"
+      ],
+      "next": [
+        "F/F3. 数据工程/过滤",
+        "J/J2. 结构化输出/Validation"
+      ]
+    },
+    "F/F2. 数据形态/图结构": {
+      "status": "draft",
+      "definition": "图结构数据由节点、边和属性构成，适合表达关系网络、依赖、知识和交互拓扑。",
+      "importance": "它和表格、文本不同，很多关系模式只有在图结构里才自然可见。",
+      "minimumDemo": "把一批实体关系转换成图结构，并检查节点、边和属性完整性。",
+      "prerequisites": [
+        "B/B4. 知识表示/知识图谱",
+        "D/D2. 架构家族/Graph Neural Networks"
+      ],
+      "coreMetrics": [
+        "edge coverage",
+        "graph consistency"
+      ],
+      "next": [
+        "E/E8. 扩展领域/推荐系统",
+        "F/F4. 数据质量/一致性"
+      ]
+    },
+    "F/F2. 数据形态/时间序列": {
+      "status": "draft",
+      "definition": "时间序列数据强调按时间排序的观测、状态或事件，核心是顺序、间隔和随时间变化的模式。",
+      "importance": "很多预测、监控和控制问题的本质都不是静态样本分类，而是对序列演化规律的建模。",
+      "minimumDemo": "对一段时间序列做窗口切分和未来标签构造，检查是否引入未来信息泄漏。",
+      "prerequisites": [
+        "B/B7. 不确定性与概率推理/时序概率模型",
+        "E/E6. 决策与强化学习"
+      ],
+      "coreMetrics": [
+        "window validity",
+        "leakage rate"
+      ],
+      "next": [
+        "F/F3. 数据工程/切分",
+        "C/C1. 问题设定/分布漂移"
+      ]
+    },
+    "F/F2. 数据形态/代码": {
+      "status": "draft",
+      "definition": "代码数据既是文本，又带有语法树、依赖关系、执行语义和仓库上下文，因此不能按普通自然语言完全等价处理。",
+      "importance": "代码理解和生成的质量强依赖仓库结构、文件边界和执行反馈，而不是只有 token 相似性。",
+      "minimumDemo": "对一个小仓库统计文件类型、函数边界和依赖关系，比较纯文本切分和代码感知切分的差异。",
+      "prerequisites": [
+        "E/E1. 语言（NLP / LLM）/代码生成与理解",
+        "I/I2. 知识库构建/Parser types/Code / repository parsers"
+      ],
+      "coreMetrics": [
+        "parse success",
+        "context completeness"
+      ],
+      "next": [
+        "F/F3. 数据工程/切分",
+        "N/N1. 场景类型/编码"
+      ]
+    },
+    "F/F2. 数据形态/交互轨迹": {
+      "status": "draft",
+      "definition": "交互轨迹是按时间记录的多轮观察、动作、工具调用和结果序列，常见于 agent、RL 和真实产品交互日志。",
+      "importance": "它和单样本数据不同，价值在于过程和反馈，而不是单条输入输出对。",
+      "minimumDemo": "把一次任务执行过程整理成 step-by-step trace，并标注每步的输入、动作和结果。",
+      "prerequisites": [
+        "M/M3. Agent 级评测/Trace schema",
+        "K/K7. 工具与外部连接/Sandbox workspace"
+      ],
+      "coreMetrics": [
+        "trace completeness",
+        "step consistency"
+      ],
+      "next": [
+        "F/F1. 数据类型/Agent traces",
+        "E/E6. 决策与强化学习"
+      ]
+    }
   }
 }

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-F-F3-1lw3nc9-1",
     "type": "leaf-batch",
     "label": "F3. 数据工程 / Leaves",
@@ -25,18 +25,215 @@
       "流式处理"
     ],
     "nodeCount": 10,
-    "filledNodeCount": 0
+    "filledNodeCount": 10
   },
   "nodes": {
-    "F/F3. 数据工程/采集": {},
-    "F/F3. 数据工程/清洗": {},
-    "F/F3. 数据工程/去重": {},
-    "F/F3. 数据工程/过滤": {},
-    "F/F3. 数据工程/切分": {},
-    "F/F3. 数据工程/标注": {},
-    "F/F3. 数据工程/版本管理": {},
-    "F/F3. 数据工程/数据增广": {},
-    "F/F3. 数据工程/合成生成": {},
-    "F/F3. 数据工程/流式处理": {}
+    "F/F3. 数据工程/采集": {
+      "status": "draft",
+      "definition": "采集是把网页、日志、文档、数据库、代码库或外部 API 里的原始内容拉进数据系统，并记录来源、时间、权限和上下文的第一步。",
+      "importance": "如果采集阶段没有把来源和边界记录清楚，后面就很难追责、去重、过滤或做合规治理。",
+      "minimumDemo": "从两个不同来源接入一批问答文本或工具日志，并保留 source、timestamp、owner、license 等基础元数据。",
+      "hardwareBudget": "通常是 IO、带宽和存储成本，不是 GPU 成本。",
+      "prerequisites": [
+        "F/F1. 数据类型",
+        "F/F2. 数据形态",
+        "I/I2. 知识库构建/数据接入"
+      ],
+      "coreMetrics": [
+        "ingestion success rate",
+        "source coverage",
+        "metadata completeness"
+      ],
+      "next": [
+        "F/F3. 数据工程/清洗",
+        "F/F3. 数据工程/版本管理",
+        "F/F5. 数据治理/License"
+      ]
+    },
+    "F/F3. 数据工程/清洗": {
+      "status": "draft",
+      "definition": "清洗是把乱码、重复模板、无效字段、异常格式和不稳定结构整理成统一、可处理的数据表示。",
+      "importance": "很多模型问题不是因为样本太少，而是输入里充满广告、模板噪声、断裂编码或结构错乱，导致训练和检索都学到错误模式。",
+      "minimumDemo": "对一批原始网页或日志做去 HTML 噪声、字段对齐、编码修复和 schema 规范化，然后比较处理前后的可解析率。",
+      "hardwareBudget": "主要是 CPU 和存储开销。",
+      "prerequisites": [
+        "F/F3. 数据工程/采集",
+        "F/F2. 数据形态/文本"
+      ],
+      "coreMetrics": [
+        "parse success rate",
+        "schema validity",
+        "clean retention ratio"
+      ],
+      "next": [
+        "F/F3. 数据工程/去重",
+        "F/F3. 数据工程/过滤",
+        "I/I2. 知识库构建/Chunking strategy"
+      ]
+    },
+    "F/F3. 数据工程/去重": {
+      "status": "draft",
+      "definition": "去重用于移除完全重复或近重复样本，避免模型把高频模板误当成强信号，也避免评测被训练内容污染。",
+      "importance": "重复率过高会抬高训练成本、降低有效覆盖，还会让验证集看起来异常乐观。",
+      "minimumDemo": "对一批文本或代码样本做 exact hash 和 near-duplicate 检查，对比去重前后的样本规模和主题分布。",
+      "hardwareBudget": "中小规模可本地完成；大规模语料需要更多内存和分布式处理。",
+      "prerequisites": [
+        "F/F3. 数据工程/清洗",
+        "F/F1. 数据类型/预训练语料"
+      ],
+      "coreMetrics": [
+        "dedup ratio",
+        "near-duplicate rate"
+      ],
+      "next": [
+        "F/F4. 数据质量/多样性",
+        "F/F7. 后训练数据构建/Contamination / leakage checks"
+      ]
+    },
+    "F/F3. 数据工程/过滤": {
+      "status": "draft",
+      "definition": "过滤是用规则、模型或人工审核把无关、低质、违规或高风险样本从候选数据里剔除，保留对目标任务真正有价值的部分。",
+      "importance": "过滤决定系统最终吃进去的信号质量；如果标准不清，模型会同时学到垃圾样本和违规模式。",
+      "minimumDemo": "定义一组简单过滤规则，移除空样本、超短样本、PII 样本和明显错误调用记录，再比较过滤前后的抽样质量。",
+      "hardwareBudget": "成本集中在规则维护和人审，不依赖昂贵算力。",
+      "prerequisites": [
+        "F/F3. 数据工程/清洗",
+        "F/F5. 数据治理/隐私",
+        "F/F5. 数据治理/PII"
+      ],
+      "coreMetrics": [
+        "filter precision",
+        "filter recall",
+        "risk removal rate"
+      ],
+      "next": [
+        "F/F4. 数据质量/正确性",
+        "F/F4. 数据质量/噪声控制"
+      ]
+    },
+    "F/F3. 数据工程/切分": {
+      "status": "draft",
+      "definition": "切分是按训练、验证、测试或线上回放等用途划分数据边界，防止不同阶段的数据相互污染并维持稳定评测口径。",
+      "importance": "没有严格切分，就无法判断提升究竟来自真实泛化，还是来自记忆和泄漏。",
+      "minimumDemo": "把一个小数据集拆成 train/validation/test，并额外检查是否存在重复用户、重复题目或同源样本跨集合出现。",
+      "hardwareBudget": "几乎没有额外硬件成本。",
+      "prerequisites": [
+        "C/C1. 问题设定/训练集 / 验证集 / 测试集",
+        "F/F1. 数据类型/Eval datasets"
+      ],
+      "coreMetrics": [
+        "split purity",
+        "class balance",
+        "leakage rate"
+      ],
+      "next": [
+        "F/F7. 后训练数据构建/Train / validation / test split",
+        "F/F7. 后训练数据构建/Contamination / leakage checks",
+        "C/C4. 共性问题/数据泄漏"
+      ]
+    },
+    "F/F3. 数据工程/标注": {
+      "status": "draft",
+      "definition": "标注是给样本附上类别、答案、偏好、评分、工具调用结果或过程标签，把原始内容变成可监督学习和可评测的结构化信号。",
+      "importance": "同一批原始数据是否能用于 SFT、偏好优化或 verifier 训练，关键就在标注口径和质量是否可靠。",
+      "minimumDemo": "选一小批样本，分别做分类标签、偏好对比或 rubric 打分，并记录标注说明和冲突样本。",
+      "hardwareBudget": "主要消耗在人力、审核和一致性管理上。",
+      "prerequisites": [
+        "C/C2. 学习范式/监督学习",
+        "H/H2. 监督式后训练/SFT",
+        "H/H3. 偏好优化与对齐/Reward modeling"
+      ],
+      "coreMetrics": [
+        "label agreement",
+        "label coverage",
+        "adjudication rate"
+      ],
+      "next": [
+        "F/F7. 后训练数据构建/Instruction crafting",
+        "F/F7. 后训练数据构建/Preference data",
+        "F/F7. 后训练数据构建/Reward / verifier data"
+      ]
+    },
+    "F/F3. 数据工程/版本管理": {
+      "status": "draft",
+      "definition": "版本管理要求每一批数据都能被唯一标识、回放和追踪，包含来源、处理步骤、过滤条件和切分方式。",
+      "importance": "没有版本管理，训练结果、评测结果和线上异常都很难追溯到具体是哪一版数据造成的。",
+      "minimumDemo": "给一次数据处理产物打版本号，记录输入源、处理脚本版本、过滤规则和导出时间。",
+      "hardwareBudget": "主要是存储和元数据管理成本。",
+      "prerequisites": [
+        "F/F3. 数据工程/采集",
+        "F/F3. 数据工程/切分"
+      ],
+      "coreMetrics": [
+        "reproducibility",
+        "version trace completeness"
+      ],
+      "next": [
+        "F/F5. 数据治理/数据卡 / model card 对齐",
+        "F/F5. 数据治理/审计",
+        "M/M7. 隐私与合规/Audit logs"
+      ]
+    },
+    "F/F3. 数据工程/数据增广": {
+      "status": "draft",
+      "definition": "数据增广是在不改变核心任务语义的前提下，对样本做改写、变换、重采样或组合，以扩大覆盖和提升稳健性。",
+      "importance": "在真实样本不足或分布过窄时，增广可以提升覆盖，但如果约束不严，也会制造虚假模式。",
+      "minimumDemo": "对一个分类或指令任务生成几种等价改写，并比较是否提升长尾场景表现。",
+      "hardwareBudget": "规则式增广便宜，模型式增广会增加推理成本。",
+      "prerequisites": [
+        "F/F3. 数据工程/标注",
+        "F/F4. 数据质量/覆盖度"
+      ],
+      "coreMetrics": [
+        "coverage gain",
+        "semantic preservation"
+      ],
+      "next": [
+        "F/F4. 数据质量/多样性",
+        "F/F3. 数据工程/合成生成"
+      ]
+    },
+    "F/F3. 数据工程/合成生成": {
+      "status": "draft",
+      "definition": "合成生成是通过规则、模拟器或模型构造新的训练或评测样本，用来补足昂贵、稀缺或危险场景的数据覆盖。",
+      "importance": "它能快速扩充数据，但最大风险是生成出来的模式与真实世界脱节，导致模型学会“考试技巧”而不是实际能力。",
+      "minimumDemo": "用规则或模型生成一批样本，与真实样本混合后训练，再单独评估其对真实分布任务的迁移效果。",
+      "hardwareBudget": "取决于生成方式；模型生成的成本明显高于规则生成。",
+      "prerequisites": [
+        "F/F1. 数据类型/合成数据",
+        "F/F3. 数据工程/数据增广"
+      ],
+      "coreMetrics": [
+        "generation yield",
+        "real-world transfer",
+        "quality pass rate"
+      ],
+      "next": [
+        "F/F4. 数据质量/分布匹配",
+        "F/F4. 数据质量/正确性"
+      ]
+    },
+    "F/F3. 数据工程/流式处理": {
+      "status": "draft",
+      "definition": "流式处理是对持续到来的日志、反馈、工具调用结果和线上事件做实时或准实时加工，让数据更快进入监控、分析和闭环优化流程。",
+      "importance": "离线批处理适合构建基础资产，但线上系统的反馈、异常和知识更新常常要求更快的数据响应链路。",
+      "minimumDemo": "为一个简单应用记录用户接受率和工具调用结果，并以小时级更新统计看板。",
+      "hardwareBudget": "更依赖稳定的消息和计算基础设施，而不是单次算力峰值。",
+      "prerequisites": [
+        "F/F1. 数据类型/用户行为日志",
+        "F/F2. 数据形态/交互轨迹",
+        "M/M4. 在线评测/Acceptance rate"
+      ],
+      "coreMetrics": [
+        "event lag",
+        "processing throughput",
+        "drop rate"
+      ],
+      "next": [
+        "M/M4. 在线评测/Business KPIs",
+        "M/M4. 在线评测/A/B tests",
+        "F/F5. 数据治理/隐私"
+      ]
+    }
   }
 }

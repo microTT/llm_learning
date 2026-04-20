@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-F-F5-1dxq4c2-1",
     "type": "leaf-batch",
     "label": "F5. 数据治理 / Leaves",
@@ -22,15 +22,143 @@
       "审计"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "F/F5. 数据治理/License": {},
-    "F/F5. 数据治理/隐私": {},
-    "F/F5. 数据治理/PII": {},
-    "F/F5. 数据治理/数据保留": {},
-    "F/F5. 数据治理/权限": {},
-    "F/F5. 数据治理/数据卡 / model card 对齐": {},
-    "F/F5. 数据治理/审计": {}
+    "F/F5. 数据治理/License": {
+      "status": "draft",
+      "definition": "License 约束数据是否可以采集、存储、训练、再分发或商用，是数据可用性的第一道法律边界。",
+      "importance": "如果 license 不清楚，后续训练和产品上线都存在根本风险；很多数据工程问题最终会回到“这批数据到底能不能用”。",
+      "minimumDemo": "为一批采集到的文档补齐 source 和 license 字段，并把未知 license 的样本单独隔离。",
+      "hardwareBudget": "几乎没有硬件成本，重点在人工梳理和流程约束。",
+      "prerequisites": [
+        "F/F3. 数据工程/采集",
+        "I/I2. 知识库构建/数据接入"
+      ],
+      "coreMetrics": [
+        "license coverage",
+        "unknown license rate"
+      ],
+      "next": [
+        "F/F5. 数据治理/数据卡 / model card 对齐",
+        "M/M7. 隐私与合规/Regulatory compliance"
+      ]
+    },
+    "F/F5. 数据治理/隐私": {
+      "status": "draft",
+      "definition": "隐私关注数据处理过程中是否遵循最小必要、目的限制和合法使用原则，避免把真实用户信息无限制地带入训练、评测和分析流程。",
+      "importance": "隐私治理不是附属合规文书，而是决定线上反馈、日志和知识资产能否安全进入 AI 系统闭环的前提。",
+      "minimumDemo": "为用户日志加上脱敏、目的说明和访问边界，确保进入分析或训练前先经过筛查。",
+      "hardwareBudget": "重点是流程和审核成本。",
+      "prerequisites": [
+        "F/F1. 数据类型/用户行为日志",
+        "M/M7. 隐私与合规/PII handling"
+      ],
+      "coreMetrics": [
+        "privacy incident count",
+        "de-identification coverage"
+      ],
+      "next": [
+        "F/F5. 数据治理/PII",
+        "M/M7. 隐私与合规/Governance policies"
+      ]
+    },
+    "F/F5. 数据治理/PII": {
+      "status": "draft",
+      "definition": "PII 指能直接或间接识别个人身份的信息，如姓名、手机号、邮箱、证件号、精确地址或与其他字段联结后可识别个人的组合信息。",
+      "importance": "PII 是最常见、最容易被忽略的数据风险源。它不仅影响合规，还会直接决定训练集、日志和知识库是否能被复用。",
+      "minimumDemo": "对一批用户反馈或工单文本做 PII 检测，统计命中类型并决定删除、掩码或隔离策略。",
+      "hardwareBudget": "多是检测和审核成本。",
+      "prerequisites": [
+        "F/F5. 数据治理/隐私",
+        "M/M7. 隐私与合规/PII handling"
+      ],
+      "coreMetrics": [
+        "PII detection recall",
+        "PII residue rate"
+      ],
+      "next": [
+        "F/F3. 数据工程/过滤",
+        "M/M7. 隐私与合规/Audit logs"
+      ]
+    },
+    "F/F5. 数据治理/数据保留": {
+      "status": "draft",
+      "definition": "数据保留规定数据该保存多久、何时删除、哪些版本需要长期留存、哪些应在特定时间后清理。",
+      "importance": "没有保留策略，数据常会无限堆积，既增加泄露面，也让审计和回滚越来越困难。",
+      "minimumDemo": "给训练集、日志和审计记录分别设定保留期限，并标明删除和归档动作。",
+      "hardwareBudget": "会影响存储和归档成本，但本质是治理问题。",
+      "prerequisites": [
+        "F/F3. 数据工程/版本管理",
+        "M/M7. 隐私与合规/Data retention"
+      ],
+      "coreMetrics": [
+        "retention compliance",
+        "expired data backlog"
+      ],
+      "next": [
+        "F/F5. 数据治理/审计",
+        "M/M7. 隐私与合规/Data retention"
+      ]
+    },
+    "F/F5. 数据治理/权限": {
+      "status": "draft",
+      "definition": "权限控制谁可以读、写、导出、标注、删除或发布数据，是防止高风险样本被随意访问和传播的组织边界。",
+      "importance": "训练、评测、知识库和线上日志往往共享基础设施，如果权限边界不清，最容易发生越权访问和敏感数据外泄。",
+      "minimumDemo": "把原始日志、脱敏数据、训练导出数据分成不同访问层级，并为每类数据定义最小权限角色。",
+      "hardwareBudget": "主要是系统和流程成本。",
+      "prerequisites": [
+        "A/A2. 计算机基础/软件工程/密钥与权限管理",
+        "J/J8. 安全与权限/Permission scopes",
+        "M/M7. 隐私与合规/Access control"
+      ],
+      "coreMetrics": [
+        "access violation count",
+        "least-privilege coverage"
+      ],
+      "next": [
+        "J/J8. 安全与权限/Sensitive action approval",
+        "F/F5. 数据治理/审计"
+      ]
+    },
+    "F/F5. 数据治理/数据卡 / model card 对齐": {
+      "status": "draft",
+      "definition": "数据卡 / model card 对齐是把数据来源、用途、限制、风险和版本信息系统化记录，并和模型说明文档保持一致，帮助团队知道模型到底吃过什么、没吃过什么。",
+      "importance": "很多组织内知识丢失，不是因为数据不存在，而是因为没人写清楚数据和模型之间的映射关系。",
+      "minimumDemo": "为一批 SFT 或 RAG 数据写一页数据卡，说明来源、用途、限制、保留和已知风险，并在模型说明里引用它。",
+      "hardwareBudget": "几乎没有硬件成本。",
+      "prerequisites": [
+        "F/F3. 数据工程/版本管理",
+        "F/F1. 数据类型"
+      ],
+      "coreMetrics": [
+        "documentation completeness",
+        "traceability coverage"
+      ],
+      "next": [
+        "F/F5. 数据治理/审计",
+        "M/M7. 隐私与合规/Governance policies"
+      ]
+    },
+    "F/F5. 数据治理/审计": {
+      "status": "draft",
+      "definition": "审计要求关键数据操作可追踪、可回放、可解释，包括谁接入了数据、谁导出了数据、谁修改了规则、谁批准了高风险动作。",
+      "importance": "没有审计，很多治理措施都只是纸面规则；出了事故无法复盘，也无法证明组织实际执行过什么。",
+      "minimumDemo": "为数据导出、权限变更和删除动作保留日志，并能按数据版本或操作人回查。",
+      "hardwareBudget": "主要是日志存储和检索成本。",
+      "prerequisites": [
+        "F/F3. 数据工程/版本管理",
+        "M/M7. 隐私与合规/Audit logs",
+        "N/N3. 决策变量/是否需要可审计流程"
+      ],
+      "coreMetrics": [
+        "audit log completeness",
+        "incident traceability"
+      ],
+      "next": [
+        "M/M8. 对抗测试与审计/Incident review",
+        "M/M8. 对抗测试与审计/Postmortem"
+      ]
+    }
   }
 }

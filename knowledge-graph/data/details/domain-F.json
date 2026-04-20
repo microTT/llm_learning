@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-18",
+    "updatedAt": "2026-04-20",
     "shardId": "domain-F",
     "type": "domain-overview",
     "label": "F. 数据层（横切层） / 概览",
@@ -14,7 +14,7 @@
     "parentTitle": null,
     "leafTitles": [],
     "nodeCount": 8,
-    "filledNodeCount": 1
+    "filledNodeCount": 8
   },
   "nodes": {
     "F": {
@@ -80,12 +80,271 @@
         "F/F7. 后训练数据构建"
       ]
     },
-    "F/F1. 数据类型": {},
-    "F/F2. 数据形态": {},
-    "F/F3. 数据工程": {},
-    "F/F4. 数据质量": {},
-    "F/F5. 数据治理": {},
-    "F/F6. 数据在系统中的角色": {},
-    "F/F7. 后训练数据构建": {}
+    "F/F1. 数据类型": {
+      "status": "draft",
+      "definition": "数据类型回答的是“这批数据在系统里扮演什么角色”，例如它是用于预训练、SFT、偏好对齐、工具调用优化、RAG，还是用来做评测与反馈回路。它强调的是用途和信号来源，而不是文件格式。",
+      "importance": "同样一条文本数据，放进预训练语料、SFT 数据或 eval set，意义完全不同。只有先分清数据类型，后续的数据工程、治理和评测口径才不会混乱。",
+      "minimumDemo": "把同一业务场景涉及的数据按用途分成预训练、任务微调、评测、知识库和用户反馈五类，并说明每类如何进入系统。",
+      "hardwareBudget": "更多依赖数据组织与标注成本，而不是 GPU。",
+      "prerequisites": [
+        "D/D3. 训练范式",
+        "M/M1. 模型级评测"
+      ],
+      "coreMetrics": [
+        "type coverage",
+        "signal quality",
+        "reuse clarity"
+      ],
+      "toolchain": [
+        "data catalog",
+        "dataset registry",
+        "schema docs"
+      ],
+      "failureSigns": [
+        "同一批数据被同时拿去训练、评测和知识库而没有边界",
+        "团队说不清某批数据到底是拿来训练什么的"
+      ],
+      "next": [
+        "F/F1. 数据类型/预训练语料",
+        "F/F1. 数据类型/指令微调数据",
+        "F/F1. 数据类型/Eval datasets"
+      ]
+    },
+    "F/F2. 数据形态": {
+      "status": "draft",
+      "definition": "数据形态描述的是样本在物理或逻辑上长什么样，例如文本、图像、音频、视频、schema 化 JSON、图结构、代码或交互轨迹。它强调的是表示形式和处理方式。",
+      "importance": "很多模型和工程错误，并不是数据类型错了，而是数据形态没搞清楚。比如同样是知识库文档，可以是纯文本、PDF、表格、代码仓库或多模态配对，它们的解析和评测方法完全不同。",
+      "minimumDemo": "拿一个真实任务，把它涉及的数据样本分别归到具体形态，并写出每种形态需要的解析、切分和验证方式。",
+      "hardwareBudget": "取决于形态复杂度；文本最低，视频和多模态更高。",
+      "prerequisites": [
+        "F/F1. 数据类型",
+        "E"
+      ],
+      "coreMetrics": [
+        "shape validity",
+        "parser success",
+        "storage / throughput"
+      ],
+      "toolchain": [
+        "parsers",
+        "feature extractors",
+        "schema validators"
+      ],
+      "failureSigns": [
+        "同一种处理流程硬套到所有数据上",
+        "数据 parse 得出来，但语义已经丢了"
+      ],
+      "next": [
+        "F/F2. 数据形态/文本",
+        "F/F2. 数据形态/JSON / schema data",
+        "F/F2. 数据形态/交互轨迹"
+      ]
+    },
+    "F/F3. 数据工程": {
+      "status": "draft",
+      "definition": "数据工程关注如何把原始内容、日志和人工标注，转成可训练、可检索、可评测、可复现的数据资产。它覆盖采集、清洗、去重、过滤、切分、标注、版本管理以及在线流式处理等流程，是把“有数据”变成“可安全复用的数据”的执行层。",
+      "importance": "很多团队知道要做训练或 RAG，但真正出问题的地方常在数据工程：schema 不统一、清洗不稳定、train/test 切分混乱、标注口径漂移、版本不可追溯。没有这层，模型和评测结果都很难复现，也很难解释为什么一次有效、下次失效。",
+      "minimumDemo": "做一条小型数据流水线：从两个来源采集原始文本或工具日志，统一 schema，完成清洗、去重、过滤和切分，再抽样标注并记录版本号。最后把同一份数据分别用于 SFT、离线评测或 RAG 建库，对比“无工程处理”和“有工程处理”两种结果差异。",
+      "hardwareBudget": "大多数学习实验可在本地或单机云实例完成，重点成本在存储、数据处理时间、人审标注和版本管理，而不是 GPU。只有大规模预训练语料、多模态转码或高吞吐在线处理时，才会显著依赖分布式计算资源。",
+      "prerequisites": [
+        "F/F1. 数据类型",
+        "F/F2. 数据形态",
+        "C/C1. 问题设定/训练集 / 验证集 / 测试集"
+      ],
+      "coreMetrics": [
+        "pipeline success rate",
+        "parse success rate",
+        "dedup ratio",
+        "label throughput",
+        "freshness lag",
+        "reproducibility"
+      ],
+      "toolchain": [
+        "ETL / ELT pipelines",
+        "schema validation",
+        "batch / stream processing",
+        "annotation tools",
+        "dataset registry",
+        "object storage"
+      ],
+      "failureSigns": [
+        "相同数据源每次处理结果都不一样",
+        "训练、评测、知识库三套数据口径互相冲突",
+        "出了问题却说不清是哪一版数据导致的",
+        "数据看似很多，但实际有效样本很少或高度重复"
+      ],
+      "next": [
+        "F/F3. 数据工程/采集",
+        "F/F3. 数据工程/清洗",
+        "F/F3. 数据工程/去重",
+        "F/F3. 数据工程/过滤",
+        "F/F3. 数据工程/切分",
+        "F/F3. 数据工程/标注",
+        "F/F3. 数据工程/版本管理",
+        "F/F3. 数据工程/数据增广",
+        "F/F3. 数据工程/合成生成",
+        "F/F3. 数据工程/流式处理"
+      ]
+    },
+    "F/F4. 数据质量": {
+      "status": "draft",
+      "definition": "数据质量回答的是“这批数据是否真的适合当前用途”，它不只关心有没有脏数据，更关心覆盖度、正确性、一致性、多样性、噪声、分布匹配、偏差与时效性这些维度是否和训练、评测或线上目标相匹配。",
+      "importance": "同一份数据，对预训练、SFT、RAG、评测和线上反馈的质量要求不同。只有把质量拆成可检查的维度，团队才能定位问题究竟来自样本错误、标签漂移、分布偏移、老旧知识还是场景覆盖不足，而不是笼统地说“数据不太行”。",
+      "minimumDemo": "为一个小数据集建立质量检查表：抽样检查事实正确性，统计类别或场景覆盖，评估重复率和噪声率，确认 train/validation/test 是否泄漏，并在一轮训练或评测后回看哪些质量问题真正影响结果。",
+      "hardwareBudget": "大多是人工抽样、规则检查、统计分析和小规模模型辅助筛查成本；真正昂贵的是长期持续维护质量闭环，而不是单次运行检查脚本。",
+      "prerequisites": [
+        "F/F3. 数据工程",
+        "C/C4. 共性问题/数据泄漏",
+        "M/M1. 模型级评测"
+      ],
+      "coreMetrics": [
+        "coverage",
+        "correctness",
+        "consistency",
+        "diversity",
+        "noise rate",
+        "distribution match",
+        "fairness gaps",
+        "freshness"
+      ],
+      "toolchain": [
+        "sampling review",
+        "rule validators",
+        "agreement checks",
+        "distribution dashboards",
+        "contamination checks"
+      ],
+      "failureSigns": [
+        "离线指标不错，线上效果却明显不稳",
+        "同任务在不同评测集上表现差异异常大",
+        "模型学到格式噪声或过拟合某些套路",
+        "新知识更新后系统仍反复回答旧版本内容"
+      ],
+      "next": [
+        "F/F4. 数据质量/覆盖度",
+        "F/F4. 数据质量/正确性",
+        "F/F4. 数据质量/一致性",
+        "F/F4. 数据质量/多样性",
+        "F/F4. 数据质量/噪声控制",
+        "F/F4. 数据质量/分布匹配",
+        "F/F4. 数据质量/偏差与公平性",
+        "F/F4. 数据质量/时效性"
+      ]
+    },
+    "F/F5. 数据治理": {
+      "status": "draft",
+      "definition": "数据治理回答的是“这些数据能不能用、谁能用、能保留多久、如何审计与追责”，它把工程和质量之外的权限、合规、保留、透明性要求嵌入数据生命周期。",
+      "importance": "数据工程保证能处理，数据质量保证够好，数据治理保证这件事在法律、组织和安全边界上站得住。没有治理，哪怕模型效果再好，也可能因为 license、隐私、权限或审计问题无法长期上线。",
+      "minimumDemo": "给一批训练或知识库数据加上 source、license、是否含 PII、保留期限、访问角色和审计记录字段，并定义最小访问与导出流程。",
+      "hardwareBudget": "硬件不是重点，重点成本在流程设计、权限系统、审计保留和合规审核。",
+      "prerequisites": [
+        "F/F3. 数据工程/版本管理",
+        "M/M7. 隐私与合规",
+        "J/J8. 安全与权限"
+      ],
+      "coreMetrics": [
+        "audit coverage",
+        "PII leak rate",
+        "access violation count",
+        "retention compliance"
+      ],
+      "toolchain": [
+        "access control",
+        "audit logs",
+        "dataset policy docs",
+        "retention workflows"
+      ],
+      "failureSigns": [
+        "团队说不清某批数据是否有使用权",
+        "训练、评测和导出流程共享同一套高权限访问",
+        "数据删不掉、查不清、导出无痕迹",
+        "线上反馈直接进入训练回路但没有隐私筛查"
+      ],
+      "next": [
+        "F/F5. 数据治理/License",
+        "F/F5. 数据治理/隐私",
+        "F/F5. 数据治理/PII",
+        "F/F5. 数据治理/数据保留",
+        "F/F5. 数据治理/权限",
+        "F/F5. 数据治理/数据卡 / model card 对齐",
+        "F/F5. 数据治理/审计"
+      ]
+    },
+    "F/F6. 数据在系统中的角色": {
+      "status": "draft",
+      "definition": "数据在系统中的角色描述的是不同类型的数据如何塑造模型和系统行为：有些决定基础能力上限，有些决定输出风格，有些决定对齐方向，有些决定 Agent 行为、RAG 质量和评测可信度。",
+      "importance": "很多讨论把数据笼统地说成“训练数据”，但真正做系统时，预训练语料、SFT 数据、偏好数据、工具 traces、eval set 和知识库文档承担的是完全不同的职责。把角色分清，才能知道该补哪类数据，而不是盲目继续堆量。",
+      "minimumDemo": "为一个实际系统列一张表，分别写出预训练数据、SFT 数据、偏好数据、工具 traces、评测集和知识库文档对结果的具体影响，并标注当前瓶颈主要在哪一类。",
+      "hardwareBudget": "更多影响后续训练、推理和评测预算分配，而不是单独消耗硬件。",
+      "prerequisites": [
+        "F/F1. 数据类型",
+        "H/H2. 监督式后训练/SFT",
+        "M/M1. 模型级评测"
+      ],
+      "coreMetrics": [
+        "capability gain attribution",
+        "behavior stability",
+        "evaluation reliability"
+      ],
+      "toolchain": [
+        "dataset registry",
+        "eval dashboards",
+        "experiment attribution notes"
+      ],
+      "failureSigns": [
+        "出现问题时只会说“数据不够”，但说不清是哪类数据不够",
+        "把知识库文档、训练集和评测集混成一个大池子",
+        "优化了错误的数据角色，导致系统收益很小"
+      ],
+      "next": [
+        "F/F6. 数据在系统中的角色/预训练数据 → 决定基础能力上限",
+        "F/F6. 数据在系统中的角色/SFT 数据 → 决定任务风格与稳定性",
+        "F/F6. 数据在系统中的角色/偏好/奖励数据 → 决定对齐方向",
+        "F/F6. 数据在系统中的角色/工具 traces → 决定 Agent 行为优化",
+        "F/F6. 数据在系统中的角色/Eval datasets → 决定可重复评测",
+        "F/F6. 数据在系统中的角色/知识库文档 → 决定 RAG 质量"
+      ]
+    },
+    "F/F7. 后训练数据构建": {
+      "status": "draft",
+      "definition": "后训练数据构建关注的是：为了做 SFT、偏好优化、RFT 或 verifier 训练，数据应该如何切分、编写、组织、多轮化、加权、过滤和评分。它不是训练算法本身，而是把原始样本变成可直接用于后训练的样本结构。",
+      "importance": "很多后训练效果差，不是算法选错，而是数据构建方式出了问题：指令写得含糊、多轮上下文不真实、偏好数据质量不稳、污染检查缺失、grader rubric 不一致。把这层做扎实，后训练方法之间的比较才有意义。",
+      "minimumDemo": "选一个窄任务，构建一套小型后训练数据集：先做 train/validation/test split，再写指令模板，加入少量多轮样本，决定哪些 token 需要参与损失，补上一批偏好或 rubric 评分数据，最后检查污染与泄漏。",
+      "hardwareBudget": "主要成本在人审、数据设计和重复迭代，而不是算力；真正高算力消耗发生在训练阶段，不在数据构建阶段。",
+      "prerequisites": [
+        "F/F1. 数据类型/指令微调数据",
+        "F/F1. 数据类型/偏好数据",
+        "F/F1. 数据类型/奖励数据",
+        "H/H2. 监督式后训练/SFT"
+      ],
+      "coreMetrics": [
+        "template clarity",
+        "label reliability",
+        "leakage rate",
+        "grader agreement"
+      ],
+      "toolchain": [
+        "dataset templates",
+        "annotation workflows",
+        "contamination checks",
+        "grader rubrics"
+      ],
+      "failureSigns": [
+        "训练收敛了，但风格和任务行为仍然混乱",
+        "偏好优化收益不稳定，甚至引入副作用",
+        "验证集看起来很好，线上或外部评测却复现不了",
+        "团队说不清一条样本里哪些 token 在被学习、哪些只是上下文"
+      ],
+      "next": [
+        "F/F7. 后训练数据构建/Train / validation / test split",
+        "F/F7. 后训练数据构建/Instruction crafting",
+        "F/F7. 后训练数据构建/Multi-turn examples",
+        "F/F7. 后训练数据构建/Weight masking",
+        "F/F7. 后训练数据构建/Preference data",
+        "F/F7. 后训练数据构建/Reward / verifier data",
+        "F/F7. 后训练数据构建/Contamination / leakage checks",
+        "F/F7. 后训练数据构建/Rubric-based graders for RFT"
+      ]
+    }
   }
 }

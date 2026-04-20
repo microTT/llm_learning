@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-H-H5-1c40oby-1",
     "type": "leaf-batch",
     "label": "H5. 压缩与效率优化 / Leaves",
@@ -20,13 +20,103 @@
       "Quantization-aware training（部分方法）"
     ],
     "nodeCount": 5,
-    "filledNodeCount": 0
+    "filledNodeCount": 5
   },
   "nodes": {
-    "H/H5. 压缩与效率优化/Quantization": {},
-    "H/H5. 压缩与效率优化/Distillation": {},
-    "H/H5. 压缩与效率优化/Pruning": {},
-    "H/H5. 压缩与效率优化/Smaller specialized models": {},
-    "H/H5. 压缩与效率优化/Quantization-aware training（部分方法）": {}
+    "H/H5. 压缩与效率优化/Quantization": {
+      "status": "draft",
+      "definition": "Quantization 通过降低权重、激活或 KV cache 的数值精度，换取更小显存占用和更高推理效率，是最常见的部署压缩手段之一。",
+      "importance": "它往往是模型上线前首先考虑的效率优化，因为改动相对直接，收益又很容易体现在显存和吞吐上。",
+      "minimumDemo": "对同一模型分别用全精度和量化配置跑相同任务，记录显存、TTFT、吞吐和质量退化。",
+      "prerequisites": [
+        "L/L3. 推理优化/Quantized inference",
+        "M/M1. 模型级评测/延迟/成本"
+      ],
+      "coreMetrics": [
+        "memory usage",
+        "throughput",
+        "quality retention"
+      ],
+      "next": [
+        "H/H5. 压缩与效率优化/Quantization-aware training（部分方法）",
+        "H/H6. 行为优化维度/更便宜 / 更快"
+      ]
+    },
+    "H/H5. 压缩与效率优化/Distillation": {
+      "status": "draft",
+      "definition": "Distillation 用更强或更大模型作为 teacher，把目标任务上的行为、分布或中间知识迁移给更小 student 模型。",
+      "importance": "它适合把高成本能力转成更便宜的可部署版本，尤其在任务边界明确时常比单纯量化更有潜力保留效果。",
+      "minimumDemo": "选一个任务，用大模型生成教师信号，训练小模型或专项模型后比较成本、速度和任务成功率。",
+      "prerequisites": [
+        "H/H5. 压缩与效率优化/Quantization",
+        "H/H2. 监督式后训练/Task-specific tuning"
+      ],
+      "coreMetrics": [
+        "student accuracy",
+        "speedup",
+        "teacher-student gap"
+      ],
+      "next": [
+        "H/H5. 压缩与效率优化/Smaller specialized models",
+        "H/H6. 行为优化维度/更准确"
+      ]
+    },
+    "H/H5. 压缩与效率优化/Pruning": {
+      "status": "draft",
+      "definition": "Pruning 通过删除不重要的参数、通道、头或结构单元来压缩模型，希望在保留主要能力的同时降低计算和存储开销。",
+      "importance": "它提供了另一条“减法式”压缩路线，但真实收益常常受硬件、内核实现和结构稀疏支持程度制约。",
+      "minimumDemo": "在小模型上尝试一次简单 pruning，并对比理论参数减少与实际延迟收益是否一致。",
+      "prerequisites": [
+        "H/H5. 压缩与效率优化/Quantization",
+        "M/M1. 模型级评测/稳定性"
+      ],
+      "coreMetrics": [
+        "parameter reduction",
+        "actual latency gain",
+        "quality loss"
+      ],
+      "next": [
+        "H/H5. 压缩与效率优化/Smaller specialized models",
+        "H/H6. 行为优化维度/更便宜 / 更快"
+      ]
+    },
+    "H/H5. 压缩与效率优化/Smaller specialized models": {
+      "status": "draft",
+      "definition": "Smaller specialized models 指的是不执着于保留一个大而全的模型，而是针对固定任务、固定领域或固定工作流训练和部署更小、更专注的模型。",
+      "importance": "当任务边界明确时，小而专的模型往往比压缩通用大模型更容易得到可控收益，也更适合作为路由体系中的前置层。",
+      "minimumDemo": "挑一个窄任务，把通用大模型和小专项模型做端到端对比，观察是否能以更低成本达到可接受质量。",
+      "prerequisites": [
+        "H/H4. 参数高效适配/其他 PEFT 变体",
+        "H/H5. 压缩与效率优化/Distillation"
+      ],
+      "coreMetrics": [
+        "task fit",
+        "cost efficiency",
+        "maintenance overhead"
+      ],
+      "next": [
+        "G/G7. 模型类型细分/专项模型",
+        "H/H6. 行为优化维度/更适应特定领域"
+      ]
+    },
+    "H/H5. 压缩与效率优化/Quantization-aware training（部分方法）": {
+      "status": "draft",
+      "definition": "Quantization-aware training 指在训练或适配阶段就把量化误差纳入考虑，让模型更早适应低精度表示，从而降低部署后精度掉头。",
+      "importance": "它适合那些后量化退化明显、但又必须在低资源环境部署的场景，是把训练和部署目标提前对齐的一类方法。",
+      "minimumDemo": "对比后量化和量化感知训练两条路线在同一任务上的质量保留和工程复杂度差异。",
+      "prerequisites": [
+        "H/H5. 压缩与效率优化/Quantization",
+        "H/H4. 参数高效适配/QLoRA"
+      ],
+      "coreMetrics": [
+        "quality retention",
+        "training overhead",
+        "deployment robustness"
+      ],
+      "next": [
+        "L/L3. 推理优化/Quantized inference",
+        "H/H6. 行为优化维度/更便宜 / 更快"
+      ]
+    }
   }
 }

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-F-F1-1rxhcct-1",
     "type": "leaf-batch",
     "label": "F1. 数据类型 / Leaves",
@@ -25,18 +25,200 @@
       "合成数据"
     ],
     "nodeCount": 10,
-    "filledNodeCount": 0
+    "filledNodeCount": 10
   },
   "nodes": {
-    "F/F1. 数据类型/预训练语料": {},
-    "F/F1. 数据类型/指令微调数据": {},
-    "F/F1. 数据类型/偏好数据": {},
-    "F/F1. 数据类型/奖励数据": {},
-    "F/F1. 数据类型/工具调用数据": {},
-    "F/F1. 数据类型/Agent traces": {},
-    "F/F1. 数据类型/Eval datasets": {},
-    "F/F1. 数据类型/知识库文档": {},
-    "F/F1. 数据类型/用户行为日志": {},
-    "F/F1. 数据类型/合成数据": {}
+    "F/F1. 数据类型/预训练语料": {
+      "status": "draft",
+      "definition": "预训练语料是用于学习通用表示和基础能力的大规模原始数据集合，通常强调覆盖面、多样性和规模，而不是单条样本的精确任务标签。",
+      "importance": "它决定基础模型的能力上限和知识覆盖面，是很多后续能力的底层来源。",
+      "minimumDemo": "比较同一模型在小语料和更大、更杂语料上的迁移表现差异。",
+      "hardwareBudget": "主要花在存储、处理和长时间训练上。",
+      "prerequisites": [
+        "D/D3. 训练范式/预训练",
+        "D/D6. 规模化要素/数据规模"
+      ],
+      "coreMetrics": [
+        "coverage",
+        "diversity",
+        "dedup ratio"
+      ],
+      "next": [
+        "F/F4. 数据质量/覆盖度",
+        "F/F3. 数据工程/去重"
+      ]
+    },
+    "F/F1. 数据类型/指令微调数据": {
+      "status": "draft",
+      "definition": "指令微调数据是把输入、期望输出和交互格式显式写出来的数据，用来让模型学会任务风格、输出格式和基本遵循能力。",
+      "importance": "它通常比预训练数据更小，但对助手行为和任务稳定性影响很大。",
+      "minimumDemo": "收集几十条指令-回答样本，比较是否加入格式约束对输出稳定性的影响。",
+      "hardwareBudget": "更多是标注和审核成本。",
+      "prerequisites": [
+        "H/H2. 监督式后训练/SFT",
+        "D/D3. 训练范式/微调"
+      ],
+      "coreMetrics": [
+        "instruction coverage",
+        "format consistency"
+      ],
+      "next": [
+        "F/F7. 后训练数据构建/Instruction crafting",
+        "F/F6. 数据在系统中的角色/SFT 数据 → 决定任务风格与稳定性"
+      ]
+    },
+    "F/F1. 数据类型/偏好数据": {
+      "status": "draft",
+      "definition": "偏好数据用来表达“哪个回答更好”，通常是成对比较或排序结果，而不是单一标准答案。",
+      "importance": "它把监督信号从“正确答案”扩展到“更符合偏好的行为”，是 DPO、RLHF 等后训练路线的关键输入。",
+      "minimumDemo": "为同一个问题构造两个回答并标注偏好，观察偏好信号和标准答案信号的不同。",
+      "hardwareBudget": "标注一致性和审核成本通常高于普通 SFT。",
+      "prerequisites": [
+        "H/H3. 偏好优化与对齐/DPO",
+        "H/H3. 偏好优化与对齐/RLHF"
+      ],
+      "coreMetrics": [
+        "agreement rate",
+        "preference coverage"
+      ],
+      "next": [
+        "F/F7. 后训练数据构建/Preference data",
+        "F/F6. 数据在系统中的角色/偏好/奖励数据 → 决定对齐方向"
+      ]
+    },
+    "F/F1. 数据类型/奖励数据": {
+      "status": "draft",
+      "definition": "奖励数据用于训练 reward model 或 verifier，帮助系统把复杂目标映射成可优化分数。",
+      "importance": "它让模型能从更细粒度的评价信号里学习，但同时也更容易引入奖励黑客和偏置。",
+      "minimumDemo": "设计一个小 rubric，把回答映射成分数并比较不同打分者的一致性。",
+      "hardwareBudget": "更多消耗在设计 rubric 和人工审核。",
+      "prerequisites": [
+        "H/H3. 偏好优化与对齐/Reward modeling",
+        "H/H3. 偏好优化与对齐/RFT"
+      ],
+      "coreMetrics": [
+        "scorer agreement",
+        "reward fidelity"
+      ],
+      "next": [
+        "F/F7. 后训练数据构建/Reward / verifier data",
+        "F/F4. 数据质量/正确性"
+      ]
+    },
+    "F/F1. 数据类型/工具调用数据": {
+      "status": "draft",
+      "definition": "工具调用数据记录模型在什么上下文下应该调用什么工具、传什么参数、如何处理结果，是函数调用和 agent 工具链优化的直接训练信号。",
+      "importance": "它决定模型是只会“说”还是能稳定地“做”，对 agent 系统的可用性影响很大。",
+      "minimumDemo": "收集一小批函数调用样本，检查工具选择、参数填充和错误恢复是否一致。",
+      "hardwareBudget": "成本主要在构造高质量示例和验证执行结果。",
+      "prerequisites": [
+        "J/J3. 工具调用/Function calling",
+        "H/H2. 监督式后训练/Tool / function-calling fine-tuning"
+      ],
+      "coreMetrics": [
+        "tool selection accuracy",
+        "argument validity"
+      ],
+      "next": [
+        "F/F6. 数据在系统中的角色/工具 traces → 决定 Agent 行为优化",
+        "M/M3. Agent 级评测/Tool selection correctness"
+      ]
+    },
+    "F/F1. 数据类型/Agent traces": {
+      "status": "draft",
+      "definition": "Agent traces 是任务执行过程中的步骤、工具、观察、产物和决策记录，用来分析 agent 为什么成功或失败。",
+      "importance": "它是 agent 训练和评测区别于普通聊天数据的关键资产，因为很多系统错误只会出现在过程里，而不是最终答案里。",
+      "minimumDemo": "把一次 agent 执行完整记录成 trace，并标注关键决策点和失败原因。",
+      "hardwareBudget": "更多消耗在存储、分析和标注。",
+      "prerequisites": [
+        "M/M3. Agent 级评测/Trace schema",
+        "K/K7. 工具与外部连接/Sandbox workspace"
+      ],
+      "coreMetrics": [
+        "trace completeness",
+        "process observability"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Trace grading",
+        "F/F4. 数据质量/一致性"
+      ]
+    },
+    "F/F1. 数据类型/Eval datasets": {
+      "status": "draft",
+      "definition": "Eval datasets 是专门用于重复评测和回归验证的数据，不应和训练数据混用。",
+      "importance": "没有独立 eval set，所有提升都可能只是训练记忆或口径漂移。",
+      "minimumDemo": "为一个任务单独划出训练集和评测集，并记录它们的来源和隔离方式。",
+      "hardwareBudget": "成本主要在构建、维护和污染检查。",
+      "prerequisites": [
+        "M/M1. 模型级评测",
+        "M/M2. 应用级评测"
+      ],
+      "coreMetrics": [
+        "reproducibility",
+        "contamination rate"
+      ],
+      "next": [
+        "F/F7. 后训练数据构建/Train / validation / test split",
+        "F/F6. 数据在系统中的角色/Eval datasets → 决定可重复评测"
+      ]
+    },
+    "F/F1. 数据类型/知识库文档": {
+      "status": "draft",
+      "definition": "知识库文档是供 RAG、检索或企业知识系统消费的原始内容资产，可能来自网页、PDF、Office、代码库或内部文档。",
+      "importance": "它直接决定检索系统能不能找到高质量事实，也决定引用和 groundedness 的上限。",
+      "minimumDemo": "选一批文档做清洗、切块和索引，然后对同一问题比较改造前后的检索命中效果。",
+      "hardwareBudget": "成本主要在 parsing、索引和存储。",
+      "prerequisites": [
+        "I/I2. 知识库构建/数据接入",
+        "I/I2. 知识库构建/Chunking strategy"
+      ],
+      "coreMetrics": [
+        "retrieval hit rate",
+        "document freshness"
+      ],
+      "next": [
+        "F/F6. 数据在系统中的角色/知识库文档 → 决定 RAG 质量",
+        "I/I2. 知识库构建/Vector store"
+      ]
+    },
+    "F/F1. 数据类型/用户行为日志": {
+      "status": "draft",
+      "definition": "用户行为日志记录真实使用过程中的点击、接受、放弃、纠错和业务结果，是闭环优化和在线评测的重要数据来源。",
+      "importance": "它能把离线假设和真实世界使用联系起来，但同时也最容易引入隐私、偏差和反馈回路问题。",
+      "minimumDemo": "为一个简单助手记录接受率、重试率和任务完成率，并做按场景切片分析。",
+      "hardwareBudget": "成本集中在埋点、存储和治理。",
+      "prerequisites": [
+        "M/M4. 在线评测/Business KPIs",
+        "F/F5. 数据治理/隐私"
+      ],
+      "coreMetrics": [
+        "acceptance rate",
+        "task completion",
+        "retention / conversion"
+      ],
+      "next": [
+        "M/M4. 在线评测/Acceptance rate",
+        "F/F5. 数据治理/PII"
+      ]
+    },
+    "F/F1. 数据类型/合成数据": {
+      "status": "draft",
+      "definition": "合成数据是通过规则、模拟器或模型生成的训练/评测样本，用来补足稀缺、昂贵或危险场景的数据覆盖。",
+      "importance": "它可以显著提升覆盖率和效率，但如果不分层验证，很容易把伪模式、偏差和错误监督信号带进系统。",
+      "minimumDemo": "生成一批合成样本与真实样本混合训练，并单独评估它对真实分布的影响。",
+      "hardwareBudget": "取决于生成方式；规则生成便宜，模型生成更贵。",
+      "prerequisites": [
+        "F/F3. 数据工程/合成生成",
+        "F/F4. 数据质量/分布匹配"
+      ],
+      "coreMetrics": [
+        "coverage gain",
+        "real-world transfer"
+      ],
+      "next": [
+        "F/F3. 数据工程/数据增广",
+        "F/F4. 数据质量/正确性"
+      ]
+    }
   }
 }

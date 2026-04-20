@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-H-H7-f3nuqn-1",
     "type": "leaf-batch",
     "label": "H7. 后训练数据构建 / Leaves",
@@ -22,15 +22,143 @@
       "Rubric-based graders for RFT"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "H/H7. 后训练数据构建/Train / validation / test split": {},
-    "H/H7. 后训练数据构建/Instruction crafting": {},
-    "H/H7. 后训练数据构建/Multi-turn examples": {},
-    "H/H7. 后训练数据构建/Weight masking": {},
-    "H/H7. 后训练数据构建/Preference / reward / verifier data": {},
-    "H/H7. 后训练数据构建/Contamination / leakage checks": {},
-    "H/H7. 后训练数据构建/Rubric-based graders for RFT": {}
+    "H/H7. 后训练数据构建/Train / validation / test split": {
+      "status": "draft",
+      "definition": "Train / validation / test split 指的是把训练、调参、最终评测严格拆开，避免模型或流程在开发阶段偷偷“看过答案”。",
+      "importance": "没有干净切分，后训练实验几乎所有好结果都可能被高估，因为你不知道模型是在泛化，还是在记住评测分布。",
+      "minimumDemo": "为一个小任务明确写下切分规则、去重规则和时间切分边界，并在每次训练前后固定复用同一验证集与测试集。",
+      "prerequisites": [
+        "F/F7. 后训练数据构建/Train / validation / test split",
+        "M/M1. 模型级评测/稳定性"
+      ],
+      "coreMetrics": [
+        "leakage rate",
+        "duplication rate",
+        "generalization gap"
+      ],
+      "next": [
+        "H/H7. 后训练数据构建/Contamination / leakage checks",
+        "H/H2. 监督式后训练/SFT"
+      ]
+    },
+    "H/H7. 后训练数据构建/Instruction crafting": {
+      "status": "draft",
+      "definition": "Instruction crafting 是把任务目标、输入槽位、输出要求和边界条件写成清晰、一致、可训练的 instruction 样本，而不是把原始业务文本直接扔给训练。",
+      "importance": "很多 SFT 成败的关键不在模型，而在 instruction 是否把真正的任务目标表达清楚；如果 instruction 含糊，模型会学到噪声而不是能力。",
+      "minimumDemo": "选一批原始样本，分别做粗糙 instruction 和精心设计 instruction 的版本，再对比训练后在格式和任务完成上的差异。",
+      "prerequisites": [
+        "F/F7. 后训练数据构建/Instruction crafting",
+        "H/H2. 监督式后训练/SFT"
+      ],
+      "coreMetrics": [
+        "instruction consistency",
+        "schema clarity",
+        "task completion delta"
+      ],
+      "next": [
+        "H/H2. 监督式后训练/SFT",
+        "H/H6. 行为优化维度/更结构化"
+      ]
+    },
+    "H/H7. 后训练数据构建/Multi-turn examples": {
+      "status": "draft",
+      "definition": "Multi-turn examples 是把多轮对话中的状态延续、澄清、纠错、工具回填和角色切换等行为显式写进训练样本，而不是只训练单轮问答。",
+      "importance": "如果目标系统本质上是多轮协作或 Agent 工作流，单轮样本通常无法覆盖真实状态转移，模型会在会话中快速失稳。",
+      "minimumDemo": "针对一个会话式任务各自构造单轮样本和多轮样本，对比模型在澄清、追问和状态保持上的差异。",
+      "prerequisites": [
+        "F/F7. 后训练数据构建/Multi-turn examples",
+        "G/G3. 上下文与记忆/会话记忆（session memory）"
+      ],
+      "coreMetrics": [
+        "dialog coherence",
+        "state retention",
+        "handoff correctness"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Handoff correctness",
+        "H/H2. 监督式后训练/Tool / function-calling fine-tuning"
+      ]
+    },
+    "H/H7. 后训练数据构建/Weight masking": {
+      "status": "draft",
+      "definition": "Weight masking 关注训练时哪些 token 或字段该计入损失、哪些只作为上下文条件存在，以避免模型被错误地奖励去复述无关输入或模板壳子。",
+      "importance": "如果损失掩码设计不当，模型可能学会抄输入、过拟合固定模板，或者在多轮与工具轨迹里把不该学的部分也学进去。",
+      "minimumDemo": "在一个带模板外壳的任务上，对比不同 loss mask 策略训练出的模型，检查是否出现机械复述或格式僵化。",
+      "prerequisites": [
+        "F/F7. 后训练数据构建/Weight masking",
+        "H/H2. 监督式后训练/SFT"
+      ],
+      "coreMetrics": [
+        "loss focus quality",
+        "template overfit rate",
+        "target token accuracy"
+      ],
+      "next": [
+        "H/H2. 监督式后训练/Style fine-tuning",
+        "H/H2. 监督式后训练/Tool / function-calling fine-tuning"
+      ]
+    },
+    "H/H7. 后训练数据构建/Preference / reward / verifier data": {
+      "status": "draft",
+      "definition": "Preference / reward / verifier data 指的是为偏好优化、奖励建模和验证器构建的专门数据，包括 chosen / rejected 样本、分级评分、规则判定和过程检查信号。",
+      "importance": "这类数据不只是“更多标注”，而是决定偏好优化方向、reward 质量和 verifier 能否可信工作的基础层。",
+      "minimumDemo": "为一个任务同时准备少量 preference pairs 和 verifier 标注，比较两者能否对同类错误给出一致判断。",
+      "prerequisites": [
+        "F/F7. 后训练数据构建/Preference data",
+        "F/F7. 后训练数据构建/Reward / verifier data",
+        "H/H3. 偏好优化与对齐"
+      ],
+      "coreMetrics": [
+        "label agreement",
+        "ranking consistency",
+        "verifier precision / recall"
+      ],
+      "next": [
+        "H/H3. 偏好优化与对齐/Reward modeling",
+        "H/H3. 偏好优化与对齐/DPO",
+        "M/M3. Agent 级评测/Outcome checks"
+      ]
+    },
+    "H/H7. 后训练数据构建/Contamination / leakage checks": {
+      "status": "draft",
+      "definition": "Contamination / leakage checks 是用去重、近重复检测、时间边界和来源审计等方式，确认训练数据没有污染评测集，也没有把未来信息偷偷带进实验。",
+      "importance": "没有这一步，很多漂亮分数都可能只是数据污染；在代码、文档、公开 benchmark 和企业内网知识任务里，这个风险尤其高。",
+      "minimumDemo": "对训练集和评测集做精确去重与近重复检索，并记录发现的重合样本比例和处理规则。",
+      "prerequisites": [
+        "F/F7. 后训练数据构建/Contamination / leakage checks",
+        "H/H7. 后训练数据构建/Train / validation / test split"
+      ],
+      "coreMetrics": [
+        "exact duplicate rate",
+        "near-duplicate rate",
+        "post-cleaning score delta"
+      ],
+      "next": [
+        "M/M1. 模型级评测/语言能力",
+        "M/M1. 模型级评测/推理能力"
+      ]
+    },
+    "H/H7. 后训练数据构建/Rubric-based graders for RFT": {
+      "status": "draft",
+      "definition": "Rubric-based graders for RFT 是把任务成功标准写成显式 rubric，再由 grader 或 verifier 对结果、过程或工件打分，用于 RFT 或过程优化。",
+      "importance": "当任务不是单一正确答案，而是需要检查过程质量、工具选择或多维成功标准时，rubric grader 往往是把训练与评测闭环打通的关键。",
+      "minimumDemo": "给一个多步任务写出 3～5 条可执行 rubric，用 grader 批量打分，检查 grader 与人工评判的一致性。",
+      "prerequisites": [
+        "F/F7. 后训练数据构建/Rubric-based graders for RFT",
+        "M/M3. Agent 级评测/Grader rubric"
+      ],
+      "coreMetrics": [
+        "grader-human agreement",
+        "rubric coverage",
+        "process sensitivity"
+      ],
+      "next": [
+        "H/H3. 偏好优化与对齐/RFT",
+        "M/M3. Agent 级评测/Trace grading"
+      ]
+    }
   }
 }

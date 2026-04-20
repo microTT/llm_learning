@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-E-E1-47l69n-1",
     "type": "leaf-batch",
     "label": "E1. 语言（NLP / LLM） / Leaves 1",
@@ -21,14 +21,222 @@
       "问答"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "E/E1. 语言（NLP / LLM）/文本分类": {},
-    "E/E1. 语言（NLP / LLM）/信息抽取": {},
-    "E/E1. 语言（NLP / LLM）/命名实体识别": {},
-    "E/E1. 语言（NLP / LLM）/翻译": {},
-    "E/E1. 语言（NLP / LLM）/摘要": {},
-    "E/E1. 语言（NLP / LLM）/问答": {}
+    "E/E1. 语言（NLP / LLM）/文本分类": {
+      "status": "draft",
+      "definition": "文本分类把输入文本映射到一个或多个预定义标签上，是最基础的语言理解任务之一。",
+      "importance": "它是很多复杂系统的最小基线任务，也能帮助学习者快速建立“标签设计—数据切分—指标—部署”的完整闭环。",
+      "minimumDemo": "做一个情感分析或工单路由分类任务，同时尝试传统模型和 LLM 分类提示。",
+      "hardwareBudget": "CPU 可做经典模型；调用 API 或小模型即可做 LLM 版本。",
+      "examples": [
+        "情感分析",
+        "工单分类",
+        "内容审核标签"
+      ],
+      "pitfalls": [
+        "标签体系本身混乱",
+        "只看 Accuracy 忽视长尾类别"
+      ],
+      "prerequisites": [
+        "C/C2. 学习范式/监督学习/分类",
+        "C/C5. 指标体系/Accuracy"
+      ],
+      "coreMetrics": [
+        "Accuracy",
+        "F1",
+        "类别召回"
+      ],
+      "toolchain": [
+        "scikit-learn",
+        "LLM classification prompts"
+      ],
+      "failureSigns": [
+        "总体指标还行，但关键类别长期误判"
+      ],
+      "next": [
+        "E/E1. 语言（NLP / LLM）/结构化解析",
+        "N/N1. 场景类型/文档处理"
+      ]
+    },
+    "E/E1. 语言（NLP / LLM）/信息抽取": {
+      "status": "draft",
+      "definition": "信息抽取把自由文本中的实体、关系、事件或字段提取成结构化表示，是文本进入知识库、工作流和数据库的重要桥梁。",
+      "importance": "它把“能看懂文本”推进到“能把文本转成可操作数据”，因此在企业系统和 agent 工作流里极其常见。",
+      "minimumDemo": "从合同、工单或公告文本中抽取实体与关键字段，输出结构化 JSON 并做简单验证。",
+      "hardwareBudget": "CPU/LLM API 均可起步。",
+      "examples": [
+        "合同字段抽取",
+        "会议纪要行动项抽取",
+        "事件关系抽取"
+      ],
+      "pitfalls": [
+        "抽出来了但 schema 不稳定",
+        "没有明确 span 或字段定义"
+      ],
+      "prerequisites": [
+        "J/J2. 结构化输出/JSON Schema",
+        "E/E1. 语言（NLP / LLM）/命名实体识别"
+      ],
+      "coreMetrics": [
+        "field F1",
+        "schema adherence",
+        "error recovery"
+      ],
+      "toolchain": [
+        "schema validators",
+        "IE prompts",
+        "span labeling tools"
+      ],
+      "failureSigns": [
+        "表面上能抽，字段命名和边界经常漂移"
+      ],
+      "next": [
+        "J/J2. 结构化输出/Validation",
+        "I/I2. 知识库构建/Metadata schema"
+      ]
+    },
+    "E/E1. 语言（NLP / LLM）/命名实体识别": {
+      "status": "draft",
+      "definition": "命名实体识别是从文本中找出人名、地名、组织、时间等实体边界与类型的任务，是信息抽取的基础组件之一。",
+      "importance": "它帮助学习者理解从 token 级标签到结构化知识的最小过渡，也是很多 IE 系统的上游步骤。",
+      "minimumDemo": "在一批标注文本上做 NER，并对错误样例分析实体边界和类别混淆。",
+      "hardwareBudget": "CPU 或小模型即可。",
+      "examples": [
+        "人名地名识别",
+        "简历字段抽取前处理"
+      ],
+      "pitfalls": [
+        "实体边界定义不一致",
+        "长尾实体和嵌套实体处理差"
+      ],
+      "prerequisites": [
+        "E/E1. 语言（NLP / LLM）/信息抽取"
+      ],
+      "coreMetrics": [
+        "entity F1",
+        "boundary accuracy"
+      ],
+      "toolchain": [
+        "sequence labeling models",
+        "span extraction"
+      ],
+      "failureSigns": [
+        "类别大致对，但边界持续不稳"
+      ],
+      "next": [
+        "E/E1. 语言（NLP / LLM）/信息抽取",
+        "B/B4. 知识表示/知识图谱"
+      ]
+    },
+    "E/E1. 语言（NLP / LLM）/翻译": {
+      "status": "draft",
+      "definition": "翻译把一种语言中的内容映射到另一种语言，同时尽量保持语义、风格和关键信息。",
+      "importance": "它是经典 seq2seq 任务，也是评估条件生成和跨语言迁移的典型场景。",
+      "minimumDemo": "选一组中英句子，比较专用翻译模型和通用 LLM 在保真度与流畅度上的差异。",
+      "hardwareBudget": "API 或单模型推理即可。",
+      "examples": [
+        "通用文本翻译",
+        "术语敏感的专业翻译"
+      ],
+      "pitfalls": [
+        "只看流畅，不看术语一致性",
+        "忽视领域词汇和格式约束"
+      ],
+      "prerequisites": [
+        "D/D5. 生成范式/编码—解码生成",
+        "G/G5. 能力面/翻译"
+      ],
+      "coreMetrics": [
+        "BLEU/COMET 类指标",
+        "术语一致性",
+        "人工可用性"
+      ],
+      "toolchain": [
+        "seq2seq models",
+        "translation memory"
+      ],
+      "failureSigns": [
+        "句子顺了，但关键术语和事实变了"
+      ],
+      "next": [
+        "E/E1. 语言（NLP / LLM）/摘要",
+        "N/N1. 场景类型/助手 / Copilot"
+      ]
+    },
+    "E/E1. 语言（NLP / LLM）/摘要": {
+      "status": "draft",
+      "definition": "摘要把长文本压缩成更短但仍保留关键信息的表达，可分为抽取式和生成式。",
+      "importance": "它是长上下文处理和信息压缩的典型任务，也是很多办公、知识管理和 agent 预处理流程的常见能力。",
+      "minimumDemo": "对同一篇长文同时做 extractive 和 abstractive 摘要，比较信息保真和长度控制。",
+      "hardwareBudget": "API 或小模型即可起步。",
+      "examples": [
+        "会议纪要摘要",
+        "长文精简",
+        "多轮对话摘要"
+      ],
+      "pitfalls": [
+        "摘要太顺但信息缺失",
+        "幻觉补充原文不存在的结论"
+      ],
+      "prerequisites": [
+        "D/D5. 生成范式/编码—解码生成",
+        "G/G5. 能力面/摘要"
+      ],
+      "coreMetrics": [
+        "信息覆盖",
+        "压缩率",
+        "事实一致性"
+      ],
+      "toolchain": [
+        "summarization prompts",
+        "eval sets"
+      ],
+      "failureSigns": [
+        "摘要越来越短，但真正有用的信息也丢了"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Context packing",
+        "N/N1. 场景类型/文档处理"
+      ]
+    },
+    "E/E1. 语言（NLP / LLM）/问答": {
+      "status": "draft",
+      "definition": "问答任务要求系统根据问题给出针对性回答，可基于参数记忆、上下文、检索结果或工具执行结果完成。",
+      "importance": "它几乎是语言系统里最常见的产品形态之一，也是从模型能力走向应用系统设计的核心入口。",
+      "minimumDemo": "实现一个最小问答系统：问题输入、检索或上下文拼接、回答生成、引用校验。",
+      "hardwareBudget": "API 或小模型即可起步；加入检索和工具后系统成本上升。",
+      "examples": [
+        "FAQ 问答",
+        "RAG 问答",
+        "文档问答"
+      ],
+      "pitfalls": [
+        "不区分闭卷问答和开卷问答",
+        "答得像样但没有证据链"
+      ],
+      "prerequisites": [
+        "I/I3. RAG 管线/Retrieval",
+        "M/M2. 应用级评测/引用真实性"
+      ],
+      "coreMetrics": [
+        "最终答案正确性",
+        "引用真实性",
+        "任务完成率"
+      ],
+      "toolchain": [
+        "RAG stack",
+        "citation checks"
+      ],
+      "failureSigns": [
+        "回答流畅但频繁幻觉或乱引"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Generation",
+        "N/N1. 场景类型/问答 / 检索",
+        "E/E1. 语言（NLP / LLM）/对话"
+      ]
+    }
   }
 }

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-B-B9-1ijt0lh-1",
     "type": "leaf-batch",
     "label": "B9. 经典 AI 与现代 AI 的连接点 / Leaves",
@@ -20,13 +20,224 @@
       "多智能体 → multi-agent orchestration"
     ],
     "nodeCount": 5,
-    "filledNodeCount": 0
+    "filledNodeCount": 5
   },
   "nodes": {
-    "B/B9. 经典 AI 与现代 AI 的连接点/搜索 → 推理模型 / tree search / verifier": {},
-    "B/B9. 经典 AI 与现代 AI 的连接点/规划 → Agent task decomposition": {},
-    "B/B9. 经典 AI 与现代 AI 的连接点/知识表示 → KG-RAG / ontology-guided systems": {},
-    "B/B9. 经典 AI 与现代 AI 的连接点/决策 → RL / tool selection / policy learning": {},
-    "B/B9. 经典 AI 与现代 AI 的连接点/多智能体 → multi-agent orchestration": {}
+    "B/B9. 经典 AI 与现代 AI 的连接点/搜索 → 推理模型 / tree search / verifier": {
+      "status": "draft",
+      "definition": "现代推理模型、tree search 和 verifier 流程，本质上常把经典搜索思想重新包装为“候选推理轨迹扩展 + 评分/剪枝 + 结果验证”。搜索不再只在棋盘或网格上发生，也在答案空间和工具调用树上发生。",
+      "importance": "这条连接点说明：今天很多看似“生成式”的系统，内部仍然需要显式搜索与裁剪来提升正确率和稳健性。理解这一点，能更好地看懂 self-consistency、tree-of-thought、verifier-guided generation 等方法。",
+      "minimumDemo": "对同一问题生成多个候选解答，再用打分器或规则检查器筛掉明显错误答案，比较单样本生成和搜索式生成的差异。",
+      "hardwareBudget": "CPU 即可做小实验；若接大模型评估，成本主要在 API 或推理次数。",
+      "examples": [
+        "tree-of-thought",
+        "代码生成中的候选采样加单测筛选",
+        "数学推理里的 verifier-guided decoding"
+      ],
+      "pitfalls": [
+        "候选很多但没有有效评分器",
+        "搜索宽度增加却不带来质量提升",
+        "verifier 和目标函数不一致"
+      ],
+      "prerequisites": [
+        "B/B2. 搜索/启发式搜索/A*",
+        "B/B6. 规划/Plan verification",
+        "K/K3. 单 Agent 模式/Verification loop"
+      ],
+      "coreMetrics": [
+        "pass@k",
+        "搜索开销",
+        "验证命中率",
+        "最终正确率提升"
+      ],
+      "toolchain": [
+        "候选生成器",
+        "grader/verifier",
+        "trace 记录"
+      ],
+      "failureSigns": [
+        "搜索成本大幅上升但收益很小",
+        "筛选器误杀正确答案",
+        "候选多样性不足"
+      ],
+      "next": [
+        "K/K3. 单 Agent 模式/Verification loop",
+        "M/M3. Agent 级评测/Outcome checks"
+      ]
+    },
+    "B/B9. 经典 AI 与现代 AI 的连接点/规划 → Agent task decomposition": {
+      "status": "draft",
+      "definition": "经典规划里的目标分解、前置条件检查和计划生成，在现代 agent 中通常表现为 task decomposition、step planning 和 workflow skeleton。区别只是计划执行的动作从物理动作变成了工具、消息或代码操作。",
+      "importance": "这条映射能帮助把 agent 的多步任务拆解看成规划问题，而不是神秘的“模型自己想出来了”。一旦这样理解，计划校验、重规划、失败恢复和状态管理就都有了经典抓手。",
+      "minimumDemo": "把一个 agent 任务拆成几个明确子任务，并为每步写清输入、输出、前置条件和失败恢复策略，模拟一次计划生成和执行。",
+      "hardwareBudget": "无额外要求；普通笔记本即可。",
+      "examples": [
+        "plan-then-act agent",
+        "workflow automation",
+        "工具链式任务分解"
+      ],
+      "pitfalls": [
+        "任务分解和执行状态脱节",
+        "planner 只输出文本，没有结构化计划",
+        "重规划链路缺失"
+      ],
+      "prerequisites": [
+        "B/B6. 规划/Task planning",
+        "K/K3. 单 Agent 模式/Plan-then-act",
+        "K/K5. 图式编排/Conditional branches"
+      ],
+      "coreMetrics": [
+        "任务完成率",
+        "重规划次数",
+        "步骤正确率",
+        "失败恢复成功率"
+      ],
+      "toolchain": [
+        "workflow graph",
+        "planner",
+        "trace"
+      ],
+      "failureSigns": [
+        "拆解步骤看起来对但实际无法执行",
+        "中途失败后没有回退路径",
+        "计划文本无法被程序消费"
+      ],
+      "next": [
+        "K/K3. 单 Agent 模式/Plan-then-act",
+        "K/K5. 图式编排/Conditional branches",
+        "K/K5. 图式编排/Checkpoints"
+      ]
+    },
+    "B/B9. 经典 AI 与现代 AI 的连接点/知识表示 → KG-RAG / ontology-guided systems": {
+      "status": "draft",
+      "definition": "经典知识表示在现代系统中最直接的延续，就是 KG-RAG、ontology-guided retrieval 和 schema-aware reasoning。语言模型不再只读原文块，还会借助实体、关系、类型和约束来做检索与回答。",
+      "importance": "这说明知识表示并不是被 embedding 替代了，而是转成了结构化外部知识层。只要任务需要多跳关系、强类型约束或可解释来源，经典表示方法就会重新出现。",
+      "minimumDemo": "把一个小型知识库同时做成文档块和图结构，比较普通 RAG 与带实体关系约束的检索在多跳问题上的差异。",
+      "hardwareBudget": "CPU 即可做原型；若接大模型生成，成本主要在推理调用。",
+      "examples": [
+        "企业知识图谱增强问答",
+        "ontology-guided search",
+        "带 schema 的外部知识调用"
+      ],
+      "pitfalls": [
+        "图谱或 ontology 设计得很重，但检索链路没真正使用",
+        "结构层和文档层长期不一致",
+        "实体链接质量差"
+      ],
+      "prerequisites": [
+        "B/B4. 知识表示/知识图谱",
+        "I/I1. 表示与检索基础/Hybrid retrieval",
+        "I/I3. RAG 管线/Retrieval"
+      ],
+      "coreMetrics": [
+        "多跳问答正确率",
+        "实体链接准确率",
+        "结构化检索命中率",
+        "引用真实性"
+      ],
+      "toolchain": [
+        "Neo4j",
+        "RAG pipeline",
+        "entity linking"
+      ],
+      "failureSigns": [
+        "图谱引入后却没有任何质量提升",
+        "多跳问题仍答非所问",
+        "结构和文本证据互相打架"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Retrieval",
+        "I/I3. RAG 管线/Citation / provenance",
+        "K/K10. Agent 形态分支/Knowledge agent"
+      ]
+    },
+    "B/B9. 经典 AI 与现代 AI 的连接点/决策 → RL / tool selection / policy learning": {
+      "status": "draft",
+      "definition": "经典决策理论和 MDP 框架在现代系统中的直接映射，是强化学习、策略学习、工具选择和长期回报优化。系统不只是“会做”，还要学会在不同环境里逐步学会“什么时候做什么更划算”。",
+      "importance": "这条连接点解释了为什么 tool routing、policy optimization 和 RLHF / RL 并不只是训练技巧，而是在延续经典决策问题：定义状态、动作、奖励和长期目标，并优化策略。",
+      "minimumDemo": "给一个多工具任务定义奖励：正确、成本低、延迟低的动作得分更高。比较固定规则工具路由和简单策略学习路由的表现。",
+      "hardwareBudget": "CPU 即可做小型仿真；若进入真正策略训练，计算成本会明显上升。",
+      "examples": [
+        "tool selection",
+        "workflow routing",
+        "在线策略优化",
+        "RLHF / RFT 的策略更新直觉"
+      ],
+      "pitfalls": [
+        "奖励设计投机取巧",
+        "策略只优化代理指标",
+        "训练环境与真实环境差异过大"
+      ],
+      "prerequisites": [
+        "B/B8. 决策与多智能体/MDP",
+        "C/C2. 学习范式/强化学习",
+        "J/J3. 工具调用/Tool routing"
+      ],
+      "coreMetrics": [
+        "长期回报",
+        "路由正确率",
+        "工具调用成本",
+        "策略稳定性"
+      ],
+      "toolchain": [
+        "仿真环境",
+        "策略日志",
+        "route evaluator"
+      ],
+      "failureSigns": [
+        "策略在离线评测好、线上差",
+        "奖励一改就行为塌陷",
+        "工具选择缺少一致性"
+      ],
+      "next": [
+        "C/C2. 学习范式/强化学习",
+        "H/H3. 偏好优化与对齐/RLHF",
+        "J/J3. 工具调用/Tool routing"
+      ]
+    },
+    "B/B9. 经典 AI 与现代 AI 的连接点/多智能体 → multi-agent orchestration": {
+      "status": "draft",
+      "definition": "经典多主体决策与博弈框架在现代系统中的延续，就是多 agent orchestration：多个角色化模型在共享状态、工具和目标下协作或竞争，通过 handoff、manager-worker、router-specialist 等模式完成复杂任务。",
+      "importance": "这条连接点把传统多智能体理论直接映射到今天的 multi-agent architecture。理解这一点，能避免把多 agent 系统只看成“多开几个模型实例”，而能从角色、通信、协作与冲突角度设计系统。",
+      "minimumDemo": "搭一个最小 manager-worker 流程：manager 负责任务分解，worker 负责执行，reviewer 负责检查。记录角色之间的消息、状态和交接，观察哪里出现信息丢失和协调成本。",
+      "hardwareBudget": "无额外要求；真正成本主要在多次模型调用和编排开销。",
+      "examples": [
+        "manager-worker",
+        "router-specialist",
+        "reviewer-verifier",
+        "subgraph orchestration"
+      ],
+      "pitfalls": [
+        "角色切分不清导致重复劳动",
+        "handoff 过程丢关键信息",
+        "多 agent 只是增加成本，没有质量提升"
+      ],
+      "prerequisites": [
+        "B/B8. 决策与多智能体/Multi-agent decision making",
+        "K/K4. 多 Agent 模式/Manager / worker",
+        "K/K4. 多 Agent 模式/Handoff"
+      ],
+      "coreMetrics": [
+        "整体完成率",
+        "handoff 正确率",
+        "协同成本",
+        "质量提升幅度"
+      ],
+      "toolchain": [
+        "orchestrator",
+        "trace graph",
+        "role-specific prompts"
+      ],
+      "failureSigns": [
+        "多个 agent 反复改写同一任务",
+        "handoff 后状态残缺",
+        "协同成本远高于单 agent"
+      ],
+      "next": [
+        "K/K4. 多 Agent 模式/Manager / worker",
+        "K/K4. 多 Agent 模式/Handoff",
+        "K/K10. Agent 形态分支/Multi-agent organization"
+      ]
+    }
   }
 }

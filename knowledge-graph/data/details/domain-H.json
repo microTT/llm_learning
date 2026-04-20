@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-18",
+    "updatedAt": "2026-04-20",
     "shardId": "domain-H",
     "type": "domain-overview",
     "label": "H. 模型适配、后训练与对齐 / 概览",
@@ -14,7 +14,7 @@
     "parentTitle": null,
     "leafTitles": [],
     "nodeCount": 8,
-    "filledNodeCount": 2
+    "filledNodeCount": 8
   },
   "nodes": {
     "H": {
@@ -78,18 +78,338 @@
         "H/H5. 压缩与效率优化"
       ]
     },
-    "H/H1. 不改权重的控制": {},
-    "H/H2. 监督式后训练": {},
-    "H/H3. 偏好优化与对齐": {},
-    "H/H4. 参数高效适配": {},
-    "H/H5. 压缩与效率优化": {},
-    "H/H6. 行为优化维度": {},
+    "H/H1. 不改权重的控制": {
+      "status": "draft",
+      "definition": "不改权重的控制指的是在不重新训练模型参数的前提下，仅通过 prompt 设计、system prompt、few-shot、模板、结构约束和工具 schema 来塑造输出行为。它解决的是“先用推理时控制把模型用对”，而不是“先训练再看效果”。",
+      "importance": "这是后训练之前最应该先跑通的一层。很多问题其实不需要立刻做 SFT 或 LoRA，只要把上下文组织、角色指令、结构化输出和工具接口约束清楚，系统就能立刻获得稳定性提升，而且迭代速度远高于改权重。",
+      "minimumDemo": "针对一个固定任务，做四组对照：1）裸 prompt；2）加入 system prompt；3）加入 few-shot；4）加入结构化输出或工具 schema。统一记录正确率、格式成功率、工具调用成功率和输出波动，判断问题到底是控制不足还是需要训练。",
+      "hardwareBudget": "这一路线几乎不需要训练硬件，主要成本是提示设计、样例构造、批量评测和日志回放。绝大多数实验通过云 API、本地推理或 notebook 即可完成。",
+      "examples": [
+        "用 system prompt 明确角色、边界和输出原则，而不是每个 user prompt 都重复说明。",
+        "用少量高质量 few-shot 样例把模型拉到目标格式和目标任务分布上。",
+        "用 JSON Schema 或 typed output 减少结构化结果的解析失败。",
+        "用工具 schema 明确参数名、约束和字段语义，降低函数调用错误率。"
+      ],
+      "pitfalls": [
+        "没有 prompt-only 基线，就直接进入权重适配。",
+        "把 system prompt、few-shot 和模板规则堆得过长，反而挤压有效上下文。",
+        "把结构化输出当成“永远正确”，却不做 validation 和 recovery。",
+        "工具 schema 只描述名称，不描述参数约束、单位、边界和异常返回。"
+      ],
+      "prerequisites": [
+        "G/G3. 上下文与记忆/上下文记忆（prompt context）",
+        "J/J2. 结构化输出",
+        "J/J3. 工具调用"
+      ],
+      "coreMetrics": [
+        "instruction adherence",
+        "format success rate",
+        "tool call accuracy",
+        "variance across retries"
+      ],
+      "toolchain": [
+        "prompt playground",
+        "prompt templates",
+        "schema validators",
+        "trace logging"
+      ],
+      "failureSigns": [
+        "轻微改 prompt 就导致结果大幅波动。",
+        "输出格式偶尔成功但整体不可解析。",
+        "工具经常被选错、参数经常填错，但系统没有明确 schema 约束。",
+        "system prompt 越写越长，却不知道哪一段真正有效。"
+      ],
+      "next": [
+        "H/H1. 不改权重的控制/Prompt engineering",
+        "H/H1. 不改权重的控制/System prompt",
+        "H/H1. 不改权重的控制/Few-shot / in-context learning",
+        "H/H1. 不改权重的控制/Prompt templates",
+        "H/H1. 不改权重的控制/Structured outputs",
+        "H/H1. 不改权重的控制/Tool schemas",
+        "H/H2. 监督式后训练"
+      ]
+    },
+    "H/H2. 监督式后训练": {
+      "status": "draft",
+      "definition": "监督式后训练是在预训练完成后，用明确的输入—输出样本继续优化模型参数，使模型在任务风格、格式、领域知识、工具调用或特定能力上更稳定地朝目标行为收敛。它通常是最直接、最常见的改权重方法。",
+      "importance": "当 prompt-only 控制已经逼近上限，或者系统需要把某类行为稳定沉淀成默认习惯时，SFT 和相关监督式适配通常是第一选择。它决定了模型在真实业务任务上的“默认姿势”，也是后续偏好优化、参数高效适配和评测回归的核心枢纽。",
+      "minimumDemo": "选一个结构化抽取、客服分类或工具调用任务，先做 prompt-only 基线，再用少量高质量样本做一次监督式适配，对比离线正确率、格式成功率、工具成功率、目标域收益和通用能力回归。",
+      "hardwareBudget": "小规模 SFT 或 LoRA 往往从单卡或少量多卡就能起步，但真正决定效果的往往不是 GPU 数量，而是样本质量、切分方式、eval 设计和回归集是否足够扎实。",
+      "examples": [
+        "用 SFT 把通用模型稳定拉到某个固定 JSON 工单格式。",
+        "用领域微调让模型更熟悉医疗、法律、金融等专门术语和表达习惯。",
+        "对工具调用轨迹做监督式训练，提升函数选择和参数填充正确率。",
+        "对视觉任务做微调，让模型更好理解企业内部图像或文档版式。"
+      ],
+      "pitfalls": [
+        "数据量不大但分布很偏，导致目标域提升同时通用能力明显回退。",
+        "只看训练损失，不看结构化输出正确率、工具成功率和线上任务达成率。",
+        "训练、验证、测试没有严格分开，离线效果被污染高估。",
+        "把所有问题都交给 SFT，忽略本可通过 prompt 或 schema 解决的控制问题。"
+      ],
+      "prerequisites": [
+        "F/F7. 后训练数据构建",
+        "H/H1. 不改权重的控制",
+        "M/M1. 模型级评测"
+      ],
+      "coreMetrics": [
+        "offline accuracy",
+        "target-domain lift",
+        "format success rate",
+        "regression delta"
+      ],
+      "toolchain": [
+        "Transformers / TRL",
+        "PEFT / LoRA stacks",
+        "training datasets",
+        "offline eval harness"
+      ],
+      "failureSigns": [
+        "训练集指标很好，但验证集和线上任务没有同步提升。",
+        "目标任务变准了，但其他任务明显退化。",
+        "工具调用更频繁了，但端到端成功率没有提升。",
+        "不同 checkpoint 差异很大，却没有稳定评测支撑选型。"
+      ],
+      "next": [
+        "H/H2. 监督式后训练/SFT",
+        "H/H2. 监督式后训练/Domain fine-tuning",
+        "H/H2. 监督式后训练/Style fine-tuning",
+        "H/H2. 监督式后训练/Tool / function-calling fine-tuning",
+        "H/H2. 监督式后训练/Vision fine-tuning",
+        "H/H2. 监督式后训练/Task-specific tuning",
+        "H/H4. 参数高效适配",
+        "H/H6. 行为优化维度"
+      ]
+    },
+    "H/H3. 偏好优化与对齐": {
+      "status": "draft",
+      "definition": "偏好优化与对齐关注的不是让模型“知道更多”，而是让模型在多个可接受答案之间，更稳定地偏向符合人类偏好、政策边界、产品风格和风险要求的那一类输出。它通常建立在 SFT 之后，通过偏好对、奖励模型、在线反馈或规则约束，把“什么答案更好”进一步写进训练目标。",
+      "importance": "很多系统问题并不是模型不会答，而是答得太长、太冒进、太油滑、太会迎合、太容易越权，或者在多解任务里总选错优化方向。理解这一层后，才能判断某个问题该靠 prompt、该靠监督数据、还是该靠偏好优化与 verifier / policy 体系来收敛。",
+      "minimumDemo": "选一组存在明显风格、风险或多解差异的任务，例如拒答边界、摘要长短、客服语气或高风险建议。分别比较 SFT 基线、DPO / 偏好优化后模型和带 verifier 的推理链路，记录 win rate、违规率、误拒率、冗长度和用户偏好命中率。",
+      "hardwareBudget": "小规模偏好优化可以从单机多卡或少量多卡起步，但真正昂贵的部分往往不是算力本身，而是偏好数据采集、标注一致性、在线反馈与离线回归评测。若做 RLHF 或在线策略优化，实验与观测成本会进一步上升。",
+      "examples": [
+        "同一个问题都能答对，但偏好优化后模型更倾向于简洁、稳妥且带边界提示的答案。",
+        "对安全场景做 policy alignment 后，模型更少直接给出高风险操作步骤。",
+        "在客服或品牌文案中，模型回答的语气、长度和措辞更接近产品要求，而不是自由发挥。",
+        "高风险输出先过 verifier 或 judge，能拦截一部分表面流畅但违反规则的回答。"
+      ],
+      "pitfalls": [
+        "把偏好优化误当成“任何问题都能继续提分”的通用补药。",
+        "偏好数据标准不稳定，导致模型学到的是标注噪声和审美漂移。",
+        "只看 win rate，不看安全性、误拒率、信息量和事实保真。",
+        "为了让模型更安全而过度收缩，最后正常请求也频繁误拒或空话化。"
+      ],
+      "prerequisites": [
+        "H/H2. 监督式后训练",
+        "F/F6. 数据在系统中的角色/偏好/奖励数据 → 决定对齐方向",
+        "F/F7. 后训练数据构建/Preference data",
+        "F/F7. 后训练数据构建/Reward / verifier data"
+      ],
+      "coreMetrics": [
+        "win rate",
+        "policy compliance",
+        "refusal / overrefusal rate",
+        "verbosity",
+        "hallucination / risk rate"
+      ],
+      "toolchain": [
+        "preference labeling",
+        "reward / verifier pipelines",
+        "TRL / alignment training stacks",
+        "offline eval and online A/B"
+      ],
+      "failureSigns": [
+        "win rate 上升，但事实错误或空泛回答明显增多。",
+        "模型更爱拒答了，但业务成功率下降。",
+        "不同批次偏好数据训练出的模型风格和边界漂移很大。",
+        "高风险场景看似更安全，实际上只是更会说漂亮话。"
+      ],
+      "next": [
+        "H/H3. 偏好优化与对齐/Reward modeling",
+        "H/H3. 偏好优化与对齐/DPO",
+        "H/H3. 偏好优化与对齐/Online DPO",
+        "H/H3. 偏好优化与对齐/GRPO",
+        "H/H3. 偏好优化与对齐/RLHF",
+        "H/H3. 偏好优化与对齐/RFT",
+        "H/H3. 偏好优化与对齐/Policy / constitutional alignment",
+        "H/H6. 行为优化维度"
+      ]
+    },
+    "H/H4. 参数高效适配": {
+      "status": "draft",
+      "definition": "参数高效适配（PEFT）关注的是：不全量更新底座模型参数，而是只训练少量附加参数、低秩矩阵或轻量模块，用更低显存、更低训练成本把模型拉向目标行为。",
+      "importance": "在真实工程里，PEFT 往往是最有性价比的改权重路线。它允许团队快速迭代多个领域版本、保留底座兼容性、降低训练资源门槛，也更适合在已有基模之上做局部能力沉淀。",
+      "minimumDemo": "选一个窄任务，同时做 prompt-only 基线和一次小规模 LoRA / QLoRA 适配，对比目标任务增益、训练资源消耗、部署复杂度和回归情况，判断是否值得从控制层升级到参数适配。",
+      "hardwareBudget": "PEFT 的主要价值就在于显著降低训练门槛。LoRA 往往能在较少显存下完成有效适配；QLoRA 进一步通过量化降低底座占用，但也会带来精度与工程复杂度权衡。相比全量微调，PEFT 更适合快速试错和多版本共存。",
+      "examples": [
+        "用 LoRA 快速做一个法律问答版本，而不必全量重训整个底座。",
+        "用 QLoRA 在受限显存环境下完成中等规模 SFT 实验。",
+        "为不同业务线维护多套 adapter，在同一底座模型上按需切换。",
+        "对工具调用或结构化抽取任务做轻量适配，快速观察收益是否显著。"
+      ],
+      "pitfalls": [
+        "只看到显存省了，却忽略了适配效果上限和部署切换成本。",
+        "把所有任务都默认走 LoRA，而不先确认 prompt-only 是否已经足够。",
+        "QLoRA 节省了资源，但没有认真检查量化带来的精度退化。",
+        "同时堆很多 adapter，却没有清楚的版本管理和回归评测。"
+      ],
+      "prerequisites": [
+        "H/H2. 监督式后训练",
+        "L/L3. 推理优化/Quantized inference",
+        "M/M1. 模型级评测/延迟/成本"
+      ],
+      "coreMetrics": [
+        "target-task lift",
+        "GPU memory usage",
+        "training time",
+        "deployment complexity",
+        "regression delta"
+      ],
+      "toolchain": [
+        "PEFT / LoRA libraries",
+        "quantized training stacks",
+        "checkpoint / adapter management",
+        "offline eval harness"
+      ],
+      "failureSigns": [
+        "训练资源省了，但目标任务几乎没提升。",
+        "adapter 一多就不知道线上到底挂的是哪个版本。",
+        "量化训练后离线分数还能看，线上复杂输入却明显退化。",
+        "适配收益很窄，但维护成本持续上升。"
+      ],
+      "next": [
+        "H/H4. 参数高效适配/Adapter",
+        "H/H4. 参数高效适配/LoRA",
+        "H/H4. 参数高效适配/QLoRA",
+        "H/H4. 参数高效适配/其他 PEFT 变体",
+        "H/H5. 压缩与效率优化"
+      ]
+    },
+    "H/H5. 压缩与效率优化": {
+      "status": "draft",
+      "definition": "压缩与效率优化关注的是：在尽量不牺牲关键能力的前提下，把模型做得更小、更快、更省显存、更便宜，或者让它更适合特定部署环境。它既包括推理侧的量化和蒸馏，也包括训练阶段为压缩做准备的路线。",
+      "importance": "模型能不能上线，往往不取决于它能不能答对所有题，而取决于它是否能在成本、时延、显存和吞吐预算内稳定工作。理解这层后，才能知道是该继续堆大模型，还是该通过量化、蒸馏、剪枝或专项小模型把系统做成可持续形态。",
+      "minimumDemo": "选一个已有任务基线，分别做未压缩模型、量化模型和更小专项模型的对照，记录正确率、TTFT、吞吐、显存占用和单位请求成本。再看收益是否足以覆盖质量退化。",
+      "hardwareBudget": "这一层既可以作为“降低训练门槛”的方法，也可以作为“降低推理门槛”的方法。小规模量化和蒸馏实验从单机就能起步，但真正评估上线价值时，需要结合并发、长上下文、批处理和多模型路由的整体成本来看。",
+      "examples": [
+        "把 7B 级模型量化后部署到资源受限环境里承接 FAQ 和提取请求。",
+        "用大模型做 teacher，把特定任务知识蒸馏到小模型上，提高性价比。",
+        "对固定工作流引入专项小模型前置筛选，只把少量难样本送到大模型。",
+        "通过量化感知训练减少部署后精度掉头。"
+      ],
+      "pitfalls": [
+        "只看显存和吞吐，不看复杂输入、长上下文和工具调用是否明显退化。",
+        "把压缩当成纯推理问题，忽略训练数据和目标函数是否支持压缩后保真。",
+        "以为更小一定更便宜，却没把路由、fallback 和维护成本算进去。",
+        "用单一 benchmark 判断压缩收益，忽略真实业务分布。"
+      ],
+      "prerequisites": [
+        "H/H4. 参数高效适配",
+        "L/L3. 推理优化",
+        "M/M1. 模型级评测/延迟/成本"
+      ],
+      "coreMetrics": [
+        "memory footprint",
+        "throughput",
+        "TTFT",
+        "quality retention",
+        "cost per request"
+      ],
+      "toolchain": [
+        "quantization stacks",
+        "distillation pipelines",
+        "offline eval harness",
+        "serving benchmarks"
+      ],
+      "failureSigns": [
+        "离线指标还能看，但线上长输入和复杂任务明显失真。",
+        "压缩后吞吐上来了，但 fallback 到大模型的比例也同步上升。",
+        "不同量化设置差异很大，却没有系统回归评测。",
+        "专项小模型越来越多，但没有明确边界和维护策略。"
+      ],
+      "next": [
+        "H/H5. 压缩与效率优化/Quantization",
+        "H/H5. 压缩与效率优化/Distillation",
+        "H/H5. 压缩与效率优化/Pruning",
+        "H/H5. 压缩与效率优化/Smaller specialized models",
+        "H/H5. 压缩与效率优化/Quantization-aware training（部分方法）",
+        "H/H6. 行为优化维度/更便宜 / 更快"
+      ]
+    },
+    "H/H6. 行为优化维度": {
+      "status": "draft",
+      "definition": "行为优化维度回答的是：当我们说“把模型调好一点”时，到底是在优化什么。不同项目追求的往往不是同一个目标，有的想更准确，有的想更稳定，有的想更短更结构化，有的更在乎工具调用、领域适配或成本时延。",
+      "importance": "如果不先把优化目标显式化，后训练和评测就会变成混乱的多目标拉扯：一个版本变得更安全了，却更空；更结构化了，却信息量下降；更便宜了，却目标任务成功率断崖式下降。理解这层，是把训练路线、数据构建和评测口径对齐的前提。",
+      "minimumDemo": "把一个任务拆成多个可度量目标，例如正确率、稳定性、格式成功率、工具成功率、长度和时延。对同一模型的不同版本打分，观察不同优化路线分别在哪些维度上得分更高、在哪些维度上产生回归。",
+      "hardwareBudget": "这一层主要消耗的是评测、标注和回归成本，而不是额外训练算力。真正困难的是定义目标、设计口径和持续观测，而不是把某个训练脚本跑起来。",
+      "examples": [
+        "客服系统更在乎语气稳定、篇幅合适和误拒率，而不是极限推理能力。",
+        "结构化抽取任务更在乎字段正确率和 parse success，而不是文风。",
+        "工具型 Agent 更在乎工具选择、参数正确率和工作流完成率。",
+        "边缘部署场景更在乎时延、显存和成本，而不是通用能力榜单。"
+      ],
+      "pitfalls": [
+        "同时想要所有目标都提升，却不愿承认目标之间存在权衡。",
+        "只看单一指标，例如 win rate 或训练损失，而忽略整体行为面貌。",
+        "没有把目标映射到具体 eval，导致训练做了但无法判断是否变好。",
+        "版本切换后只关注平均值，不看错误类型是否发生结构性变化。"
+      ],
+      "prerequisites": [
+        "M/M1. 模型级评测",
+        "M/M3. Agent 级评测",
+        "H/H7. 后训练数据构建"
+      ],
+      "coreMetrics": [
+        "accuracy",
+        "stability",
+        "format success",
+        "tool success",
+        "latency / cost",
+        "domain lift"
+      ],
+      "toolchain": [
+        "eval dashboards",
+        "rubric graders",
+        "trace analytics",
+        "A/B testing"
+      ],
+      "failureSigns": [
+        "不同团队口中的“更好”指向完全不同，却共享同一训练版本。",
+        "离线评测说变好了，线上用户感知却变差。",
+        "版本回归时只能看到总分下降，无法定位具体目标维度。",
+        "训练和部署团队关注的指标体系彼此脱节。"
+      ],
+      "next": [
+        "H/H6. 行为优化维度/更准确",
+        "H/H6. 行为优化维度/更稳定",
+        "H/H6. 行为优化维度/更短/更长",
+        "H/H6. 行为优化维度/更结构化",
+        "H/H6. 行为优化维度/更会调用工具",
+        "H/H6. 行为优化维度/更适应特定领域",
+        "H/H6. 行为优化维度/更便宜 / 更快",
+        "M/M1. 模型级评测",
+        "M/M3. Agent 级评测"
+      ]
+    },
     "H/H7. 后训练数据构建": {
-      "status": "seed",
-      "definition": "后训练数据构建关心的不是“拿到数据”，而是如何把 instruction、偏好、reward、verifier 和 eval 数据整理成可训练、可评测、可复现的样本体系。",
-      "importance": "后训练效果很大程度上由数据 schema、切分方式、rubric 和 contamination 控制决定，而不是只由算法名决定。",
-      "minimumDemo": "为一个小型任务各自构造 SFT 样本、偏好对、verifier 标注和评测集，并保持 train / eval 完全隔离。",
-      "hardwareBudget": "数据构建本身主要吃人工与评测成本；小规模实验用单机 GPU 即可。",
+      "status": "draft",
+      "definition": "后训练数据构建关注的是：如何把任务目标、标注标准、偏好信息、grader 规则和评测口径组织成可训练、可验证、可复现的数据体系。它讨论的不是“有没有数据”，而是“数据是否真的能稳定驱动目标行为”，包括 instruction 样本、偏好对、reward / verifier 数据、过程轨迹和严格隔离的评测集。",
+      "importance": "在后训练里，数据经常比算法名本身更决定上限。很多看似是模型或训练框架的问题，最后都能追溯到样本 schema 混乱、train/eval 泄漏、rubric 不清、偏好标准漂移或多轮轨迹质量不足。把这层打牢，后面的 SFT、偏好优化、RFT 和 agent 评测才有可信基础。",
+      "minimumDemo": "围绕一个小任务同时准备 4 类数据：1）SFT 指令样本；2）偏好对或 reward / verifier 标注；3）独立验证集与测试集；4）能自动打分的 rubric 或 grader。统一记录样本来源、切分规则、去污染检查和标注说明，然后在同一模型上比较 prompt-only、SFT 和偏好优化的收益差异。",
+      "hardwareBudget": "这层的主要成本通常不是 GPU，而是数据设计、标注质量、去污染检查和回归评测。即使只做小规模实验，也应优先保证数据体系完整，而不是先追求更大训练规模。",
+      "examples": [
+        "为结构化抽取任务分别准备 instruction 样本、schema 验证规则和独立评测集。",
+        "把同一任务拆成单轮示例和多轮对话示例，观察模型在会话状态上的差异。",
+        "为偏好优化单独准备 chosen / rejected 样本，而不是把 SFT 样本直接复用成偏好对。",
+        "为 RFT 构造 rubric-based grader，让过程质量和最终结果都能被打分。"
+      ],
+      "pitfalls": [
+        "训练集、验证集、测试集或线上回归集之间存在隐性重叠。",
+        "同一数据集里混入多种不兼容 schema，导致训练目标模糊。",
+        "偏好数据、reward 数据和 verifier 标准彼此冲突。",
+        "多轮样本只有表面轮次，没有真实状态依赖或工具轨迹。",
+        "只关注样本数量，不关注标注一致性和任务覆盖。"
+      ],
       "prerequisites": [
         "F/F7. 后训练数据构建",
         "H/H2. 监督式后训练",
@@ -99,21 +419,32 @@
         "label consistency",
         "train/eval leakage rate",
         "rubric agreement",
-        "task success delta"
+        "task success delta",
+        "coverage of failure modes"
       ],
       "toolchain": [
         "Datasets",
         "annotation / labeling tools",
-        "eval harness"
+        "eval harness",
+        "data lineage / provenance tracking",
+        "grader pipelines"
       ],
       "failureSigns": [
         "训练后线上效果和离线 eval 差异极大",
-        "偏好数据与 verifier 标准彼此冲突"
+        "偏好数据与 verifier 标准彼此冲突",
+        "同一模型在不同批次数据上学到完全不同的风格和边界",
+        "高分样本很多，但真实失败模式没有被覆盖"
       ],
       "next": [
-        "H/H2. 监督式后训练",
-        "H/H3. 偏好优化与对齐",
-        "M/M1. 模型级评测"
+        "H/H7. 后训练数据构建/Train / validation / test split",
+        "H/H7. 后训练数据构建/Instruction crafting",
+        "H/H7. 后训练数据构建/Multi-turn examples",
+        "H/H7. 后训练数据构建/Weight masking",
+        "H/H7. 后训练数据构建/Preference / reward / verifier data",
+        "H/H7. 后训练数据构建/Contamination / leakage checks",
+        "H/H7. 后训练数据构建/Rubric-based graders for RFT",
+        "M/M1. 模型级评测",
+        "M/M3. Agent 级评测"
       ]
     }
   }

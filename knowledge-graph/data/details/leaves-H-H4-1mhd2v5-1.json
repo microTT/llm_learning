@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-H-H4-1mhd2v5-1",
     "type": "leaf-batch",
     "label": "H4. 参数高效适配 / Leaves",
@@ -19,12 +19,86 @@
       "其他 PEFT 变体"
     ],
     "nodeCount": 4,
-    "filledNodeCount": 0
+    "filledNodeCount": 4
   },
   "nodes": {
-    "H/H4. 参数高效适配/Adapter": {},
-    "H/H4. 参数高效适配/LoRA": {},
-    "H/H4. 参数高效适配/QLoRA": {},
-    "H/H4. 参数高效适配/其他 PEFT 变体": {}
+    "H/H4. 参数高效适配/Adapter": {
+      "status": "draft",
+      "definition": "Adapter 是在原模型层间插入小型可训练模块，只更新这些附加模块而冻结大部分底座参数的适配方式。",
+      "importance": "它代表了最早一类经典 PEFT 思路：保留底座稳定性，同时用少量额外参数承接任务差异，适合多任务共存和版本切换。",
+      "minimumDemo": "对一个小任务做一次 adapter 适配，与 prompt-only 基线比较目标任务提升和推理部署复杂度。",
+      "prerequisites": [
+        "H/H2. 监督式后训练/SFT",
+        "H/H4. 参数高效适配/LoRA"
+      ],
+      "coreMetrics": [
+        "parameter count",
+        "task lift",
+        "deployment overhead"
+      ],
+      "next": [
+        "H/H4. 参数高效适配/其他 PEFT 变体",
+        "H/H5. 压缩与效率优化/Smaller specialized models"
+      ]
+    },
+    "H/H4. 参数高效适配/LoRA": {
+      "status": "draft",
+      "definition": "LoRA（Low-Rank Adaptation）通过给部分权重更新添加低秩分解，只训练少量低秩矩阵来近似参数调整，是目前最常见的 PEFT 路线之一。",
+      "importance": "它在训练成本、效果和生态支持之间有很好的平衡，常作为团队从 prompt-only 走向参数适配的第一选择。",
+      "minimumDemo": "用 LoRA 对一个结构化抽取或领域问答任务做一次小规模适配，并与 prompt-only 以及全量微调预期成本做比较。",
+      "prerequisites": [
+        "H/H2. 监督式后训练/SFT",
+        "M/M1. 模型级评测/延迟/成本"
+      ],
+      "coreMetrics": [
+        "memory usage",
+        "training time",
+        "target-task lift",
+        "regression delta"
+      ],
+      "next": [
+        "H/H4. 参数高效适配/QLoRA",
+        "H/H6. 行为优化维度/更便宜 / 更快"
+      ]
+    },
+    "H/H4. 参数高效适配/QLoRA": {
+      "status": "draft",
+      "definition": "QLoRA 是在量化底座模型的基础上做 LoRA 适配，以更低显存完成监督式训练或实验，是资源受限条件下很常见的 PEFT 方案。",
+      "importance": "它显著降低了实验门槛，让中等规模模型也能在有限资源下完成有效适配，但需要同时处理量化精度与训练稳定性的权衡。",
+      "minimumDemo": "在同一任务上分别跑 LoRA 与 QLoRA，对比显存占用、训练时间、目标任务效果和复杂输入退化。",
+      "prerequisites": [
+        "H/H4. 参数高效适配/LoRA",
+        "L/L3. 推理优化/Quantized inference"
+      ],
+      "coreMetrics": [
+        "GPU memory usage",
+        "quality retention",
+        "training stability",
+        "cost"
+      ],
+      "next": [
+        "H/H5. 压缩与效率优化/Quantization",
+        "H/H6. 行为优化维度/更便宜 / 更快"
+      ]
+    },
+    "H/H4. 参数高效适配/其他 PEFT 变体": {
+      "status": "draft",
+      "definition": "其他 PEFT 变体包括不同的 adapter 结构、前缀 / prompt tuning、rank 设计和模块选择策略，目标是在不同资源与任务条件下寻找更合适的轻量适配方式。",
+      "importance": "LoRA 不是唯一答案。不同任务、不同模态和不同部署环境下，其他 PEFT 方案可能在效果、切换成本或工程复杂度上更合适。",
+      "minimumDemo": "挑一个 LoRA 效果一般的任务，尝试另一种 PEFT 变体并和 LoRA 做小规模对照，判断是否值得额外工程投入。",
+      "prerequisites": [
+        "H/H4. 参数高效适配/Adapter",
+        "H/H4. 参数高效适配/LoRA"
+      ],
+      "coreMetrics": [
+        "adapter efficiency",
+        "task fit",
+        "engineering complexity"
+      ],
+      "next": [
+        "H/H5. 压缩与效率优化",
+        "H/H6. 行为优化维度/更适应特定领域"
+      ]
+    }
   }
 }

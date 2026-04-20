@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-G-G8-h762r2-1",
     "type": "leaf-batch",
     "label": "G8. 推理模型与模型路由 / Leaves",
@@ -21,14 +21,129 @@
       "什么时候不要用 reasoning model"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "G/G8. 推理模型与模型路由/Reasoning models vs GPT models": {},
-    "G/G8. 推理模型与模型路由/Planner / executor split": {},
-    "G/G8. 推理模型与模型路由/Verifier / judge": {},
-    "G/G8. 推理模型与模型路由/Test-time compute / reasoning effort": {},
-    "G/G8. 推理模型与模型路由/Model routing policy": {},
-    "G/G8. 推理模型与模型路由/什么时候不要用 reasoning model": {}
+    "G/G8. 推理模型与模型路由/Reasoning models vs GPT models": {
+      "status": "draft",
+      "definition": "这一对比关注的是：通用 GPT 类模型更偏广覆盖、低摩擦和高吞吐，而 reasoning model 更偏复杂任务上的额外测试时计算与过程控制。两者不是替代关系，而是默认层和升级层的关系。",
+      "importance": "很多系统失控的根源就是没有先分清“默认走谁、什么条件下升级”。如果把 reasoning model 当默认主力，成本和时延会迅速膨胀；如果复杂任务也不升级，最终正确率又会掉得很厉害。",
+      "minimumDemo": "设计一组简单任务和一组复杂任务，同时跑通用模型与 reasoning model，统计升级收益、额外成本和平均延迟，找出真正值得升级的任务边界。",
+      "prerequisites": [
+        "G/G7. 模型类型细分/通用对话模型",
+        "G/G7. 模型类型细分/推理强化模型"
+      ],
+      "coreMetrics": [
+        "upgrade win rate",
+        "latency delta",
+        "cost delta",
+        "quality delta"
+      ],
+      "next": [
+        "G/G8. 推理模型与模型路由/Test-time compute / reasoning effort",
+        "G/G8. 推理模型与模型路由/什么时候不要用 reasoning model"
+      ]
+    },
+    "G/G8. 推理模型与模型路由/Planner / executor split": {
+      "status": "draft",
+      "definition": "Planner / executor split 指的是把“规划任务步骤”和“执行具体动作”拆给不同模型或不同阶段处理：planner 负责分解目标、选择策略，executor 负责调用工具、读写状态和产出结果。",
+      "importance": "这种拆分通常能把高成本推理集中在少数关键步骤，把批量执行交给便宜模型或工具，从而兼顾质量与效率。",
+      "minimumDemo": "准备一组多步任务，做两条链路：一条由单模型从头做到底，另一条先由 planner 生成 plan，再由 executor 逐步执行并回填状态，比较成功率和成本。",
+      "prerequisites": [
+        "G/G8. 推理模型与模型路由/Reasoning models vs GPT models",
+        "K/K2. 执行形态/Hybrid system"
+      ],
+      "coreMetrics": [
+        "plan quality",
+        "execution success rate",
+        "recovery rate",
+        "cost per completed workflow"
+      ],
+      "next": [
+        "J/J3. 工具调用/Tool routing",
+        "K/K5. 图式编排/Conditional branches"
+      ]
+    },
+    "G/G8. 推理模型与模型路由/Verifier / judge": {
+      "status": "draft",
+      "definition": "Verifier / judge 是独立于生成器的检查层，用来判断答案、计划、工具结果或结构化输出是否满足给定证据、规则和目标，而不是盲信单次生成结果。",
+      "importance": "只靠一个生成模型同时“生成+自证”通常不够稳。引入 verifier 后，系统可以把高风险场景里的错误拦截、重试或升级，而不是把每次输出都直接交给用户。",
+      "minimumDemo": "对一组结构化输出或高风险回答，先让模型直接输出，再让 verifier 判断是否通过。统计 verifier 的拦截命中率、误杀率和整体正确率变化。",
+      "prerequisites": [
+        "G/G8. 推理模型与模型路由/Planner / executor split",
+        "M/M3. Agent 级评测/Outcome checks"
+      ],
+      "coreMetrics": [
+        "precision",
+        "recall",
+        "false reject rate",
+        "post-verification accuracy"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Trace grading",
+        "M/M3. Agent 级评测/Policy compliance"
+      ]
+    },
+    "G/G8. 推理模型与模型路由/Test-time compute / reasoning effort": {
+      "status": "draft",
+      "definition": "Test-time compute / reasoning effort 指的是在推理阶段动态分配更多步骤、更多 token、更强模型或更多候选分支，以提升复杂任务成功率的策略。",
+      "importance": "它解释了为什么同一个基础模型在不同设置下会表现出完全不同的复杂任务能力，也决定了推理强化模型和值得升级的任务边界。",
+      "minimumDemo": "对同一批复杂任务，在低、中、高 reasoning effort 下分别运行，记录正确率、时延、token 消耗和边际收益，看额外计算何时开始不划算。",
+      "prerequisites": [
+        "G/G5. 能力面/多步推理",
+        "G/G4. 生成与解码/Sampling"
+      ],
+      "coreMetrics": [
+        "accuracy gain",
+        "latency",
+        "token growth",
+        "marginal utility"
+      ],
+      "next": [
+        "G/G7. 模型类型细分/推理强化模型",
+        "G/G8. 推理模型与模型路由/Model routing policy"
+      ]
+    },
+    "G/G8. 推理模型与模型路由/Model routing policy": {
+      "status": "draft",
+      "definition": "Model routing policy 是把任务特征、模态、风险等级、时延预算和成本约束转成“该选哪个模型、是否升级、是否需要 verifier 或 fallback”的决策规则。",
+      "importance": "没有路由策略，多模型系统只会退化成手工经验和隐性成本。好的路由策略能把高成本能力集中在真正需要的请求上，并让系统在预算和 SLA 下保持稳定。",
+      "minimumDemo": "先做一个简单规则路由器：按任务复杂度、是否需要多模态、是否要求结构化输出来选模型。再用日志复盘路由误判，并逐步补规则或训练分类器。",
+      "prerequisites": [
+        "G/G7. 模型类型细分/多模态模型",
+        "J/J3. 工具调用/Tool routing",
+        "G/G8. 推理模型与模型路由/Test-time compute / reasoning effort"
+      ],
+      "coreMetrics": [
+        "routing quality",
+        "fallback rate",
+        "SLA hit rate",
+        "cost efficiency"
+      ],
+      "next": [
+        "K/K5. 图式编排/Conditional branches",
+        "M/M3. Agent 级评测/Routing quality"
+      ]
+    },
+    "G/G8. 推理模型与模型路由/什么时候不要用 reasoning model": {
+      "status": "draft",
+      "definition": "这条节点强调的是边界意识：并不是所有任务都值得上 reasoning model。提取、分类、固定格式输出、低时延高吞吐请求和大量重复性工作，往往更适合通用模型、小模型或专项模型。",
+      "importance": "很多团队会高估 reasoning model 的适用面，结果把预算花在没有必要的地方，还让系统整体响应变慢。知道什么时候不用，和知道什么时候该用同样重要。",
+      "minimumDemo": "挑一组简单提取、FAQ、短文本分类和固定 schema 输出任务，用 reasoning model 与通用模型对比，统计准确率差异是否足以覆盖延迟和成本上涨。",
+      "prerequisites": [
+        "G/G8. 推理模型与模型路由/Reasoning models vs GPT models",
+        "G/G7. 模型类型细分/小模型 / 边缘模型"
+      ],
+      "coreMetrics": [
+        "over-upgrade rate",
+        "avoidable cost",
+        "latency savings",
+        "quality parity rate"
+      ],
+      "next": [
+        "G/G7. 模型类型细分/通用对话模型",
+        "G/G7. 模型类型细分/专项模型"
+      ]
+    }
   }
 }

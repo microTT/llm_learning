@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-D-D3-12hzr8h-1",
     "type": "leaf-batch",
     "label": "D3. 训练范式 / Leaves",
@@ -23,16 +23,284 @@
       "Curriculum / staged training"
     ],
     "nodeCount": 8,
-    "filledNodeCount": 0
+    "filledNodeCount": 8
   },
   "nodes": {
-    "D/D3. 训练范式/从头训练": {},
-    "D/D3. 训练范式/预训练": {},
-    "D/D3. 训练范式/微调": {},
-    "D/D3. 训练范式/多任务训练": {},
-    "D/D3. 训练范式/迁移学习": {},
-    "D/D3. 训练范式/蒸馏": {},
-    "D/D3. 训练范式/自训练 / 伪标签": {},
-    "D/D3. 训练范式/Curriculum / staged training": {}
+    "D/D3. 训练范式/从头训练": {
+      "status": "draft",
+      "definition": "从头训练指模型参数从随机初始化开始，仅依赖当前任务数据和训练目标学习能力，不继承外部预训练权重。",
+      "importance": "它能提供最干净的任务适配过程，也最能暴露数据、目标和优化本身的问题；但在大规模场景下通常成本最高、样本效率最低。",
+      "minimumDemo": "在一个小数据集上从随机初始化训练一个分类模型，并与使用预训练 backbone 的版本对比。",
+      "hardwareBudget": "CPU 或单 GPU 可做小实验；大模型从头训练成本极高。",
+      "examples": [
+        "小型 CNN 从头训练",
+        "特定任务的专用小模型"
+      ],
+      "pitfalls": [
+        "数据量不够却坚持从头训练",
+        "把从头训练当成更“纯粹”就一定更好"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/参数",
+        "D/D1. 神经网络基础/Optimizer"
+      ],
+      "coreMetrics": [
+        "样本效率",
+        "收敛速度",
+        "资源成本"
+      ],
+      "toolchain": [
+        "training loop",
+        "checkpointing"
+      ],
+      "failureSigns": [
+        "训练了很久仍明显弱于微调方案"
+      ],
+      "next": [
+        "D/D3. 训练范式/预训练",
+        "D/D3. 训练范式/微调"
+      ]
+    },
+    "D/D3. 训练范式/预训练": {
+      "status": "draft",
+      "definition": "预训练是在大规模通用数据上先学习基础表示和通用能力，再把这些能力迁移到更多下游任务上。",
+      "importance": "这是基础模型时代最关键的范式之一，它把“先学通用能力，再做适配”变成了默认路径。",
+      "minimumDemo": "对比预训练词向量/语言模型与随机初始化模型在下游任务上的样本效率差异。",
+      "hardwareBudget": "小型预训练实验可在单 GPU 上理解；真实大规模预训练成本极高。",
+      "examples": [
+        "语言模型预训练",
+        "视觉 backbone 预训练",
+        "多模态对齐预训练"
+      ],
+      "pitfalls": [
+        "只看预训练 loss，不看迁移效果",
+        "预训练数据和目标与实际应用脱节"
+      ],
+      "prerequisites": [
+        "C/C2. 学习范式/自监督学习",
+        "D/D6. 规模化要素/数据规模"
+      ],
+      "coreMetrics": [
+        "迁移增益",
+        "样本效率",
+        "训练成本"
+      ],
+      "toolchain": [
+        "大规模语料/数据集",
+        "distributed training"
+      ],
+      "failureSigns": [
+        "预训练投入很大，但下游增益不稳定"
+      ],
+      "next": [
+        "C/C6. 与大模型的对应关系/预训练 ≈ 大规模自监督学习",
+        "D/D3. 训练范式/微调",
+        "D/D4. 基础模型类型/文本基础模型"
+      ]
+    },
+    "D/D3. 训练范式/微调": {
+      "status": "draft",
+      "definition": "微调是在已有预训练模型权重基础上，使用更小规模、目标更明确的数据继续训练，使模型更适配特定任务、领域或风格。",
+      "importance": "它是现实工程里最常见的适配手段之一，在成本、样本效率和效果之间通常比从头训练更优。",
+      "minimumDemo": "拿一个预训练文本或视觉模型做少量任务样本微调，并与零样本/从头训练做对比。",
+      "hardwareBudget": "单 GPU 常可完成小规模微调。",
+      "examples": [
+        "领域问答微调",
+        "视觉分类微调",
+        "工具调用微调"
+      ],
+      "pitfalls": [
+        "微调数据质量差却期望大提升",
+        "忘记控制灾难性遗忘"
+      ],
+      "prerequisites": [
+        "D/D3. 训练范式/预训练",
+        "H/H2. 监督式后训练/SFT"
+      ],
+      "coreMetrics": [
+        "任务增益",
+        "样本效率",
+        "遗忘程度"
+      ],
+      "toolchain": [
+        "finetuning scripts",
+        "eval set"
+      ],
+      "failureSigns": [
+        "目标任务提升了，但通用能力明显塌陷"
+      ],
+      "next": [
+        "H/H2. 监督式后训练/Domain fine-tuning",
+        "H/H4. 参数高效适配/LoRA",
+        "D/D3. 训练范式/蒸馏"
+      ]
+    },
+    "D/D3. 训练范式/多任务训练": {
+      "status": "draft",
+      "definition": "多任务训练让模型同时在多个相关任务或目标上学习，以获得更强的共享表示和更好的泛化能力。",
+      "importance": "它能提高表示复用和任务迁移能力，也是很多通用基础模型在训练时的重要思想来源。",
+      "minimumDemo": "用一个共享 backbone 在两个相近任务上联合训练，对比单任务训练的差异。",
+      "hardwareBudget": "CPU/GPU 视任务规模而定。",
+      "examples": [
+        "共享编码器做分类 + 抽取",
+        "多目标预训练"
+      ],
+      "pitfalls": [
+        "任务冲突导致互相拖累",
+        "不同任务数据规模不平衡"
+      ],
+      "prerequisites": [
+        "C/C2. 学习范式",
+        "D/D3. 训练范式/预训练"
+      ],
+      "coreMetrics": [
+        "各任务指标",
+        "任务间迁移增益"
+      ],
+      "toolchain": [
+        "multi-task dataloaders"
+      ],
+      "failureSigns": [
+        "联合训练后多数任务都比单训差"
+      ],
+      "next": [
+        "D/D3. 训练范式/迁移学习",
+        "D/D4. 基础模型类型/多模态基础模型"
+      ]
+    },
+    "D/D3. 训练范式/迁移学习": {
+      "status": "draft",
+      "definition": "迁移学习把某一任务或领域中学到的参数、表示或结构迁移到另一个相关任务上，以降低目标任务的数据与训练成本。",
+      "importance": "它是预训练-微调链条的理论与实践基础，也帮助解释为什么 foundation model 能成为通用底座。",
+      "minimumDemo": "用一个在源任务上训练好的 backbone 迁移到目标任务，对比冻结与全量微调差异。",
+      "hardwareBudget": "单 GPU 足够做小规模实验。",
+      "examples": [
+        "ImageNet backbone 迁移",
+        "文本 encoder 迁移"
+      ],
+      "pitfalls": [
+        "源域与目标域差太大导致负迁移",
+        "冻结策略不合理"
+      ],
+      "prerequisites": [
+        "C/C2. 学习范式/迁移学习",
+        "D/D3. 训练范式/预训练"
+      ],
+      "coreMetrics": [
+        "迁移增益",
+        "样本效率"
+      ],
+      "toolchain": [
+        "pretrained checkpoints"
+      ],
+      "failureSigns": [
+        "迁移后比从头训练还差"
+      ],
+      "next": [
+        "D/D3. 训练范式/微调",
+        "H/H4. 参数高效适配/Adapter"
+      ]
+    },
+    "D/D3. 训练范式/蒸馏": {
+      "status": "draft",
+      "definition": "蒸馏通过让小模型模仿大模型的输出、隐藏表示或行为，把大模型部分能力压缩到更小、更快的模型中。",
+      "importance": "它是把高性能模型转成可部署系统的关键手段之一，尤其适合延迟、成本和设备资源受限的场景。",
+      "minimumDemo": "训练一个教师模型和一个学生模型，用软标签蒸馏对比直接训练学生模型的效果。",
+      "hardwareBudget": "CPU/GPU 视模型大小而定。",
+      "examples": [
+        "大模型蒸馏到小模型",
+        "视觉 backbone 蒸馏"
+      ],
+      "pitfalls": [
+        "教师模型本身有偏差",
+        "只追求压缩不看任务保真度"
+      ],
+      "prerequisites": [
+        "D/D3. 训练范式/微调",
+        "H/H5. 压缩与效率优化/Distillation"
+      ],
+      "coreMetrics": [
+        "性能保留率",
+        "速度提升",
+        "模型尺寸"
+      ],
+      "toolchain": [
+        "teacher-student training"
+      ],
+      "failureSigns": [
+        "学生模型快了但能力断崖"
+      ],
+      "next": [
+        "H/H5. 压缩与效率优化/Distillation",
+        "D/D4. 基础模型类型/文本基础模型"
+      ]
+    },
+    "D/D3. 训练范式/自训练 / 伪标签": {
+      "status": "draft",
+      "definition": "自训练和伪标签通过让模型先对无标签数据产生预测，再把这些预测当作额外监督信号继续训练。",
+      "importance": "它在标签稀缺场景下很有现实价值，也是半监督和后训练数据扩增的常见手段。",
+      "minimumDemo": "用一个监督模型给未标注样本打伪标签，再和原始有标签训练对比。",
+      "hardwareBudget": "CPU 即可做小实验。",
+      "examples": [
+        "图像半监督",
+        "文本伪标签扩充"
+      ],
+      "pitfalls": [
+        "错误伪标签被不断放大",
+        "对分布外样本过度自信"
+      ],
+      "prerequisites": [
+        "C/C2. 学习范式/半监督学习",
+        "C/C2. 学习范式/主动学习"
+      ],
+      "coreMetrics": [
+        "伪标签精度",
+        "样本效率"
+      ],
+      "toolchain": [
+        "pseudo-label pipeline"
+      ],
+      "failureSigns": [
+        "加了伪标签后模型更差"
+      ],
+      "next": [
+        "C/C2. 学习范式/半监督学习",
+        "H/H2. 监督式后训练/Task-specific tuning"
+      ]
+    },
+    "D/D3. 训练范式/Curriculum / staged training": {
+      "status": "draft",
+      "definition": "Curriculum 或 staged training 指按难度、阶段或目标逐步组织训练流程，而不是一次性把所有数据和目标混在一起训练。",
+      "importance": "它常用于提升训练稳定性、加快收敛或让模型先学基础再学复杂行为，在大模型后训练和复杂多阶段任务里尤其常见。",
+      "minimumDemo": "对同一个任务比较一次性混合训练与分阶段训练的收敛曲线。",
+      "hardwareBudget": "CPU/GPU 视模型规模而定。",
+      "examples": [
+        "先基础能力后工具调用",
+        "先短上下文后长上下文训练"
+      ],
+      "pitfalls": [
+        "阶段切换依据不清晰",
+        "前一阶段目标和后一阶段相互冲突"
+      ],
+      "prerequisites": [
+        "D/D3. 训练范式/从头训练",
+        "C/C4. 共性问题/过拟合 / 欠拟合"
+      ],
+      "coreMetrics": [
+        "收敛稳定性",
+        "阶段增益"
+      ],
+      "toolchain": [
+        "staged config",
+        "curriculum scheduler"
+      ],
+      "failureSigns": [
+        "阶段越多越复杂，但收益不清楚"
+      ],
+      "next": [
+        "D/D3. 训练范式/预训练",
+        "D/D3. 训练范式/微调"
+      ]
+    }
   }
 }

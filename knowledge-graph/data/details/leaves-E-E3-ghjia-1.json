@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-E-E3-ghjia-1",
     "type": "leaf-batch",
     "label": "E3. 音频 / 语音 / Leaves",
@@ -26,10 +26,10 @@
   },
   "nodes": {
     "E/E3. 音频 / 语音/自动语音识别（ASR）": {
-      "status": "seed",
+      "status": "draft",
       "definition": "ASR 把连续语音转成文本，是语音产品和语音 Agent 的第一入口。",
       "importance": "很多后续能力都建立在转写质量之上；如果 ASR 不稳定，翻译、问答、语音助手都会连锁退化。",
-      "minimumDemo": "对一批短语音做离线和流式转写，对比 WER、延迟和稳定性。",
+      "minimumDemo": "对一批短语音做离线和流式转写，对比 WER、延迟、稳定性和 partial rewrite 现象。",
       "hardwareBudget": "短语音实验 CPU 也能做；流式或高并发场景更适合 GPU 或托管服务。",
       "prerequisites": [
         "E/E3. 音频 / 语音",
@@ -58,10 +58,10 @@
       ]
     },
     "E/E3. 音频 / 语音/说话人识别": {
-      "status": "seed",
+      "status": "draft",
       "definition": "说话人识别关心的是“谁在说话”，通常分为 speaker identification、verification 和 diarization 三类问题。",
-      "importance": "会议、客服、播客和安全场景都需要把语义内容和说话人身份对齐，否则后续摘要和审计都不可靠。",
-      "minimumDemo": "对一段多人音频做 diarization 或 speaker verification，并核对说话人切换点和身份匹配率。",
+      "importance": "会议、客服、播客和安全场景都需要把语义内容和说话人身份对齐，否则后续摘要、审计和责任归因都不可靠。",
+      "minimumDemo": "对一段多人音频做 diarization 或 speaker verification，并核对说话人切换点、串话和身份匹配率。",
       "hardwareBudget": "单卡 GPU 或 CPU 可做原型，主要取决于音频长度与并发。",
       "prerequisites": [
         "E/E3. 音频 / 语音",
@@ -89,10 +89,10 @@
       ]
     },
     "E/E3. 音频 / 语音/音频分类": {
-      "status": "seed",
+      "status": "draft",
       "definition": "音频分类把一段声音归到环境音、事件或类别上，例如警报、乐器、情绪或设备状态。",
       "importance": "它把语音之外的大量非语言音频纳入 AI 可处理范围，是工业、内容审核和环境感知的重要入口。",
-      "minimumDemo": "训练一个小型音频分类器，比较不同采样率、特征表示和类别不平衡处理对结果的影响。",
+      "minimumDemo": "训练一个小型音频分类器，比较不同采样率、特征表示和类别不平衡处理对结果的影响，并查看混淆矩阵。",
       "hardwareBudget": "单卡 GPU 足够；很多场景可直接做边缘部署。",
       "prerequisites": [
         "E/E3. 音频 / 语音",
@@ -120,10 +120,10 @@
       ]
     },
     "E/E3. 音频 / 语音/语音翻译": {
-      "status": "seed",
+      "status": "draft",
       "definition": "语音翻译把说话内容跨语言迁移，可能经过 ASR→MT→TTS，也可能由端到端语音模型直接完成。",
       "importance": "它把语音链路从“能听懂”升级成“能跨语言交流”，对实时会议、客服和国际化产品很关键。",
-      "minimumDemo": "完成一条最小语音翻译链路，比较级联方案和端到端方案的延迟与保真度。",
+      "minimumDemo": "完成一条最小语音翻译链路，比较级联方案和端到端方案的延迟、保真度和专有名词保持能力。",
       "hardwareBudget": "通常需要云 API 或中高端 GPU 才能把质量和延迟同时压住。",
       "prerequisites": [
         "E/E3. 音频 / 语音/自动语音识别（ASR）",
@@ -151,10 +151,10 @@
       ]
     },
     "E/E3. 音频 / 语音/文本转语音（TTS）": {
-      "status": "seed",
+      "status": "draft",
       "definition": "TTS 把文本转成语音，重点不仅是读出来，还包括自然度、韵律、情绪和可控性。",
       "importance": "它决定语音产品最后一公里的体验，很多系统并不需要很强的对话能力，但非常需要稳定、可控、听感自然的输出。",
-      "minimumDemo": "把一组不同风格文本合成为语音，比较多说话人、语速和情绪控制效果。",
+      "minimumDemo": "把一组不同风格文本合成为语音，比较多说话人、语速、停顿和情绪控制效果。",
       "hardwareBudget": "CPU 可做低吞吐原型；实时高质量合成更适合 GPU 或专用服务。",
       "prerequisites": [
         "E/E3. 音频 / 语音",
@@ -182,10 +182,10 @@
       ]
     },
     "E/E3. 音频 / 语音/语音到语音": {
-      "status": "seed",
+      "status": "draft",
       "definition": "语音到语音把输入语音直接转成输出语音，核心难点是同时保持语义正确、交互低延迟和说话风格控制。",
       "importance": "这是实时语音 Agent、翻译耳机和电话助手里最接近“自然对话”的能力层。",
-      "minimumDemo": "做一轮端到端语音回路，支持说话中断和继续，并记录总轮次延迟。",
+      "minimumDemo": "做一轮端到端语音回路，支持说话中断和继续，并记录总轮次延迟、barge-in 成功率和状态恢复情况。",
       "hardwareBudget": "对实时链路要求高，通常更依赖云服务或稳定的 GPU 推理栈。",
       "prerequisites": [
         "E/E3. 音频 / 语音/自动语音识别（ASR）",
@@ -213,10 +213,10 @@
       ]
     },
     "E/E3. 音频 / 语音/音乐/音频生成": {
-      "status": "seed",
+      "status": "draft",
       "definition": "音乐/音频生成关心的是在时间维度上生成有结构、有风格、可控长度的音频内容，不只局限于语音。",
       "importance": "它把音频分支从语音助手扩展到创作工具、配乐、SFX 和内容生成，是多模态生成的重要一角。",
-      "minimumDemo": "给定风格或文本条件生成一段短音乐 / 音频片段，并评估时长一致性与风格符合度。",
+      "minimumDemo": "给定风格或文本条件生成一段短音乐 / 音频片段，并评估时长一致性、风格符合度和音频伪影。",
       "hardwareBudget": "生成音频通常比做分类/ASR 更吃 GPU 时间和存储。",
       "prerequisites": [
         "E/E3. 音频 / 语音",

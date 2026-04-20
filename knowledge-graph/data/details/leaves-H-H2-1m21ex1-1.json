@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-H-H2-1m21ex1-1",
     "type": "leaf-batch",
     "label": "H2. 监督式后训练 / Leaves",
@@ -21,14 +21,123 @@
       "Task-specific tuning"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "H/H2. 监督式后训练/SFT": {},
-    "H/H2. 监督式后训练/Domain fine-tuning": {},
-    "H/H2. 监督式后训练/Style fine-tuning": {},
-    "H/H2. 监督式后训练/Tool / function-calling fine-tuning": {},
-    "H/H2. 监督式后训练/Vision fine-tuning": {},
-    "H/H2. 监督式后训练/Task-specific tuning": {}
+    "H/H2. 监督式后训练/SFT": {
+      "status": "draft",
+      "definition": "SFT（supervised fine-tuning）是用明确的输入—输出配对样本直接继续训练模型，让它更稳定地学会目标任务格式、风格和默认行为。",
+      "importance": "它通常是最直接的改权重方式，也是把 prompt-only 中难以稳定控制的行为沉淀进参数里的第一步。",
+      "minimumDemo": "针对一个固定任务构造几十到几百条高质量样本，做一次小规模 SFT / LoRA，并与 prompt-only 基线比较目标任务收益和通用回归。",
+      "prerequisites": [
+        "F/F6. 数据在系统中的角色/SFT 数据 → 决定任务风格与稳定性",
+        "H/H1. 不改权重的控制/Prompt engineering"
+      ],
+      "coreMetrics": [
+        "offline accuracy",
+        "format success rate",
+        "target-task lift",
+        "regression delta"
+      ],
+      "next": [
+        "H/H2. 监督式后训练/Domain fine-tuning",
+        "H/H2. 监督式后训练/Style fine-tuning"
+      ]
+    },
+    "H/H2. 监督式后训练/Domain fine-tuning": {
+      "status": "draft",
+      "definition": "Domain fine-tuning 是让模型更适应某个领域的术语、文档结构、任务边界和常见推理模式，例如医疗、法律、金融、制造或内部知识体系。",
+      "importance": "通用模型在专业领域里经常不是“完全不会”，而是术语理解不稳、证据引用不准、边界意识不够。领域微调可以把这些默认行为拉回到目标分布上。",
+      "minimumDemo": "对一个专业领域任务，分别做 prompt-only 和 domain fine-tuning，对比领域专有名词理解、事实准确率和通用任务退化。",
+      "prerequisites": [
+        "H/H2. 监督式后训练/SFT",
+        "F/F7. 后训练数据构建/Train / validation / test split"
+      ],
+      "coreMetrics": [
+        "domain accuracy",
+        "term fidelity",
+        "general regression"
+      ],
+      "next": [
+        "H/H6. 行为优化维度/更适应特定领域",
+        "H/H2. 监督式后训练/Task-specific tuning"
+      ]
+    },
+    "H/H2. 监督式后训练/Style fine-tuning": {
+      "status": "draft",
+      "definition": "Style fine-tuning 关注的是回答语气、篇幅、礼貌程度、企业话术或文案风格的一致性，而不是任务知识本身。",
+      "importance": "在客服、品牌、内容生产和企业助手场景里，风格一致性本身就是可交付质量的一部分；如果只靠 prompt 控制，往往会在长对话和复杂任务下慢慢漂移。",
+      "minimumDemo": "准备一组同任务不同风格要求的样本，比较 prompt-only 与 style fine-tuning 在风格一致性和事实保真上的差异。",
+      "prerequisites": [
+        "H/H2. 监督式后训练/SFT",
+        "F/F7. 后训练数据构建/Instruction crafting"
+      ],
+      "coreMetrics": [
+        "style consistency",
+        "tone adherence",
+        "content fidelity"
+      ],
+      "next": [
+        "H/H6. 行为优化维度/更短/更长",
+        "H/H6. 行为优化维度/更稳定"
+      ]
+    },
+    "H/H2. 监督式后训练/Tool / function-calling fine-tuning": {
+      "status": "draft",
+      "definition": "Tool / function-calling fine-tuning 是通过带工具轨迹或函数调用标注的数据，让模型更稳定地学会何时调用工具、如何填参数、如何处理返回结果。",
+      "importance": "很多 Agent 失败根源并不是模型不会回答，而是不会正确调工具。把工具行为写进监督数据，通常比只靠 schema 和 prompt 更稳。",
+      "minimumDemo": "准备一组带正确工具选择和参数填写的样本，对比 fine-tuning 前后在工具选择正确率、参数正确率和端到端成功率上的变化。",
+      "prerequisites": [
+        "J/J3. 工具调用/Function calling",
+        "H/H2. 监督式后训练/SFT"
+      ],
+      "coreMetrics": [
+        "tool selection accuracy",
+        "argument accuracy",
+        "end-to-end tool success"
+      ],
+      "next": [
+        "J/J3. 工具调用/Tool execution",
+        "H/H6. 行为优化维度/更会调用工具"
+      ]
+    },
+    "H/H2. 监督式后训练/Vision fine-tuning": {
+      "status": "draft",
+      "definition": "Vision fine-tuning 是针对图像、文档、图文问答或视觉指令等任务做监督式适配，让模型更好理解目标视觉分布和标注要求。",
+      "importance": "多模态模型虽然有通用视觉能力，但面对企业内部图像、特定版式、质检图片或复杂文档结构时，往往仍需要定向适配。",
+      "minimumDemo": "针对一个图像分类、OCR 文档理解或图文问答任务，比较 prompt-only 与 vision fine-tuning 后的 grounded accuracy 和误判模式。",
+      "prerequisites": [
+        "E/E5. 多模态/视觉语言模型（VLM）",
+        "M/M1. 模型级评测/多模态能力"
+      ],
+      "coreMetrics": [
+        "grounded accuracy",
+        "visual robustness",
+        "hallucination rate"
+      ],
+      "next": [
+        "H/H2. 监督式后训练/Task-specific tuning",
+        "G/G7. 模型类型细分/多模态模型"
+      ]
+    },
+    "H/H2. 监督式后训练/Task-specific tuning": {
+      "status": "draft",
+      "definition": "Task-specific tuning 是围绕某个窄任务目标做监督式适配，例如固定 schema 抽取、审核分类、SQL 生成、代码修复或特定工作流中的单一步骤。",
+      "importance": "它通常是最容易带来可度量收益的微调路线，因为任务边界清晰、指标明确、样本构造也更可控。",
+      "minimumDemo": "选一个窄任务做小规模 tuning，并与 domain/style tuning 对比，看哪个方案在目标指标、通用回归和维护成本之间更划算。",
+      "prerequisites": [
+        "H/H2. 监督式后训练/Domain fine-tuning",
+        "F/F7. 后训练数据构建/Instruction crafting"
+      ],
+      "coreMetrics": [
+        "task accuracy",
+        "error type distribution",
+        "maintenance cost"
+      ],
+      "next": [
+        "H/H6. 行为优化维度/更准确",
+        "H/H6. 行为优化维度/更结构化"
+      ]
+    }
   }
 }

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-H-H3-cov35w-1",
     "type": "leaf-batch",
     "label": "H3. 偏好优化与对齐 / Leaves",
@@ -22,15 +22,142 @@
       "Policy / constitutional alignment"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "H/H3. 偏好优化与对齐/Reward modeling": {},
-    "H/H3. 偏好优化与对齐/DPO": {},
-    "H/H3. 偏好优化与对齐/Online DPO": {},
-    "H/H3. 偏好优化与对齐/GRPO": {},
-    "H/H3. 偏好优化与对齐/RLHF": {},
-    "H/H3. 偏好优化与对齐/RFT": {},
-    "H/H3. 偏好优化与对齐/Policy / constitutional alignment": {}
+    "H/H3. 偏好优化与对齐/Reward modeling": {
+      "status": "draft",
+      "definition": "Reward modeling 是用人类偏好或评分数据训练一个独立评分器，让系统学会对候选回答打分，表示“哪个更好、风险更低、风格更符合要求”。",
+      "importance": "它是许多偏好优化与 RLHF 路线的核心中间层，因为没有稳定评分器，就很难把主观偏好转成可训练信号。",
+      "minimumDemo": "准备一批偏好对或分级样本，训练一个简单 reward model，并检查它对明显优劣样本的排序一致性。",
+      "prerequisites": [
+        "F/F7. 后训练数据构建/Reward / verifier data",
+        "H/H3. 偏好优化与对齐/DPO"
+      ],
+      "coreMetrics": [
+        "ranking accuracy",
+        "calibration",
+        "agreement with human preference"
+      ],
+      "next": [
+        "H/H3. 偏好优化与对齐/RLHF",
+        "H/H3. 偏好优化与对齐/Policy / constitutional alignment"
+      ]
+    },
+    "H/H3. 偏好优化与对齐/DPO": {
+      "status": "draft",
+      "definition": "DPO（Direct Preference Optimization）直接利用偏好对优化策略模型，不显式单独训练 reward model，也不走完整 RL 流程。",
+      "importance": "它通常比 RLHF 更简单、更稳定，因而成为很多偏好优化项目的入门路线和工业常用基线。",
+      "minimumDemo": "准备一小批 chosen / rejected 样本，用 DPO 训练一个小模型或 adapter，并与 SFT 基线比较风格、边界和 win rate。",
+      "prerequisites": [
+        "H/H2. 监督式后训练/SFT",
+        "F/F7. 后训练数据构建/Preference data"
+      ],
+      "coreMetrics": [
+        "win rate",
+        "training stability",
+        "policy compliance"
+      ],
+      "next": [
+        "H/H3. 偏好优化与对齐/Online DPO",
+        "H/H3. 偏好优化与对齐/Policy / constitutional alignment"
+      ]
+    },
+    "H/H3. 偏好优化与对齐/Online DPO": {
+      "status": "draft",
+      "definition": "Online DPO 把偏好优化从离线固定偏好数据扩展到在线采样与更新，使策略在训练过程中不断根据当前模型生成的候选进行偏好学习。",
+      "importance": "它能更贴近当前模型分布，减少只在旧数据上优化带来的失真，但同时也更容易引入反馈回路和训练不稳定。",
+      "minimumDemo": "在一个小任务上先做离线 DPO，再加入一轮在线采样偏好更新，比较收益是否足以覆盖额外复杂度。",
+      "prerequisites": [
+        "H/H3. 偏好优化与对齐/DPO",
+        "M/M1. 模型级评测/稳定性"
+      ],
+      "coreMetrics": [
+        "online win rate gain",
+        "distribution shift robustness",
+        "training variance"
+      ],
+      "next": [
+        "H/H3. 偏好优化与对齐/GRPO",
+        "H/H3. 偏好优化与对齐/RLHF"
+      ]
+    },
+    "H/H3. 偏好优化与对齐/GRPO": {
+      "status": "draft",
+      "definition": "GRPO 可以理解为一类围绕群组相对表现进行优化的策略方法，重点不是绝对分数，而是同批候选之间的相对优劣比较与更新。",
+      "importance": "它适合那些“相对更好”比“绝对正确”更容易判定的任务，也常出现在推理和过程优化的实验路线里。",
+      "minimumDemo": "对同一问题采样多份候选回答，用相对排序或 group-based 评分比较不同候选，再观察策略更新后的表现变化。",
+      "prerequisites": [
+        "H/H3. 偏好优化与对齐/Online DPO",
+        "F/F7. 后训练数据构建/Rubric-based graders for RFT"
+      ],
+      "coreMetrics": [
+        "group ranking quality",
+        "policy improvement rate",
+        "sampling cost"
+      ],
+      "next": [
+        "H/H3. 偏好优化与对齐/RFT",
+        "M/M1. 模型级评测/推理能力"
+      ]
+    },
+    "H/H3. 偏好优化与对齐/RLHF": {
+      "status": "draft",
+      "definition": "RLHF（Reinforcement Learning from Human Feedback）是把人类偏好或奖励信号接进强化学习流程，让策略模型在与 reward 或 feedback 交互中继续优化。",
+      "importance": "它是偏好优化的经典路径，适合需要更强策略塑形和复杂目标权衡的场景，但实现、观测和稳定性要求都更高。",
+      "minimumDemo": "在一个受控小任务上复盘 SFT → reward / preference → RLHF 的完整链路，并比较是否真的优于更轻量的 DPO 基线。",
+      "prerequisites": [
+        "H/H3. 偏好优化与对齐/Reward modeling",
+        "H/H3. 偏好优化与对齐/DPO"
+      ],
+      "coreMetrics": [
+        "win rate",
+        "reward hacking risk",
+        "training stability",
+        "cost"
+      ],
+      "next": [
+        "H/H3. 偏好优化与对齐/Policy / constitutional alignment",
+        "M/M1. 模型级评测/安全性"
+      ]
+    },
+    "H/H3. 偏好优化与对齐/RFT": {
+      "status": "draft",
+      "definition": "RFT 更强调围绕任务结果、过程打分或 rubric grader 来优化模型，使模型在特定目标上学会更可评测的行为，而不只是泛化风格偏好。",
+      "importance": "它常用于有明确 outcome / process rubric 的场景，例如代码、数学、复杂工具链路或有 verifier 的任务。",
+      "minimumDemo": "构造带 rubric grader 的小任务，对比普通偏好优化和面向 rubric 的 RFT 路线在目标指标上的差异。",
+      "prerequisites": [
+        "F/F7. 后训练数据构建/Rubric-based graders for RFT",
+        "M/M3. Agent 级评测/Grader rubric"
+      ],
+      "coreMetrics": [
+        "grader score",
+        "task success rate",
+        "process correctness"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Process checks",
+        "M/M3. Agent 级评测/Outcome checks"
+      ]
+    },
+    "H/H3. 偏好优化与对齐/Policy / constitutional alignment": {
+      "status": "draft",
+      "definition": "Policy / constitutional alignment 是用显式规则、政策原则或宪法式约束，把模型行为往可接受边界内拉，而不仅仅依赖隐式偏好样本。",
+      "importance": "当系统需要稳定遵守安全、合规和产品原则时，显式规则体系通常比模糊偏好更可审计，也更适合作为 verifier 和拒答边界的依据。",
+      "minimumDemo": "为一组高风险任务写出明确规则或 rubric，比较纯偏好优化和带政策约束流程在违规率、误拒率和可解释性上的差异。",
+      "prerequisites": [
+        "H/H3. 偏好优化与对齐/DPO",
+        "M/M3. Agent 级评测/Policy compliance"
+      ],
+      "coreMetrics": [
+        "policy compliance",
+        "overrefusal rate",
+        "explainability"
+      ],
+      "next": [
+        "M/M1. 模型级评测/安全性",
+        "M/M3. Agent 级评测/Policy compliance"
+      ]
+    }
   }
 }

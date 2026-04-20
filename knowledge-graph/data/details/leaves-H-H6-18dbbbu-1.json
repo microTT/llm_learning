@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-H-H6-18dbbbu-1",
     "type": "leaf-batch",
     "label": "H6. 行为优化维度 / Leaves",
@@ -22,15 +22,142 @@
       "更便宜 / 更快"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "H/H6. 行为优化维度/更准确": {},
-    "H/H6. 行为优化维度/更稳定": {},
-    "H/H6. 行为优化维度/更短/更长": {},
-    "H/H6. 行为优化维度/更结构化": {},
-    "H/H6. 行为优化维度/更会调用工具": {},
-    "H/H6. 行为优化维度/更适应特定领域": {},
-    "H/H6. 行为优化维度/更便宜 / 更快": {}
+    "H/H6. 行为优化维度/更准确": {
+      "status": "draft",
+      "definition": "更准确意味着模型在目标任务上更少犯事实错误、逻辑错误或字段错误，是最直接但也最容易和其他目标发生冲突的优化维度。",
+      "importance": "如果任务本身有明确正确答案，准确率通常就是第一优先级；但它不能脱离稳定性、结构化程度和成本单独看。",
+      "minimumDemo": "建立一组高质量标注集，对不同版本模型做离线正确率和错误类型分布对比。",
+      "prerequisites": [
+        "M/M1. 模型级评测/语言能力",
+        "H/H2. 监督式后训练/Task-specific tuning"
+      ],
+      "coreMetrics": [
+        "accuracy",
+        "F1 / EM",
+        "error type distribution"
+      ],
+      "next": [
+        "H/H6. 行为优化维度/更稳定",
+        "H/H6. 行为优化维度/更结构化"
+      ]
+    },
+    "H/H6. 行为优化维度/更稳定": {
+      "status": "draft",
+      "definition": "更稳定指的是模型在轻微 prompt 扰动、重试、多轮对话或批次变化下仍保持相近行为，而不是偶尔惊艳、偶尔崩溃。",
+      "importance": "工程上，稳定性往往和平均准确率同样重要，因为不稳定系统很难接入工作流、很难调试，也很难建立运营预期。",
+      "minimumDemo": "对同一批请求做多次重试和轻微模板扰动，统计输出方差、格式成功率和工具成功率波动。",
+      "prerequisites": [
+        "M/M1. 模型级评测/稳定性",
+        "H/H1. 不改权重的控制/Prompt templates"
+      ],
+      "coreMetrics": [
+        "variance",
+        "consistency",
+        "retry success delta"
+      ],
+      "next": [
+        "H/H6. 行为优化维度/更短/更长",
+        "H/H6. 行为优化维度/更会调用工具"
+      ]
+    },
+    "H/H6. 行为优化维度/更短/更长": {
+      "status": "draft",
+      "definition": "更短/更长关注的是输出长度、解释深度和冗余度是否符合目标任务，而不是越长越好或越短越好。",
+      "importance": "长度控制直接影响用户体验、token 成本和信息密度；很多看似“更安全”或“更详细”的版本，其实只是更冗长。",
+      "minimumDemo": "对同一任务建立短答和长答两种 rubric，比较不同版本的长度分布、任务完成率和用户偏好。",
+      "prerequisites": [
+        "H/H2. 监督式后训练/Style fine-tuning",
+        "M/M1. 模型级评测/延迟/成本"
+      ],
+      "coreMetrics": [
+        "response length",
+        "verbosity",
+        "information density"
+      ],
+      "next": [
+        "H/H6. 行为优化维度/更结构化",
+        "H/H6. 行为优化维度/更便宜 / 更快"
+      ]
+    },
+    "H/H6. 行为优化维度/更结构化": {
+      "status": "draft",
+      "definition": "更结构化指的是模型更稳定地产生符合 schema、字段约束和程序消费预期的输出，而不是自由文本里夹杂半结构化片段。",
+      "importance": "一旦结果要接进程序、表单或工作流，结构化质量往往比文采重要得多，也是很多业务系统最先追求的行为面。",
+      "minimumDemo": "用固定 schema 的抽取任务评测不同版本模型的 parse success、字段完整率和 recovery 次数。",
+      "prerequisites": [
+        "J/J2. 结构化输出/Validation",
+        "H/H1. 不改权重的控制/Structured outputs"
+      ],
+      "coreMetrics": [
+        "parse success rate",
+        "schema adherence",
+        "field completeness"
+      ],
+      "next": [
+        "E/E1. 语言（NLP / LLM）/结构化解析",
+        "H/H6. 行为优化维度/更会调用工具"
+      ]
+    },
+    "H/H6. 行为优化维度/更会调用工具": {
+      "status": "draft",
+      "definition": "更会调用工具意味着模型更懂得什么时候该调工具、调哪个工具、如何填参数、如何消费结果，并把工具执行纳入任务闭环。",
+      "importance": "很多 Agent 任务的真实成功率主要由工具行为决定，而不是自然语言表述本身，因此这往往是应用层最关键的优化维度之一。",
+      "minimumDemo": "对一组需要和不需要工具的任务，评估工具选择、参数正确率和端到端成功率在不同版本之间的变化。",
+      "prerequisites": [
+        "J/J3. 工具调用/Tool routing",
+        "H/H2. 监督式后训练/Tool / function-calling fine-tuning"
+      ],
+      "coreMetrics": [
+        "tool selection accuracy",
+        "argument accuracy",
+        "workflow completion rate"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Tool selection correctness",
+        "M/M3. Agent 级评测/Workflow completion rate"
+      ]
+    },
+    "H/H6. 行为优化维度/更适应特定领域": {
+      "status": "draft",
+      "definition": "更适应特定领域指模型在某个专业场景中更熟悉术语、任务边界、文档结构和成功标准，而不是只会通用聊天。",
+      "importance": "很多业务价值来自领域适配而不是通用能力继续提升；但这类优化也最容易引入分布偏移和通用回归。",
+      "minimumDemo": "准备领域内和领域外两组评测，对比不同版本在领域提升与通用退化之间的平衡。",
+      "prerequisites": [
+        "H/H2. 监督式后训练/Domain fine-tuning",
+        "G/G7. 模型类型细分/专项模型"
+      ],
+      "coreMetrics": [
+        "domain lift",
+        "general regression",
+        "term fidelity"
+      ],
+      "next": [
+        "H/H5. 压缩与效率优化/Smaller specialized models",
+        "H/H6. 行为优化维度/更准确"
+      ]
+    },
+    "H/H6. 行为优化维度/更便宜 / 更快": {
+      "status": "draft",
+      "definition": "更便宜 / 更快强调的是在满足最低质量要求下，把单位请求成本、首 token 延迟、吞吐和资源占用压到可接受范围内。",
+      "importance": "这是系统能否大规模上线的决定因素之一。很多“更强”的改动如果同时让成本和时延失控，最终就不会成为可持续方案。",
+      "minimumDemo": "对多个模型版本记录 TTFT、吞吐、成本和成功率，画出质量与成本的 trade-off 曲线，而不是只看单点分数。",
+      "prerequisites": [
+        "H/H5. 压缩与效率优化/Quantization",
+        "L/L3. 推理优化/Throughput / latency tuning"
+      ],
+      "coreMetrics": [
+        "TTFT",
+        "throughput",
+        "cost per request",
+        "quality floor"
+      ],
+      "next": [
+        "H/H5. 压缩与效率优化",
+        "M/M1. 模型级评测/延迟/成本"
+      ]
+    }
   }
 }

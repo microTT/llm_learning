@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-C-C5-14frcqx-1",
     "type": "leaf-batch",
     "label": "C5. 指标体系 / Leaves",
@@ -22,15 +22,251 @@
       "Cost-sensitive metrics"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "C/C5. 指标体系/Accuracy": {},
-    "C/C5. 指标体系/Precision / Recall / F1": {},
-    "C/C5. 指标体系/AUC": {},
-    "C/C5. 指标体系/MSE / MAE": {},
-    "C/C5. 指标体系/Ranking metrics": {},
-    "C/C5. 指标体系/Calibration": {},
-    "C/C5. 指标体系/Cost-sensitive metrics": {}
+    "C/C5. 指标体系/Accuracy": {
+      "status": "draft",
+      "definition": "Accuracy 衡量的是预测正确样本占全部样本的比例，是分类任务里最直观的指标。",
+      "importance": "它简单、好懂、易沟通，但只适合类别相对均衡且错误代价近似时使用。只要样本分布失衡，Accuracy 往往会产生误导。",
+      "minimumDemo": "在一个高度不平衡分类任务上同时报告 Accuracy 和 Recall，观察为什么“高 Accuracy”仍可能意味着模型几乎没用。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "平衡分类任务的快速 baseline",
+        "作为辅助指标观察整体正确率"
+      ],
+      "pitfalls": [
+        "在类别不平衡任务上单独使用",
+        "忽略阈值变化对 Accuracy 的影响"
+      ],
+      "prerequisites": [
+        "C/C2. 学习范式/监督学习/分类"
+      ],
+      "coreMetrics": [
+        "正确率",
+        "混淆矩阵"
+      ],
+      "toolchain": [
+        "scikit-learn metrics"
+      ],
+      "failureSigns": [
+        "Accuracy 很高但关键少数类几乎全错"
+      ],
+      "next": [
+        "C/C5. 指标体系/Precision / Recall / F1",
+        "C/C4. 共性问题/类别不平衡"
+      ]
+    },
+    "C/C5. 指标体系/Precision / Recall / F1": {
+      "status": "draft",
+      "definition": "Precision 衡量预测为正的样本里有多少是真的，Recall 衡量真实为正的样本里有多少被找回，F1 则在两者之间做平衡。",
+      "importance": "它们是类别不平衡场景下最常用的一组指标，能把“漏判”和“误报”的代价拆开讨论。",
+      "minimumDemo": "固定一个二分类模型，调不同阈值，画出 Precision-Recall 的此消彼长，并观察 F1 在什么位置达到折中。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "欺诈识别看 Recall",
+        "高成本审核看 Precision",
+        "综合对比看 F1"
+      ],
+      "pitfalls": [
+        "不知道阈值对应哪个业务动作",
+        "只报 F1 不报 Precision 和 Recall"
+      ],
+      "prerequisites": [
+        "C/C2. 学习范式/监督学习/分类",
+        "C/C4. 共性问题/类别不平衡"
+      ],
+      "coreMetrics": [
+        "Precision",
+        "Recall",
+        "F1",
+        "PR curve"
+      ],
+      "toolchain": [
+        "混淆矩阵",
+        "阈值扫描"
+      ],
+      "failureSigns": [
+        "离线 F1 还行，但线上误报或漏报成本不可接受"
+      ],
+      "next": [
+        "C/C5. 指标体系/Cost-sensitive metrics",
+        "M/M4. 在线评测/Business KPIs"
+      ]
+    },
+    "C/C5. 指标体系/AUC": {
+      "status": "draft",
+      "definition": "AUC 衡量模型把正样本排在负样本前面的能力，反映的是整体排序能力而不是某个固定阈值下的表现。",
+      "importance": "当你更关心排序质量、阈值仍会调整，或者类别不平衡较明显时，AUC 往往比 Accuracy 更稳。",
+      "minimumDemo": "在同一模型上比较不同阈值下 Accuracy 的变化和 AUC 的稳定性，理解排序指标和决策指标的区别。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "CTR 预估",
+        "风险评分排序",
+        "召回前排序"
+      ],
+      "pitfalls": [
+        "AUC 高就默认业务一定好",
+        "忽视实际阈值和校准"
+      ],
+      "prerequisites": [
+        "C/C2. 学习范式/监督学习/分类"
+      ],
+      "coreMetrics": [
+        "ROC-AUC",
+        "PR-AUC"
+      ],
+      "toolchain": [
+        "ROC / PR curve"
+      ],
+      "failureSigns": [
+        "AUC 很高但一落到业务阈值上就不好用"
+      ],
+      "next": [
+        "C/C5. 指标体系/Calibration",
+        "C/C3. 经典模型家族/GBDT"
+      ]
+    },
+    "C/C5. 指标体系/MSE / MAE": {
+      "status": "draft",
+      "definition": "MSE 和 MAE 是回归任务里最常见的误差指标。MSE 会更惩罚大误差，MAE 则对异常值相对更稳。",
+      "importance": "它们帮助学习者理解“误差函数不只是评估工具，也是优化偏好的选择”。同样一个回归模型，选不同指标会影响你对好坏的判断。",
+      "minimumDemo": "在带有少量异常值的回归数据集上同时报告 MSE 和 MAE，观察两者对异常样本的敏感度差异。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "房价预测",
+        "需求量预估",
+        "时序数值回归"
+      ],
+      "pitfalls": [
+        "只报一个误差指标不看分布",
+        "不知道异常值对 MSE 的放大作用"
+      ],
+      "prerequisites": [
+        "C/C2. 学习范式/监督学习/回归"
+      ],
+      "coreMetrics": [
+        "MSE",
+        "RMSE",
+        "MAE"
+      ],
+      "toolchain": [
+        "残差分析",
+        "误差分桶"
+      ],
+      "failureSigns": [
+        "平均误差还行，但少数大误差样本非常糟"
+      ],
+      "next": [
+        "C/C3. 经典模型家族/线性回归 / 逻辑回归",
+        "C/C4. 共性问题/鲁棒性"
+      ]
+    },
+    "C/C5. 指标体系/Ranking metrics": {
+      "status": "draft",
+      "definition": "Ranking metrics 用来衡量排序结果是否把更相关、更重要的项目排在前面，常见如 NDCG、MAP、MRR 等。",
+      "importance": "推荐、搜索和召回重排场景的目标不是单点分类正确，而是列表前部的整体质量，因此必须用排序指标而不是普通分类指标。",
+      "minimumDemo": "对一个搜索或推荐样例集合计算 NDCG@K，比较前几位顺序变化对指标的影响。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "搜索结果排序",
+        "推荐列表重排",
+        "召回候选排序"
+      ],
+      "pitfalls": [
+        "用 Accuracy 评价排序任务",
+        "不显式指定 cutoff@K",
+        "忽视位置权重"
+      ],
+      "prerequisites": [
+        "C/C2. 学习范式/监督学习/排序"
+      ],
+      "coreMetrics": [
+        "NDCG",
+        "MRR",
+        "MAP"
+      ],
+      "toolchain": [
+        "排序评测脚本",
+        "top-k 分析"
+      ],
+      "failureSigns": [
+        "整体相关率不错，但列表头部体验很差"
+      ],
+      "next": [
+        "C/C3. 经典模型家族/GBDT",
+        "M/M4. 在线评测/Task completion"
+      ]
+    },
+    "C/C5. 指标体系/Calibration": {
+      "status": "draft",
+      "definition": "Calibration 指模型输出的分数或概率与真实发生频率的一致程度，例如输出 0.8 的样本是否真的大约 80% 为正。",
+      "importance": "它把“可排序”进一步提升为“可决策”。在阈值、资源分配、告警和风险管理中，校准直接影响策略是否合理。",
+      "minimumDemo": "画 reliability diagram，并在校准前后比较分桶置信度与真实命中率。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "风险告警阈值设置",
+        "置信度输出解释"
+      ],
+      "pitfalls": [
+        "把 AUC 当成概率质量指标",
+        "只在静态离线集看校准"
+      ],
+      "prerequisites": [
+        "A/A1. 数学基础/概率统计/估计、校准、置信",
+        "C/C4. 共性问题/校准"
+      ],
+      "coreMetrics": [
+        "ECE",
+        "Brier score",
+        "reliability diagram"
+      ],
+      "toolchain": [
+        "Platt scaling",
+        "isotonic regression"
+      ],
+      "failureSigns": [
+        "同一置信度在不同场景下对应完全不同真实风险"
+      ],
+      "next": [
+        "C/C4. 共性问题/校准",
+        "M/M4. 在线评测/Business KPIs"
+      ]
+    },
+    "C/C5. 指标体系/Cost-sensitive metrics": {
+      "status": "draft",
+      "definition": "Cost-sensitive metrics 把不同错误类型的业务代价显式纳入评估，例如漏报比误报更贵，或不同人群的错误代价不同。",
+      "importance": "很多真实系统里，模型目标不是“平均正确”，而是“总成本最低”。当代价不对称时，只看通用指标会严重误导决策。",
+      "minimumDemo": "为同一模型设置不同的误报/漏报成本矩阵，观察最优阈值如何改变。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "欺诈漏判代价高于误报",
+        "客服分流中的不同工单成本"
+      ],
+      "pitfalls": [
+        "业务代价只是口头上提到，评估里却没体现",
+        "把所有切片强行套同一个阈值"
+      ],
+      "prerequisites": [
+        "C/C5. 指标体系/Precision / Recall / F1",
+        "C/C4. 共性问题/类别不平衡"
+      ],
+      "coreMetrics": [
+        "expected cost",
+        "cost curve",
+        "阈值收益"
+      ],
+      "toolchain": [
+        "阈值扫描",
+        "成本矩阵分析"
+      ],
+      "failureSigns": [
+        "模型平均指标好，但业务总损失仍然很高"
+      ],
+      "next": [
+        "M/M4. 在线评测/Business KPIs",
+        "C/C4. 共性问题/类别不平衡"
+      ]
+    }
   }
 }

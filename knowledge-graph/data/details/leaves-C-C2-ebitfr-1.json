@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-C-C2-ebitfr-1",
     "type": "leaf-batch",
     "label": "监督学习 / Leaves",
@@ -18,11 +18,124 @@
       "排序"
     ],
     "nodeCount": 3,
-    "filledNodeCount": 0
+    "filledNodeCount": 3
   },
   "nodes": {
-    "C/C2. 学习范式/监督学习/回归": {},
-    "C/C2. 学习范式/监督学习/分类": {},
-    "C/C2. 学习范式/监督学习/排序": {}
+    "C/C2. 学习范式/监督学习/回归": {
+      "status": "draft",
+      "definition": "回归学习连续数值目标，例如价格、时长、概率分数或需求量。",
+      "importance": "它是最基础的监督学习任务之一，也是理解损失函数、误差分布和数值预测可靠性的入口。",
+      "minimumDemo": "用一个房价或销量数据集训练线性回归 baseline，并报告 MAE/MSE。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "房价预测",
+        "销量预测",
+        "延迟估计"
+      ],
+      "pitfalls": [
+        "异常值主导训练",
+        "输出分布偏斜却仍用简单假设"
+      ],
+      "prerequisites": [
+        "C/C2. 学习范式/监督学习",
+        "C/C1. 问题设定/目标函数"
+      ],
+      "coreMetrics": [
+        "MAE",
+        "MSE",
+        "R^2"
+      ],
+      "toolchain": [
+        "scikit-learn",
+        "XGBoost"
+      ],
+      "failureSigns": [
+        "平均误差不高但关键区间严重失真",
+        "预测范围明显不合理"
+      ],
+      "next": [
+        "C/C3. 经典模型家族/线性回归 / 逻辑回归"
+      ]
+    },
+    "C/C2. 学习范式/监督学习/分类": {
+      "status": "draft",
+      "definition": "分类学习离散标签预测，例如是/否、多类别归属或多标签判断。",
+      "importance": "它是工业 ML 最常见的任务之一，也是理解 Precision/Recall/F1、校准和阈值选择的关键入口。",
+      "minimumDemo": "做一个二分类 baseline，比较 Accuracy 和 F1 在类不平衡场景下的差异。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "垃圾邮件分类",
+        "流失预测",
+        "审核通过/拒绝"
+      ],
+      "pitfalls": [
+        "只看 Accuracy 忽略类不平衡",
+        "阈值固定不调",
+        "概率分数未校准"
+      ],
+      "prerequisites": [
+        "C/C2. 学习范式/监督学习",
+        "C/C5. 指标体系"
+      ],
+      "coreMetrics": [
+        "Accuracy",
+        "Precision",
+        "Recall",
+        "F1",
+        "AUC"
+      ],
+      "toolchain": [
+        "scikit-learn",
+        "评测报表"
+      ],
+      "failureSigns": [
+        "总体 accuracy 高，但关键类表现很差",
+        "上线阈值一变表现大幅波动"
+      ],
+      "next": [
+        "C/C3. 经典模型家族/线性回归 / 逻辑回归",
+        "C/C3. 经典模型家族/决策树"
+      ]
+    },
+    "C/C2. 学习范式/监督学习/排序": {
+      "status": "draft",
+      "definition": "排序任务学习的是候选项相对优先级，而不是单个样本独立标签，常见于搜索、推荐和广告系统。",
+      "importance": "很多实际业务的目标不是“分类对不对”，而是“哪个结果排在前面更好”。理解排序能帮助从单样本预测转向列表级优化。",
+      "minimumDemo": "为一个简单检索或推荐任务构造相关性标签，比较 pointwise 和 pairwise 排序 baseline。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "搜索结果排序",
+        "推荐候选重排",
+        "广告竞价排序"
+      ],
+      "pitfalls": [
+        "用分类思路硬做排序",
+        "指标和用户体验脱节",
+        "只优化离线排序分数"
+      ],
+      "prerequisites": [
+        "C/C2. 学习范式/监督学习",
+        "C/C5. 指标体系"
+      ],
+      "coreMetrics": [
+        "NDCG",
+        "MAP",
+        "MRR",
+        "CTR uplift"
+      ],
+      "toolchain": [
+        "LightGBM ranker",
+        "XGBoost ranker",
+        "ranking eval"
+      ],
+      "failureSigns": [
+        "离线 NDCG 提升但线上点击不涨",
+        "长尾候选始终被压制"
+      ],
+      "next": [
+        "C/C3. 经典模型家族/GBDT",
+        "I/I1. 表示与检索基础/Reranking"
+      ]
+    }
   }
 }

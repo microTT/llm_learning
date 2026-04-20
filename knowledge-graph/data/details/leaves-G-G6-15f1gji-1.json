@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-G-G6-15f1gji-1",
     "type": "leaf-batch",
     "label": "G6. 局限面 / Leaves",
@@ -21,14 +21,121 @@
       "受数据分布影响"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "G/G6. 局限面/幻觉": {},
-    "G/G6. 局限面/过期知识": {},
-    "G/G6. 局限面/长上下文退化": {},
-    "G/G6. 局限面/工具误用": {},
-    "G/G6. 局限面/受提示与检索质量影响": {},
-    "G/G6. 局限面/受数据分布影响": {}
+    "G/G6. 局限面/幻觉": {
+      "status": "draft",
+      "definition": "幻觉指模型输出看似合理、语气自信，但内容缺乏真实依据或直接错误。",
+      "importance": "它是大模型最著名也最容易被误用的失败模式之一，直接影响搜索、问答、抽取和工具调用可靠性。",
+      "minimumDemo": "给模型提供不足或冲突信息，观察它是暴露不确定性还是硬编答案。",
+      "prerequisites": [
+        "G/G3. 上下文与记忆/外部记忆（RAG / tools / stores）",
+        "M/M1. 模型级评测/安全性"
+      ],
+      "coreMetrics": [
+        "unsupported claim rate",
+        "citation error rate",
+        "overconfidence"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Citation / provenance",
+        "M/M8. 对抗测试与审计/Red teaming"
+      ]
+    },
+    "G/G6. 局限面/过期知识": {
+      "status": "draft",
+      "definition": "过期知识指模型参数里记住的事实停留在训练截断点，无法自动同步到最新世界状态。",
+      "importance": "这决定了为什么许多产品必须依赖检索、数据库或工具，而不能只靠“模型自己知道”。",
+      "minimumDemo": "用近一年内变化明显的事实问题测试模型，再与带检索资料版本对比。",
+      "prerequisites": [
+        "G/G3. 上下文与记忆/参数记忆（weights）",
+        "F/F1. 数据类型/知识库文档"
+      ],
+      "coreMetrics": [
+        "staleness rate",
+        "freshness gain from retrieval"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Retrieval",
+        "F/F6. 数据在系统中的角色/知识库文档 → 决定 RAG 质量"
+      ]
+    },
+    "G/G6. 局限面/长上下文退化": {
+      "status": "draft",
+      "definition": "长上下文退化指随着输入长度增长，模型虽然还能“装下”上下文，但对远距离信息的利用质量下降，容易漏约束、漏证据或被噪声稀释。",
+      "importance": "它提醒我们上下文窗口和上下文利用不是一回事，不能把“支持更长上下文”直接等同于“更会用上下文”。",
+      "minimumDemo": "逐步增加上下文长度并插入干扰信息，测试模型对关键约束的保留能力。",
+      "prerequisites": [
+        "G/G2. Transformer 机制/长上下文处理",
+        "L/L3. 推理优化/Context length management"
+      ],
+      "coreMetrics": [
+        "long-context accuracy drop",
+        "constraint loss rate",
+        "latency growth"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Context packing",
+        "M/M1. 模型级评测/稳定性"
+      ]
+    },
+    "G/G6. 局限面/工具误用": {
+      "status": "draft",
+      "definition": "工具误用包括选错工具、传错参数、误解工具返回值，或在不该调工具时也触发调用。",
+      "importance": "它是 Agent 类系统里非常常见的系统性失败，不是单纯的语言错误，而是行动层错误。",
+      "minimumDemo": "准备一组需要和不需要工具的任务，分析模型错路由、错参数和错整合的比例。",
+      "prerequisites": [
+        "G/G5. 能力面/工具选择",
+        "J/J3. 工具调用/Tool execution"
+      ],
+      "coreMetrics": [
+        "tool misuse rate",
+        "argument error rate",
+        "false invocation rate"
+      ],
+      "next": [
+        "J/J3. 工具调用/Tool retries / fallback",
+        "M/M3. Agent 级评测/Tool selection correctness"
+      ]
+    },
+    "G/G6. 局限面/受提示与检索质量影响": {
+      "status": "draft",
+      "definition": "模型输出高度受 prompt 表达方式、上下文排序和检索结果质量影响，说明很多“能力”其实建立在输入质量之上。",
+      "importance": "这决定了为什么应用工程、RAG 质量和结构约束经常比单次换模型更有效。",
+      "minimumDemo": "对同一问题改变 prompt 写法、检索召回和上下文排序，比较结果波动。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Rerank",
+        "G/G3. 上下文与记忆/上下文记忆（prompt context）"
+      ],
+      "coreMetrics": [
+        "prompt sensitivity",
+        "retrieval sensitivity",
+        "variance"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Query rewrite",
+        "M/M1. 模型级评测/稳定性"
+      ]
+    },
+    "G/G6. 局限面/受数据分布影响": {
+      "status": "draft",
+      "definition": "模型能力高度依赖训练和后训练见过的数据分布，分布一变，原本稳定的行为可能迅速退化。",
+      "importance": "这说明很多“能力边界”其实是分布边界，不能把 benchmark 上的表现直接外推到真实业务场景。",
+      "minimumDemo": "对同一任务准备 in-distribution 和 out-of-distribution 两组样本，比较性能断崖位置。",
+      "prerequisites": [
+        "F/F4. 数据质量/分布匹配",
+        "M/M1. 模型级评测/语言能力"
+      ],
+      "coreMetrics": [
+        "OOD gap",
+        "distribution shift drop",
+        "generalization"
+      ],
+      "next": [
+        "F/F4. 数据质量/分布匹配",
+        "N/N6. 持续改进闭环/新 evals"
+      ]
+    }
   }
 }

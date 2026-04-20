@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-D-D2-nhaalt-1",
     "type": "leaf-batch",
     "label": "D2. 架构家族 / Leaves",
@@ -23,16 +23,295 @@
       "Graph Neural Networks"
     ],
     "nodeCount": 8,
-    "filledNodeCount": 0
+    "filledNodeCount": 8
   },
   "nodes": {
-    "D/D2. 架构家族/MLP": {},
-    "D/D2. 架构家族/CNN": {},
-    "D/D2. 架构家族/RNN / LSTM / GRU": {},
-    "D/D2. 架构家族/Transformer": {},
-    "D/D2. 架构家族/Diffusion models": {},
-    "D/D2. 架构家族/Mixture of Experts": {},
-    "D/D2. 架构家族/State Space Models": {},
-    "D/D2. 架构家族/Graph Neural Networks": {}
+    "D/D2. 架构家族/MLP": {
+      "status": "draft",
+      "definition": "MLP 由若干全连接层和非线性激活堆叠而成，是最基础的前馈神经网络架构。",
+      "importance": "它是理解深度学习表达能力的起点，也是很多更复杂架构里子模块的基本原型。",
+      "minimumDemo": "用两层 MLP 在一个小型表格或 MNIST 风格数据集上训练分类器。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "表格数据分类",
+        "作为大模型中的 feed-forward 子层"
+      ],
+      "pitfalls": [
+        "直接拿 MLP 处理强结构化空间关系",
+        "忽视特征尺度"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/激活函数",
+        "D/D1. 神经网络基础/参数"
+      ],
+      "coreMetrics": [
+        "任务指标",
+        "参数量",
+        "收敛速度"
+      ],
+      "toolchain": [
+        "PyTorch"
+      ],
+      "failureSigns": [
+        "对空间或时序结构任务表现明显不足"
+      ],
+      "next": [
+        "D/D2. 架构家族/CNN",
+        "D/D2. 架构家族/Transformer"
+      ]
+    },
+    "D/D2. 架构家族/CNN": {
+      "status": "draft",
+      "definition": "CNN 通过卷积核和局部感受野建模局部空间结构，擅长处理图像、频谱和局部模式显著的数据。",
+      "importance": "它长期是视觉任务的主力架构，也帮助理解参数共享、平移不变性和层级特征抽取。",
+      "minimumDemo": "用一个小 CNN 在图像分类任务上训练，并可视化卷积特征图。",
+      "hardwareBudget": "CPU 可做最小实验；GPU 更流畅。",
+      "examples": [
+        "图像分类",
+        "OCR / 文档理解",
+        "语音频谱建模"
+      ],
+      "pitfalls": [
+        "卷积核尺寸和 stride 设计随意",
+        "把 CNN 的局部优势误套到长程依赖任务"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/张量",
+        "D/D1. 神经网络基础/前向传播"
+      ],
+      "coreMetrics": [
+        "Accuracy",
+        "吞吐",
+        "特征图尺寸"
+      ],
+      "toolchain": [
+        "PyTorch",
+        "vision dataloaders"
+      ],
+      "failureSigns": [
+        "特征图尺寸一路错下去",
+        "局部模式能学到，但全局关系抓不住"
+      ],
+      "next": [
+        "E/E2. 视觉（CV）/图像分类",
+        "E/E2. 视觉（CV）/OCR / 文档理解"
+      ]
+    },
+    "D/D2. 架构家族/RNN / LSTM / GRU": {
+      "status": "draft",
+      "definition": "RNN 系列通过显式隐藏状态递推处理序列数据，LSTM / GRU 则用门控机制缓解长序列梯度问题。",
+      "importance": "它们是理解序列建模历史的重要一环，也能帮助学习者对比为什么 Transformer 后来会成为主流。",
+      "minimumDemo": "在一个简单字符级或时间序列任务上比较 vanilla RNN 和 LSTM 的训练稳定性。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "时间序列预测",
+        "早期机器翻译",
+        "语音序列建模"
+      ],
+      "pitfalls": [
+        "长序列训练不稳定",
+        "并行效率低"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/前向传播",
+        "D/D1. 神经网络基础/反向传播"
+      ],
+      "coreMetrics": [
+        "序列损失",
+        "长依赖保持能力",
+        "训练吞吐"
+      ],
+      "toolchain": [
+        "PyTorch RNN modules"
+      ],
+      "failureSigns": [
+        "序列一长效果就断崖",
+        "训练速度远慢于并行架构"
+      ],
+      "next": [
+        "D/D2. 架构家族/Transformer",
+        "E/E3. 音频 / 语音/自动语音识别（ASR）"
+      ]
+    },
+    "D/D2. 架构家族/Transformer": {
+      "status": "draft",
+      "definition": "Transformer 依赖注意力机制和并行前馈结构建模长程依赖，已成为语言、多模态和大量生成任务的主力架构。",
+      "importance": "它几乎定义了当前基础模型时代。理解 Transformer，是理解 LLM、VLM、长上下文、工具调用和多模态统一建模的关键入口。",
+      "minimumDemo": "阅读一个最小 Transformer block 实现，并跟踪 attention、MLP、residual 和 normalization 的数据流。",
+      "hardwareBudget": "CPU 可做理解与极小实验；实用训练通常需要 GPU。",
+      "examples": [
+        "LLM",
+        "Vision Transformer",
+        "多模态 Transformer"
+      ],
+      "pitfalls": [
+        "只背 attention，不理解 block 级计算结构",
+        "忽略上下文长度与计算成本的平方关系"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/Normalization",
+        "D/D1. 神经网络基础/前向传播"
+      ],
+      "coreMetrics": [
+        "tokens/s",
+        "上下文长度",
+        "任务指标"
+      ],
+      "toolchain": [
+        "Transformers",
+        "flash attention 类优化"
+      ],
+      "failureSigns": [
+        "长上下文成本过高",
+        "训练稳定性依赖大量配方细节"
+      ],
+      "next": [
+        "E/E1. 语言（NLP / LLM）/LLM：通用语言能力模型",
+        "D/D5. 生成范式/自回归生成",
+        "D/D6. 规模化要素/上下文长度"
+      ]
+    },
+    "D/D2. 架构家族/Diffusion models": {
+      "status": "draft",
+      "definition": "扩散模型通过逐步加噪和逐步去噪学习数据分布，擅长高质量生成，尤其在图像领域表现突出。",
+      "importance": "它代表了与自回归不同的一条主流生成路线，也解释了为什么现代图像生成系统会围绕噪声预测、采样步数和条件控制组织。",
+      "minimumDemo": "跑通一个最小 diffusion 推理示例，观察采样步数与生成质量/速度的权衡。",
+      "hardwareBudget": "GPU 更合适；CPU 仅适合理解级实验。",
+      "examples": [
+        "文生图",
+        "图像编辑",
+        "超分辨率"
+      ],
+      "pitfalls": [
+        "忽视采样成本",
+        "把扩散模型当成所有生成任务的默认答案"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/Optimizer",
+        "D/D5. 生成范式/扩散生成"
+      ],
+      "coreMetrics": [
+        "生成质量",
+        "采样速度",
+        "条件一致性"
+      ],
+      "toolchain": [
+        "Diffusers"
+      ],
+      "failureSigns": [
+        "生成质量好但速度慢到不可用",
+        "条件控制不稳定"
+      ],
+      "next": [
+        "E/E2. 视觉（CV）/图像生成",
+        "D/D5. 生成范式/扩散生成"
+      ]
+    },
+    "D/D2. 架构家族/Mixture of Experts": {
+      "status": "draft",
+      "definition": "MoE 通过只激活部分专家子网络来扩展总参数量，使模型在保持相对可控计算成本的同时拥有更大容量。",
+      "importance": "它是规模化大模型的重要路线之一，体现了“参数规模”和“实际每 token 计算量”可以分离的工程思想。",
+      "minimumDemo": "阅读一个 top-k routing 的最小示例，理解 token 如何被路由到不同专家。",
+      "hardwareBudget": "理解层面不高；真实训练和推理需要较强系统支持。",
+      "examples": [
+        "稀疏激活语言模型",
+        "大规模多专家推理"
+      ],
+      "pitfalls": [
+        "路由不均导致专家失衡",
+        "系统复杂度大幅上升"
+      ],
+      "prerequisites": [
+        "D/D2. 架构家族/Transformer",
+        "D/D6. 规模化要素/参数规模"
+      ],
+      "coreMetrics": [
+        "activated params",
+        "专家负载均衡",
+        "吞吐"
+      ],
+      "toolchain": [
+        "分布式训练",
+        "router monitoring"
+      ],
+      "failureSigns": [
+        "少数专家过载，大部分专家闲置",
+        "系统成本高于收益"
+      ],
+      "next": [
+        "D/D6. 规模化要素/参数规模",
+        "D/D6. 规模化要素/系统优化"
+      ]
+    },
+    "D/D2. 架构家族/State Space Models": {
+      "status": "draft",
+      "definition": "State Space Models 用结构化状态更新来处理长序列，试图在保持长依赖建模能力的同时改善传统注意力的计算成本问题。",
+      "importance": "它代表了后 Transformer 时代对更高效长序列建模的探索，也是理解“并非所有序列建模都必须是 attention”的重要案例。",
+      "minimumDemo": "比较一个 SSM 类模型和 Transformer 在长序列上的吞吐与内存行为。",
+      "hardwareBudget": "GPU 更合适；理解层面可只读实现。",
+      "examples": [
+        "长文本建模",
+        "音频序列处理",
+        "长上下文时序任务"
+      ],
+      "pitfalls": [
+        "把论文优势直接等同于真实系统优势",
+        "忽视生态成熟度"
+      ],
+      "prerequisites": [
+        "D/D2. 架构家族/RNN / LSTM / GRU",
+        "D/D6. 规模化要素/上下文长度"
+      ],
+      "coreMetrics": [
+        "长序列吞吐",
+        "内存占用",
+        "任务指标"
+      ],
+      "toolchain": [
+        "长序列 benchmark"
+      ],
+      "failureSigns": [
+        "理论复杂度好看，但实际工程收益不明显"
+      ],
+      "next": [
+        "D/D6. 规模化要素/上下文长度",
+        "E/E3. 音频 / 语音/音频分类"
+      ]
+    },
+    "D/D2. 架构家族/Graph Neural Networks": {
+      "status": "draft",
+      "definition": "GNN 在图结构上做消息传递与聚合，用来建模节点、边和图级别的关系模式。",
+      "importance": "它是把深度学习推广到非欧几里得结构数据的重要方向，也能帮助连接图结构知识表示、推荐图和关系建模。",
+      "minimumDemo": "在一个小型节点分类任务上跑图卷积或图注意力模型，观察邻域聚合如何影响表示。",
+      "hardwareBudget": "CPU 可做小图实验。",
+      "examples": [
+        "节点分类",
+        "关系预测",
+        "图推荐"
+      ],
+      "pitfalls": [
+        "图构建本身不合理",
+        "过度平滑导致节点表示趋同"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/张量",
+        "B/B4. 知识表示/知识图谱"
+      ],
+      "coreMetrics": [
+        "节点/边任务指标",
+        "图结构覆盖度"
+      ],
+      "toolchain": [
+        "PyG / DGL"
+      ],
+      "failureSigns": [
+        "图一变性能就显著波动",
+        "邻居越多反而信息越糊"
+      ],
+      "next": [
+        "B/B4. 知识表示/知识图谱",
+        "E/E1. 语言（NLP / LLM）/信息抽取"
+      ]
+    }
   }
 }

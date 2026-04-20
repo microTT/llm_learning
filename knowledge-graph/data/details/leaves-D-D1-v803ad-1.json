@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-D-D1-v803ad-1",
     "type": "leaf-batch",
     "label": "D1. 神经网络基础 / Leaves",
@@ -25,18 +25,360 @@
       "Checkpoint"
     ],
     "nodeCount": 10,
-    "filledNodeCount": 0
+    "filledNodeCount": 10
   },
   "nodes": {
-    "D/D1. 神经网络基础/张量": {},
-    "D/D1. 神经网络基础/参数": {},
-    "D/D1. 神经网络基础/前向传播": {},
-    "D/D1. 神经网络基础/反向传播": {},
-    "D/D1. 神经网络基础/Autograd": {},
-    "D/D1. 神经网络基础/激活函数": {},
-    "D/D1. 神经网络基础/Normalization": {},
-    "D/D1. 神经网络基础/Regularization": {},
-    "D/D1. 神经网络基础/Optimizer": {},
-    "D/D1. 神经网络基础/Checkpoint": {}
+    "D/D1. 神经网络基础/张量": {
+      "status": "draft",
+      "definition": "张量是深度学习中表示标量、向量、矩阵和更高维数组的统一数据结构，也是神经网络输入、参数、中间激活和梯度的基本载体。",
+      "importance": "不理解张量的形状、维度和广播规则，后面几乎所有模型实现都会频繁出错。很多 bug 本质上不是模型问题，而是张量语义没对齐。",
+      "minimumDemo": "在 PyTorch 里创建几个不同形状的张量，做 reshape、transpose、matmul 和 broadcasting，观察输出形状变化。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "batch x seq x hidden",
+        "图像张量 NCHW",
+        "参数矩阵和梯度张量"
+      ],
+      "pitfalls": [
+        "把 shape 对上当成语义正确",
+        "忽略 batch 维、时间维和通道维差异"
+      ],
+      "prerequisites": [
+        "A/A1. 数学基础/线性代数/向量、矩阵、张量"
+      ],
+      "coreMetrics": [
+        "shape 正确性",
+        "内存占用"
+      ],
+      "toolchain": [
+        "PyTorch tensor ops"
+      ],
+      "failureSigns": [
+        "shape mismatch",
+        "silent broadcasting 造成隐蔽错误"
+      ],
+      "next": [
+        "D/D1. 神经网络基础/参数",
+        "D/D1. 神经网络基础/前向传播"
+      ]
+    },
+    "D/D1. 神经网络基础/参数": {
+      "status": "draft",
+      "definition": "参数是模型在训练过程中被优化更新的权重和偏置，用来决定输入经过网络后会产生什么映射关系。",
+      "importance": "参数规模、初始化方式和更新策略决定了模型容量、训练稳定性和部署成本，是连接架构与训练的关键接口。",
+      "minimumDemo": "打印一个小 MLP 的参数名称、形状和总参数量，观察训练前后参数如何变化。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "线性层权重",
+        "卷积核",
+        "LayerNorm 参数"
+      ],
+      "pitfalls": [
+        "只看总参数量，不看参数分布和实际可训练部分",
+        "冻结与解冻策略不清晰"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/张量"
+      ],
+      "coreMetrics": [
+        "参数量",
+        "可训练参数比例"
+      ],
+      "toolchain": [
+        "model summary",
+        "parameter inspection"
+      ],
+      "failureSigns": [
+        "参数没更新但训练还在跑",
+        "参数量暴涨带来显存和延迟问题"
+      ],
+      "next": [
+        "D/D1. 神经网络基础/Optimizer",
+        "D/D1. 神经网络基础/Checkpoint"
+      ]
+    },
+    "D/D1. 神经网络基础/前向传播": {
+      "status": "draft",
+      "definition": "前向传播指输入沿着网络结构逐层计算，得到中间激活和最终输出的过程。",
+      "importance": "它定义了模型实际在算什么，也是理解 shape 流动、激活分布和中间表示的基础。",
+      "minimumDemo": "对一个两层网络手动跟踪每一层输入输出形状和数值范围。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "embedding -> attention -> logits",
+        "卷积 -> 激活 -> pooling"
+      ],
+      "pitfalls": [
+        "只关心最终输出，不观察中间激活异常",
+        "把前向图当成固定模板，不理解每层作用"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/张量",
+        "D/D1. 神经网络基础/激活函数"
+      ],
+      "coreMetrics": [
+        "输出 shape",
+        "激活分布",
+        "数值稳定性"
+      ],
+      "toolchain": [
+        "forward hooks",
+        "activation logging"
+      ],
+      "failureSigns": [
+        "激活全为 0 或异常爆大",
+        "中间层 shape 不符合预期"
+      ],
+      "next": [
+        "D/D1. 神经网络基础/反向传播",
+        "D/D2. 架构家族/MLP"
+      ]
+    },
+    "D/D1. 神经网络基础/反向传播": {
+      "status": "draft",
+      "definition": "反向传播利用链式法则把损失对输出的敏感度逐层传播回参数，从而得到参数梯度。",
+      "importance": "它是深度学习可训练的核心机制。理解反向传播，才能真正理解为什么参数会朝某个方向更新，为什么会出现梯度爆炸或消失。",
+      "minimumDemo": "对一个简单计算图手推梯度，再和框架自动求导结果比对。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "loss.backward()",
+        "链式法则传播梯度"
+      ],
+      "pitfalls": [
+        "只会调用 backward，不知道梯度从哪来",
+        "梯度累积与清零机制混淆"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/前向传播",
+        "A/A1. 数学基础/微积分与优化/导数、偏导、链式法则"
+      ],
+      "coreMetrics": [
+        "梯度范数",
+        "梯度稳定性"
+      ],
+      "toolchain": [
+        "grad inspection",
+        "gradient clipping"
+      ],
+      "failureSigns": [
+        "梯度为 0 或 NaN",
+        "训练早期极不稳定"
+      ],
+      "next": [
+        "D/D1. 神经网络基础/Autograd",
+        "D/D1. 神经网络基础/Optimizer"
+      ]
+    },
+    "D/D1. 神经网络基础/Autograd": {
+      "status": "draft",
+      "definition": "Autograd 是框架自动构建计算图并自动求导的机制，让研究者不必手写大部分梯度表达式。",
+      "importance": "它大幅降低了实验成本，但也容易让人忽视计算图生命周期、in-place 操作、副图断开和 no_grad 等关键细节。",
+      "minimumDemo": "写一个小模型，在开启和关闭 autograd 的情况下比较梯度和显存行为。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "requires_grad",
+        "detach",
+        "torch.no_grad"
+      ],
+      "pitfalls": [
+        "误用 detach 导致梯度断掉",
+        "in-place 操作破坏计算图"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/反向传播"
+      ],
+      "coreMetrics": [
+        "梯度存在性",
+        "计算图正确性"
+      ],
+      "toolchain": [
+        "autograd profiler",
+        "debug hooks"
+      ],
+      "failureSigns": [
+        "loss.backward 后梯度全空",
+        "莫名其妙的 in-place error"
+      ],
+      "next": [
+        "D/D1. 神经网络基础/Optimizer",
+        "D/D1. 神经网络基础/Checkpoint"
+      ]
+    },
+    "D/D1. 神经网络基础/激活函数": {
+      "status": "draft",
+      "definition": "激活函数为网络引入非线性，使多层网络能够表示比线性模型更复杂的函数关系。",
+      "importance": "没有非线性，多层网络会退化成单层线性变换。激活函数的选择也会影响梯度流、稀疏性和训练稳定性。",
+      "minimumDemo": "对比 ReLU、GELU 和 Sigmoid 在同一小网络上的训练曲线和激活分布。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "ReLU",
+        "GELU",
+        "Sigmoid",
+        "Tanh"
+      ],
+      "pitfalls": [
+        "死 ReLU",
+        "饱和激活导致梯度消失"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/前向传播"
+      ],
+      "coreMetrics": [
+        "激活分布",
+        "梯度通过率"
+      ],
+      "toolchain": [
+        "activation histogram"
+      ],
+      "failureSigns": [
+        "大面积神经元失活",
+        "训练极慢且梯度发散"
+      ],
+      "next": [
+        "D/D2. 架构家族/MLP",
+        "D/D2. 架构家族/Transformer"
+      ]
+    },
+    "D/D1. 神经网络基础/Normalization": {
+      "status": "draft",
+      "definition": "Normalization 通过对激活或表示做标准化，帮助稳定训练、改善梯度流和提高收敛速度。常见形式包括 BatchNorm、LayerNorm、RMSNorm 等。",
+      "importance": "它是很多深网络可训练的关键配方之一。尤其在 Transformer 中，归一化位置和形式会直接影响训练稳定性。",
+      "minimumDemo": "比较有无 normalization 的小网络训练曲线和梯度稳定性。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "BatchNorm",
+        "LayerNorm",
+        "RMSNorm"
+      ],
+      "pitfalls": [
+        "不了解 batch 统计与推理阶段差异",
+        "归一化位置随意调整导致训练变差"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/激活函数",
+        "D/D1. 神经网络基础/前向传播"
+      ],
+      "coreMetrics": [
+        "训练稳定性",
+        "收敛速度"
+      ],
+      "toolchain": [
+        "norm layer inspection"
+      ],
+      "failureSigns": [
+        "加深网络后训练突然不稳定",
+        "train/eval 切换后表现差异异常大"
+      ],
+      "next": [
+        "D/D2. 架构家族/Transformer",
+        "D/D1. 神经网络基础/Optimizer"
+      ]
+    },
+    "D/D1. 神经网络基础/Regularization": {
+      "status": "draft",
+      "definition": "Regularization 是限制模型过度记忆训练数据的一组手段，包括权重衰减、dropout、数据增强、早停等。",
+      "importance": "它直接连接到泛化问题，是控制过拟合的重要工具箱。深度模型往往容量极大，没有正则手段很容易只记住训练集。",
+      "minimumDemo": "对同一个模型分别加入 dropout 或 weight decay，比较训练/验证差距变化。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "weight decay",
+        "dropout",
+        "early stopping"
+      ],
+      "pitfalls": [
+        "把所有泛化问题都寄希望于正则项",
+        "正则过强导致严重欠拟合"
+      ],
+      "prerequisites": [
+        "C/C4. 共性问题/过拟合 / 欠拟合",
+        "D/D1. 神经网络基础/参数"
+      ],
+      "coreMetrics": [
+        "训练/验证 gap",
+        "泛化表现"
+      ],
+      "toolchain": [
+        "weight decay config",
+        "dropout ablation"
+      ],
+      "failureSigns": [
+        "训练集升得很快，验证集不动",
+        "加正则后整体都学不动"
+      ],
+      "next": [
+        "D/D3. 训练范式/从头训练",
+        "C/C4. 共性问题/过拟合 / 欠拟合"
+      ]
+    },
+    "D/D1. 神经网络基础/Optimizer": {
+      "status": "draft",
+      "definition": "Optimizer 根据参数梯度决定每一步如何更新参数。常见优化器包括 SGD、Adam 及其变体。",
+      "importance": "优化器决定训练速度、稳定性和最终收敛点。相同架构和数据下，不同优化器和学习率配方可能带来完全不同的结果。",
+      "minimumDemo": "在同一个小模型上比较 SGD 和 Adam 的收敛曲线与最终验证表现。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "SGD",
+        "AdamW"
+      ],
+      "pitfalls": [
+        "只换优化器不调学习率",
+        "把优化器当万能改进按钮"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/反向传播",
+        "A/A1. 数学基础/微积分与优化/SGD、Adam 类优化器"
+      ],
+      "coreMetrics": [
+        "收敛速度",
+        "训练稳定性"
+      ],
+      "toolchain": [
+        "optimizer config",
+        "lr scheduler"
+      ],
+      "failureSigns": [
+        "loss 大幅震荡",
+        "换 seed 后收敛结果差异很大"
+      ],
+      "next": [
+        "D/D3. 训练范式/从头训练",
+        "D/D3. 训练范式/微调"
+      ]
+    },
+    "D/D1. 神经网络基础/Checkpoint": {
+      "status": "draft",
+      "definition": "Checkpoint 是对模型参数、优化器状态和训练进度的持久化保存，用于恢复训练、回滚版本和做离线评测。",
+      "importance": "训练稳定不只是 loss 稳定，还包括中断后能恢复、实验结果可复现。checkpoint 是工程化训练的基本设施。",
+      "minimumDemo": "训练一个小模型到一半保存 checkpoint，然后中断并恢复，验证恢复后 loss 轨迹基本连续。",
+      "hardwareBudget": "CPU 即可。",
+      "examples": [
+        "best checkpoint",
+        "latest checkpoint",
+        "EMA checkpoint"
+      ],
+      "pitfalls": [
+        "只存模型参数，不存优化器状态",
+        "best / latest 语义混乱"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/参数",
+        "D/D1. 神经网络基础/Optimizer"
+      ],
+      "coreMetrics": [
+        "恢复成功率",
+        "实验可复现性"
+      ],
+      "toolchain": [
+        "checkpoint manager",
+        "artifact storage"
+      ],
+      "failureSigns": [
+        "恢复后 loss 曲线断裂",
+        "最佳模型无法回放"
+      ],
+      "next": [
+        "D/D3. 训练范式/从头训练",
+        "D/D3. 训练范式/微调"
+      ]
+    }
   }
 }

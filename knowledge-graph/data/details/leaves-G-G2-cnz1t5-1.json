@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-G-G2-cnz1t5-1",
     "type": "leaf-batch",
     "label": "G2. Transformer 机制 / Leaves",
@@ -21,14 +21,127 @@
       "KV cache"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "G/G2. Transformer 机制/Self-attention": {},
-    "G/G2. Transformer 机制/Multi-head attention": {},
-    "G/G2. Transformer 机制/Feed-forward blocks": {},
-    "G/G2. Transformer 机制/Residual / normalization": {},
-    "G/G2. Transformer 机制/长上下文处理": {},
-    "G/G2. Transformer 机制/KV cache": {}
+    "G/G2. Transformer 机制/Self-attention": {
+      "status": "draft",
+      "definition": "Self-attention 让每个 token 在当前层里对其它 token 分配权重，从而决定“当前表示应该读取哪些上下文”。",
+      "importance": "它是 Transformer 能建模长程依赖的关键，也是 LLM 能在上下文里做条件化生成的基础。",
+      "minimumDemo": "对几个 token embedding 手写一次 QK^T softmax，再观察 attention weights 如何变化。",
+      "hardwareBudget": "机制学习用 CPU 即可；长序列实验更吃显存和内存。",
+      "prerequisites": [
+        "A/A1. 数学基础/线性代数",
+        "G/G1. 语言建模基础/Embedding",
+        "G/G1. 语言建模基础/Positional information"
+      ],
+      "coreMetrics": [
+        "attention concentration",
+        "context utilization",
+        "compute cost"
+      ],
+      "next": [
+        "G/G2. Transformer 机制/Multi-head attention",
+        "G/G2. Transformer 机制/长上下文处理"
+      ]
+    },
+    "G/G2. Transformer 机制/Multi-head attention": {
+      "status": "draft",
+      "definition": "Multi-head attention 把注意力拆成多个头，让模型能并行关注不同类型的上下文关系，而不是只学一种全局权重模式。",
+      "importance": "它提升了表示丰富度，使模型能同时处理语法、局部模式、长程依赖和不同特征子空间。",
+      "minimumDemo": "观察不同 attention head 在同一输入上的权重模式是否分工不同。",
+      "hardwareBudget": "头数增加会提高计算和缓存开销。",
+      "prerequisites": [
+        "G/G2. Transformer 机制/Self-attention"
+      ],
+      "coreMetrics": [
+        "head diversity",
+        "representation richness",
+        "compute overhead"
+      ],
+      "next": [
+        "G/G2. Transformer 机制/Feed-forward blocks",
+        "G/G2. Transformer 机制/KV cache"
+      ]
+    },
+    "G/G2. Transformer 机制/Feed-forward blocks": {
+      "status": "draft",
+      "definition": "Feed-forward blocks 在每个 token 上做独立的非线性变换，为模型提供注意力之外的特征混合和表示容量。",
+      "importance": "如果只有注意力没有前馈层，模型很难形成足够强的逐 token 表示能力。前馈层是“读取上下文之后如何变换表示”的主力。",
+      "minimumDemo": "比较一个带 FFN 和一个不带 FFN 的极小 Transformer block 输出差异。",
+      "hardwareBudget": "FFN 通常占据大量参数和计算量。",
+      "prerequisites": [
+        "G/G2. Transformer 机制/Self-attention",
+        "A/A1. 数学基础/微积分与优化/导数、偏导、链式法则"
+      ],
+      "coreMetrics": [
+        "model capacity",
+        "training stability",
+        "compute share"
+      ],
+      "next": [
+        "G/G2. Transformer 机制/Residual / normalization",
+        "D/D6. 规模化要素/参数规模"
+      ]
+    },
+    "G/G2. Transformer 机制/Residual / normalization": {
+      "status": "draft",
+      "definition": "Residual connection 和 normalization 负责让深层网络的信号更稳定地传播，减少训练发散和表示塌缩。",
+      "importance": "没有这层，Transformer 很难在深层和大规模设置下稳定训练，也会更难在推理时保持数值行为稳定。",
+      "minimumDemo": "比较有无 residual 或 norm 的小网络在训练曲线和输出稳定性上的差异。",
+      "hardwareBudget": "本身开销不高，但对能否训稳有决定性影响。",
+      "prerequisites": [
+        "G/G2. Transformer 机制/Feed-forward blocks"
+      ],
+      "coreMetrics": [
+        "loss stability",
+        "gradient behavior",
+        "numerical stability"
+      ],
+      "next": [
+        "D/D1. 神经网络基础/Normalization",
+        "G/G2. Transformer 机制/长上下文处理"
+      ]
+    },
+    "G/G2. Transformer 机制/长上下文处理": {
+      "status": "draft",
+      "definition": "长上下文处理关心的是当输入 token 数急剧增长时，模型如何继续有效利用上下文，而不是只把窗口机械放大。",
+      "importance": "上下文变长后，不仅注意力计算会更贵，模型对远距离信息的利用也会下降，因此长上下文质量和长上下文容量不是一回事。",
+      "minimumDemo": "把同一任务的上下文长度从短到长逐步增加，观察正确率、时延和约束遗忘的变化。",
+      "hardwareBudget": "是长对话和长文档成本上升的主要来源之一。",
+      "prerequisites": [
+        "G/G2. Transformer 机制/Self-attention",
+        "G/G3. 上下文与记忆/上下文记忆（prompt context）"
+      ],
+      "coreMetrics": [
+        "long-context accuracy",
+        "latency growth",
+        "context dilution"
+      ],
+      "next": [
+        "L/L3. 推理优化/Context length management",
+        "I/I3. RAG 管线/Context packing"
+      ]
+    },
+    "G/G2. Transformer 机制/KV cache": {
+      "status": "draft",
+      "definition": "KV cache 会在自回归生成时缓存已算过 token 的 key/value，避免每一步都重复计算整段前缀。",
+      "importance": "它是大多数 LLM 在线推理可接受的关键优化之一，直接影响首 token 后的吞吐、时延和多轮会话表现。",
+      "minimumDemo": "对比开启和关闭 cache 时的 decode latency 与 tokens/s。",
+      "hardwareBudget": "会显著占用显存或内存，但通常能换来更好的推理效率。",
+      "prerequisites": [
+        "G/G2. Transformer 机制/Multi-head attention",
+        "L/L3. 推理优化/KV cache"
+      ],
+      "coreMetrics": [
+        "decode latency",
+        "cache memory usage",
+        "tokens per second"
+      ],
+      "next": [
+        "L/L3. 推理优化/Prefix cache",
+        "L/L3. 推理优化/KV offload"
+      ]
+    }
   }
 }

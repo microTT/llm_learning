@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-H-H1-h83ff8-1",
     "type": "leaf-batch",
     "label": "H1. 不改权重的控制 / Leaves",
@@ -21,14 +21,123 @@
       "Tool schemas"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "H/H1. 不改权重的控制/Prompt engineering": {},
-    "H/H1. 不改权重的控制/System prompt": {},
-    "H/H1. 不改权重的控制/Few-shot / in-context learning": {},
-    "H/H1. 不改权重的控制/Prompt templates": {},
-    "H/H1. 不改权重的控制/Structured outputs": {},
-    "H/H1. 不改权重的控制/Tool schemas": {}
+    "H/H1. 不改权重的控制/Prompt engineering": {
+      "status": "draft",
+      "definition": "Prompt engineering 是围绕任务目标、上下文组织和约束表达来设计输入，使模型在不改权重的情况下更稳定地产生目标行为。",
+      "importance": "它通常是最便宜、最快速的行为优化手段，也是判断是否需要进入 SFT 或 LoRA 之前的必经基线。",
+      "minimumDemo": "为同一任务设计两到三版 prompt，对比正确率、输出稳定性和 token 成本，确认哪部分提示真正带来收益。",
+      "prerequisites": [
+        "G/G5. 能力面/指令跟随",
+        "J/J1. 模型接口层/Prompt composition"
+      ],
+      "coreMetrics": [
+        "task success rate",
+        "variance",
+        "prompt length",
+        "cost"
+      ],
+      "next": [
+        "H/H1. 不改权重的控制/Prompt templates",
+        "H/H2. 监督式后训练/SFT"
+      ]
+    },
+    "H/H1. 不改权重的控制/System prompt": {
+      "status": "draft",
+      "definition": "System prompt 用来定义模型的长期角色、边界、优先级和默认行为，是多轮会话和统一产品行为的高层约束层。",
+      "importance": "它能把跨请求共享的规则稳定前置，减少用户输入对底层策略的扰动，也是安全边界和输出风格控制的重要入口。",
+      "minimumDemo": "让同一组用户请求分别在有和没有 system prompt 的条件下执行，比较越权率、格式成功率和行为一致性。",
+      "prerequisites": [
+        "J/J1. 模型接口层/System / user / tool messages",
+        "H/H1. 不改权重的控制/Prompt engineering"
+      ],
+      "coreMetrics": [
+        "behavior consistency",
+        "policy adherence",
+        "override resistance"
+      ],
+      "next": [
+        "H/H1. 不改权重的控制/Few-shot / in-context learning",
+        "H/H1. 不改权重的控制/Structured outputs"
+      ]
+    },
+    "H/H1. 不改权重的控制/Few-shot / in-context learning": {
+      "status": "draft",
+      "definition": "Few-shot / in-context learning 通过在上下文里提供少量示例，让模型临时适应目标分布、格式或决策边界，而不修改参数。",
+      "importance": "它常常能在零训练成本下显著提高格式稳定性和任务对齐度，尤其适合样本稀少、任务变化快的场景。",
+      "minimumDemo": "准备 0-shot、1-shot、3-shot 三组设置，对同一任务批量评测，观察性能提升何时开始被上下文成本抵消。",
+      "prerequisites": [
+        "G/G3. 上下文与记忆/上下文记忆（prompt context）",
+        "H/H1. 不改权重的控制/System prompt"
+      ],
+      "coreMetrics": [
+        "few-shot lift",
+        "context cost",
+        "format retention"
+      ],
+      "next": [
+        "H/H1. 不改权重的控制/Prompt templates",
+        "H/H2. 监督式后训练/Task-specific tuning"
+      ]
+    },
+    "H/H1. 不改权重的控制/Prompt templates": {
+      "status": "draft",
+      "definition": "Prompt templates 是把常用上下文槽位、规则段落和示例结构固化成可复用模板，减少临时拼接和人为遗漏。",
+      "importance": "模板化是把 prompt engineering 从一次性技巧变成工程资产的关键步骤，也是批量评测和线上稳定交付的前提。",
+      "minimumDemo": "把一组常见请求改造成模板渲染输入，比较模板化前后的复用效率、错误率和线上可观测性。",
+      "prerequisites": [
+        "H/H1. 不改权重的控制/Prompt engineering",
+        "J/J1. 模型接口层/Prompt composition"
+      ],
+      "coreMetrics": [
+        "template reuse rate",
+        "authoring error rate",
+        "consistency"
+      ],
+      "next": [
+        "H/H1. 不改权重的控制/Structured outputs",
+        "H/H1. 不改权重的控制/Tool schemas"
+      ]
+    },
+    "H/H1. 不改权重的控制/Structured outputs": {
+      "status": "draft",
+      "definition": "Structured outputs 指通过 JSON mode、JSON Schema 或 typed outputs 等方式，让模型输出满足预期结构而不是自由文本。",
+      "importance": "它是把模型结果可靠接进程序和工作流的关键控制层。没有结构约束，很多“看起来能用”的 demo 一进入真实系统就会被解析失败拖垮。",
+      "minimumDemo": "对同一批抽取任务分别使用自由生成与 schema 约束输出，统计 parse 成功率、字段完整率和重试次数。",
+      "prerequisites": [
+        "J/J2. 结构化输出/JSON Schema",
+        "H/H1. 不改权重的控制/Prompt templates"
+      ],
+      "coreMetrics": [
+        "parse success rate",
+        "schema adherence",
+        "retry rate"
+      ],
+      "next": [
+        "J/J2. 结构化输出/Validation",
+        "H/H1. 不改权重的控制/Tool schemas"
+      ]
+    },
+    "H/H1. 不改权重的控制/Tool schemas": {
+      "status": "draft",
+      "definition": "Tool schemas 用明确的函数签名、参数类型、字段说明和约束，把工具调用从模糊自然语言接口变成可验证的结构化接口。",
+      "importance": "模型是否会调用工具，不只取决于 function calling 能力，还强烈取决于 schema 是否清晰、边界是否明确、异常是否有约定。",
+      "minimumDemo": "对同一工具设计一版宽松 schema 和一版严格 schema，比较参数填充正确率、错误调用率和 fallback 次数。",
+      "prerequisites": [
+        "J/J3. 工具调用/Tool schema design",
+        "H/H1. 不改权重的控制/Structured outputs"
+      ],
+      "coreMetrics": [
+        "argument accuracy",
+        "tool call success rate",
+        "fallback rate"
+      ],
+      "next": [
+        "J/J3. 工具调用/Tool routing",
+        "H/H2. 监督式后训练/Tool / function-calling fine-tuning"
+      ]
+    }
   }
 }

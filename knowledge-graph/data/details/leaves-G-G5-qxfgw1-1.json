@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-G-G5-qxfgw1-1",
     "type": "leaf-batch",
     "label": "G5. 能力面 / Leaves",
@@ -25,18 +25,198 @@
       "多模态理解"
     ],
     "nodeCount": 10,
-    "filledNodeCount": 0
+    "filledNodeCount": 10
   },
   "nodes": {
-    "G/G5. 能力面/续写": {},
-    "G/G5. 能力面/指令跟随": {},
-    "G/G5. 能力面/摘要": {},
-    "G/G5. 能力面/翻译": {},
-    "G/G5. 能力面/归纳": {},
-    "G/G5. 能力面/提取": {},
-    "G/G5. 能力面/工具选择": {},
-    "G/G5. 能力面/多步推理": {},
-    "G/G5. 能力面/代码生成": {},
-    "G/G5. 能力面/多模态理解": {}
+    "G/G5. 能力面/续写": {
+      "status": "draft",
+      "definition": "续写是下一 token 预测最直接的外显能力，模型根据已有前缀延续语气、结构和内容模式。",
+      "importance": "它是很多生成能力的底层原型，也是理解“模型会顺着模式走”这一事实的最简单入口。",
+      "minimumDemo": "给同一前缀写几种不同长度和风格，观察模型如何顺势延续和何时开始跑偏。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Next-token prediction",
+        "G/G4. 生成与解码/Greedy"
+      ],
+      "coreMetrics": [
+        "coherence",
+        "local consistency",
+        "drift rate"
+      ],
+      "next": [
+        "G/G5. 能力面/摘要",
+        "G/G6. 局限面/受数据分布影响"
+      ]
+    },
+    "G/G5. 能力面/指令跟随": {
+      "status": "draft",
+      "definition": "指令跟随指模型把用户约束、格式要求和任务目标转成输出行为，而不是只做自由续写。",
+      "importance": "这是助手类系统最关键的能力之一，也是 SFT 和结构化生成最常想提升的一层。",
+      "minimumDemo": "设计一组有明确格式、长度和禁令约束的任务，测模型是否真的遵守。",
+      "prerequisites": [
+        "F/F6. 数据在系统中的角色/SFT 数据 → 决定任务风格与稳定性",
+        "G/G4. 生成与解码/Structured generation"
+      ],
+      "coreMetrics": [
+        "instruction adherence",
+        "constraint retention",
+        "format success"
+      ],
+      "next": [
+        "H/H2. 监督式后训练/SFT",
+        "J/J2. 结构化输出"
+      ]
+    },
+    "G/G5. 能力面/摘要": {
+      "status": "draft",
+      "definition": "摘要能力要求模型在压缩信息的同时保留关键信息和结构，不只是缩短文本长度。",
+      "importance": "它常被用作知识压缩、文档处理和会话回顾的基础能力，也很能暴露上下文选择和信息保真问题。",
+      "minimumDemo": "给一段长文本要求不同长度摘要，并检查信息遗漏和虚构补充。",
+      "prerequisites": [
+        "G/G3. 上下文与记忆/上下文记忆（prompt context）",
+        "G/G4. 生成与解码/Sampling"
+      ],
+      "coreMetrics": [
+        "faithfulness",
+        "coverage",
+        "compression ratio"
+      ],
+      "next": [
+        "E/E1. 语言（NLP / LLM）/摘要",
+        "G/G6. 局限面/幻觉"
+      ]
+    },
+    "G/G5. 能力面/翻译": {
+      "status": "draft",
+      "definition": "翻译能力是把语义跨语言迁移，同时尽量保持事实、语气和结构不变。",
+      "importance": "它能测试 tokenizer、多语言表示和指令控制是否真正稳定，而不仅仅是记住高频对照语句。",
+      "minimumDemo": "对多语言句子做双向翻译并检查专有名词、数字和格式保持情况。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Tokenization pipeline",
+        "G/G4. 生成与解码/Greedy"
+      ],
+      "coreMetrics": [
+        "adequacy",
+        "fluency",
+        "entity preservation"
+      ],
+      "next": [
+        "E/E1. 语言（NLP / LLM）/翻译",
+        "E/E3. 音频 / 语音/语音翻译"
+      ]
+    },
+    "G/G5. 能力面/归纳": {
+      "status": "draft",
+      "definition": "归纳能力指模型从多个样例或片段里提炼共性规律、模式和高层结论。",
+      "importance": "很多“看起来像推理”的任务其实更接近归纳总结，它对摘要、分类和分析类工作很常见。",
+      "minimumDemo": "给多条案例或日志，让模型总结共性问题和模式，再检查是否遗漏关键异类样本。",
+      "prerequisites": [
+        "G/G3. 上下文与记忆/上下文记忆（prompt context）",
+        "G/G5. 能力面/摘要"
+      ],
+      "coreMetrics": [
+        "pattern recall",
+        "abstraction quality",
+        "exception handling"
+      ],
+      "next": [
+        "B/B5. 推理/归纳推理",
+        "G/G6. 局限面/受数据分布影响"
+      ]
+    },
+    "G/G5. 能力面/提取": {
+      "status": "draft",
+      "definition": "提取能力要求模型从非结构化内容中抽出字段、实体、关系或结论，并尽量保持边界和格式稳定。",
+      "importance": "这是大模型进入工作流和业务系统最常见的能力之一，因为系统最终更需要结构化结果而不是自然语言解释。",
+      "minimumDemo": "对一批文本或文档要求输出固定 schema，统计 parse 成功率和字段正确率。",
+      "prerequisites": [
+        "G/G4. 生成与解码/Structured generation",
+        "J/J2. 结构化输出/JSON Schema"
+      ],
+      "coreMetrics": [
+        "field accuracy",
+        "schema adherence",
+        "parse success"
+      ],
+      "next": [
+        "E/E1. 语言（NLP / LLM）/结构化解析",
+        "E/E2. 视觉（CV）/OCR / 文档理解"
+      ]
+    },
+    "G/G5. 能力面/工具选择": {
+      "status": "draft",
+      "definition": "工具选择能力指模型判断什么时候该调用工具、该调哪个工具，以及什么时候不应该调工具。",
+      "importance": "很多 Agent 失败不是执行出错，而是根本选错了工具或不该调的时候硬调。",
+      "minimumDemo": "给一组需要与不需要工具的任务，检查模型是否做出正确路由选择。",
+      "prerequisites": [
+        "J/J3. 工具调用/Function calling",
+        "G/G4. 生成与解码/Structured generation"
+      ],
+      "coreMetrics": [
+        "tool selection accuracy",
+        "false tool call rate",
+        "abstain quality"
+      ],
+      "next": [
+        "J/J3. 工具调用/Tool routing",
+        "G/G6. 局限面/工具误用"
+      ]
+    },
+    "G/G5. 能力面/多步推理": {
+      "status": "draft",
+      "definition": "多步推理指模型在多个中间步骤之间维持一致约束，逐步得到更复杂结论，而不是靠单步模式匹配碰巧答对。",
+      "importance": "这是 reasoning model、planner/verifier 系统和复杂任务编排最常强调的能力层。",
+      "minimumDemo": "设计几道必须经过中间步骤才能答对的题，对比普通模式补全和显式推理设置的差异。",
+      "prerequisites": [
+        "G/G4. 生成与解码/Sampling",
+        "M/M1. 模型级评测/推理能力"
+      ],
+      "coreMetrics": [
+        "step consistency",
+        "final accuracy",
+        "test-time compute cost"
+      ],
+      "next": [
+        "G/G7. 模型类型细分/推理强化模型",
+        "G/G8. 推理模型与模型路由"
+      ]
+    },
+    "G/G5. 能力面/代码生成": {
+      "status": "draft",
+      "definition": "代码生成能力指模型根据说明、上下文和接口约束生成可运行或可编辑的代码片段、补丁和脚本。",
+      "importance": "它同时依赖语言建模、结构化约束、长上下文和工具整合，是检验模型工程可用性的高价值场景。",
+      "minimumDemo": "让模型针对一个明确接口生成小函数，并实际运行测试或静态检查。",
+      "prerequisites": [
+        "G/G3. 上下文与记忆/外部记忆（RAG / tools / stores）",
+        "J/J3. 工具调用/Function calling"
+      ],
+      "coreMetrics": [
+        "compile / run success",
+        "spec adherence",
+        "edit locality"
+      ],
+      "next": [
+        "E/E1. 语言（NLP / LLM）/代码生成与理解",
+        "K/K7. 工具与外部连接/File search / web search / code tools"
+      ]
+    },
+    "G/G5. 能力面/多模态理解": {
+      "status": "draft",
+      "definition": "多模态理解指模型把图像、音频、视频等非文本信号和文本问题联合起来做判断，而不是只看其中一个模态。",
+      "importance": "这是 VLM 和 omni 系统进入真实任务的基础，因为很多问题必须依赖跨模态证据才能答对。",
+      "minimumDemo": "构造必须联合图像+文本或音频+文本才能答对的样本，检查模型是否真正用到了非文本证据。",
+      "prerequisites": [
+        "E/E5. 多模态/视觉语言模型（VLM）",
+        "M/M1. 模型级评测/多模态能力"
+      ],
+      "coreMetrics": [
+        "groundedness",
+        "cross-modal consistency",
+        "answer accuracy"
+      ],
+      "next": [
+        "E/E5. 多模态/多模态推理",
+        "G/G6. 局限面/受提示与检索质量影响"
+      ]
+    }
   }
 }

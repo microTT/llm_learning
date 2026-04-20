@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-18",
+    "updatedAt": "2026-04-20",
     "shardId": "domain-D",
     "type": "domain-overview",
     "label": "D. 深度学习与基础模型 / 概览",
@@ -14,7 +14,7 @@
     "parentTitle": null,
     "leafTitles": [],
     "nodeCount": 7,
-    "filledNodeCount": 1
+    "filledNodeCount": 7
   },
   "nodes": {
     "D": {
@@ -78,11 +78,249 @@
         "D/D6. 规模化要素"
       ]
     },
-    "D/D1. 神经网络基础": {},
-    "D/D2. 架构家族": {},
-    "D/D3. 训练范式": {},
-    "D/D4. 基础模型类型": {},
-    "D/D5. 生成范式": {},
-    "D/D6. 规模化要素": {}
+    "D/D1. 神经网络基础": {
+      "status": "draft",
+      "definition": "神经网络基础关注的是一个可微分模型如何表示数据、如何前向计算、如何通过梯度更新参数，以及如何在训练过程中保持稳定、可复现和可恢复。这里的关键词包括张量、参数、前向/反向传播、autograd、激活函数、归一化、正则化、优化器和 checkpoint。",
+      "importance": "这是所有深度学习实践的公共底座。只要这层没有真正理解，后面看到 CNN、Transformer、扩散模型或大模型训练配方时，都会沦为背 API 和背术语。",
+      "minimumDemo": "用 PyTorch 写一个两层 MLP，手动打印张量形状、参数数量、前向输出、loss、梯度和 checkpoint 保存/恢复过程。",
+      "hardwareBudget": "CPU 即可完成最小实验。",
+      "examples": [
+        "手写一个最小 MLP",
+        "观察反向传播后的梯度",
+        "保存并恢复训练状态"
+      ],
+      "pitfalls": [
+        "把 autograd 当魔法，不理解计算图和梯度流",
+        "loss 下降就默认一切正常",
+        "忽视数值稳定性和 checkpoint 管理"
+      ],
+      "prerequisites": [
+        "A/A1. 数学基础/线性代数",
+        "A/A1. 数学基础/微积分与优化"
+      ],
+      "coreMetrics": [
+        "loss",
+        "梯度稳定性",
+        "训练吞吐",
+        "恢复成功率"
+      ],
+      "toolchain": [
+        "PyTorch",
+        "TensorBoard / W&B",
+        "checkpoint 管理"
+      ],
+      "failureSigns": [
+        "loss 不降或 NaN",
+        "梯度爆炸/消失",
+        "训练中断后无法恢复"
+      ],
+      "next": [
+        "D/D1. 神经网络基础/张量",
+        "D/D1. 神经网络基础/反向传播",
+        "D/D1. 神经网络基础/Optimizer",
+        "D/D2. 架构家族"
+      ]
+    },
+    "D/D2. 架构家族": {
+      "status": "draft",
+      "definition": "架构家族关注的是神经网络如何组织计算结构以适配不同数据形态与任务：MLP 适合一般表征映射，CNN 强于局部感受野，RNN/SSM 擅长序列状态更新，Transformer 擅长长程依赖和并行训练，Diffusion 擅长高质量生成，MoE 擅长扩展参数容量，GNN 擅长图结构建模。",
+      "importance": "理解架构家族不是为了死记硬背模型名，而是为了知道：面对图像、语言、音频、图结构或生成任务时，为什么某一类结构更自然、更高效或更容易扩展。",
+      "minimumDemo": "选一个简单任务，用 MLP、CNN 或 Transformer 中至少两种结构跑对照实验，比较参数量、训练速度和效果差异。",
+      "hardwareBudget": "CPU 可做最小实验；较复杂结构更适合单 GPU。",
+      "examples": [
+        "CNN 做图像分类",
+        "Transformer 做语言建模",
+        "Diffusion 做图像生成"
+      ],
+      "pitfalls": [
+        "把架构流行度当成选择理由",
+        "忽略输入结构和任务约束",
+        "只看论文名字不看计算特性"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础",
+        "C/C2. 学习范式"
+      ],
+      "coreMetrics": [
+        "任务指标",
+        "参数量",
+        "吞吐",
+        "显存占用"
+      ],
+      "toolchain": [
+        "PyTorch",
+        "Transformers",
+        "Diffusers"
+      ],
+      "failureSigns": [
+        "换了更复杂架构但收益极低",
+        "模型结构和数据形态天然不匹配"
+      ],
+      "next": [
+        "D/D2. 架构家族/MLP",
+        "D/D2. 架构家族/CNN",
+        "D/D2. 架构家族/Transformer",
+        "D/D5. 生成范式"
+      ]
+    },
+    "D/D3. 训练范式": {
+      "status": "draft",
+      "definition": "训练范式关注的是模型用什么数据起点、以什么目标和流程学习能力，以及训练后如何继续适配任务。它包括从头训练、预训练、微调、多任务训练、迁移学习、蒸馏、自训练/伪标签和 staged training 等路线。",
+      "importance": "同一个架构因为训练范式不同，最后能表现出的能力可能完全不同。理解训练范式，才能解释为什么有的模型适合通用能力积累，有的更适合任务迁移，有的更适合低成本部署。",
+      "minimumDemo": "选一个小模型，分别做一次从头训练和一次基于预训练权重的微调，对比样本效率和收敛速度。",
+      "hardwareBudget": "CPU 可做最小实验；预训练和较大微调通常需要 GPU。",
+      "examples": [
+        "BERT 预训练后做任务微调",
+        "vision backbone 迁移到检测任务",
+        "教师模型蒸馏到小模型"
+      ],
+      "pitfalls": [
+        "不区分从头训练和迁移学习成本",
+        "把微调当成唯一适配方式",
+        "只看训练 loss，不看迁移与上线收益"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础/Optimizer",
+        "C/C2. 学习范式"
+      ],
+      "coreMetrics": [
+        "样本效率",
+        "收敛速度",
+        "迁移增益",
+        "部署成本"
+      ],
+      "toolchain": [
+        "training scripts",
+        "checkpoint loading",
+        "eval set"
+      ],
+      "failureSigns": [
+        "训练跑了很久但迁移收益很小",
+        "从头训练和微调的策略边界模糊"
+      ],
+      "next": [
+        "D/D3. 训练范式/预训练",
+        "D/D3. 训练范式/微调",
+        "D/D3. 训练范式/蒸馏",
+        "H/H2. 监督式后训练"
+      ]
+    },
+    "D/D4. 基础模型类型": {
+      "status": "draft",
+      "definition": "基础模型类型描述的是大规模预训练后形成的通用能力底座按模态和世界交互方式如何分类，包括文本、视觉、语音/音频、视频、多模态以及更前沿的具身/世界模型。",
+      "importance": "理解基础模型类型，才能知道不同能力边界是怎样从数据模态和训练目标里长出来的，也能帮助判断系统该接哪类模型而不是泛泛地说“接个大模型”。",
+      "minimumDemo": "选几个公开模型，对比文本、视觉和多模态基础模型的输入输出接口、训练语料和典型任务。",
+      "hardwareBudget": "理解层面不高；真实部署取决于模态和模型规模。",
+      "examples": [
+        "文本 LLM",
+        "视觉 foundation model",
+        "多模态理解与生成模型"
+      ],
+      "pitfalls": [
+        "按产品包装而不是按模态能力理解模型",
+        "把所有基础模型都当作文本模型的变体"
+      ],
+      "prerequisites": [
+        "D/D2. 架构家族",
+        "D/D3. 训练范式/预训练"
+      ],
+      "coreMetrics": [
+        "模态覆盖",
+        "任务迁移能力",
+        "部署成本"
+      ],
+      "toolchain": [
+        "model cards",
+        "inference runtimes"
+      ],
+      "failureSigns": [
+        "模型接口能跑，但任务模态和训练偏置根本不匹配"
+      ],
+      "next": [
+        "D/D4. 基础模型类型/文本基础模型",
+        "D/D4. 基础模型类型/视觉基础模型",
+        "D/D4. 基础模型类型/多模态基础模型",
+        "E/E1. 语言（NLP / LLM）"
+      ]
+    },
+    "D/D5. 生成范式": {
+      "status": "draft",
+      "definition": "生成范式关注模型是如何一步步构造输出的。主流路线包括自回归生成、编码—解码生成、扩散生成，以及在这些主干上叠加条件与控制机制。",
+      "importance": "生成范式决定了模型的输出方式、速度、可控性和适配任务。理解它，才能解释为什么语言模型常用自回归，而图像系统常用扩散，为什么有些系统更快，有些系统更可控。",
+      "minimumDemo": "比较一个自回归文本生成示例和一个扩散图像生成示例，观察输出过程、速度和控制接口的差异。",
+      "hardwareBudget": "CPU 可做文本最小实验；图像扩散更适合 GPU。",
+      "examples": [
+        "LLM 逐 token 生成",
+        "seq2seq 翻译",
+        "文生图扩散采样"
+      ],
+      "pitfalls": [
+        "把生成范式和具体模型名字混为一谈",
+        "只看质量，不看生成速度和控制能力"
+      ],
+      "prerequisites": [
+        "D/D2. 架构家族/Transformer",
+        "D/D2. 架构家族/Diffusion models"
+      ],
+      "coreMetrics": [
+        "生成质量",
+        "延迟",
+        "控制一致性"
+      ],
+      "toolchain": [
+        "sampling configs",
+        "generation APIs"
+      ],
+      "failureSigns": [
+        "输出质量可接受但延迟或可控性完全不达标"
+      ],
+      "next": [
+        "D/D5. 生成范式/自回归生成",
+        "D/D5. 生成范式/扩散生成",
+        "D/D5. 生成范式/控制生成"
+      ]
+    },
+    "D/D6. 规模化要素": {
+      "status": "draft",
+      "definition": "规模化要素描述的是模型能力、成本和系统复杂度如何随着数据规模、参数规模、训练算力、上下文长度、训练时长和系统优化一起变化。",
+      "importance": "大模型时代的很多现象都不能只用“架构更强”解释，真正起决定作用的是规模化配方和系统工程。理解这层，才能正确评估收益、成本和边界条件。",
+      "minimumDemo": "比较同一架构在不同数据量、参数量或上下文长度下的效果与资源消耗曲线，建立最基本的 scaling 直觉。",
+      "hardwareBudget": "理解层面不需要额外预算；真实实验常受 GPU、显存和系统吞吐限制。",
+      "examples": [
+        "更长上下文带来更高显存成本",
+        "参数变大但需要更强 serving 优化",
+        "数据规模提升改善泛化"
+      ],
+      "pitfalls": [
+        "只增加参数不增加数据或系统能力",
+        "忽视 serving 阶段的瓶颈",
+        "把规模化收益当成无限线性增长"
+      ],
+      "prerequisites": [
+        "D/D1. 神经网络基础",
+        "D/D2. 架构家族/Transformer"
+      ],
+      "coreMetrics": [
+        "tokens/s",
+        "显存占用",
+        "训练时长",
+        "推理延迟"
+      ],
+      "toolchain": [
+        "distributed training",
+        "serving runtimes",
+        "profilers"
+      ],
+      "failureSigns": [
+        "能力增长低于资源增长",
+        "训练或推理的系统瓶颈压过模型本身收益"
+      ],
+      "next": [
+        "D/D6. 规模化要素/参数规模",
+        "D/D6. 规模化要素/上下文长度",
+        "D/D6. 规模化要素/系统优化",
+        "L/L3. 推理优化"
+      ]
+    }
   }
 }

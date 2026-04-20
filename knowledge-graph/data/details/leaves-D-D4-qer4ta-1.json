@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-D-D4-qer4ta-1",
     "type": "leaf-batch",
     "label": "D4. 基础模型类型 / Leaves",
@@ -21,14 +21,218 @@
       "具身/世界模型（更偏前沿与系统）"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "D/D4. 基础模型类型/文本基础模型": {},
-    "D/D4. 基础模型类型/视觉基础模型": {},
-    "D/D4. 基础模型类型/语音 / 音频基础模型": {},
-    "D/D4. 基础模型类型/视频基础模型": {},
-    "D/D4. 基础模型类型/多模态基础模型": {},
-    "D/D4. 基础模型类型/具身/世界模型（更偏前沿与系统）": {}
+    "D/D4. 基础模型类型/文本基础模型": {
+      "status": "draft",
+      "definition": "文本基础模型是在海量文本语料上预训练形成的通用语言能力底座，通常以 Transformer 自回归或编码器/解码器结构实现。",
+      "importance": "它们是 LLM 应用的直接基础，也推动了问答、对话、代码、检索增强生成等大量系统能力。",
+      "minimumDemo": "比较一个 base LLM 和一个经过任务微调的模型在问答或分类任务上的差异。",
+      "hardwareBudget": "推理可从本地小模型到云 API；训练通常成本较高。",
+      "examples": [
+        "通用 LLM",
+        "代码模型",
+        "领域语言模型"
+      ],
+      "pitfalls": [
+        "把所有文本模型都视为对话模型",
+        "不区分基础模型和经过对齐的助手模型"
+      ],
+      "prerequisites": [
+        "D/D2. 架构家族/Transformer",
+        "D/D3. 训练范式/预训练"
+      ],
+      "coreMetrics": [
+        "语言能力",
+        "推理能力",
+        "上下文长度"
+      ],
+      "toolchain": [
+        "Transformers",
+        "vLLM / API runtimes"
+      ],
+      "failureSigns": [
+        "模型能续写但不擅长任务遵循"
+      ],
+      "next": [
+        "E/E1. 语言（NLP / LLM）/LLM：通用语言能力模型",
+        "J/J1. 模型接口层/Chat / responses"
+      ]
+    },
+    "D/D4. 基础模型类型/视觉基础模型": {
+      "status": "draft",
+      "definition": "视觉基础模型是在大规模图像或视觉-文本数据上训练得到的通用视觉表示或生成底座，可迁移到分类、检测、分割和生成任务。",
+      "importance": "它让视觉任务从“每个任务单独训一个模型”逐步转向“通用 backbone + 任务适配”。",
+      "minimumDemo": "对比一个通用视觉 backbone 在分类与分割任务上的迁移表现。",
+      "hardwareBudget": "推理可单 GPU；训练成本随分辨率和数据规模上升。",
+      "examples": [
+        "ViT backbone",
+        "CLIP-style visual encoder",
+        "图像生成 backbone"
+      ],
+      "pitfalls": [
+        "只看单一视觉 benchmark",
+        "忽略分辨率和预处理约束"
+      ],
+      "prerequisites": [
+        "D/D2. 架构家族/CNN",
+        "D/D2. 架构家族/Transformer"
+      ],
+      "coreMetrics": [
+        "图像任务迁移能力",
+        "分辨率成本"
+      ],
+      "toolchain": [
+        "vision frameworks"
+      ],
+      "failureSigns": [
+        "迁移到下游视觉任务时收益不稳定"
+      ],
+      "next": [
+        "E/E2. 视觉（CV）/图像分类",
+        "E/E2. 视觉（CV）/图像生成"
+      ]
+    },
+    "D/D4. 基础模型类型/语音 / 音频基础模型": {
+      "status": "draft",
+      "definition": "语音/音频基础模型在海量语音、音频或语音-文本对数据上学习通用音频表示，可迁移到识别、说话人、翻译和生成任务。",
+      "importance": "它把音频建模从任务特定系统推进到更统一的表示底座，也支撑了端到端 ASR、TTS 和语音到语音系统。",
+      "minimumDemo": "比较同一个语音 backbone 在 ASR 和音频分类任务上的迁移能力。",
+      "hardwareBudget": "中等 GPU 更适合实用实验。",
+      "examples": [
+        "ASR foundation model",
+        "音频 encoder",
+        "TTS backbone"
+      ],
+      "pitfalls": [
+        "忽视采样率、时长和语种分布",
+        "把语音与一般音频任务混为一谈"
+      ],
+      "prerequisites": [
+        "D/D2. 架构家族/RNN / LSTM / GRU",
+        "D/D2. 架构家族/Transformer"
+      ],
+      "coreMetrics": [
+        "WER / CER",
+        "语音生成自然度",
+        "迁移能力"
+      ],
+      "toolchain": [
+        "speech frameworks"
+      ],
+      "failureSigns": [
+        "跨语种或长音频性能骤降"
+      ],
+      "next": [
+        "E/E3. 音频 / 语音/自动语音识别（ASR）",
+        "E/E3. 音频 / 语音/文本转语音（TTS）"
+      ]
+    },
+    "D/D4. 基础模型类型/视频基础模型": {
+      "status": "draft",
+      "definition": "视频基础模型在时空连续信号上学习通用表示或生成能力，关注画面、动作和时间演化。",
+      "importance": "视频把视觉从静态图像推进到时序世界，是理解时空建模和未来视频生成系统的重要入口。",
+      "minimumDemo": "阅读一个视频模型的输入组织方式，理解帧、时间窗和时空注意力如何组合。",
+      "hardwareBudget": "通常比图像更高，因时空维度带来显著成本。",
+      "examples": [
+        "视频理解模型",
+        "视频生成模型"
+      ],
+      "pitfalls": [
+        "低估视频数据与训练成本",
+        "把逐帧图像模型简单拼接当成视频模型"
+      ],
+      "prerequisites": [
+        "D/D2. 架构家族/Transformer",
+        "D/D6. 规模化要素/训练算力"
+      ],
+      "coreMetrics": [
+        "时空一致性",
+        "生成连贯性",
+        "训练成本"
+      ],
+      "toolchain": [
+        "video datasets",
+        "spatiotemporal models"
+      ],
+      "failureSigns": [
+        "短片段可用，长时序完全不稳定"
+      ],
+      "next": [
+        "D/D5. 生成范式/扩散生成",
+        "D/D6. 规模化要素/训练算力"
+      ]
+    },
+    "D/D4. 基础模型类型/多模态基础模型": {
+      "status": "draft",
+      "definition": "多模态基础模型把文本、图像、音频、视频等不同模态映射到共享或可对齐的表示空间中，支持跨模态理解、生成和交互。",
+      "importance": "它是现代 AI 系统从单模态走向统一智能接口的核心方向，也直接支撑了 VLM、语音助手和 agent with perception。",
+      "minimumDemo": "比较一个纯文本模型和一个视觉语言模型的输入输出接口与任务覆盖差异。",
+      "hardwareBudget": "通常高于单模态模型，因输入更复杂。",
+      "examples": [
+        "VLM",
+        "语音到文本多模态交互",
+        "图文检索和问答"
+      ],
+      "pitfalls": [
+        "以为多模态只是把多个模型拼起来",
+        "忽略不同模态数据质量差异"
+      ],
+      "prerequisites": [
+        "D/D2. 架构家族/Transformer",
+        "D/D3. 训练范式/多任务训练"
+      ],
+      "coreMetrics": [
+        "跨模态对齐质量",
+        "任务覆盖面",
+        "系统复杂度"
+      ],
+      "toolchain": [
+        "multi-modal training stack"
+      ],
+      "failureSigns": [
+        "单模态都正常，但跨模态时明显失真"
+      ],
+      "next": [
+        "E/E5. 多模态",
+        "K/K2. 执行形态/Hybrid system"
+      ]
+    },
+    "D/D4. 基础模型类型/具身/世界模型（更偏前沿与系统）": {
+      "status": "draft",
+      "definition": "具身/世界模型尝试学习环境动力学、行动结果和长期交互结构，以支持机器人、模拟代理和更强的环境理解。",
+      "importance": "它代表了从“预测文本/图像”走向“预测世界与行动后果”的方向，是前沿系统能力的重要探索路径。",
+      "minimumDemo": "从概念上比较文本基础模型和世界模型在输入、反馈和目标上的差异。",
+      "hardwareBudget": "通常很高，尤其涉及仿真和真实交互数据时。",
+      "examples": [
+        "robotics policy models",
+        "world model planners"
+      ],
+      "pitfalls": [
+        "把前沿概念当成已成熟工程范式",
+        "忽略仿真与现实差距"
+      ],
+      "prerequisites": [
+        "C/C2. 学习范式/强化学习",
+        "D/D4. 基础模型类型/多模态基础模型"
+      ],
+      "coreMetrics": [
+        "任务完成率",
+        "规划一致性",
+        "交互稳定性"
+      ],
+      "toolchain": [
+        "simulators",
+        "robotics stacks"
+      ],
+      "failureSigns": [
+        "离线世界建模很好，真实环境却失效"
+      ],
+      "next": [
+        "K/K10. Agent 形态分支/Research agent",
+        "E/E7. 机器人与具身智能"
+      ]
+    }
   }
 }

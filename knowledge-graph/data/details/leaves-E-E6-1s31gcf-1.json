@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-E-E6-1s31gcf-1",
     "type": "leaf-batch",
     "label": "E6. 决策与强化学习 / Leaves",
@@ -25,10 +25,10 @@
   },
   "nodes": {
     "E/E6. 决策与强化学习/策略学习": {
-      "status": "seed",
-      "definition": "策略学习关心的是在状态下选什么动作，核心对象是 policy 而不是单次分类器。",
-      "importance": "它决定系统会不会在连续决策里形成稳定行为，是 RL 分支的中心节点。",
-      "minimumDemo": "在一个简单环境里训练策略，记录 episode return 和训练过程中的探索行为。",
+      "status": "draft",
+      "definition": "策略学习关心的是在状态下选什么动作，核心对象是 policy 而不是单次分类器或静态打分器。",
+      "importance": "它决定系统会不会在连续决策里形成稳定行为，是 RL 分支的中心节点，也是从“预测”走向“行动”的关键跃迁。",
+      "minimumDemo": "在一个简单环境里训练策略，记录 episode return、策略熵和训练过程中的探索行为，再分析策略为何学到当前动作偏好。",
       "hardwareBudget": "许多小环境 CPU 即可，复杂环境和大模型策略需要 GPU。",
       "prerequisites": [
         "E/E6. 决策与强化学习",
@@ -56,10 +56,10 @@
       ]
     },
     "E/E6. 决策与强化学习/值函数": {
-      "status": "seed",
-      "definition": "值函数估计某个状态或状态—动作对未来能拿到多少回报，是很多 RL 方法的评估核心。",
-      "importance": "它让系统不只看眼前奖励，而开始估计长期后果，是规划和学习之间的关键桥梁。",
-      "minimumDemo": "对一个小环境学习 state value 或 Q value，并可视化不同状态下的估计差异。",
+      "status": "draft",
+      "definition": "值函数估计某个状态或状态—动作对未来能拿到多少回报，是很多 RL 方法评估长期收益的核心组件。",
+      "importance": "它让系统不只看眼前奖励，而开始估计长期后果，是规划、bootstrapping 和策略改进之间的关键桥梁。",
+      "minimumDemo": "对一个小环境学习 state value 或 Q value，并可视化不同状态下的估计差异与误差传播。",
       "hardwareBudget": "小规模环境成本可控；高维状态空间更吃算力和数据。",
       "prerequisites": [
         "E/E6. 决策与强化学习",
@@ -86,10 +86,10 @@
       ]
     },
     "E/E6. 决策与强化学习/奖励设计": {
-      "status": "seed",
+      "status": "draft",
       "definition": "奖励设计决定系统到底在被优化什么，是 RL 里最容易把“看起来有效”做成“实际偏航”的地方。",
-      "importance": "很多 RL 失败根本不是模型不会学，而是奖励函数写错了，或者只覆盖了局部目标。",
-      "minimumDemo": "给同一环境设计两版 reward，观察策略学到的行为差异，并分析 reward hacking。",
+      "importance": "很多 RL 失败根本不是模型不会学，而是奖励函数写错了、目标代理不完整，或只覆盖了局部目标而忽略安全与长期效果。",
+      "minimumDemo": "给同一环境设计两版 reward，观察策略学到的行为差异，并专门分析 reward hacking 和 unintended shortcut。",
       "hardwareBudget": "主要成本来自仿真、反复实验和线上验证，而不只是 GPU。",
       "prerequisites": [
         "E/E6. 决策与强化学习",
@@ -117,10 +117,10 @@
       ]
     },
     "E/E6. 决策与强化学习/探索/利用": {
-      "status": "seed",
-      "definition": "探索/利用权衡讨论的是系统何时继续尝试新动作，何时利用当前看起来最优的策略。",
-      "importance": "它直接决定学习速度、样本效率和线上风险，也是 RL 与产品策略经常冲突的地方。",
-      "minimumDemo": "对比不同探索策略在同一环境下的收敛速度和最终表现。",
+      "status": "draft",
+      "definition": "探索/利用权衡讨论的是系统何时继续尝试新动作，何时利用当前看起来最优的策略，以及这种权衡会如何影响风险与学习效率。",
+      "importance": "它直接决定学习速度、样本效率和线上风险，也是 RL 与产品策略经常冲突的地方，因为真实系统不可能无限制试错。",
+      "minimumDemo": "对比不同探索策略在同一环境下的收敛速度、最终表现和累计 regret。",
       "hardwareBudget": "计算成本往往不是最大问题，试错成本和风险控制更关键。",
       "prerequisites": [
         "E/E6. 决策与强化学习",
@@ -148,10 +148,10 @@
       ]
     },
     "E/E6. 决策与强化学习/在线交互决策": {
-      "status": "seed",
+      "status": "draft",
       "definition": "在线交互决策强调系统在真实反馈回路里持续更新，而不是只在静态数据集上离线训练。",
-      "importance": "一旦进入线上，延迟、风险、策略漂移和人类反馈都会成为系统本身的一部分。",
-      "minimumDemo": "用一个带在线反馈的仿真或 A/B 环境，比较离线最优策略和在线适应策略的差异。",
+      "importance": "一旦进入线上，延迟、风险、策略漂移、人类反馈和回滚机制都会成为系统本身的一部分，算法选择不再能脱离产品和安全边界。",
+      "minimumDemo": "用一个带在线反馈的仿真或 A/B 环境，比较离线最优策略和在线适应策略的差异，并观察回滚与保护机制什么时候被触发。",
       "hardwareBudget": "线上成本和风险管理通常比单纯训练算力更关键。",
       "prerequisites": [
         "E/E6. 决策与强化学习",
@@ -180,10 +180,10 @@
       ]
     },
     "E/E6. 决策与强化学习/模拟环境学习": {
-      "status": "seed",
+      "status": "draft",
       "definition": "模拟环境学习通过 simulator 或 world model 在低风险环境里试错，是 RL 和机器人系统降低真实交互成本的常见方式。",
-      "importance": "没有 simulator，很多 RL/机器人任务根本无法高频迭代；但 simulator 做得不好又会带来 sim-to-real 偏差。",
-      "minimumDemo": "在 simulator 中训练一个策略，再比较它和真实环境或验证环境里的行为差异。",
+      "importance": "没有 simulator，很多 RL/机器人任务根本无法高频迭代；但 simulator 做得不好又会带来显著 sim-to-real 偏差。",
+      "minimumDemo": "在 simulator 中训练一个策略，再比较它和真实环境或验证环境里的行为差异，特别关注策略是否依赖了仿真中的伪规律。",
       "hardwareBudget": "会持续消耗 CPU/GPU 和存储；环境越复杂，成本越接近训练模型本身。",
       "prerequisites": [
         "E/E6. 决策与强化学习",

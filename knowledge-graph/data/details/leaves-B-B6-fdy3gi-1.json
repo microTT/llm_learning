@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-B-B6-fdy3gi-1",
     "type": "leaf-batch",
     "label": "B6. 规划 / Leaves",
@@ -21,14 +21,269 @@
       "Plan verification"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "B/B6. 规划/Goal-based planning": {},
-    "B/B6. 规划/Task planning": {},
-    "B/B6. 规划/Symbolic planning": {},
-    "B/B6. 规划/Plan search": {},
-    "B/B6. 规划/Multi-step planning": {},
-    "B/B6. 规划/Plan verification": {}
+    "B/B6. 规划/Goal-based planning": {
+      "status": "draft",
+      "definition": "Goal-based planning 以显式目标状态为起点，围绕“如何从当前状态达到目标”来构造动作序列。它强调目标条件、动作前置条件和状态转移，而不一定先做复杂任务分解。",
+      "importance": "这是规划最基本的切入点，适合目标清晰、动作模型相对稳定的问题。很多机器人路径规划、流程自动化和 plan-then-act agent 都从这里起步。",
+      "minimumDemo": "在钥匙-门-终点世界里定义目标为到达出口，动作包括拿钥匙、开门、移动，输出一条满足目标的动作链。",
+      "hardwareBudget": "CPU 即可；普通笔记本足够。",
+      "examples": [
+        "导航到指定位置",
+        "完成一组明确前置条件的工作流",
+        "从当前系统状态恢复到健康状态"
+      ],
+      "pitfalls": [
+        "目标定义太宽或太窄",
+        "动作效果描述不准确",
+        "忽视执行过程中的环境变化"
+      ],
+      "prerequisites": [
+        "B/B1. 智能体观/目标（Goal）",
+        "B/B1. 智能体观/动作（Action）",
+        "B/B2. 搜索"
+      ],
+      "coreMetrics": [
+        "目标达成率",
+        "计划长度",
+        "计划生成时间",
+        "执行成功率"
+      ],
+      "toolchain": [
+        "状态转移模拟器",
+        "planner",
+        "可视化脚本"
+      ],
+      "failureSigns": [
+        "目标能描述但行动链经常断",
+        "生成计划过度冗长",
+        "环境轻微变化就失败"
+      ],
+      "next": [
+        "B/B6. 规划/Plan search",
+        "B/B6. 规划/Plan verification",
+        "K/K3. 单 Agent 模式/Plan-then-act"
+      ]
+    },
+    "B/B6. 规划/Task planning": {
+      "status": "draft",
+      "definition": "Task planning 更强调把高层任务拆成可执行子任务，再为每个子任务安排动作或工具。它通常比纯 goal-based planning 更接近真实工作流和 Agent 编排。",
+      "importance": "一旦任务不再只是到达某个状态，而是包含多个阶段、子目标和角色协同，任务规划就成为核心。现代 agent task decomposition、workflow automation 和 manager-worker 结构都与此直接相关。",
+      "minimumDemo": "给一个“整理会议资料并发送摘要”的目标，先拆成检索资料、提炼摘要、生成邮件、发送确认等子任务，再为每步定义输入输出和执行条件。",
+      "hardwareBudget": "CPU 即可；普通笔记本足够。",
+      "examples": [
+        "Agent 多步任务拆解",
+        "流程自动化中的任务编排",
+        "机器人任务序列安排"
+      ],
+      "pitfalls": [
+        "任务拆得过细，编排成本太高",
+        "任务边界模糊，责任不清",
+        "分解后无法映射到真实动作或工具"
+      ],
+      "prerequisites": [
+        "B/B6. 规划/Goal-based planning",
+        "B/B5. 推理/演绎推理"
+      ],
+      "coreMetrics": [
+        "子任务完成率",
+        "分解深度",
+        "跨步依赖错误数",
+        "总执行时间"
+      ],
+      "toolchain": [
+        "任务图",
+        "工作流编排器",
+        "状态机",
+        "日志"
+      ],
+      "failureSigns": [
+        "子任务顺序经常错乱",
+        "每步都能做，但整体任务做不完",
+        "重试和恢复路径缺失"
+      ],
+      "next": [
+        "B/B6. 规划/Multi-step planning",
+        "K/K4. 多 Agent 模式/Manager / worker",
+        "K/K5. 图式编排/Conditional branches"
+      ]
+    },
+    "B/B6. 规划/Symbolic planning": {
+      "status": "draft",
+      "definition": "Symbolic planning 用显式符号状态、动作 schema、前置条件和效果来构造计划，通常依赖 PDDL 这类形式化表示。它强调语义清晰、可验证和可搜索。",
+      "importance": "它是经典规划最标准的工程表达方式，也是把世界模型、动作模型和求解器清晰解耦的关键。很多 hybrid agent 系统虽然表面上由 LLM 驱动，底层仍会借鉴符号规划的动作约束与计划校验思想。",
+      "minimumDemo": "用 PDDL 定义一个小型搬运任务域和问题实例，调用 planner 生成计划，再检查每步前置条件和状态变化。",
+      "hardwareBudget": "CPU 即可；普通笔记本足够。",
+      "examples": [
+        "机器人搬运和装配",
+        "离散流程规划",
+        "复杂操作流程的可执行建模"
+      ],
+      "pitfalls": [
+        "动作 schema 设计与真实执行脱节",
+        "域建模过重，维护困难",
+        "环境动态变化无法及时吸收"
+      ],
+      "prerequisites": [
+        "B/B4. 知识表示/符号表示",
+        "B/B6. 规划/Goal-based planning",
+        "B/B3. 约束满足与组合问题/变量、域、约束"
+      ],
+      "coreMetrics": [
+        "planner 成功率",
+        "计划最优性或成本",
+        "动作模型覆盖率",
+        "可执行一致性"
+      ],
+      "toolchain": [
+        "PDDL",
+        "Fast Downward",
+        "pyperplan",
+        "状态模拟器"
+      ],
+      "failureSigns": [
+        "planner 频繁找不到明明存在的计划",
+        "计划生成成功但执行失败",
+        "动作 schema 维护越来越脆"
+      ],
+      "next": [
+        "B/B6. 规划/Plan search",
+        "B/B6. 规划/Plan verification",
+        "B/B9. 经典 AI 与现代 AI 的连接点/规划 → Agent task decomposition"
+      ]
+    },
+    "B/B6. 规划/Plan search": {
+      "status": "draft",
+      "definition": "Plan search 是把规划问题显式转成搜索问题，在候选动作序列、部分计划或状态空间上寻找最优或可行计划。它把规划和搜索直接接上，是很多 planner 的核心内核。",
+      "importance": "它解释了为什么搜索技巧能直接提升规划效果，也让 A*、启发式和剪枝自然进入规划场景。现代 tree search agent 在本质上也常常是在做某种 plan search。",
+      "minimumDemo": "在小型 PDDL 或网格任务上，把每个状态和合法动作显式展开，并用 A* 或 Uniform Cost Search 找到计划，比较不同启发式下的搜索开销。",
+      "hardwareBudget": "CPU 即可；普通笔记本足够。",
+      "examples": [
+        "A* 规划",
+        "部分计划搜索",
+        "动作序列 tree search"
+      ],
+      "pitfalls": [
+        "状态表示过大导致搜索爆炸",
+        "启发式设计和真实目标脱节",
+        "把搜索路径当成可执行计划，缺少验证"
+      ],
+      "prerequisites": [
+        "B/B2. 搜索/启发式搜索/A*",
+        "B/B6. 规划/Goal-based planning"
+      ],
+      "coreMetrics": [
+        "扩展节点数",
+        "计划代价",
+        "求解时间",
+        "启发式有效性"
+      ],
+      "toolchain": [
+        "planner",
+        "优先队列",
+        "启发式函数",
+        "profile 工具"
+      ],
+      "failureSigns": [
+        "状态空间快速爆炸",
+        "找到计划但代价很差",
+        "启发式几乎不起作用"
+      ],
+      "next": [
+        "B/B6. 规划/Multi-step planning",
+        "B/B6. 规划/Plan verification",
+        "B/B9. 经典 AI 与现代 AI 的连接点/搜索 → 推理模型 / tree search / verifier"
+      ]
+    },
+    "B/B6. 规划/Multi-step planning": {
+      "status": "draft",
+      "definition": "Multi-step planning 强调跨多个阶段、工具或子目标维持一致的计划结构，不只是找到一步可行动作，而是让整个长链条在上下文、约束和状态演进上自洽。",
+      "importance": "现代 Agent 系统之所以难，往往就难在多步计划的稳定性。它把经典规划问题直接映射到今天的长任务执行、tool sequence、上下文压缩和重规划场景。",
+      "minimumDemo": "选一个 4 到 6 步的办公任务，例如收集信息、生成摘要、起草邮件、审查、发送，要求每步产出都能作为下一步输入，并在中间插入一个失败重试分支。",
+      "hardwareBudget": "CPU 即可；普通笔记本足够。",
+      "examples": [
+        "多工具工作流",
+        "复杂业务审批流程",
+        "长链路 agent 执行"
+      ],
+      "pitfalls": [
+        "每步局部最优，整体失败",
+        "中间状态丢失或被污染",
+        "没有重规划和恢复点"
+      ],
+      "prerequisites": [
+        "B/B6. 规划/Task planning",
+        "J/J4. 会话与状态/Context compaction",
+        "K/K5. 图式编排/Checkpoints"
+      ],
+      "coreMetrics": [
+        "端到端成功率",
+        "中途失败率",
+        "重规划次数",
+        "上下文丢失率"
+      ],
+      "toolchain": [
+        "工作流编排器",
+        "状态存储",
+        "checkpoint",
+        "trace"
+      ],
+      "failureSigns": [
+        "中间一步失败就整条链路报废",
+        "长流程中经常忘前文",
+        "恢复后状态不一致"
+      ],
+      "next": [
+        "K/K3. 单 Agent 模式/Plan-then-act",
+        "K/K5. 图式编排/Checkpoints",
+        "K/K9. Agent 观测与控制/Tracing"
+      ]
+    },
+    "B/B6. 规划/Plan verification": {
+      "status": "draft",
+      "definition": "Plan verification 是在计划生成后检查每一步是否满足前置条件、是否真的能产生预期效果，以及整个计划是否达到目标。它相当于给 planner 或 agent 增加一个独立的审查层。",
+      "importance": "没有验证的计划只是候选文本。计划验证是从“看起来对”到“真的可执行”的关键步骤，也是现代 verifier、critic、execution guard 和安全审计的重要结构前身。",
+      "minimumDemo": "为一个已生成的动作序列写检查器：逐步模拟执行，每一步都验证前置条件和效果，并在失败处给出具体原因和修复建议。",
+      "hardwareBudget": "CPU 即可；普通笔记本足够。",
+      "examples": [
+        "机器人动作序列校验",
+        "工作流执行前 dry-run",
+        "Agent tool plan 的静态检查"
+      ],
+      "pitfalls": [
+        "只检查语法，不检查语义可执行性",
+        "验证器和执行器使用两套不同模型",
+        "发现错误但没有反馈到重规划"
+      ],
+      "prerequisites": [
+        "B/B6. 规划/Goal-based planning",
+        "B/B5. 推理/演绎推理",
+        "B/B5. 推理/定理证明"
+      ],
+      "coreMetrics": [
+        "计划通过率",
+        "验证时间",
+        "发现错误的召回率",
+        "误报率"
+      ],
+      "toolchain": [
+        "模拟器",
+        "规则检查器",
+        "验证日志",
+        "dry-run 框架"
+      ],
+      "failureSigns": [
+        "验证通过但执行仍大量失败",
+        "验证器经常误报或漏报",
+        "错误位置无法准确定位"
+      ],
+      "next": [
+        "B/B9. 经典 AI 与现代 AI 的连接点/搜索 → 推理模型 / tree search / verifier",
+        "K/K3. 单 Agent 模式/Verification loop",
+        "M/M2. 应用级评测/Tool execution success"
+      ]
+    }
   }
 }

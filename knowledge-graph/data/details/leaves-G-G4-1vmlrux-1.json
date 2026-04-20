@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-20",
     "shardId": "leaves-G-G4-1vmlrux-1",
     "type": "leaf-batch",
     "label": "G4. 生成与解码 / Leaves",
@@ -22,15 +22,145 @@
       "Structured generation"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "G/G4. 生成与解码/Greedy": {},
-    "G/G4. 生成与解码/Sampling": {},
-    "G/G4. 生成与解码/Temperature": {},
-    "G/G4. 生成与解码/Top-k": {},
-    "G/G4. 生成与解码/Top-p": {},
-    "G/G4. 生成与解码/Stop conditions": {},
-    "G/G4. 生成与解码/Structured generation": {}
+    "G/G4. 生成与解码/Greedy": {
+      "status": "draft",
+      "definition": "Greedy decoding 每一步都选当前概率最高的 token，是最确定、最稳定、也最保守的解码方式。",
+      "importance": "它常用于抽取、分类、结构化输出等稳定性优先的任务，也是理解其它采样策略的基线。",
+      "minimumDemo": "对同一任务分别用 greedy 和 sampling 跑多次，比较输出方差和格式稳定性。",
+      "hardwareBudget": "不会显著增加额外计算，但可能因为保守而牺牲质量多样性。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Next-token prediction"
+      ],
+      "coreMetrics": [
+        "determinism",
+        "format stability",
+        "quality ceiling"
+      ],
+      "next": [
+        "G/G4. 生成与解码/Sampling",
+        "G/G4. 生成与解码/Structured generation"
+      ]
+    },
+    "G/G4. 生成与解码/Sampling": {
+      "status": "draft",
+      "definition": "Sampling 会按概率分布抽样，而不是总选最大值，从而引入多样性和探索空间。",
+      "importance": "它适合创意生成、开放式写作和需要多候选方案的场景，但也更容易放大幻觉和格式漂移。",
+      "minimumDemo": "固定输入，多次 sampling，观察答案多样性与错误率如何一起变化。",
+      "hardwareBudget": "计算开销接近 greedy，但会增加重试与评审成本。",
+      "prerequisites": [
+        "G/G4. 生成与解码/Greedy",
+        "G/G4. 生成与解码/Temperature"
+      ],
+      "coreMetrics": [
+        "output variance",
+        "diversity",
+        "error rate"
+      ],
+      "next": [
+        "G/G4. 生成与解码/Top-k",
+        "G/G4. 生成与解码/Top-p"
+      ]
+    },
+    "G/G4. 生成与解码/Temperature": {
+      "status": "draft",
+      "definition": "Temperature 通过重新缩放 logits 来控制概率分布的尖锐程度，温度越高，输出越发散；温度越低，输出越保守。",
+      "importance": "它是最常被直接调的解码旋钮之一，对输出稳定性、创意性和错误率都有显著影响。",
+      "minimumDemo": "把同一输入在 0、0.2、0.7、1.0 等温度下各跑几次，观察方差和格式错误率。",
+      "hardwareBudget": "本身几乎没有额外硬件成本。",
+      "prerequisites": [
+        "G/G4. 生成与解码/Sampling"
+      ],
+      "coreMetrics": [
+        "variance",
+        "hallucination rate",
+        "format break rate"
+      ],
+      "next": [
+        "G/G4. 生成与解码/Top-k",
+        "G/G4. 生成与解码/Top-p"
+      ]
+    },
+    "G/G4. 生成与解码/Top-k": {
+      "status": "draft",
+      "definition": "Top-k sampling 会先只保留概率最高的 k 个 token，再在其中抽样，从而限制极低概率 token 被选中。",
+      "importance": "它能在保留一定多样性的同时限制输出发散，是对 sampling 的一种约束手段。",
+      "minimumDemo": "保持温度不变，比较不同 k 值下的输出质量、重复和错误模式。",
+      "hardwareBudget": "开销很小，更多影响输出行为而不是计算量。",
+      "prerequisites": [
+        "G/G4. 生成与解码/Sampling"
+      ],
+      "coreMetrics": [
+        "candidate truncation",
+        "diversity",
+        "error control"
+      ],
+      "next": [
+        "G/G4. 生成与解码/Top-p",
+        "M/M1. 模型级评测/稳定性"
+      ]
+    },
+    "G/G4. 生成与解码/Top-p": {
+      "status": "draft",
+      "definition": "Top-p（nucleus sampling）会保留累计概率达到阈值 p 的最小 token 集合，再在其中抽样，因此比固定 k 更能自适应不同分布形状。",
+      "importance": "它是开放式生成里常见的默认选择之一，能在保证一定多样性的同时减少低概率噪声。",
+      "minimumDemo": "比较固定 top-k 和不同 top-p 设置在开放问答与创意生成中的差异。",
+      "hardwareBudget": "本身不显著增加硬件成本。",
+      "prerequisites": [
+        "G/G4. 生成与解码/Sampling"
+      ],
+      "coreMetrics": [
+        "adaptive candidate size",
+        "diversity",
+        "coherence"
+      ],
+      "next": [
+        "G/G4. 生成与解码/Stop conditions",
+        "M/M1. 模型级评测/稳定性"
+      ]
+    },
+    "G/G4. 生成与解码/Stop conditions": {
+      "status": "draft",
+      "definition": "Stop conditions 决定生成何时终止，例如遇到 stop token、达到最大长度、检测到结构结束或触发工具边界。",
+      "importance": "它直接影响截断、重复、过长输出和多轮协议是否稳定，是很多产品级 bug 的根源。",
+      "minimumDemo": "对同一结构化任务分别设置不同 stop 条件，比较截断、冗余和格式完整率。",
+      "hardwareBudget": "本身成本低，但会影响总 token 数和重试成本。",
+      "prerequisites": [
+        "G/G4. 生成与解码/Greedy",
+        "J/J2. 结构化输出/Validation"
+      ],
+      "coreMetrics": [
+        "truncate rate",
+        "over-generation rate",
+        "retry rate"
+      ],
+      "next": [
+        "J/J3. 工具调用/Tool execution",
+        "J/J2. 结构化输出/Error recovery"
+      ]
+    },
+    "G/G4. 生成与解码/Structured generation": {
+      "status": "draft",
+      "definition": "Structured generation 通过 JSON mode、schema、typed outputs 或 constrained decoding 把生成空间限制在预期结构内。",
+      "importance": "它是把“能说”变成“能稳定产出可消费结果”的关键机制，对工具调用、抽取、工作流编排都很重要。",
+      "minimumDemo": "让模型输出同一份 JSON，比较自由生成后再解析与直接结构化生成的成功率差异。",
+      "hardwareBudget": "本身不会大幅增加单次推理硬件成本，但会减少重试和后处理浪费。",
+      "prerequisites": [
+        "J/J2. 结构化输出/JSON mode",
+        "J/J2. 结构化输出/JSON Schema",
+        "J/J3. 工具调用/Tool schema design"
+      ],
+      "coreMetrics": [
+        "schema adherence",
+        "parse success rate",
+        "retry rate"
+      ],
+      "next": [
+        "J/J2. 结构化输出/Typed outputs",
+        "J/J3. 工具调用/Function calling"
+      ]
+    }
   }
 }
