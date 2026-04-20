@@ -1,87 +1,153 @@
-import { GRAPH_DEFAULT_CONFIG, attachDetailShards, buildRuntimeGraph } from "./graph-core.js";
+import {
+  attachDetailShards,
+  buildRuntimeGraph,
+  countConcepts,
+  getRelationDetailKey,
+  hasMeaningfulDetail,
+  normalizeDetailStatus,
+} from "./graph-core.js";
 
-let STAGES = GRAPH_DEFAULT_CONFIG.stages;
-let CROSSCUT_CODES = GRAPH_DEFAULT_CONFIG.crosscutCodes;
-let DOMAIN_GROUPS = GRAPH_DEFAULT_CONFIG.domainGroups;
-let DOMAIN_DISPLAY = GRAPH_DEFAULT_CONFIG.domainDisplay;
-let CROSSCUT_NOTES = GRAPH_DEFAULT_CONFIG.crosscutNotes;
-let STATUS_LABELS = GRAPH_DEFAULT_CONFIG.statusLabels;
+const G6 = globalThis.G6;
+const DEBUG_BRIDGE_ENABLED =
+  typeof window !== "undefined" &&
+  (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost");
 
-const DETAIL_TEXT_FIELDS = ["definition", "importance", "minimumDemo", "hardwareBudget"];
-const DETAIL_LIST_FIELDS = [
-  "examples",
-  "pitfalls",
-  "prerequisites",
-  "coreMetrics",
-  "toolchain",
-  "failureSigns",
-  "next",
-];
+const EDGE_LABELS = {
+  structure: "结构边",
+  prerequisite: "前置边",
+  next: "延展边",
+  relation: "关系挂接边",
+};
+
+const RELATION_COLORS = ["#c6b27b", "#8bc9b0", "#b5a6ea", "#8eb7e4", "#d7a27e"];
+const ZOOM_LIMITS = {
+  minAbsolute: 0.18,
+  minFitFactor: 0.92,
+  max: 2.8,
+};
+
+const LAYOUT = {
+  paddingX: 42,
+  paddingY: 40,
+  stageWidth: 470,
+  stageGap: 20,
+  domainX: 12,
+  moduleX: 148,
+  conceptX: 306,
+  conceptDepthIndent: 18,
+  domainWidth: 136,
+  domainMinWidth: 108,
+  domainHeight: 54,
+  moduleWidth: 190,
+  moduleMinWidth: 148,
+  moduleHeight: 68,
+  conceptWidth: 146,
+  conceptMinWidth: 102,
+  conceptHeight: 48,
+  relationWidth: 188,
+  relationMinWidth: 148,
+  relationHeight: 58,
+  relationColumns: 2,
+  relationColGap: 16,
+  relationRowGap: 16,
+  relationStartGap: 96,
+  domainGap: 40,
+  moduleGap: 14,
+  conceptGap: 8,
+  relationGroupGap: 28,
+};
 
 const elements = {
+  graphShell: document.querySelector(".graph-shell"),
   stats: document.getElementById("hero-stats"),
-  jumpbar: document.getElementById("jumpbar"),
-  roadmap: document.getElementById("roadmap"),
-  relationGrid: document.getElementById("relation-grid"),
+  graphLegend: document.getElementById("graph-legend"),
+  graphSurface: document.getElementById("graph-surface"),
+  graphCanvas: document.getElementById("graph-canvas"),
+  fullscreenAction: document.querySelector('[data-graph-action="fullscreen"]'),
   detailDrawer: document.getElementById("detail-drawer"),
   detailBackdrop: document.getElementById("detail-backdrop"),
   detailClose: document.getElementById("detail-close"),
-  detailPanel: document.getElementById("detail-panel"),
   detailPanelCard: document.getElementById("detail-panel-card"),
 };
 
 const state = {
   graph: null,
-  activeKey: null,
+  g6: null,
+  scene: null,
+  edgeLookup: new Map(),
+  expandedModules: new Set(),
+  active: null,
   isDrawerOpen: false,
   lastTrigger: null,
+  resizeObserver: null,
+  interactionsBound: false,
 };
 
 bootstrap().catch((error) => {
   console.error(error);
-  elements.roadmap.innerHTML = `
-    <div class="error-state">
-      <strong>知识图谱加载失败。</strong>
-      <p>请确认 <code>data/graph.json</code>、<code>data/detail-index.json</code> 和 <code>data/details/*.json</code> 可访问且结构合法，然后刷新页面重试。</p>
-    </div>
-  `;
+  renderError(
+    "知识图谱加载失败。请确认 data/graph.json、data/detail-index.json、data/details/*.json，以及 vendor/g6.min.js 都可访问。"
+  );
 });
 
 async function bootstrap() {
+  if (!G6?.Graph) {
+    throw new Error("G6 runtime is missing");
+  }
+
+  syncDebugBridge();
   renderLoading();
   const graphSource = await fetchJson("./data/graph.json", null);
   if (!graphSource) {
     throw new Error("Failed to fetch ./data/graph.json");
   }
+
   const detailShards = await loadDetailShards(graphSource);
-  const hydratedGraphSource = detailShards.length ? attachDetailShards(graphSource, detailShards) : graphSource;
-  const graph = buildRuntimeGraph(hydratedGraphSource);
-  applyGraphConfig(graph.config);
+  const hydratedSource = detailShards.length ? attachDetailShards(graphSource, detailShards) : graphSource;
+  const graph = buildRuntimeGraph(hydratedSource);
+
   state.graph = graph;
   if (graph.referenceIssues.length) {
     console.warn("knowledge-graph: unresolved or ambiguous detail references", graph.referenceIssues);
   }
-  render(graph);
+
+  renderStats(graph.stats);
   bindInteractions();
-  renderDetailPanel();
+  syncFullscreenActionState();
+  observeGraphResize();
+  await renderGraph(true);
+}
+
+function syncDebugBridge() {
+  if (!DEBUG_BRIDGE_ENABLED) {
+    return;
+  }
+  globalThis.__KG_DEBUG__ = {
+    getGraph: () => state.g6,
+    getScene: () => state.scene,
+    getActive: () => state.active,
+    fitGraphView,
+    renderGraph,
+    selectNode,
+    selectEdge,
+    toggleModule,
+  };
 }
 
 function renderLoading() {
-  elements.roadmap.innerHTML = `
-    <div class="empty-state">
-      正在加载 <code>data/graph.json</code> 与 <code>data/details/*.json</code>，整理 AI 知识路线图…
+  elements.graphCanvas.innerHTML = `
+    <div class="graph-empty">
+      正在加载 <code>data/graph.json</code>、<code>data/details/*.json</code> 与本地 G6 运行时…
     </div>
   `;
-  elements.relationGrid.innerHTML = "";
 }
 
-function applyGraphConfig(config) {
-  STAGES = config.stages;
-  CROSSCUT_CODES = config.crosscutCodes;
-  DOMAIN_GROUPS = config.domainGroups;
-  DOMAIN_DISPLAY = config.domainDisplay;
-  CROSSCUT_NOTES = config.crosscutNotes;
-  STATUS_LABELS = config.statusLabels;
+function renderError(message) {
+  elements.graphCanvas.innerHTML = `
+    <div class="graph-empty is-error">
+      ${escapeHtml(message)}
+    </div>
+  `;
 }
 
 async function fetchJson(url, fallback) {
@@ -106,841 +172,475 @@ async function loadDetailShards(graphSource) {
     return [];
   }
 
-  const shardResults = await Promise.all(
+  const shards = await Promise.all(
     detailIndex.shards.map((shard) => fetchJson(`./data/${shard.file}`, null))
   );
-
-  return shardResults.filter(Boolean);
-}
-
-function buildGraph(markdown, overlay) {
-  const topSections = splitByHeading(markdown, "## ");
-  const domains = [];
-  let relationGroups = [];
-
-  for (const section of topSections) {
-    if (/^[A-Z]\.\s/.test(section.title)) {
-      domains.push(parseDomainSection(section, overlay.nodes || {}));
-      continue;
-    }
-
-    if (section.title === "结构之间的关系总表") {
-      relationGroups = parseRelationSection(section);
-    }
-  }
-
-  const structureReferenceMap = buildStructureReferenceMap(domains);
-  expandStructureReferences(domains, relationGroups, structureReferenceMap);
-  enrichRelationReferences(relationGroups, structureReferenceMap);
-
-  const stages = buildStages(domains, relationGroups);
-  const lookup = buildSelectionIndex(domains, relationGroups);
-  const referenceIssues = attachDetailReferences(domains, lookup);
-
-  return {
-    domains,
-    stages,
-    relationGroups,
-    lookup,
-    referenceIssues,
-    overlay,
-    stats: {
-      domains: domains.length,
-      modules: domains.reduce((sum, domain) => sum + domain.modules.length, 0),
-      concepts: domains.reduce(
-        (sum, domain) =>
-          sum +
-          domain.modules.reduce((moduleSum, module) => moduleSum + countConcepts(module.concepts), 0),
-        0
-      ),
-      detailNodes: domains.reduce((sum, domain) => sum + countDetailNodes(domain), 0),
-    },
-  };
-}
-
-function parseDomainSection(section, overlayNodes) {
-  const headingMatch = section.title.match(/^([A-Z])\.\s+(.+)$/);
-  const code = headingMatch[1];
-  const title = headingMatch[2];
-  const display = DOMAIN_DISPLAY[code];
-  const subsections = splitByHeading(section.content, "### ");
-  const intro = section.content.split(/^### /m)[0]?.trim() || "";
-  const summary = toSummaryText(intro);
-  const modules = [];
-  const relationNotes = [];
-  const pathKey = code;
-
-  for (const subsection of subsections) {
-    if (/层关系$/.test(subsection.title)) {
-      relationNotes.push(...flattenBulletTree(parseBulletTree(subsection.content)));
-      continue;
-    }
-    modules.push(parseModule(code, subsection, overlayNodes));
-  }
-
-  return withOverlay(
-    {
-      id: code,
-      code,
-      title,
-      displayTitle: display?.title || title,
-      fullTitle: `${code}. ${title}`,
-      displayFullTitle: `${code}. ${display?.title || title}`,
-      displayNote: display?.note || null,
-      summary,
-      pathKey,
-      relationNotes,
-      modules,
-      conceptCount: modules.reduce((sum, module) => sum + countConcepts(module.concepts), 0),
-    },
-    overlayNodes[pathKey]
-  );
-}
-
-function parseModule(domainCode, subsection, overlayNodes) {
-  const headingMatch = subsection.title.match(/^([A-Z]\d+)\.\s+(.+)$/);
-  const code = headingMatch ? headingMatch[1] : subsection.title;
-  const title = headingMatch ? headingMatch[2] : subsection.title;
-  const pathKey = `${domainCode}/${code}. ${title}`;
-  const concepts = enrichConcepts(
-    parseBulletTree(subsection.content),
-    { domainCode, moduleCode: code, moduleTitle: title },
-    overlayNodes
-  );
-
-  return withOverlay(
-    {
-      id: code,
-      code,
-      title,
-      fullTitle: `${code}. ${title}`,
-      pathKey,
-      concepts,
-    },
-    overlayNodes[pathKey]
-  );
-}
-
-function enrichConcepts(tree, context, overlayNodes, trail = []) {
-  return tree.map((item) => {
-    const pathParts = [...trail, item.text];
-    const pathKey = `${context.domainCode}/${context.moduleCode}. ${context.moduleTitle}/${pathParts.join("/")}`;
-    const concept = withOverlay(
-      {
-        title: item.text,
-        pathKey,
-        children: [],
-      },
-      overlayNodes[pathKey]
-    );
-
-    concept.children = enrichConcepts(item.children, context, overlayNodes, pathParts);
-    return concept;
-  });
-}
-
-function parseRelationSection(section) {
-  return splitByHeading(section.content, "### ").map((group) => ({
-    title: group.title,
-    entries: parseBulletTree(group.content).map((item) => ({
-      rawText: item.text,
-      rawNotes: flattenBulletTree(item.children),
-      text: item.text,
-      notes: flattenBulletTree(item.children),
-      references: [],
-    })),
-  }));
-}
-
-function buildStructureReferenceMap(domains) {
-  const referenceMap = new Map();
-
-  for (const domain of domains) {
-    referenceMap.set(domain.code, {
-      code: domain.code,
-      title: domain.displayTitle,
-      pathKey: domain.pathKey,
-      type: "domain",
-    });
-    for (const module of domain.modules) {
-      referenceMap.set(module.code, {
-        code: module.code,
-        title: module.title,
-        pathKey: module.pathKey,
-        type: "module",
-      });
-    }
-  }
-
-  return referenceMap;
-}
-
-function expandStructureReferences(domains, relationGroups, referenceMap) {
-  for (const domain of domains) {
-    domain.relationNotes = domain.relationNotes.map((note) =>
-      expandStructureReferenceText(note, referenceMap)
-    );
-  }
-
-  for (const group of relationGroups) {
-    group.entries = group.entries.map((entry) => ({
-      ...entry,
-      text: expandStructureReferenceText(entry.text, referenceMap),
-      notes: entry.notes.map((note) => expandStructureReferenceText(note, referenceMap)),
-    }));
-  }
-}
-
-function expandStructureReferenceText(text, referenceMap) {
-  if (!text) {
-    return text;
-  }
-
-  const matcher = createReferenceMatcher(referenceMap);
-  const keys = matcher.keys;
-  if (!keys.length) {
-    return text;
-  }
-
-  return text.replace(matcher.pattern, (match) => referenceMap.get(match)?.title || match);
-}
-
-function enrichRelationReferences(relationGroups, referenceMap) {
-  for (const group of relationGroups) {
-    group.entries = group.entries.map((entry) => ({
-      ...entry,
-      references: collectStructureReferences([entry.rawText, ...(entry.rawNotes || [])], referenceMap),
-    }));
-  }
-}
-
-function collectStructureReferences(texts, referenceMap) {
-  const matcher = createReferenceMatcher(referenceMap);
-  if (!matcher.keys.length) {
-    return [];
-  }
-
-  const seen = new Set();
-  const items = [];
-
-  for (const text of texts) {
-    if (!text) {
-      continue;
-    }
-
-    for (const match of text.matchAll(matcher.pattern)) {
-      const code = match[0];
-      const reference = referenceMap.get(code);
-      if (!reference || seen.has(reference.pathKey)) {
-        continue;
-      }
-      seen.add(reference.pathKey);
-      items.push(reference);
-    }
-  }
-
-  return items;
-}
-
-function createReferenceMatcher(referenceMap) {
-  const keys = Array.from(referenceMap.keys()).sort((left, right) => right.length - left.length);
-  return {
-    keys,
-    pattern: new RegExp(
-      `(?<![A-Za-z0-9])(${keys.map(escapeRegExp).join("|")})(?![A-Za-z0-9])`,
-      "g"
-    ),
-  };
-}
-
-function buildStages(domains, relationGroups) {
-  const domainMap = new Map(domains.map((domain) => [domain.code, domain]));
-
-  return STAGES.map((stage) => {
-    const stageDomains = stage.codes.map((code) => domainMap.get(code)).filter(Boolean);
-    const stageReferenceCodes = new Set(
-      stageDomains.flatMap((domain) => [domain.code, ...domain.modules.map((module) => module.code)])
-    );
-    const relationPreview = [];
-    const relationSeen = new Set();
-
-    for (const group of relationGroups) {
-      for (const entry of group.entries) {
-        const touchesStage = entry.references.some((reference) =>
-          stageReferenceCodes.has(reference.code)
-        );
-        if (!touchesStage) {
-          continue;
-        }
-
-        const key = getRelationDetailKey(group.title, entry.text);
-        if (relationSeen.has(key)) {
-          continue;
-        }
-
-        relationSeen.add(key);
-        relationPreview.push({
-          key,
-          groupTitle: group.title,
-          text: entry.text,
-          notes: entry.notes,
-          references: entry.references,
-        });
-      }
-    }
-
-    return {
-      ...stage,
-      domains: stageDomains,
-      moduleCount: stageDomains.reduce((sum, domain) => sum + domain.modules.length, 0),
-      conceptCount: stageDomains.reduce((sum, domain) => sum + domain.conceptCount, 0),
-      relationPreview,
-    };
-  }).filter((stage) => stage.domains.length);
-}
-
-function splitByHeading(markdown, marker) {
-  const lines = markdown.replace(/\r/g, "").split("\n");
-  const sections = [];
-  let current = null;
-
-  for (const line of lines) {
-    if (line.startsWith(marker)) {
-      if (current) {
-        current.content = current.buffer.join("\n").trim();
-        delete current.buffer;
-        sections.push(current);
-      }
-      current = { title: line.slice(marker.length).trim(), buffer: [] };
-      continue;
-    }
-    if (current) {
-      current.buffer.push(line);
-    }
-  }
-
-  if (current) {
-    current.content = current.buffer.join("\n").trim();
-    delete current.buffer;
-    sections.push(current);
-  }
-
-  return sections;
-}
-
-function parseBulletTree(content) {
-  const root = [];
-  const stack = [{ indent: -1, children: root }];
-
-  for (const rawLine of content.split("\n")) {
-    const match = rawLine.match(/^(\s*)\* (.+)$/);
-    if (!match) {
-      continue;
-    }
-
-    const indent = match[1].replace(/\t/g, "  ").length;
-    const text = cleanMarkdown(match[2]);
-    const node = { text, children: [] };
-
-    while (stack.length && indent <= stack[stack.length - 1].indent) {
-      stack.pop();
-    }
-
-    stack[stack.length - 1].children.push(node);
-    stack.push({ indent, children: node.children });
-  }
-
-  return root;
-}
-
-function cleanMarkdown(text) {
-  return text
-    .replace(/`([^`]+)`/g, "$1")
-    .replace(/\*\*([^*]+)\*\*/g, "$1")
-    .replace(/\[([^\]]+)\]\[[^\]]+\]/g, "$1")
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-    .replace(/^\s+|\s+$/g, "")
-    .trim();
-}
-
-function toSummaryText(text) {
-  return cleanMarkdown(text)
-    .replace(/\([^)]+\)\s*$/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function flattenBulletTree(tree) {
-  return tree.map((item) => item.text);
-}
-
-function withOverlay(node, overlay = {}) {
-  return { ...node, detail: overlay };
-}
-
-function countConcepts(concepts) {
-  let total = 0;
-  walkConcepts(concepts, () => {
-    total += 1;
-  });
-  return total;
-}
-
-function walkConcepts(concepts, visitor) {
-  for (const concept of concepts) {
-    visitor(concept);
-    walkConcepts(concept.children, visitor);
-  }
-}
-
-function countDetailNodes(domain) {
-  let total = hasMeaningfulDetail(domain.detail) ? 1 : 0;
-  for (const module of domain.modules) {
-    if (hasMeaningfulDetail(module.detail)) {
-      total += 1;
-    }
-    walkConcepts(module.concepts, (concept) => {
-      if (hasMeaningfulDetail(concept.detail)) {
-        total += 1;
-      }
-    });
-  }
-  return total;
-}
-
-function hasMeaningfulDetail(detail) {
-  if (!detail || typeof detail !== "object") {
-    return false;
-  }
-
-  return (
-    DETAIL_TEXT_FIELDS.some((field) => hasNonEmptyText(detail[field])) ||
-    DETAIL_LIST_FIELDS.some((field) => hasNonEmptyList(detail[field]))
-  );
-}
-
-function collectDetailNodes(module) {
-  const items = [];
-
-  if (hasMeaningfulDetail(module.detail)) {
-    items.push({
-      title: module.fullTitle,
-      pathKey: module.pathKey,
-      detail: module.detail,
-    });
-  }
-
-  walkConcepts(module.concepts, (concept) => {
-    if (!hasMeaningfulDetail(concept.detail)) {
-      return;
-    }
-
-    items.push({
-      title: concept.title,
-      pathKey: concept.pathKey,
-      detail: concept.detail,
-    });
-  });
-
-  return items;
-}
-
-function hasNonEmptyText(value) {
-  return typeof value === "string" && value.trim().length > 0;
-}
-
-function hasNonEmptyList(value) {
-  return Array.isArray(value) && value.some((item) => hasNonEmptyText(item));
-}
-
-function attachDetailReferences(domains, lookup) {
-  const resolver = createDetailReferenceResolver(lookup);
-  const issues = [];
-
-  walkDetailEntries(domains, ({ pathKey, detail }) => {
-    detail.resolvedPrerequisites = resolveDetailReferences(detail.prerequisites, resolver, {
-      ownerPathKey: pathKey,
-      fieldName: "prerequisites",
-      issues,
-    });
-    detail.resolvedNext = resolveDetailReferences(detail.next, resolver, {
-      ownerPathKey: pathKey,
-      fieldName: "next",
-      issues,
-    });
-  });
-
-  return issues;
-}
-
-function walkDetailEntries(domains, visitor) {
-  for (const domain of domains) {
-    visitor({ pathKey: domain.pathKey, detail: domain.detail, type: "domain" });
-    for (const module of domain.modules) {
-      visitor({ pathKey: module.pathKey, detail: module.detail, type: "module" });
-      walkConcepts(module.concepts, (concept) => {
-        visitor({ pathKey: concept.pathKey, detail: concept.detail, type: "concept" });
-      });
-    }
-  }
-}
-
-function createDetailReferenceResolver(lookup) {
-  const byPathKey = new Map();
-  const byAlias = new Map();
-
-  for (const entry of lookup.values()) {
-    if (!entry.pathKey) {
-      continue;
-    }
-
-    byPathKey.set(normalizeReferenceKey(entry.pathKey), entry);
-
-    for (const alias of collectReferenceAliases(entry)) {
-      const aliasKey = normalizeReferenceKey(alias);
-      if (!aliasKey) {
-        continue;
-      }
-
-      const bucket = byAlias.get(aliasKey) || [];
-      bucket.push(entry);
-      byAlias.set(aliasKey, bucket);
-    }
-  }
-
-  return { byPathKey, byAlias };
-}
-
-function collectReferenceAliases(entry) {
-  const aliases = new Set();
-  const lastSegment = getLastPathSegment(entry.pathKey);
-  const pathWithoutDomain = entry.pathKey.includes("/") ? entry.pathKey.slice(entry.pathKey.indexOf("/") + 1) : "";
-
-  addReferenceAlias(aliases, entry.pathKey);
-  addReferenceAlias(aliases, pathWithoutDomain);
-  addReferenceAlias(aliases, entry.title);
-  addReferenceAlias(aliases, lastSegment);
-
-  return aliases;
-}
-
-function addReferenceAlias(aliases, value) {
-  const cleaned = cleanReferenceText(value);
-  if (!cleaned) {
-    return;
-  }
-
-  aliases.add(cleaned);
-
-  const withoutCode = cleaned.replace(/^[A-Z]\d+\.\s+/, "").trim();
-  if (withoutCode && withoutCode !== cleaned) {
-    aliases.add(withoutCode);
-  }
-
-  const parenMatch = cleaned.match(/^(.+?)[（(]([^()（）]+)[)）]$/);
-  if (!parenMatch) {
-    return;
-  }
-
-  aliases.add(parenMatch[1].trim());
-  aliases.add(parenMatch[2].trim());
-}
-
-function cleanReferenceText(value) {
-  if (!hasNonEmptyText(value)) {
-    return "";
-  }
-
-  return cleanMarkdown(String(value)).replace(/\s+/g, " ").trim();
-}
-
-function normalizeReferenceKey(value) {
-  return cleanReferenceText(value).toLowerCase();
-}
-
-function getLastPathSegment(pathKey) {
-  if (!hasNonEmptyText(pathKey)) {
-    return "";
-  }
-
-  const parts = String(pathKey).split("/");
-  return parts[parts.length - 1] || "";
-}
-
-function resolveDetailReferences(values, resolver, context) {
-  if (!Array.isArray(values)) {
-    return [];
-  }
-
-  const items = [];
-  const seen = new Set();
-
-  for (const rawValue of values) {
-    const label = cleanReferenceText(rawValue);
-    if (!label) {
-      continue;
-    }
-
-    const exactPathMatch = resolver.byPathKey.get(normalizeReferenceKey(label));
-    if (exactPathMatch) {
-      if (!seen.has(exactPathMatch.key)) {
-        seen.add(exactPathMatch.key);
-        items.push({ key: exactPathMatch.key, label: exactPathMatch.title });
-      }
-      continue;
-    }
-
-    const aliasMatches = resolver.byAlias.get(normalizeReferenceKey(label)) || [];
-    if (aliasMatches.length === 1) {
-      const [match] = aliasMatches;
-      if (!seen.has(match.key)) {
-        seen.add(match.key);
-        items.push({ key: match.key, label: match.title });
-      }
-      continue;
-    }
-
-    items.push({ label });
-    context.issues.push({
-      ownerPathKey: context.ownerPathKey,
-      fieldName: context.fieldName,
-      value: label,
-      reason: aliasMatches.length > 1 ? "ambiguous" : "unresolved",
-      matches:
-        aliasMatches.length > 1 ? aliasMatches.map((candidate) => candidate.pathKey) : undefined,
-    });
-  }
-
-  return items;
-}
-
-function buildSelectionIndex(domains, relationGroups) {
-  const lookup = new Map();
-
-  for (const domain of domains) {
-    lookup.set(domain.pathKey, {
-      key: domain.pathKey,
-      type: "domain",
-      eyebrow: `Domain / ${domain.code}`,
-      title: domain.displayFullTitle,
-      pathKey: domain.pathKey,
-      summary:
-        domain.detail.definition ||
-        domain.summary ||
-        `${domain.modules.length} 个模块，${domain.conceptCount} 个术语节点。`,
-      detail: domain.detail,
-      status: normalizeDetailStatus(domain.detail),
-      stats: [`${domain.modules.length} 个模块`, `${domain.conceptCount} 个术语节点`],
-      parentTitle: null,
-      relatedNotes: domain.relationNotes,
-      relatedLinks: [],
-      childTitles: domain.modules.map((module) => module.fullTitle),
-      impactScope: CROSSCUT_CODES.includes(domain.code) ? CROSSCUT_NOTES[domain.code] : domain.displayNote,
-    });
-
-    if (domain.relationNotes.length) {
-      lookup.set(getDomainRelationKey(domain.pathKey), {
-        key: getDomainRelationKey(domain.pathKey),
-        type: "domain-relations",
-        eyebrow: `Links / ${domain.code}`,
-        title: `${domain.displayFullTitle} / 本层关系`,
-        pathKey: domain.pathKey,
-        summary: `${domain.relationNotes.length} 条与当前领域直接相关的结构关系。`,
-        detail: {},
-        status: "none",
-        stats: [`${domain.relationNotes.length} 条关系`],
-        parentTitle: domain.displayFullTitle,
-        relatedNotes: domain.relationNotes,
-        relatedLinks: [],
-        childTitles: [],
-        impactScope: CROSSCUT_CODES.includes(domain.code) ? CROSSCUT_NOTES[domain.code] : null,
-      });
-    }
-
-    for (const module of domain.modules) {
-      const conceptCount = countConcepts(module.concepts);
-      const detailNodes = collectDetailNodes(module);
-      lookup.set(module.pathKey, {
-        key: module.pathKey,
-        type: "module",
-        eyebrow: `Module / ${module.code}`,
-        title: module.fullTitle,
-        pathKey: module.pathKey,
-        summary:
-          module.detail.definition ||
-          `${module.title} 当前包含 ${conceptCount} 个术语节点，可继续向下展开。`,
-        detail: module.detail,
-        status: normalizeDetailStatus(module.detail),
-        stats: [
-          `${conceptCount} 个术语节点`,
-          detailNodes.length ? `${detailNodes.length} 个补充节点` : null,
-        ].filter(Boolean),
-        parentTitle: domain.displayFullTitle,
-        relatedNotes: [],
-        relatedLinks: [],
-        childTitles: module.concepts.map((concept) => concept.title),
-        impactScope: CROSSCUT_CODES.includes(domain.code) ? CROSSCUT_NOTES[domain.code] : null,
-      });
-
-      walkConcepts(module.concepts, (concept) => {
-        lookup.set(concept.pathKey, {
-          key: concept.pathKey,
-          type: "concept",
-          eyebrow: `Concept / ${module.code}`,
-          title: concept.title,
-          pathKey: concept.pathKey,
-          summary: concept.detail.definition || getConceptFallbackSummary(concept),
-          detail: concept.detail,
-          status: normalizeDetailStatus(concept.detail),
-          stats: [concept.children.length ? `${concept.children.length} 个下级概念` : "叶子节点"],
-          parentTitle: module.fullTitle,
-          relatedNotes: [],
-          relatedLinks: [],
-          childTitles: concept.children.map((child) => child.title),
-          impactScope: CROSSCUT_CODES.includes(domain.code) ? CROSSCUT_NOTES[domain.code] : null,
-        });
-      });
-    }
-  }
-
-  for (const group of relationGroups) {
-    for (const entry of group.entries) {
-      lookup.set(getRelationDetailKey(group.title, entry.text), {
-        key: getRelationDetailKey(group.title, entry.text),
-        type: "relation",
-        eyebrow: `Relation / ${group.title}`,
-        title: entry.text,
-        pathKey: null,
-        summary: entry.notes[0] || `${group.title} 中的一条关键结构关系。`,
-        detail: {},
-        status: "none",
-        stats: [entry.notes.length ? `${entry.notes.length} 条补充说明` : "结构关系"],
-        parentTitle: group.title,
-        relatedNotes: entry.notes,
-        relatedLinks: entry.references.map((reference) => ({
-          key: reference.pathKey,
-          label:
-            reference.type === "domain"
-              ? `${reference.code}. ${reference.title}`
-              : `${reference.code}. ${reference.title}`,
-        })),
-        childTitles: [],
-        impactScope: entry.references.length
-          ? `影响范围：${entry.references.map((reference) => reference.code).join(" / ")}`
-          : null,
-      });
-    }
-  }
-
-  return lookup;
-}
-
-function normalizeDetailStatus(detail) {
-  if (!detail || typeof detail !== "object") {
-    return "none";
-  }
-
-  if (detail.status === "placeholder") {
-    return "none";
-  }
-
-  if (detail.status && STATUS_LABELS[detail.status]) {
-    return detail.status;
-  }
-
-  return hasMeaningfulDetail(detail) ? "seed" : "none";
-}
-
-function getConceptFallbackSummary(concept) {
-  if (concept.children.length) {
-    return `当前节点下还有 ${concept.children.length} 个下级概念，可以继续沿结构往下展开。`;
-  }
-
-  return "当前节点还没有补充独立说明，后续可以在 data/graph.json 中继续细化定义和示例。";
-}
-
-function getDomainRelationKey(pathKey) {
-  return `domain-relations/${pathKey}`;
-}
-
-function getRelationDetailKey(groupTitle, entryText) {
-  return `relation/${groupTitle}/${entryText}`;
-}
-
-function render(graph) {
-  renderStats(graph.stats);
-  renderJumpbar(graph.domains);
-  renderRoadmap(graph.stages);
-  renderRelationGrid(graph.relationGroups);
+  return shards.filter(Boolean);
 }
 
 function bindInteractions() {
-  const roots = [elements.roadmap, elements.relationGrid, elements.detailPanelCard];
-  for (const root of roots) {
-    root.addEventListener("click", handleInteractiveSelection);
-    root.addEventListener("keydown", handleInteractiveKeydown);
+  if (state.interactionsBound) {
+    return;
   }
+  state.interactionsBound = true;
 
+  elements.graphShell.addEventListener("click", handleGraphShellClick);
+  elements.detailPanelCard.addEventListener("click", handlePanelClick);
+  elements.detailPanelCard.addEventListener("keydown", handlePanelKeydown);
   elements.detailBackdrop.addEventListener("click", closeDetailDrawer);
   elements.detailClose.addEventListener("click", closeDetailDrawer);
   document.addEventListener("keydown", handleGlobalKeydown);
+  document.addEventListener("fullscreenchange", syncFullscreenActionState);
 }
 
-function handleInteractiveSelection(event) {
-  if (event.target.closest("summary")) {
+function observeGraphResize() {
+  if (!("ResizeObserver" in window) || state.resizeObserver) {
     return;
   }
 
-  const target = event.target.closest("[data-path-key], [data-detail-key]");
+  state.resizeObserver = new ResizeObserver(() => {
+    if (!state.g6) {
+      return;
+    }
+    const { width, height } = getCanvasSize();
+    state.g6.setSize(width, height);
+    fitGraphView();
+  });
+  state.resizeObserver.observe(elements.graphSurface);
+}
+
+function handleGraphShellClick(event) {
+  const action = event.target.closest("[data-graph-action]");
+  if (!action) {
+    return;
+  }
+
+  state.lastTrigger = action;
+  const value = action.dataset.graphAction;
+
+  if (value === "fit") {
+    fitGraphView();
+    return;
+  }
+
+  if (value === "center") {
+    centerGraphView();
+    return;
+  }
+
+  if (value === "fullscreen") {
+    void toggleFullscreen();
+    return;
+  }
+
+  if (value === "collapse-all") {
+    void collapseAllConcepts();
+    return;
+  }
+
+  if (value === "clear-selection") {
+    closeDetailDrawer();
+  }
+}
+
+function handlePanelClick(event) {
+  const target = event.target.closest("[data-node-key]");
   if (!target) {
     return;
   }
-
-  const key = target.dataset.pathKey || target.dataset.detailKey;
-  if (!key) {
-    return;
-  }
-
-  setActiveDetail(key, target);
+  state.lastTrigger = target;
+  void selectNode(target.dataset.nodeKey, target);
 }
 
-function handleInteractiveKeydown(event) {
+function handlePanelKeydown(event) {
   if (event.key !== "Enter" && event.key !== " ") {
     return;
   }
 
-  const target = event.target.closest("[data-path-key], [data-detail-key]");
+  const target = event.target.closest("[data-node-key]");
   if (!target) {
     return;
   }
 
   event.preventDefault();
-  const key = target.dataset.pathKey || target.dataset.detailKey;
-  if (key) {
-    setActiveDetail(key, target);
-  }
+  state.lastTrigger = target;
+  void selectNode(target.dataset.nodeKey, target);
 }
 
 function handleGlobalKeydown(event) {
+  if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey || isTypingTarget(event.target)) {
+    return;
+  }
+
+  const key = event.key.toLowerCase();
+
   if (event.key === "Escape" && state.isDrawerOpen) {
+    event.preventDefault();
+    closeDetailDrawer();
+    return;
+  }
+
+  if (event.key === "0") {
+    event.preventDefault();
+    fitGraphView();
+    return;
+  }
+
+  if (key === "c") {
+    event.preventDefault();
+    centerGraphView();
+    return;
+  }
+
+  if (key === "f") {
+    event.preventDefault();
+    void toggleFullscreen();
+    return;
+  }
+
+  if (key === "x") {
+    event.preventDefault();
+    void collapseAllConcepts();
+    return;
+  }
+
+  if (event.key === "Escape") {
+    event.preventDefault();
     closeDetailDrawer();
   }
 }
 
-function setActiveDetail(key, trigger = null) {
-  state.activeKey = key;
+function isTypingTarget(target) {
+  if (!(target instanceof HTMLElement)) {
+    return false;
+  }
+  if (target.isContentEditable) {
+    return true;
+  }
+  return Boolean(target.closest('input, textarea, select, [contenteditable="true"]'));
+}
+
+async function renderGraph(fitView = false) {
+  if (!state.graph) {
+    return;
+  }
+
+  const scene = buildSceneModel(state.graph, state.expandedModules);
+  state.scene = scene;
+  state.edgeLookup = scene.edgeLookup;
+
+  const activeStillVisible =
+    !state.active ||
+    (state.active.kind === "node" && scene.visibleNodeIds.has(state.active.key)) ||
+    (state.active.kind === "edge" && scene.visibleEdgeIds.has(state.active.key));
+
+  if (!activeStillVisible) {
+    state.active = null;
+    setDrawerOpen(false);
+  }
+
+  renderLegend(scene);
+  await upsertGraph(scene, fitView);
+  await syncSelectionStates();
+  renderDetailPanel();
+}
+
+async function upsertGraph(scene, fitView) {
+  const data = { nodes: scene.nodes, edges: scene.edges };
+
+  if (!state.g6) {
+    elements.graphCanvas.innerHTML = "";
+    const size = getCanvasSize();
+
+    state.g6 = new G6.Graph({
+      container: elements.graphCanvas,
+      width: size.width,
+      height: size.height,
+      animation: false,
+      data,
+      node: {
+        state: {
+          selected: {
+            lineWidth: 3,
+            stroke: "#ffd36b",
+            shadowBlur: 18,
+            shadowColor: "rgba(255, 211, 107, 0.24)",
+          },
+          highlight: {
+            lineWidth: 2.4,
+            stroke: "#8db3df",
+            shadowBlur: 12,
+            shadowColor: "rgba(141, 179, 223, 0.18)",
+          },
+          inactive: {
+            opacity: 0.2,
+          },
+        },
+      },
+      edge: {
+        state: {
+          selected: {
+            lineWidth: 3.4,
+            stroke: "#ffd36b",
+            opacity: 1,
+          },
+          highlight: {
+            lineWidth: 2.6,
+            opacity: 0.96,
+          },
+          inactive: {
+            opacity: 0.1,
+          },
+        },
+      },
+      behaviors: ["drag-canvas", "zoom-canvas"],
+      plugins: ["minimap"],
+    });
+
+    state.g6.on("node:click", (graphEvent) => {
+      const nodeId = getGraphTargetId(graphEvent);
+      if (nodeId) {
+        void selectNode(nodeId);
+      }
+    });
+
+    state.g6.on("node:dblclick", (graphEvent) => {
+      const nodeId = getGraphTargetId(graphEvent);
+      if (!nodeId) {
+        return;
+      }
+      const node = state.scene?.nodeLookup.get(nodeId);
+      if (node?.data.kind === "module" && node.data.expandable) {
+        void toggleModule(nodeId);
+      }
+    });
+
+    state.g6.on("edge:click", (graphEvent) => {
+      const edgeId = getGraphTargetId(graphEvent);
+      if (edgeId) {
+        selectEdge(edgeId);
+      }
+    });
+
+    state.g6.on("canvas:click", () => {
+      closeDetailDrawer();
+    });
+
+    await state.g6.render();
+    if (fitView) {
+      fitGraphView();
+    }
+    return;
+  }
+
+  state.g6.setData(data);
+  await state.g6.render();
+  if (fitView) {
+    fitGraphView();
+  }
+}
+
+function getGraphTargetId(graphEvent) {
+  return (
+    graphEvent?.target?.id ||
+    graphEvent?.target?.config?.id ||
+    graphEvent?.element?.id ||
+    null
+  );
+}
+
+function getCanvasSize() {
+  const width = Math.max(360, Math.floor(elements.graphSurface.clientWidth || 960));
+  const height = Math.max(720, Math.floor(elements.graphSurface.clientHeight || 900));
+  return { width, height };
+}
+
+function fitGraphView() {
+  if (!state.g6?.fitView) {
+    return;
+  }
+  window.requestAnimationFrame(() => {
+    state.g6?.fitView?.();
+    window.requestAnimationFrame(() => {
+      syncZoomRange();
+    });
+  });
+}
+
+function centerGraphView() {
+  if (!state.g6?.fitCenter) {
+    return;
+  }
+  window.requestAnimationFrame(() => {
+    state.g6?.fitCenter?.();
+  });
+}
+
+function syncZoomRange() {
+  if (!state.g6?.setZoomRange || !state.g6?.getZoom) {
+    return;
+  }
+
+  const zoom = state.g6.getZoom();
+  if (!Number.isFinite(zoom) || zoom <= 0) {
+    return;
+  }
+
+  const minZoom = Math.max(ZOOM_LIMITS.minAbsolute, zoom * ZOOM_LIMITS.minFitFactor);
+  state.g6.setZoomRange([minZoom, ZOOM_LIMITS.max]);
+}
+
+async function toggleFullscreen() {
+  if (!document.fullscreenEnabled) {
+    return;
+  }
+
+  if (document.fullscreenElement) {
+    await document.exitFullscreen();
+    return;
+  }
+
+  await document.documentElement.requestFullscreen();
+}
+
+function syncFullscreenActionState() {
+  const button = elements.fullscreenAction;
+  if (!button) {
+    return;
+  }
+  const active = Boolean(document.fullscreenElement);
+  button.classList.toggle("is-active", active);
+  button.setAttribute("aria-pressed", active ? "true" : "false");
+}
+
+async function collapseAllConcepts() {
+  if (!state.expandedModules.size) {
+    return;
+  }
+  state.expandedModules.clear();
+  await renderGraph(false);
+}
+
+async function selectNode(key, trigger = null) {
+  if (!state.graph?.lookup.has(key)) {
+    return;
+  }
+
+  await ensureNodeVisible(key);
+  state.active = { kind: "node", key };
   if (trigger instanceof HTMLElement) {
     state.lastTrigger = trigger;
   }
+  await syncSelectionStates();
   renderDetailPanel();
-  syncActiveElements();
   setDrawerOpen(true);
 }
 
-function closeDetailDrawer() {
-  state.activeKey = null;
+function selectEdge(key) {
+  if (!state.edgeLookup.has(key)) {
+    return;
+  }
+
+  state.active = { kind: "edge", key };
+  syncSelectionStates();
   renderDetailPanel();
-  syncActiveElements();
+  setDrawerOpen(true);
+}
+
+async function ensureNodeVisible(key) {
+  if (state.scene?.visibleNodeIds.has(key)) {
+    return;
+  }
+
+  const moduleKey = getModuleKeyFromPath(key);
+  if (!moduleKey) {
+    return;
+  }
+
+  state.expandedModules.add(moduleKey);
+  await renderGraph(false);
+}
+
+function getModuleKeyFromPath(pathKey) {
+  if (!pathKey || pathKey.startsWith("relation/")) {
+    return null;
+  }
+
+  const parts = pathKey.split("/");
+  if (parts.length < 3) {
+    return null;
+  }
+
+  return `${parts[0]}/${parts[1]}`;
+}
+
+async function toggleModule(moduleKey) {
+  if (state.expandedModules.has(moduleKey)) {
+    state.expandedModules.delete(moduleKey);
+  } else {
+    state.expandedModules.add(moduleKey);
+  }
+  await renderGraph(false);
+}
+
+async function syncSelectionStates() {
+  if (!state.g6 || !state.scene) {
+    return;
+  }
+
+  const states = {};
+  for (const node of state.scene.nodes) {
+    states[node.id] = [];
+  }
+  for (const edge of state.scene.edges) {
+    states[edge.id] = [];
+  }
+
+  if (!state.active) {
+    await state.g6.setElementState(states, false);
+    return;
+  }
+
+  for (const key of Object.keys(states)) {
+    states[key] = ["inactive"];
+  }
+
+  if (state.active.kind === "node") {
+    const activeKey = state.active.key;
+    states[activeKey] = ["selected"];
+
+    for (const edge of state.scene.edges) {
+      if (edge.source === activeKey || edge.target === activeKey) {
+        states[edge.id] = ["highlight"];
+        if (edge.source !== activeKey) {
+          states[edge.source] = ["highlight"];
+        }
+        if (edge.target !== activeKey) {
+          states[edge.target] = ["highlight"];
+        }
+      }
+    }
+  }
+
+  if (state.active.kind === "edge") {
+    const edge = state.scene.edgeById.get(state.active.key);
+    if (!edge) {
+      await state.g6.setElementState(states, false);
+      return;
+    }
+
+    states[edge.id] = ["selected"];
+    states[edge.source] = ["highlight"];
+    states[edge.target] = ["highlight"];
+  }
+
+  await state.g6.setElementState(states, false);
+}
+
+function closeDetailDrawer() {
+  state.active = null;
+  syncSelectionStates();
+  renderDetailPanel();
   setDrawerOpen(false);
 }
 
@@ -961,47 +661,591 @@ function setDrawerOpen(open) {
   }
 }
 
-function syncActiveElements() {
-  document.querySelectorAll(".module-card, .domain-card").forEach((node) =>
-    node.classList.remove("is-selected")
-  );
+function renderStats(stats) {
+  const cards = [
+    { label: "领域层", value: stats.domains },
+    { label: "模块层", value: stats.modules },
+    { label: "术语节点", value: stats.concepts },
+    { label: "已补充节点", value: stats.detailNodes },
+  ];
 
-  document.querySelectorAll("[data-path-key], [data-detail-key]").forEach((node) => {
-    const key = node.dataset.pathKey || node.dataset.detailKey;
-    const isActive = key === state.activeKey;
-    node.classList.toggle("is-selected", isActive);
-    if (node.getAttribute("role") === "button") {
-      node.setAttribute("aria-pressed", isActive ? "true" : "false");
+  elements.stats.innerHTML = cards
+    .map(
+      (card) => `
+        <article class="stat-card">
+          <span class="stat-label">${escapeHtml(card.label)}</span>
+          <strong class="stat-value">${card.value}</strong>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderLegend(scene) {
+  const expandedConcepts = scene.nodes.filter((node) => node.data.kind === "concept").length;
+  const relationNodes = scene.nodes.filter((node) => node.data.kind === "relation").length;
+
+  elements.graphLegend.innerHTML = `
+    <div class="graph-legend-meta">
+      <span>${scene.nodes.length} 个可见节点</span>
+      <span>${scene.edges.length} 条可见边</span>
+      <span>${expandedConcepts} 个已展开概念</span>
+      <span>${relationNodes} 个关系节点</span>
+    </div>
+    <div class="graph-stage-chips">
+      ${scene.stageSummaries
+        .map(
+          (stage) => `
+            <span class="graph-stage-chip" style="--stage-chip:${escapeAttribute(stage.color)}">
+              <strong>${escapeHtml(stage.title)}</strong>
+              <small>${stage.moduleCount} 模块 / ${stage.expandedConcepts} 已展开概念</small>
+            </span>
+          `
+        )
+        .join("")}
+    </div>
+    <div class="graph-legend-items">
+      <span class="graph-legend-item"><i></i>结构从属边</span>
+      <span class="graph-legend-item is-prerequisite"><i></i>前置依赖边</span>
+      <span class="graph-legend-item is-next"><i></i>继续延展边</span>
+      <span class="graph-legend-item is-relation"><i></i>关系挂接边</span>
+    </div>
+    <p class="graph-legend-note">
+      单击节点或边查看详情；双击模块展开概念；滚轮缩放、拖拽平移；快捷键：<kbd>0</kbd> 适配视图，<kbd>C</kbd>
+      定位中心，<kbd>F</kbd> 切换全屏，<kbd>X</kbd> 折叠概念，<kbd>Esc</kbd> 清空选择 / 关闭详情。
+    </p>
+  `;
+}
+
+function buildSceneModel(graph, expandedModules) {
+  const nodes = [];
+  const edges = [];
+  const edgeLookup = new Map();
+  const edgeById = new Map();
+  const nodeLookup = new Map();
+  const visibleNodeIds = new Set();
+  const visibleEdgeIds = new Set();
+  const stageSummaries = [];
+
+  let structureBottom = LAYOUT.paddingY;
+
+  graph.stages.forEach((stage, stageIndex) => {
+    const stageX = LAYOUT.paddingX + stageIndex * (LAYOUT.stageWidth + LAYOUT.stageGap);
+    let cursorY = LAYOUT.paddingY;
+    let expandedConcepts = 0;
+
+    for (const domain of stage.domains) {
+      const clusterTop = cursorY;
+      const moduleKeys = [];
+      let moduleCursorY = clusterTop;
+
+      for (const module of domain.modules) {
+        const moduleScene = createModuleSceneNode(graph, stage, module, stageX, moduleCursorY, expandedModules);
+        registerNode(nodes, nodeLookup, visibleNodeIds, moduleScene.node);
+        moduleKeys.push(moduleScene.node.id);
+
+        for (const conceptNode of moduleScene.conceptNodes) {
+          registerNode(nodes, nodeLookup, visibleNodeIds, conceptNode);
+        }
+
+        for (const edge of moduleScene.conceptEdges) {
+          registerEdge(edges, edgeLookup, edgeById, visibleEdgeIds, edge);
+        }
+
+        expandedConcepts += moduleScene.conceptNodes.length;
+        moduleCursorY = moduleScene.bottom + LAYOUT.moduleGap;
+      }
+
+      const clusterBottom = moduleKeys.length
+        ? moduleCursorY - LAYOUT.moduleGap
+        : clusterTop + LAYOUT.domainHeight;
+
+      const domainY = clusterTop + Math.max(0, (clusterBottom - clusterTop - LAYOUT.domainHeight) / 2);
+      const domainNode = createDomainSceneNode(graph, stage, domain, stageX, domainY);
+      registerNode(nodes, nodeLookup, visibleNodeIds, domainNode);
+
+      for (const moduleKey of moduleKeys) {
+        registerEdge(
+          edges,
+          edgeLookup,
+          edgeById,
+          visibleEdgeIds,
+          createSceneEdge({
+            kind: "structure",
+            source: domainNode.id,
+            target: moduleKey,
+            title: `${graph.lookup.get(moduleKey)?.title || moduleKey} 属于 ${domainNode.data.title}`,
+            summary: `${graph.lookup.get(moduleKey)?.title || moduleKey} 是 ${domainNode.data.title} 的下级模块。`,
+            relatedLinks: [toNodeLink(domainNode.id, graph.lookup), toNodeLink(moduleKey, graph.lookup)],
+          })
+        );
+      }
+
+      cursorY = clusterBottom + LAYOUT.domainGap;
+      structureBottom = Math.max(structureBottom, clusterBottom);
     }
 
-    if (isActive && node.classList.contains("module-header")) {
-      node.closest(".module-card")?.classList.add("is-selected");
-    }
-
-    if (isActive && node.classList.contains("domain-header")) {
-      node.closest(".domain-card")?.classList.add("is-selected");
-    }
+    stageSummaries.push({
+      id: stage.id,
+      title: stage.title,
+      color: stage.color,
+      moduleCount: stage.moduleCount,
+      expandedConcepts,
+    });
   });
+
+  registerSemanticEdges(graph, visibleNodeIds, edges, edgeLookup, edgeById, visibleEdgeIds);
+
+  const relationStartX =
+    LAYOUT.paddingX +
+    graph.stages.length * (LAYOUT.stageWidth + LAYOUT.stageGap) +
+    LAYOUT.relationStartGap;
+  let relationCursorY = LAYOUT.paddingY;
+
+  graph.relationGroups.forEach((group, groupIndex) => {
+    const color = RELATION_COLORS[groupIndex % RELATION_COLORS.length];
+    const rowCount = Math.max(1, Math.ceil(group.entries.length / LAYOUT.relationColumns));
+
+    group.entries.forEach((entry, index) => {
+      const key = getRelationDetailKey(group.title, entry.text);
+      const row = Math.floor(index / LAYOUT.relationColumns);
+      const col = index % LAYOUT.relationColumns;
+      const x = relationStartX + col * (LAYOUT.relationWidth + LAYOUT.relationColGap);
+      const y = relationCursorY + row * (LAYOUT.relationHeight + LAYOUT.relationRowGap);
+
+      const relationNode = createRelationSceneNode(graph, key, group.title, entry, x, y, color);
+      registerNode(nodes, nodeLookup, visibleNodeIds, relationNode);
+
+      for (const reference of entry.references || []) {
+        if (!visibleNodeIds.has(reference.pathKey)) {
+          continue;
+        }
+
+        registerEdge(
+          edges,
+          edgeLookup,
+          edgeById,
+          visibleEdgeIds,
+          createSceneEdge({
+            kind: "relation",
+            source: relationNode.id,
+            target: reference.pathKey,
+            title: `${group.title} 命中 ${graph.lookup.get(reference.pathKey)?.title || reference.title}`,
+            summary: `${entry.text} 把 ${graph.lookup.get(reference.pathKey)?.title || reference.title} 拉进同一条结构关系。`,
+            relatedNotes: entry.notes || [],
+            relatedLinks: [toNodeLink(relationNode.id, graph.lookup), toNodeLink(reference.pathKey, graph.lookup)],
+          })
+        );
+      }
+    });
+
+    relationCursorY +=
+      rowCount * (LAYOUT.relationHeight + LAYOUT.relationRowGap) + LAYOUT.relationGroupGap;
+  });
+
+  const width =
+    relationStartX +
+    LAYOUT.relationColumns * LAYOUT.relationWidth +
+    (LAYOUT.relationColumns - 1) * LAYOUT.relationColGap +
+    LAYOUT.paddingX;
+  const height = Math.max(structureBottom + LAYOUT.paddingY, relationCursorY);
+
+  return {
+    nodes,
+    edges,
+    edgeLookup,
+    edgeById,
+    nodeLookup,
+    visibleNodeIds,
+    visibleEdgeIds,
+    stageSummaries,
+    width,
+    height,
+  };
+}
+
+function createDomainSceneNode(graph, stage, domain, stageX, y) {
+  const entry = graph.lookup.get(domain.pathKey);
+  const status = entry?.status || normalizeDetailStatus(domain.detail, graph.config.statusLabels);
+  const fill = tint(stage.color, 0.28);
+  const domainLabel = buildAdaptiveLabel({
+    code: domain.code,
+    title: entry?.title || domain.displayTitle,
+    maxUnits: 8.4,
+    maxLines: 2,
+    fontSize: 13,
+    minWidth: LAYOUT.domainMinWidth,
+    maxWidth: LAYOUT.domainWidth,
+    horizontalPadding: 16,
+  });
+
+  return {
+    id: domain.pathKey,
+    type: "ellipse",
+    data: {
+      kind: "domain",
+      title: entry?.title || domain.displayFullTitle,
+      summary: entry?.summary || `${domain.modules.length} 个模块，${domain.conceptCount} 个术语节点。`,
+      pathKey: domain.pathKey,
+      stageId: stage.id,
+      status,
+    },
+    style: {
+      x: stageX + LAYOUT.domainX,
+      y,
+      size: [domainLabel.width, LAYOUT.domainHeight],
+      fill,
+      stroke: stage.color,
+      lineWidth: 1.4,
+      shadowBlur: 12,
+      shadowColor: "rgba(6, 14, 24, 0.24)",
+      labelText: domainLabel.text,
+      labelFill: "#e6eef9",
+      labelFontSize: 12,
+      labelFontWeight: 800,
+      labelLineHeight: 15,
+      cursor: "pointer",
+    },
+  };
+}
+
+function createModuleSceneNode(graph, stage, module, stageX, y, expandedModules) {
+  const entry = graph.lookup.get(module.pathKey);
+  const conceptCount = countConcepts(module.concepts);
+  const detailCount = countDetailEntriesInModule(module);
+  const status = entry?.status || normalizeDetailStatus(module.detail, graph.config.statusLabels);
+  const fill = tint(stage.color, 0.18);
+  const moduleLabel = buildAdaptiveLabel({
+    code: module.code,
+    title: module.title,
+    maxUnits: 11.8,
+    maxLines: 2,
+    fontSize: 13,
+    minWidth: LAYOUT.moduleMinWidth,
+    maxWidth: LAYOUT.moduleWidth,
+    horizontalPadding: 18,
+  });
+
+  const node = {
+    id: module.pathKey,
+    type: "rect",
+    data: {
+      kind: "module",
+      title: entry?.title || module.fullTitle,
+      summary: entry?.summary || `${conceptCount} 个术语节点，双击展开。`,
+      pathKey: module.pathKey,
+      stageId: stage.id,
+      status,
+      expandable: conceptCount > 0,
+      conceptCount,
+      detailCount,
+    },
+    style: {
+      x: stageX + LAYOUT.moduleX,
+      y,
+      size: [moduleLabel.width, LAYOUT.moduleHeight],
+      radius: 16,
+      fill,
+      stroke: tint(stage.color, 0.8),
+      lineWidth: 1.3,
+      shadowBlur: 14,
+      shadowColor: "rgba(6, 14, 24, 0.22)",
+      labelText: moduleLabel.text,
+      labelFill: "#e6eef9",
+      labelFontSize: 13,
+      labelFontWeight: 800,
+      labelLineHeight: 16,
+      cursor: "pointer",
+    },
+  };
+
+  const conceptNodes = [];
+  const conceptEdges = [];
+  let bottom = y + LAYOUT.moduleHeight;
+
+  if (expandedModules.has(module.pathKey)) {
+    let conceptCursorY = y;
+    const flattened = flattenConceptNodes(module.concepts);
+
+    for (const item of flattened) {
+      const conceptEntry = graph.lookup.get(item.concept.pathKey);
+      const conceptStatus =
+        conceptEntry?.status || normalizeDetailStatus(item.concept.detail, graph.config.statusLabels);
+      const conceptLabel = buildAdaptiveLabel({
+        title: item.concept.title,
+        maxUnits: Math.max(8.4, 12.8 - item.depth * 0.8),
+        maxLines: 2,
+        fontSize: 12,
+        minWidth: Math.max(88, LAYOUT.conceptMinWidth - item.depth * 6),
+        maxWidth: Math.max(112, LAYOUT.conceptWidth - item.depth * 10),
+        horizontalPadding: 14,
+      });
+      const conceptNode = {
+        id: item.concept.pathKey,
+        type: "rect",
+        data: {
+          kind: "concept",
+          title: conceptEntry?.title || item.concept.title,
+          summary: conceptEntry?.summary || getConceptFallbackSummary(item.concept),
+          pathKey: item.concept.pathKey,
+          stageId: stage.id,
+          status: conceptStatus,
+          depth: item.depth,
+        },
+        style: {
+          x: stageX + LAYOUT.conceptX + item.depth * LAYOUT.conceptDepthIndent,
+          y: conceptCursorY,
+          size: [conceptLabel.width, LAYOUT.conceptHeight],
+          radius: 14,
+          fill: tint(stage.color, 0.08),
+          stroke: tint(stage.color, 0.48),
+          lineWidth: 1.1,
+          shadowBlur: 8,
+          shadowColor: "rgba(4, 10, 18, 0.18)",
+          labelText: conceptLabel.text,
+          labelFill: "#d7e6fb",
+          labelFontSize: 11,
+          labelFontWeight: 700,
+          labelLineHeight: 14,
+          cursor: "pointer",
+        },
+      };
+      conceptNodes.push(conceptNode);
+
+      const parentKey = item.parentKey || module.pathKey;
+      conceptEdges.push(
+        createSceneEdge({
+          kind: "structure",
+          source: parentKey,
+          target: conceptNode.id,
+          title: item.parentKey
+            ? `${conceptNode.data.title} 是 ${graph.lookup.get(item.parentKey)?.title || item.parentTitle} 的下级概念`
+            : `${conceptNode.data.title} 是 ${node.data.title} 的根概念`,
+          summary: item.parentKey
+            ? `${conceptNode.data.title} 挂在 ${graph.lookup.get(item.parentKey)?.title || item.parentTitle} 下。`
+            : `${conceptNode.data.title} 是 ${node.data.title} 的直接概念节点。`,
+          relatedLinks: [toNodeLink(parentKey, graph.lookup), toNodeLink(conceptNode.id, graph.lookup)],
+        })
+      );
+
+      conceptCursorY += LAYOUT.conceptHeight + LAYOUT.conceptGap;
+      bottom = conceptCursorY - LAYOUT.conceptGap;
+    }
+  }
+
+  return {
+    node,
+    conceptNodes,
+    conceptEdges,
+    bottom: Math.max(bottom, y + LAYOUT.moduleHeight),
+  };
+}
+
+function createRelationSceneNode(graph, key, groupTitle, entry, x, y, color) {
+  const lookupEntry = graph.lookup.get(key);
+  const relationLabel = buildAdaptiveLabel({
+    title: entry.text,
+    maxUnits: 14.8,
+    maxLines: 2,
+    fontSize: 12,
+    minWidth: LAYOUT.relationMinWidth,
+    maxWidth: LAYOUT.relationWidth,
+    horizontalPadding: 18,
+  });
+  return {
+    id: key,
+    type: "diamond",
+    data: {
+      kind: "relation",
+      title: lookupEntry?.title || entry.text,
+      summary: lookupEntry?.summary || entry.notes?.[0] || `${groupTitle} 的一条结构关系。`,
+      pathKey: key,
+      status: "none",
+      groupTitle,
+    },
+    style: {
+      x,
+      y,
+      size: [relationLabel.width, LAYOUT.relationHeight],
+      fill: tint(color, 0.14),
+      stroke: color,
+      lineWidth: 1.4,
+      shadowBlur: 10,
+      shadowColor: "rgba(6, 14, 24, 0.2)",
+      labelText: relationLabel.text,
+      labelFill: "#f2f6fb",
+      labelFontSize: 11,
+      labelFontWeight: 800,
+      labelLineHeight: 14,
+      cursor: "pointer",
+    },
+  };
+}
+
+function registerSemanticEdges(graph, visibleNodeIds, edges, edgeLookup, edgeById, visibleEdgeIds) {
+  const visibleKeys = Array.from(visibleNodeIds).filter((key) => graph.lookup.has(key));
+
+  for (const key of visibleKeys) {
+    const entry = graph.lookup.get(key);
+    if (!entry?.detail) {
+      continue;
+    }
+
+    for (const prerequisite of entry.detail.resolvedPrerequisites || []) {
+      if (!prerequisite.key || !visibleNodeIds.has(prerequisite.key)) {
+        continue;
+      }
+      registerEdge(
+        edges,
+        edgeLookup,
+        edgeById,
+        visibleEdgeIds,
+        createSceneEdge({
+          kind: "prerequisite",
+          source: prerequisite.key,
+          target: key,
+          title: `${prerequisite.label} → ${entry.title}`,
+          summary: `${prerequisite.label} 是理解 ${entry.title} 前的前置知识。`,
+          relatedNotes: ["方向：从前置知识流向当前节点"],
+          relatedLinks: [toNodeLink(prerequisite.key, graph.lookup), toNodeLink(key, graph.lookup)],
+        })
+      );
+    }
+
+    for (const next of entry.detail.resolvedNext || []) {
+      if (!next.key || !visibleNodeIds.has(next.key)) {
+        continue;
+      }
+      registerEdge(
+        edges,
+        edgeLookup,
+        edgeById,
+        visibleEdgeIds,
+        createSceneEdge({
+          kind: "next",
+          source: key,
+          target: next.key,
+          title: `${entry.title} → ${next.label}`,
+          summary: `${next.label} 是从 ${entry.title} 继续往下延展的下一步。`,
+          relatedNotes: ["方向：从当前主题延展到下一步"],
+          relatedLinks: [toNodeLink(key, graph.lookup), toNodeLink(next.key, graph.lookup)],
+        })
+      );
+    }
+  }
+}
+
+function registerNode(nodes, nodeLookup, visibleNodeIds, node) {
+  nodes.push(node);
+  nodeLookup.set(node.id, node);
+  visibleNodeIds.add(node.id);
+}
+
+function registerEdge(edges, edgeLookup, edgeById, visibleEdgeIds, edge) {
+  if (!edge || edgeLookup.has(edge.id)) {
+    return;
+  }
+
+  edges.push(edge);
+  edgeById.set(edge.id, edge);
+  edgeLookup.set(edge.id, createEdgeLookupEntry(edge));
+  visibleEdgeIds.add(edge.id);
+}
+
+function createSceneEdge({ kind, source, target, title, summary, relatedNotes = [], relatedLinks = [] }) {
+  const styles = {
+    structure: {
+      stroke: "#6c88a8",
+      lineWidth: 1.8,
+      opacity: 0.6,
+      endArrow: true,
+    },
+    prerequisite: {
+      stroke: "#7ec7de",
+      lineWidth: 1.9,
+      opacity: 0.72,
+      lineDash: [7, 5],
+      endArrow: true,
+    },
+    next: {
+      stroke: "#97a7ea",
+      lineWidth: 1.9,
+      opacity: 0.72,
+      endArrow: true,
+    },
+    relation: {
+      stroke: "#c6b27b",
+      lineWidth: 1.6,
+      opacity: 0.4,
+      lineDash: [2, 6],
+      endArrow: true,
+    },
+  };
+
+  return {
+    id: `edge/${kind}/${source}/${target}`,
+    source,
+    target,
+    type: kind === "relation" ? "cubic" : "cubic-horizontal",
+    data: {
+      kind,
+      title,
+      summary,
+      relatedNotes,
+      relatedLinks: relatedLinks.filter(Boolean),
+    },
+    style: styles[kind] || styles.structure,
+  };
+}
+
+function createEdgeLookupEntry(edge) {
+  return {
+    key: edge.id,
+    type: `edge-${edge.data.kind}`,
+    eyebrow: `Edge / ${EDGE_LABELS[edge.data.kind] || "连接"}`,
+    title: edge.data.title,
+    pathKey: null,
+    summary: edge.data.summary,
+    detail: {
+      definition: edge.data.summary,
+      importance:
+        edge.data.kind === "structure"
+          ? "这条边定义结构从属。"
+          : edge.data.kind === "prerequisite"
+            ? "这条边定义学习顺序里的前置约束。"
+            : edge.data.kind === "next"
+              ? "这条边定义从当前主题继续延展的方向。"
+              : "这条边把关系节点挂接到具体知识项上。",
+    },
+    status: "none",
+    stats: [EDGE_LABELS[edge.data.kind] || "连接"],
+    parentTitle: null,
+    relatedNotes: edge.data.relatedNotes || [],
+    relatedLinks: edge.data.relatedLinks || [],
+    childTitles: [],
+    impactScope: null,
+  };
 }
 
 function renderDetailPanel() {
-  const entry = state.activeKey ? state.graph.lookup.get(state.activeKey) : null;
+  const entry = getActiveEntry();
 
   if (!entry) {
     elements.detailPanelCard.innerHTML = `
       <p class="detail-panel-eyebrow">Detail / Ready</p>
       <h2 id="detail-panel-title">侧边详情</h2>
       <p class="detail-panel-summary">
-        点击左侧任意知识项，在这里按“是什么 / 解决了什么问题 / 示例”三段式阅读。后面每个节点继续补内容时，这里会直接承接。
+        单击图里的节点或边，在这里按“是什么 / 解决了什么问题 / 示例”读取内容。
+        如果概念节点还没展开，双击它的所属模块即可把它放进同一张图里。
       </p>
       <div class="detail-panel-empty">
-        当前还没有选中具体节点。
+        当前还没有选中具体节点或边。
       </div>
     `;
     return;
   }
 
-  const statusLabel = STATUS_LABELS[entry.status] || STATUS_LABELS.none;
+  const statusLabel = getStatusLabel(entry.status);
   const sections = buildDetailTriad(entry);
 
   elements.detailPanelCard.innerHTML = `
@@ -1011,7 +1255,7 @@ function renderDetailPanel() {
     <p class="detail-panel-summary">${escapeHtml(entry.summary)}</p>
     <div class="detail-panel-meta">
       ${[
-        ...entry.stats.map((item) => ({ label: item, className: "" })),
+        ...((entry.stats || []).map((item) => ({ label: item, className: "" }))),
         { label: getTypeLabel(entry.type), className: "" },
         { label: `状态：${statusLabel}`, className: `is-${entry.status}` },
       ]
@@ -1028,9 +1272,25 @@ function renderDetailPanel() {
   `;
 }
 
+function getActiveEntry() {
+  if (!state.active) {
+    return null;
+  }
+
+  if (state.active.kind === "node") {
+    return state.graph?.lookup.get(state.active.key) || null;
+  }
+
+  if (state.active.kind === "edge") {
+    return state.edgeLookup.get(state.active.key) || null;
+  }
+
+  return null;
+}
+
 function buildDetailTriad(entry) {
   const detail = entry.detail || {};
-  const prerequisiteItems = detail.resolvedPrerequisites || [];
+  const prerequisites = detail.resolvedPrerequisites || [];
   const nextItems = detail.resolvedNext || [];
   const previewChildren = getPreviewChildren(entry.childTitles, 10);
 
@@ -1038,9 +1298,8 @@ function buildDetailTriad(entry) {
   const problemBlocks = [];
   const exampleBlocks = [];
 
-  const definitionText = detail.definition || entry.summary;
-  if (definitionText) {
-    whatBlocks.push({ type: "text", content: definitionText });
+  if (detail.definition || entry.summary) {
+    whatBlocks.push({ type: "text", content: detail.definition || entry.summary });
   }
 
   if (entry.parentTitle) {
@@ -1059,11 +1318,11 @@ function buildDetailTriad(entry) {
     problemBlocks.push({ type: "text", label: "核心价值", content: detail.importance });
   }
 
-  if (prerequisiteItems.length) {
-    problemBlocks.push({ type: "refs", label: "理解前置", items: prerequisiteItems });
+  if (prerequisites.length) {
+    problemBlocks.push({ type: "refs", label: "理解前置", items: prerequisites });
   }
 
-  if (entry.relatedNotes.length) {
+  if (entry.relatedNotes?.length) {
     problemBlocks.push({ type: "list", label: "相关关系", items: entry.relatedNotes });
   }
 
@@ -1107,17 +1366,17 @@ function buildDetailTriad(entry) {
     {
       title: "是什么",
       blocks: whatBlocks,
-      emptyText: "当前节点还没有更具体的定义补充。",
+      emptyText: "当前对象还没有补充更具体的定义。",
     },
     {
       title: "解决了什么问题",
       blocks: problemBlocks,
-      emptyText: "当前节点还没有补充它的价值、边界或相关问题。",
+      emptyText: "当前对象还没有补充它的价值、边界或关联问题。",
     },
     {
       title: "示例",
       blocks: exampleBlocks,
-      emptyText: "当前节点还没有补充例子或最小实验。",
+      emptyText: "当前对象还没有补充例子或最小实验。",
     },
   ];
 }
@@ -1127,12 +1386,11 @@ function getPreviewChildren(childTitles, limit) {
     return [];
   }
 
-  const previewChildren = childTitles.slice(0, limit);
-  if (childTitles.length > previewChildren.length) {
-    previewChildren.push(`还有 ${childTitles.length - previewChildren.length} 项未展开`);
+  const preview = childTitles.slice(0, limit);
+  if (childTitles.length > preview.length) {
+    preview.push(`还有 ${childTitles.length - preview.length} 项未展开`);
   }
-
-  return previewChildren;
+  return preview;
 }
 
 function renderPanelCompositeSection(title, blocks, emptyText) {
@@ -1189,26 +1447,18 @@ function renderPanelBlock(block) {
 
 function renderPanelReferenceLinks(items) {
   return items
-    .map(
-      (item) => `
-        ${
-          item.key
-            ? `
-              <button
-                type="button"
-                class="detail-panel-link"
-                data-path-key="${escapeAttribute(item.key)}"
-              >
-                ${escapeHtml(item.label)}
-              </button>
-            `
-            : `
-              <button type="button" class="detail-panel-link" disabled>
-                ${escapeHtml(item.label)}
-              </button>
-            `
-        }
-      `
+    .map((item) =>
+      item.key
+        ? `
+            <button type="button" class="detail-panel-link" data-node-key="${escapeAttribute(item.key)}">
+              ${escapeHtml(item.label)}
+            </button>
+          `
+        : `
+            <button type="button" class="detail-panel-link" disabled>
+              ${escapeHtml(item.label)}
+            </button>
+          `
     )
     .join("");
 }
@@ -1216,567 +1466,180 @@ function renderPanelReferenceLinks(items) {
 function getTypeLabel(type) {
   const labels = {
     domain: "领域",
-    "domain-relations": "领域关系",
     module: "模块",
     concept: "术语节点",
-    relation: "结构关系",
+    relation: "关系节点",
+    "edge-structure": "结构边",
+    "edge-prerequisite": "前置边",
+    "edge-next": "延展边",
+    "edge-relation": "关系挂接边",
   };
-
   return labels[type] || "知识项";
 }
 
-function renderStats(stats) {
-  const cards = [
-    { label: "领域层", value: stats.domains },
-    { label: "模块层", value: stats.modules },
-    { label: "术语节点", value: stats.concepts },
-    { label: "已补充节点", value: stats.detailNodes },
-  ];
+function getStatusLabel(status) {
+  const labels = state.graph?.config?.statusLabels || {
+    none: "未补充",
+    seed: "seed",
+    draft: "draft",
+    deep: "deep",
+  };
 
-  elements.stats.innerHTML = cards
-    .map(
-      (card) => `
-        <article class="stat-card">
-          <span class="stat-label">${escapeHtml(card.label)}</span>
-          <strong class="stat-value">${card.value}</strong>
-        </article>
-      `
-    )
-    .join("");
+  return labels[status] || labels.none || "未补充";
 }
 
-function renderJumpbar(domains) {
-  elements.jumpbar.innerHTML = domains
-    .map(
-      (domain) => `
-        <a href="#domain-${escapeHtml(domain.code)}">${escapeHtml(domain.code)}. ${escapeHtml(domain.displayTitle)}</a>
-      `
-    )
-    .join("");
+function countDetailEntriesInModule(module) {
+  let total = hasMeaningfulDetail(module.detail) ? 1 : 0;
+  walkConceptList(module.concepts || [], (concept) => {
+    if (hasMeaningfulDetail(concept.detail)) {
+      total += 1;
+    }
+  });
+  return total;
 }
 
-function renderRoadmap(stages) {
-  const stageMarkup = stages
-    .map(
-      (stage) => `
-      <section class="stage-card" style="--stage-color: ${stage.color}" id="stage-${escapeAttribute(stage.id)}">
-        <header class="stage-header">
-          <p class="stage-eyebrow">Stage / ${escapeHtml(stage.id)}</p>
-          <h2>${escapeHtml(stage.title)}</h2>
-          <p>${escapeHtml(stage.description)}</p>
-          <div class="stage-meta">
-            <span>${stage.domains.length} 个领域</span>
-            <span>${stage.moduleCount} 个模块</span>
-            <span>${stage.conceptCount} 个术语节点</span>
-          </div>
-        </header>
-        ${renderStageRelations(stage)}
-        <div class="domain-grid">
-          ${stage.domains.map(renderDomainCard).join("")}
-        </div>
-      </section>
-    `
-    )
-    .join("");
-
-  elements.roadmap.innerHTML = stageMarkup;
-}
-
-function renderStageRelations(stage) {
-  if (!stage.relationPreview.length) {
-    return "";
+function walkConceptList(concepts, visitor) {
+  for (const concept of concepts || []) {
+    visitor(concept);
+    walkConceptList(concept.children || [], visitor);
   }
-
-  const preview = stage.relationPreview.slice(0, 6);
-  return `
-    <section class="stage-relations" aria-label="${escapeAttribute(stage.title)} 的关键关系">
-      <div class="stage-relations-header">
-        <strong>本阶段关键连接</strong>
-        <span>${stage.relationPreview.length} 条</span>
-      </div>
-      <div class="stage-relations-list">
-        ${preview
-          .map(
-            (entry) => `
-              <button
-                type="button"
-                class="stage-relation-chip"
-                data-detail-key="${escapeAttribute(entry.key)}"
-                aria-label="查看 ${escapeAttribute(entry.text)} 的详情"
-              >
-                <span class="stage-relation-group">${escapeHtml(entry.groupTitle)}</span>
-                <span class="stage-relation-text">${escapeHtml(entry.text)}</span>
-              </button>
-            `
-          )
-          .join("")}
-      </div>
-    </section>
-  `;
 }
 
-function renderDomainCard(domain) {
-  const status = normalizeDetailStatus(domain.detail);
-  return `
-    <article class="domain-card" id="domain-${escapeHtml(domain.code)}">
-      <header
-        class="domain-header"
-        data-path-key="${escapeAttribute(domain.pathKey)}"
-        tabindex="0"
-        role="button"
-        aria-label="查看 ${escapeAttribute(domain.displayFullTitle)} 的详情"
-      >
-        <p class="domain-eyebrow">${escapeHtml(domain.code)} / Domain</p>
-        <h3>${escapeHtml(domain.displayFullTitle)}</h3>
-        ${
-          domain.detail.definition
-            ? `<p class="domain-summary">${escapeHtml(domain.detail.definition)}</p>`
-            : ""
-        }
-        ${domain.summary ? `<p class="domain-summary">${escapeHtml(domain.summary)}</p>` : ""}
-        <div class="domain-stats">
-          ${CROSSCUT_CODES.includes(domain.code) ? `<span class="domain-badge">横切层</span>` : ""}
-          <span class="domain-badge is-${escapeAttribute(status)}">${escapeHtml(
-            STATUS_LABELS[status]
-          )}</span>
-          <span>${domain.modules.length} 个模块</span>
-          <span>${domain.conceptCount} 个术语节点</span>
-        </div>
-      </header>
-      ${renderDomainModules(domain)}
-      ${renderDomainRelations(domain)}
-    </article>
-  `;
-}
-
-function renderDomainModules(domain) {
-  const groups = DOMAIN_GROUPS[domain.code];
-  if (!groups?.length) {
-    return `<div class="module-grid">${domain.modules.map(renderModuleCard).join("")}</div>`;
-  }
-
-  const renderedCodes = new Set();
-  const blocks = groups
-    .map((group) => {
-      const modules = group.codes
-        .map((code) => domain.modules.find((module) => module.code === code))
-        .filter(Boolean);
-
-      if (!modules.length) {
-        return "";
-      }
-
-      modules.forEach((module) => renderedCodes.add(module.code));
-
-      return `
-        <section class="module-group">
-          <div class="module-group-header">
-            <strong>${escapeHtml(group.title)}</strong>
-            <span>${modules.length} 个模块</span>
-          </div>
-          <div class="module-grid">
-            ${modules.map(renderModuleCard).join("")}
-          </div>
-        </section>
-      `;
-    })
-    .filter(Boolean);
-
-  const leftovers = domain.modules.filter((module) => !renderedCodes.has(module.code));
-  if (leftovers.length) {
-    blocks.push(`
-      <section class="module-group">
-        <div class="module-group-header">
-          <strong>补充模块</strong>
-          <span>${leftovers.length} 个模块</span>
-        </div>
-        <div class="module-grid">
-          ${leftovers.map(renderModuleCard).join("")}
-        </div>
-      </section>
-    `);
-  }
-
-  return blocks.join("");
-}
-
-function renderModuleCard(module) {
-  const detailNodes = collectDetailNodes(module);
-  const conceptCount = countConcepts(module.concepts);
-  const layoutStyle = getModuleLayoutStyle(module, conceptCount, detailNodes.length);
-  const status = normalizeDetailStatus(module.detail);
-
-  return `
-    <article
-      class="module-card"
-      data-path-key="${escapeAttribute(module.pathKey)}"
-      style="${escapeAttribute(layoutStyle)}"
-    >
-      <header
-        class="module-header"
-        data-path-key="${escapeAttribute(module.pathKey)}"
-        tabindex="0"
-        role="button"
-        aria-label="查看 ${escapeAttribute(module.fullTitle)} 的详情"
-      >
-        <div class="module-headline">
-          <span class="module-code">${escapeHtml(module.code)}</span>
-          <span class="module-status is-${escapeAttribute(status)}">${escapeHtml(
-            STATUS_LABELS[status]
-          )}</span>
-        </div>
-        <h4>${escapeHtml(module.title)}</h4>
-        ${module.detail.definition ? `<p class="module-summary">${escapeHtml(module.detail.definition)}</p>` : ""}
-      </header>
-      <div class="module-body">
-        ${renderConceptTree(module.concepts)}
-        ${detailNodes.length ? renderDetailGroup(detailNodes) : ""}
-      </div>
-    </article>
-  `;
-}
-
-function renderConceptTree(concepts) {
-  if (!concepts.length) {
-    return `<div class="empty-state">当前模块还没有解析出术语节点。</div>`;
-  }
-
-  return `<div class="concept-tree">${concepts.map(renderConceptCluster).join("")}</div>`;
-}
-
-function renderConceptCluster(concept) {
-  const hasDetail = hasMeaningfulDetail(concept.detail);
-  const descendants = flattenConceptFlow(concept.children);
-  const rootClasses = getConceptLabelClasses(hasDetail, !descendants.length, "is-root");
-
-  return `
-    <section class="concept-cluster">
-      <div
-        class="${rootClasses}"
-        data-path-key="${escapeAttribute(concept.pathKey)}"
-        tabindex="0"
-        role="button"
-        title="${escapeAttribute(concept.pathKey)}"
-        aria-label="查看 ${escapeAttribute(concept.title)} 的详情"
-      >${escapeHtml(concept.title)}</div>
-      ${
-        descendants.length
-          ? `<div class="concept-flow">${descendants.map(renderConceptFlowItem).join("")}</div>`
-          : ""
-      }
-    </section>
-  `;
-}
-
-function renderConceptFlowItem(concept) {
-  const classes = getConceptLabelClasses(hasMeaningfulDetail(concept.detail), false);
-  return `
-    <div
-      class="${classes}"
-      data-path-key="${escapeAttribute(concept.pathKey)}"
-      tabindex="0"
-      role="button"
-      title="${escapeAttribute(concept.pathKey)}"
-      aria-label="查看 ${escapeAttribute(concept.title)} 的详情"
-    >${escapeHtml(concept.title)}</div>
-  `;
-}
-
-function flattenConceptFlow(children, prefix = []) {
+function flattenConceptNodes(concepts, depth = 0, trail = [], parent = null) {
   const items = [];
-
-  for (const child of children) {
-    const title = prefix.length ? `${prefix.join(" / ")} / ${child.title}` : child.title;
+  for (const concept of concepts || []) {
     items.push({
-      title,
-      pathKey: child.pathKey,
-      detail: child.detail,
+      concept,
+      depth,
+      parentKey: parent?.pathKey || null,
+      parentTitle: parent?.title || null,
+      trail,
     });
-    items.push(...flattenConceptFlow(child.children, [...prefix, child.title]));
+    items.push(...flattenConceptNodes(concept.children || [], depth + 1, [...trail, concept.title], concept));
   }
-
   return items;
 }
 
-function getConceptLabelClasses(hasDetail, isLeaf, extraClass = "") {
-  return ["concept-label", hasDetail ? "has-detail" : "", isLeaf ? "is-leaf" : "", extraClass]
-    .filter(Boolean)
-    .join(" ");
+function getConceptFallbackSummary(concept) {
+  const childCount = Array.isArray(concept.children) ? concept.children.length : 0;
+  if (!childCount) {
+    return "叶子概念，建议在 detail shard 里补充定义、误区和实验。";
+  }
+  return `${childCount} 个下级概念，双击所属模块后会和主线一起显示。`;
 }
 
-function getModuleLayoutStyle(module, conceptCount, detailCount) {
-  const titleWeight = Math.min(module.title.length * 5, 70);
-  const summaryWeight = module.detail.definition ? 56 : 0;
-  const basis = Math.max(
-    132,
-    Math.min(420, 116 + conceptCount * 11 + detailCount * 28 + titleWeight + summaryWeight)
-  );
-  const max = Math.max(220, Math.min(520, basis + (detailCount ? 84 : 44)));
-  return `--module-basis:${basis}px;--module-max:${max}px;`;
+function toNodeLink(key, lookup) {
+  const entry = lookup.get(key);
+  if (!entry) {
+    return null;
+  }
+  return { key, label: entry.title };
 }
 
-function renderDetailGroup(items) {
-  return `
-    <details class="detail-group">
-      <summary>
-        <strong>补充知识 ${items.length} 项</strong>
-      </summary>
-      <div class="detail-list">
-        ${items.map(renderDetailCard).join("")}
-      </div>
-    </details>
-  `;
+function buildAdaptiveLabel({
+  title,
+  code = "",
+  maxUnits = 10,
+  maxLines = 2,
+  fontSize = 12,
+  minWidth = 108,
+  maxWidth = 180,
+  horizontalPadding = 16,
+}) {
+  const titleLines = compactLines(title, maxUnits, maxLines);
+  const lines = code ? [code, ...titleLines] : titleLines;
+  const longestUnits = Math.max(1, ...lines.map((line) => measureVisualUnits(line)));
+  const width = clamp(Math.round(longestUnits * fontSize * 0.92 + horizontalPadding * 2), minWidth, maxWidth);
+  return {
+    text: lines.join("\n"),
+    width,
+  };
 }
 
-function renderDetailCard(item) {
-  const { detail } = item;
-  const status = normalizeDetailStatus(detail);
-  const segments = [];
-  const prerequisiteLabels = getReferenceLabels(detail.resolvedPrerequisites, detail.prerequisites);
-  const nextLabels = getReferenceLabels(detail.resolvedNext, detail.next);
-
-  if (detail.definition) {
-    segments.push(`<p>${escapeHtml(detail.definition)}</p>`);
-  }
-  if (detail.importance) {
-    segments.push(`<p><strong>为什么重要：</strong>${escapeHtml(detail.importance)}</p>`);
-  }
-  if (prerequisiteLabels.length) {
-    segments.push(`<p><strong>前置：</strong>${escapeHtml(prerequisiteLabels.join(" / "))}</p>`);
-  }
-  if (detail.minimumDemo) {
-    segments.push(`<p><strong>最小实验：</strong>${escapeHtml(detail.minimumDemo)}</p>`);
-  }
-  if (Array.isArray(detail.coreMetrics) && detail.coreMetrics.length) {
-    segments.push(`
-      <p><strong>核心指标：</strong>${escapeHtml(detail.coreMetrics.slice(0, 4).join(" / "))}</p>
-    `);
-  }
-  if (Array.isArray(detail.examples) && detail.examples.length) {
-    segments.push(`
-      <ul>
-        ${detail.examples.map((entry) => `<li>${escapeHtml(entry)}</li>`).join("")}
-      </ul>
-    `);
-  }
-  if (Array.isArray(detail.pitfalls) && detail.pitfalls.length) {
-    segments.push(`
-      <p><strong>常见误区：</strong></p>
-      <ul>
-        ${detail.pitfalls.map((entry) => `<li>${escapeHtml(entry)}</li>`).join("")}
-      </ul>
-    `);
-  }
-  if (nextLabels.length) {
-    segments.push(`
-      <p><strong>下一步：</strong>${escapeHtml(nextLabels.join(" / "))}</p>
-    `);
-  }
-
-  return `
-    <article
-      class="detail-card"
-      data-path-key="${escapeAttribute(item.pathKey)}"
-      tabindex="0"
-      role="button"
-      aria-label="查看 ${escapeAttribute(item.title)} 的详情"
-    >
-      <div class="detail-card-head">
-        <h5>${escapeHtml(item.title)}</h5>
-        <span class="module-status is-${escapeAttribute(status)}">${escapeHtml(
-          STATUS_LABELS[status]
-        )}</span>
-      </div>
-      ${segments.join("")}
-    </article>
-  `;
+function compactLabel(text, chunk = 10, lines = 2) {
+  return compactLines(text, chunk, lines).join("\n");
 }
 
-function getReferenceLabels(resolvedItems, fallbackValues) {
-  if (Array.isArray(resolvedItems) && resolvedItems.length) {
-    return resolvedItems.map((item) => item.label);
-  }
-
-  if (!Array.isArray(fallbackValues)) {
+function compactLines(text, chunk = 10, lines = 2) {
+  const normalized = String(text || "").replace(/\s+/g, " ").trim();
+  if (!normalized) {
     return [];
   }
 
-  return fallbackValues.map(cleanReferenceText).filter(Boolean);
-}
-
-function renderDomainRelations(domain) {
-  if (!domain.relationNotes.length) {
-    return "";
+  const rows = [];
+  let cursor = normalized;
+  while (cursor && rows.length < lines) {
+    const [segment, rest] = splitByVisualUnits(cursor, chunk);
+    rows.push(segment);
+    cursor = rest;
   }
 
-  return `
-    <details class="detail-group">
-      <summary>
-        <strong>本层关系 ${domain.relationNotes.length} 条</strong>
-      </summary>
-      <div class="detail-list">
-        <article
-          class="detail-card"
-          data-detail-key="${escapeAttribute(getDomainRelationKey(domain.pathKey))}"
-          tabindex="0"
-          role="button"
-          aria-label="查看 ${escapeAttribute(domain.displayFullTitle)} 本层关系的详情"
-        >
-          <ul>
-            ${domain.relationNotes.map((note) => `<li>${escapeHtml(note)}</li>`).join("")}
-          </ul>
-        </article>
-      </div>
-    </details>
-  `;
+  if (cursor) {
+    const tail = rows[rows.length - 1] || "";
+    const [trimmed] = splitByVisualUnits(tail, Math.max(1, chunk - 1));
+    rows[rows.length - 1] = `${trimmed}…`;
+  }
+
+  return rows;
 }
 
-function renderRelationGrid(groups) {
-  elements.relationGrid.innerHTML = groups
-    .map(
-      (group) => `
-        <article class="relation-card" style="${escapeAttribute(getRelationLayoutStyle(group))}">
-          <h3>${escapeHtml(group.title)}</h3>
-          <div class="relation-list">
-            ${group.entries.map((entry) => renderRelationEntry(group.title, entry)).join("")}
-          </div>
-        </article>
-      `
-    )
-    .join("");
-}
+function splitByVisualUnits(text, maxUnits) {
+  let units = 0;
+  let index = 0;
+  const chars = Array.from(text);
 
-function getRelationLayoutStyle(group) {
-  const basis = Math.max(180, Math.min(340, 150 + group.entries.length * 16 + group.title.length * 3));
-  const max = Math.max(240, Math.min(420, basis + 70));
-  const accent = getRelationAccent(group.title);
-  return [
-    `--relation-basis:${basis}px`,
-    `--relation-max:${max}px`,
-    `--relation-accent:${accent.accent}`,
-    `--relation-accent-ink:${accent.ink}`,
-    `--relation-note-bg:${accent.noteBg}`,
-    `--relation-entry-bg:${accent.entryBg}`,
-    `--relation-wash:${accent.wash}`,
-  ].join(";");
-}
-
-function getRelationAccent(title) {
-  const palette = [
-    {
-      match: "前置关系",
-      accent: "#9bbbe4",
-      ink: "#dceafb",
-      noteBg: "#22334a",
-      entryBg: "#101b2a",
-      wash: "#142131",
-    },
-    {
-      match: "构成关系",
-      accent: "#8db0dd",
-      ink: "#d9e7fb",
-      noteBg: "#203047",
-      entryBg: "#0f1a28",
-      wash: "#152233",
-    },
-    {
-      match: "互补关系",
-      accent: "#82a7d6",
-      ink: "#d6e5fa",
-      noteBg: "#1e2d44",
-      entryBg: "#0f1927",
-      wash: "#162436",
-    },
-    {
-      match: "替代 / 取舍关系",
-      accent: "#789fcc",
-      ink: "#d3e2f9",
-      noteBg: "#1d2b41",
-      entryBg: "#0e1825",
-      wash: "#162333",
-    },
-    {
-      match: "反馈闭环关系",
-      accent: "#6e95c4",
-      ink: "#d1e0f7",
-      noteBg: "#1b293e",
-      entryBg: "#0d1724",
-      wash: "#152130",
-    },
-    {
-      match: "数据流关系",
-      accent: "#87abd2",
-      ink: "#d8e6fa",
-      noteBg: "#213148",
-      entryBg: "#101a28",
-      wash: "#152334",
-    },
-    {
-      match: "记忆关系",
-      accent: "#7b9fc6",
-      ink: "#d4e3f9",
-      noteBg: "#1f2e44",
-      entryBg: "#0f1926",
-      wash: "#162334",
-    },
-    {
-      match: "协议与接口关系",
-      accent: "#7194bc",
-      ink: "#d0dff7",
-      noteBg: "#1c293d",
-      entryBg: "#0d1723",
-      wash: "#15202f",
-    },
-    {
-      match: "安全边界关系",
-      accent: "#678ab3",
-      ink: "#ccdcf5",
-      noteBg: "#1a273a",
-      entryBg: "#0c1622",
-      wash: "#141f2d",
-    },
-    {
-      match: "最核心",
-      accent: "#a5c2e8",
-      ink: "#e3effd",
-      noteBg: "#24364e",
-      entryBg: "#122032",
-      wash: "#162536",
-    },
-  ];
-
-  return (
-    palette.find((item) => title.includes(item.match)) || {
-      accent: "#86a8d1",
-      ink: "#d8e6fa",
-      noteBg: "#203148",
-      entryBg: "#101a28",
-      wash: "#152233",
+  while (index < chars.length) {
+    const nextUnits = units + measureCharUnits(chars[index]);
+    if (index > 0 && nextUnits > maxUnits) {
+      break;
     }
-  );
+    units = nextUnits;
+    index += 1;
+  }
+
+  return [chars.slice(0, index).join(""), chars.slice(index).join("")];
 }
 
-function renderRelationEntry(groupTitle, entry) {
-  return `
-    <div
-      class="relation-entry"
-      data-detail-key="${escapeAttribute(getRelationDetailKey(groupTitle, entry.text))}"
-      tabindex="0"
-      role="button"
-      aria-label="查看关系 ${escapeAttribute(entry.text)} 的详情"
-    >
-      ${escapeHtml(entry.text)}
-      ${
-        entry.notes.length
-          ? `<div class="relation-notes">${entry.notes.map((note) => `<span>${escapeHtml(note)}</span>`).join("")}</div>`
-          : ""
-      }
-    </div>
-  `;
+function measureVisualUnits(text) {
+  return Array.from(String(text || "")).reduce((sum, char) => sum + measureCharUnits(char), 0);
+}
+
+function measureCharUnits(char) {
+  if (!char) {
+    return 0;
+  }
+  if (/\s/.test(char)) {
+    return 0.34;
+  }
+  if (/[\u4e00-\u9fff\u3400-\u4dbf\u3040-\u30ff\uac00-\ud7af]/u.test(char)) {
+    return 1;
+  }
+  if (/[A-Z0-9]/.test(char)) {
+    return 0.72;
+  }
+  if (/[a-z]/.test(char)) {
+    return 0.62;
+  }
+  return 0.52;
+}
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function tint(hex, opacity) {
+  const value = hex.replace("#", "");
+  if (value.length !== 6) {
+    return hex;
+  }
+  const red = parseInt(value.slice(0, 2), 16);
+  const green = parseInt(value.slice(2, 4), 16);
+  const blue = parseInt(value.slice(4, 6), 16);
+  return `rgba(${red}, ${green}, ${blue}, ${opacity})`;
 }
 
 function escapeHtml(value) {
-  return String(value)
+  return String(value ?? "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
@@ -1785,9 +1648,5 @@ function escapeHtml(value) {
 }
 
 function escapeAttribute(value) {
-  return escapeHtml(value).replaceAll("\n", " ");
-}
-
-function escapeRegExp(value) {
-  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return escapeHtml(value).replaceAll("\n", "&#10;");
 }

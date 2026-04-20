@@ -24,15 +24,13 @@
           <p class="eyebrow">AI Roadmap / GitHub Pages Ready</p>
           <h1>AI 知识图谱</h1>
           <p class="hero-text">
-            这页不再强调操作，而是强调阅读。它把
-            <code>data/graph.json</code> 里的完整知识骨架，配合
-            <code>data/detail-index.json</code> 和 <code>data/details/*.json</code>
-            的分片节点详情，整理成一张可以顺着往下学、也可以按领域回看的 AI 路线图。
+            现在只保留一张图，而且交给成熟图引擎来渲染：结构节点、关系节点、前置边、延展边都在同一块可缩放画布里。
+            默认显示领域、模块和关系节点；概念节点按模块原地展开，节点和边都能直接打开右侧详情。
           </p>
           <div class="hero-tags">
-            <span>主干：基础 → 模型 → 应用 → Agent → 生产</span>
-            <span>分支：语言 / 视觉 / 音频 / 视频 / 多模态 / 决策 / 机器人</span>
-            <span>横切：数据 / 评测 / 安全 / 基础设施 / 产品</span>
+            <span>单一视图：结构层 + 关系层 + 详情联动</span>
+            <span>G6 渲染：缩放 / 拖拽 / 小地图</span>
+            <span>双击模块：展开或收起概念</span>
           </div>
         </div>
         <div class="hero-meta">
@@ -44,31 +42,43 @@
         </div>
       </header>
 
-      <nav class="jumpbar" id="jumpbar" aria-label="知识领域导航"></nav>
-
-      <section class="reading-strip">
-        <p class="reading-note">
-          <strong>阅读提示：</strong>仍然按阶段阅读主干，但每个阶段内部已经带上关键关系预览；
-          E 层会拆成更清楚的子组；右侧详情统一按“是什么 / 解决了什么问题 / 示例”三段式展开。
-        </p>
-      </section>
-
-      <div class="content-shell">
-        <div class="content-main">
-          <main class="roadmap" id="roadmap"></main>
-
-          <section class="relation-section">
-            <div class="section-heading">
-              <p class="section-eyebrow">Cross Links</p>
-              <h2>结构之间的关键关系</h2>
-              <p>
-                这里保留跨层关系，让这张图不只是目录，而是一张真正的知识网络。
-              </p>
-            </div>
-            <div class="relation-grid" id="relation-grid"></div>
-          </section>
+      <section class="graph-shell">
+        <div class="graph-toolbar">
+          <div class="graph-toolbar-copy">
+            <p class="section-eyebrow">Single Graph</p>
+            <h2>单一交互图视图</h2>
+            <p class="graph-toolbar-note">
+              现在由 G6 负责画布渲染和交互。单击节点或边会打开详情；双击模块会展开概念；滚轮缩放、拖拽平移，小地图负责全局定位。
+            </p>
+          </div>
+          <div class="graph-actions" aria-label="图谱操作">
+            <button type="button" class="graph-action-button" data-graph-action="fit">
+              <span>适配视图</span>
+              <kbd>0</kbd>
+            </button>
+            <button type="button" class="graph-action-button" data-graph-action="center">
+              <span>定位中心</span>
+              <kbd>C</kbd>
+            </button>
+            <button type="button" class="graph-action-button" data-graph-action="fullscreen">
+              <span>切换全屏</span>
+              <kbd>F</kbd>
+            </button>
+            <button type="button" class="graph-action-button" data-graph-action="collapse-all">
+              <span>折叠概念</span>
+              <kbd>X</kbd>
+            </button>
+            <button type="button" class="graph-action-button" data-graph-action="clear-selection">
+              <span>清空选择</span>
+              <kbd>Esc</kbd>
+            </button>
+          </div>
         </div>
-      </div>
+        <div class="graph-legend" id="graph-legend" aria-label="图例"></div>
+        <div class="graph-surface" id="graph-surface">
+          <div class="graph-canvas" id="graph-canvas" aria-label="AI 知识图谱交互画布"></div>
+        </div>
+      </section>
 
       <div class="detail-drawer" id="detail-drawer" aria-hidden="true">
         <button
@@ -107,11 +117,13 @@
 
       <footer class="page-footer">
         <p>
-          当前页面展示的是“结构骨架 + 分片 detail”的第一版。后续只要继续补结构和对应 shard，它会自然扩展。
+          结构继续维护在 <code>data/graph.json</code>；节点 detail 继续维护在
+          <code>data/detail-index.json</code> 与 <code>data/details/*.json</code>。
         </p>
       </footer>
     </div>
 
+    <script src="./vendor/g6.min.js"></script>
     <script type="module" src="./app.js"></script>
   </body>
 </html>
