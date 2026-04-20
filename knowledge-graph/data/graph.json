@@ -1,8 +1,8 @@
 {
   "meta": {
-    "version": 3,
-    "updatedAt": "2026-04-17",
-    "description": "知识图谱结构写在 graph.json；节点 detail 存在 detail-index.json + details/*.json；批量补充 prompt 由 scripts/build-detail-workspace.mjs 导出。",
+    "version": 4,
+    "updatedAt": "2026-04-20",
+    "description": "知识图谱结构写在 graph.json；节点 detail 存在 detail-index.json + details/*.json；知识补充直接维护 JSON 分片，不再生成外部 prompt 工作区。",
     "migratedFrom": [
       "design.md",
       "data/node-details.json"
@@ -5947,8 +5947,6 @@
     "storage": "sharded",
     "indexFile": "detail-index.json",
     "shardDir": "details",
-    "promptDir": "../prompts/detail",
-    "answerFileName": "answer.md",
     "generator": "scripts/build-detail-workspace.mjs"
   }
 }

@@ -206,8 +206,6 @@ function renderDetailStorage(details) {
     `- storage: ${details.storage || "unknown"}`,
     details.indexFile ? `- indexFile: \`data/${details.indexFile}\`` : null,
     details.shardDir ? `- shardDir: \`data/${details.shardDir}\`` : null,
-    details.promptDir ? `- promptDir: \`${details.promptDir}\`` : null,
-    details.answerFileName ? `- answerFileName: \`${details.answerFileName}\`` : null,
     details.generator ? `- generator: \`${details.generator}\`` : null,
   ].filter((line) => line !== null);
 }
