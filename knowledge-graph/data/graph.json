@@ -2,7 +2,7 @@
   "meta": {
     "version": 4,
     "updatedAt": "2026-04-20",
-    "description": "知识图谱结构写在 graph.json；节点 detail 存在 detail-index.json + details/*.json；知识补充直接维护 JSON 分片，不再生成外部 prompt 工作区。",
+    "description": "按阶段展开的 AI 学习路线图，覆盖基础、模型、应用、Agent 与生产实践。",
     "migratedFrom": [
       "design.md",
       "data/node-details.json"
@@ -13,7 +13,7 @@
       {
         "id": "foundation",
         "title": "01 基础底座",
-        "description": "先把经典 AI、机器学习、深度学习和底层能力串成一条主线。",
+        "description": "从数学、经典 AI、机器学习与深度学习建立共同基础。",
         "color": "#96b6df",
         "codes": [
           "A",
@@ -25,7 +25,7 @@
       {
         "id": "modalities",
         "title": "02 任务域与数据",
-        "description": "然后再把语言、视觉、语音、视频、多模态以及数据横切层挂上去。",
+        "description": "围绕语言、视觉、语音、视频与多模态任务，理解任务形态及其数据基础。",
         "color": "#88aad4",
         "codes": [
           "E",
@@ -35,7 +35,7 @@
       {
         "id": "llm-system",
         "title": "03 大模型系统",
-        "description": "这一段把 LLM 本体、后训练、对齐、检索和外部知识连接起来。",
+        "description": "说明大模型的内部机制、对齐方式，以及与检索和外部知识的结合。",
         "color": "#799dc8",
         "codes": [
           "G",
@@ -46,7 +46,7 @@
       {
         "id": "application",
         "title": "04 应用与 Agent",
-        "description": "应用工程负责稳定性，Agent 系统负责多步自治、状态和工具编排。",
+        "description": "聚焦模型在应用系统、工具调用与多步任务中的组织方式。",
         "color": "#6d90ba",
         "codes": [
           "J",
@@ -56,7 +56,7 @@
       {
         "id": "production",
         "title": "05 运行、治理与产品",
-        "description": "最后把运行时、基础设施、评测、安全和产品组织闭环补完整。",
+        "description": "覆盖部署、评测、安全、合规与产品落地，形成完整运行闭环。",
         "color": "#5f82ac",
         "codes": [
           "L",
@@ -96,20 +96,20 @@
     "domainDisplay": {
       "E": {
         "title": "模态、任务域与智能形态",
-        "note": "把模态、多模态、决策、具身与扩展能力拆开阅读，避免混在同一层。"
+        "note": "这一层覆盖范围较广，可先按语言、视觉、语音与多模态分别理解，再查阅决策、具身与扩展方向。"
       }
     },
     "crosscutNotes": {
-      "F": "这是全局数据轴：训练、检索、评测、线上反馈都会经过这里。",
-      "L": "这是全局运行时轴：模型访问、服务运行、推理优化和生产指标都会受它约束。",
-      "M": "这是全局治理轴：模型、应用与 Agent 的评测、安全和合规边界都在这里收束。",
-      "N": "这是全局产品闭环：场景、自动化等级、体验设计与团队流程最终在这里落地。"
+      "F": "训练、RAG、评测与线上优化都依赖这一层的数据基础。",
+      "L": "系统稳定性、响应效率与成本控制最终都会落实到这一层。",
+      "M": "评测、安全与合规不宜后置，建议与系统建设同步推进。",
+      "N": "当问题转向场景边界、自动化范围与团队协作时，这一层负责把前述能力转化为产品方案。"
     },
     "statusLabels": {
-      "none": "未补充",
-      "seed": "seed",
-      "draft": "draft",
-      "deep": "deep"
+      "none": "待完善",
+      "seed": "概览",
+      "draft": "详述",
+      "deep": "深入"
     }
   },
   "domains": [

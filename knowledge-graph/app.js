@@ -41,8 +41,8 @@ bootstrap().catch((error) => {
   console.error(error);
   elements.roadmap.innerHTML = `
     <div class="error-state">
-      <strong>知识图谱加载失败。</strong>
-      <p>请确认 <code>data/graph.json</code>、<code>data/detail-index.json</code> 和 <code>data/details/*.json</code> 可访问且结构合法，然后刷新页面重试。</p>
+      <strong>页面暂时没有加载出来。</strong>
+      <p>请刷新后再试。如果你是在本地查看，也请确认数据文件已经准备好。</p>
     </div>
   `;
 });
@@ -69,7 +69,7 @@ async function bootstrap() {
 function renderLoading() {
   elements.roadmap.innerHTML = `
     <div class="empty-state">
-      正在加载 <code>data/graph.json</code> 与 <code>data/details/*.json</code>，整理 AI 知识路线图…
+      正在载入这张 AI 路线图…
     </div>
   `;
   elements.relationGrid.innerHTML = "";
@@ -721,16 +721,16 @@ function buildSelectionIndex(domains, relationGroups) {
     lookup.set(domain.pathKey, {
       key: domain.pathKey,
       type: "domain",
-      eyebrow: `Domain / ${domain.code}`,
+      eyebrow: `${domain.code} 领域`,
       title: domain.displayFullTitle,
       pathKey: domain.pathKey,
       summary:
         domain.detail.definition ||
         domain.summary ||
-        `${domain.modules.length} 个模块，${domain.conceptCount} 个术语节点。`,
+        `包含 ${domain.modules.length} 个专题，共覆盖 ${domain.conceptCount} 个知识点。`,
       detail: domain.detail,
       status: normalizeDetailStatus(domain.detail),
-      stats: [`${domain.modules.length} 个模块`, `${domain.conceptCount} 个术语节点`],
+      stats: [`包含 ${domain.modules.length} 个专题`, `覆盖 ${domain.conceptCount} 个知识点`],
       parentTitle: null,
       relatedNotes: domain.relationNotes,
       relatedLinks: [],
@@ -742,13 +742,13 @@ function buildSelectionIndex(domains, relationGroups) {
       lookup.set(getDomainRelationKey(domain.pathKey), {
         key: getDomainRelationKey(domain.pathKey),
         type: "domain-relations",
-        eyebrow: `Links / ${domain.code}`,
-        title: `${domain.displayFullTitle} / 本层关系`,
+        eyebrow: `${domain.code} 领域关系`,
+        title: `${domain.displayFullTitle} / 结构关系`,
         pathKey: domain.pathKey,
-        summary: `${domain.relationNotes.length} 条与当前领域直接相关的结构关系。`,
+        summary: `汇总 ${domain.relationNotes.length} 条与当前领域直接相关的结构关系。`,
         detail: {},
         status: "none",
-        stats: [`${domain.relationNotes.length} 条关系`],
+        stats: [`${domain.relationNotes.length} 条结构关系`],
         parentTitle: domain.displayFullTitle,
         relatedNotes: domain.relationNotes,
         relatedLinks: [],
@@ -763,17 +763,17 @@ function buildSelectionIndex(domains, relationGroups) {
       lookup.set(module.pathKey, {
         key: module.pathKey,
         type: "module",
-        eyebrow: `Module / ${module.code}`,
+        eyebrow: `${module.code} 专题`,
         title: module.fullTitle,
         pathKey: module.pathKey,
         summary:
           module.detail.definition ||
-          `${module.title} 当前包含 ${conceptCount} 个术语节点，可继续向下展开。`,
+          `${module.title} 下设 ${conceptCount} 个知识点，可继续展开查阅。`,
         detail: module.detail,
         status: normalizeDetailStatus(module.detail),
         stats: [
-          `${conceptCount} 个术语节点`,
-          detailNodes.length ? `${detailNodes.length} 个补充节点` : null,
+          `包含 ${conceptCount} 个知识点`,
+          detailNodes.length ? `补充内容 ${detailNodes.length} 项` : null,
         ].filter(Boolean),
         parentTitle: domain.displayFullTitle,
         relatedNotes: [],
@@ -786,13 +786,13 @@ function buildSelectionIndex(domains, relationGroups) {
         lookup.set(concept.pathKey, {
           key: concept.pathKey,
           type: "concept",
-          eyebrow: `Concept / ${module.code}`,
+          eyebrow: `${module.code} 知识点`,
           title: concept.title,
           pathKey: concept.pathKey,
           summary: concept.detail.definition || getConceptFallbackSummary(concept),
           detail: concept.detail,
           status: normalizeDetailStatus(concept.detail),
-          stats: [concept.children.length ? `${concept.children.length} 个下级概念` : "叶子节点"],
+          stats: [concept.children.length ? `下一级内容 ${concept.children.length} 项` : "最细一级"],
           parentTitle: module.fullTitle,
           relatedNotes: [],
           relatedLinks: [],
@@ -808,10 +808,10 @@ function buildSelectionIndex(domains, relationGroups) {
       lookup.set(getRelationDetailKey(group.title, entry.text), {
         key: getRelationDetailKey(group.title, entry.text),
         type: "relation",
-        eyebrow: `Relation / ${group.title}`,
+        eyebrow: `${group.title} / 关键关系`,
         title: entry.text,
         pathKey: null,
-        summary: entry.notes[0] || `${group.title} 中的一条关键结构关系。`,
+        summary: entry.notes[0] || `理解这条连接后，再阅读两侧内容会更清晰。`,
         detail: {},
         status: "none",
         stats: [entry.notes.length ? `${entry.notes.length} 条补充说明` : "结构关系"],
@@ -826,7 +826,7 @@ function buildSelectionIndex(domains, relationGroups) {
         })),
         childTitles: [],
         impactScope: entry.references.length
-          ? `影响范围：${entry.references.map((reference) => reference.code).join(" / ")}`
+          ? `涉及范围：${entry.references.map((reference) => reference.code).join(" / ")}`
           : null,
       });
     }
@@ -853,10 +853,10 @@ function normalizeDetailStatus(detail) {
 
 function getConceptFallbackSummary(concept) {
   if (concept.children.length) {
-    return `当前节点下还有 ${concept.children.length} 个下级概念，可以继续沿结构往下展开。`;
+    return `该节点下设 ${concept.children.length} 个更细的知识点，可继续展开查阅。`;
   }
 
-  return "当前节点还没有补充独立说明，后续可以在 data/graph.json 中继续细化定义和示例。";
+  return "该节点当前未单独补充说明，建议结合上下文一并理解。";
 }
 
 function getDomainRelationKey(pathKey) {
@@ -989,13 +989,13 @@ function renderDetailPanel() {
 
   if (!entry) {
     elements.detailPanelCard.innerHTML = `
-      <p class="detail-panel-eyebrow">Detail / Ready</p>
-      <h2 id="detail-panel-title">侧边详情</h2>
+      <p class="detail-panel-eyebrow">阅读提示</p>
+      <h2 id="detail-panel-title">内容详情</h2>
       <p class="detail-panel-summary">
-        点击左侧任意知识项，在这里按“是什么 / 解决了什么问题 / 示例”三段式阅读。后面每个节点继续补内容时，这里会直接承接。
+        选择左侧任一知识项，此处会补充背景、价值与延伸阅读线索。
       </p>
       <div class="detail-panel-empty">
-        当前还没有选中具体节点。
+        当前尚未选择具体内容。
       </div>
     `;
     return;
@@ -1013,7 +1013,7 @@ function renderDetailPanel() {
       ${[
         ...entry.stats.map((item) => ({ label: item, className: "" })),
         { label: getTypeLabel(entry.type), className: "" },
-        { label: `状态：${statusLabel}`, className: `is-${entry.status}` },
+        { label: `内容状态：${statusLabel}`, className: `is-${entry.status}` },
       ]
         .filter((item) => item.label)
         .map(
@@ -1044,43 +1044,43 @@ function buildDetailTriad(entry) {
   }
 
   if (entry.parentTitle) {
-    whatBlocks.push({ type: "list", label: "结构位置", items: [entry.parentTitle] });
+    whatBlocks.push({ type: "list", label: "所属层级", items: [entry.parentTitle] });
   }
 
   if (previewChildren.length) {
-    whatBlocks.push({ type: "list", label: "下一级结构", items: previewChildren });
+    whatBlocks.push({ type: "list", label: "下一级内容", items: previewChildren });
   }
 
   if (entry.impactScope) {
-    problemBlocks.push({ type: "text", label: "影响范围", content: entry.impactScope });
+    problemBlocks.push({ type: "text", label: "适用范围", content: entry.impactScope });
   }
 
   if (detail.importance) {
-    problemBlocks.push({ type: "text", label: "核心价值", content: detail.importance });
+    problemBlocks.push({ type: "text", label: "阅读价值", content: detail.importance });
   }
 
   if (prerequisiteItems.length) {
-    problemBlocks.push({ type: "refs", label: "理解前置", items: prerequisiteItems });
+    problemBlocks.push({ type: "refs", label: "建议先了解", items: prerequisiteItems });
   }
 
   if (entry.relatedNotes.length) {
-    problemBlocks.push({ type: "list", label: "相关关系", items: entry.relatedNotes });
+    problemBlocks.push({ type: "list", label: "关联内容", items: entry.relatedNotes });
   }
 
   if (entry.relatedLinks?.length) {
-    problemBlocks.push({ type: "refs", label: "关联节点", items: entry.relatedLinks });
+    problemBlocks.push({ type: "refs", label: "相关内容", items: entry.relatedLinks });
   }
 
   if (nextItems.length) {
-    problemBlocks.push({ type: "refs", label: "继续延展", items: nextItems });
+    problemBlocks.push({ type: "refs", label: "延伸阅读", items: nextItems });
   }
 
   if (detail.minimumDemo) {
-    exampleBlocks.push({ type: "text", label: "最小实验", content: detail.minimumDemo });
+    exampleBlocks.push({ type: "text", label: "理解路径", content: detail.minimumDemo });
   }
 
   if (Array.isArray(detail.examples) && detail.examples.length) {
-    exampleBlocks.push({ type: "list", label: "例子", items: detail.examples });
+    exampleBlocks.push({ type: "list", label: "示例", items: detail.examples });
   }
 
   if (Array.isArray(detail.toolchain) && detail.toolchain.length) {
@@ -1088,15 +1088,15 @@ function buildDetailTriad(entry) {
   }
 
   if (Array.isArray(detail.coreMetrics) && detail.coreMetrics.length) {
-    exampleBlocks.push({ type: "list", label: "观察指标", items: detail.coreMetrics });
+    exampleBlocks.push({ type: "list", label: "观察重点", items: detail.coreMetrics });
   }
 
   if (detail.hardwareBudget) {
-    exampleBlocks.push({ type: "text", label: "资源需求", content: detail.hardwareBudget });
+    exampleBlocks.push({ type: "text", label: "资源要求", content: detail.hardwareBudget });
   }
 
   if (Array.isArray(detail.failureSigns) && detail.failureSigns.length) {
-    exampleBlocks.push({ type: "list", label: "失败信号", items: detail.failureSigns });
+    exampleBlocks.push({ type: "list", label: "常见问题", items: detail.failureSigns });
   }
 
   if (Array.isArray(detail.pitfalls) && detail.pitfalls.length) {
@@ -1105,19 +1105,19 @@ function buildDetailTriad(entry) {
 
   return [
     {
-      title: "是什么",
+      title: "核心说明",
       blocks: whatBlocks,
-      emptyText: "当前节点还没有更具体的定义补充。",
+      emptyText: "该项暂未补充更多背景说明。",
     },
     {
-      title: "解决了什么问题",
+      title: "关联与价值",
       blocks: problemBlocks,
-      emptyText: "当前节点还没有补充它的价值、边界或相关问题。",
+      emptyText: "该项暂未补充关联说明。",
     },
     {
-      title: "示例",
+      title: "实践与延伸",
       blocks: exampleBlocks,
-      emptyText: "当前节点还没有补充例子或最小实验。",
+      emptyText: "该项暂未补充示例或实践说明。",
     },
   ];
 }
@@ -1129,7 +1129,7 @@ function getPreviewChildren(childTitles, limit) {
 
   const previewChildren = childTitles.slice(0, limit);
   if (childTitles.length > previewChildren.length) {
-    previewChildren.push(`还有 ${childTitles.length - previewChildren.length} 项未展开`);
+    previewChildren.push(`还有 ${childTitles.length - previewChildren.length} 项`);
   }
 
   return previewChildren;
@@ -1217,9 +1217,9 @@ function getTypeLabel(type) {
   const labels = {
     domain: "领域",
     "domain-relations": "领域关系",
-    module: "模块",
-    concept: "术语节点",
-    relation: "结构关系",
+    module: "专题",
+    concept: "知识点",
+    relation: "关键关系",
   };
 
   return labels[type] || "知识项";
@@ -1227,10 +1227,10 @@ function getTypeLabel(type) {
 
 function renderStats(stats) {
   const cards = [
-    { label: "领域层", value: stats.domains },
-    { label: "模块层", value: stats.modules },
-    { label: "术语节点", value: stats.concepts },
-    { label: "已补充节点", value: stats.detailNodes },
+    { label: "领域", value: stats.domains },
+    { label: "专题", value: stats.modules },
+    { label: "知识点", value: stats.concepts },
+    { label: "已展开条目", value: stats.detailNodes },
   ];
 
   elements.stats.innerHTML = cards
@@ -1261,13 +1261,13 @@ function renderRoadmap(stages) {
       (stage) => `
       <section class="stage-card" style="--stage-color: ${stage.color}" id="stage-${escapeAttribute(stage.id)}">
         <header class="stage-header">
-          <p class="stage-eyebrow">Stage / ${escapeHtml(stage.id)}</p>
+          <p class="stage-eyebrow">推荐阅读顺序</p>
           <h2>${escapeHtml(stage.title)}</h2>
           <p>${escapeHtml(stage.description)}</p>
           <div class="stage-meta">
-            <span>${stage.domains.length} 个领域</span>
-            <span>${stage.moduleCount} 个模块</span>
-            <span>${stage.conceptCount} 个术语节点</span>
+            <span>包含 ${stage.domains.length} 个领域</span>
+            <span>展开为 ${stage.moduleCount} 个专题</span>
+            <span>覆盖 ${stage.conceptCount} 个知识点</span>
           </div>
         </header>
         ${renderStageRelations(stage)}
@@ -1291,7 +1291,7 @@ function renderStageRelations(stage) {
   return `
     <section class="stage-relations" aria-label="${escapeAttribute(stage.title)} 的关键关系">
       <div class="stage-relations-header">
-        <strong>本阶段关键连接</strong>
+        <strong>本阶段重点关联</strong>
         <span>${stage.relationPreview.length} 条</span>
       </div>
       <div class="stage-relations-list">
@@ -1326,7 +1326,7 @@ function renderDomainCard(domain) {
         role="button"
         aria-label="查看 ${escapeAttribute(domain.displayFullTitle)} 的详情"
       >
-        <p class="domain-eyebrow">${escapeHtml(domain.code)} / Domain</p>
+        <p class="domain-eyebrow">${escapeHtml(domain.code)} 领域</p>
         <h3>${escapeHtml(domain.displayFullTitle)}</h3>
         ${
           domain.detail.definition
@@ -1335,12 +1335,12 @@ function renderDomainCard(domain) {
         }
         ${domain.summary ? `<p class="domain-summary">${escapeHtml(domain.summary)}</p>` : ""}
         <div class="domain-stats">
-          ${CROSSCUT_CODES.includes(domain.code) ? `<span class="domain-badge">横切层</span>` : ""}
+          ${CROSSCUT_CODES.includes(domain.code) ? `<span class="domain-badge">横向主题</span>` : ""}
           <span class="domain-badge is-${escapeAttribute(status)}">${escapeHtml(
             STATUS_LABELS[status]
           )}</span>
-          <span>${domain.modules.length} 个模块</span>
-          <span>${domain.conceptCount} 个术语节点</span>
+          <span>包含 ${domain.modules.length} 个专题</span>
+          <span>覆盖 ${domain.conceptCount} 个知识点</span>
         </div>
       </header>
       ${renderDomainModules(domain)}
@@ -1372,7 +1372,7 @@ function renderDomainModules(domain) {
         <section class="module-group">
           <div class="module-group-header">
             <strong>${escapeHtml(group.title)}</strong>
-            <span>${modules.length} 个模块</span>
+            <span>${modules.length} 个专题</span>
           </div>
           <div class="module-grid">
             ${modules.map(renderModuleCard).join("")}
@@ -1387,8 +1387,8 @@ function renderDomainModules(domain) {
     blocks.push(`
       <section class="module-group">
         <div class="module-group-header">
-          <strong>补充模块</strong>
-          <span>${leftovers.length} 个模块</span>
+          <strong>其他专题</strong>
+          <span>${leftovers.length} 个专题</span>
         </div>
         <div class="module-grid">
           ${leftovers.map(renderModuleCard).join("")}
@@ -1438,7 +1438,7 @@ function renderModuleCard(module) {
 
 function renderConceptTree(concepts) {
   if (!concepts.length) {
-    return `<div class="empty-state">当前模块还没有解析出术语节点。</div>`;
+    return `<div class="empty-state">当前专题尚未继续拆分至更细层级。</div>`;
   }
 
   return `<div class="concept-tree">${concepts.map(renderConceptCluster).join("")}</div>`;
@@ -1519,7 +1519,7 @@ function renderDetailGroup(items) {
   return `
     <details class="detail-group">
       <summary>
-        <strong>补充知识 ${items.length} 项</strong>
+        <strong>本专题相关内容 ${items.length} 项</strong>
       </summary>
       <div class="detail-list">
         ${items.map(renderDetailCard).join("")}
@@ -1539,17 +1539,17 @@ function renderDetailCard(item) {
     segments.push(`<p>${escapeHtml(detail.definition)}</p>`);
   }
   if (detail.importance) {
-    segments.push(`<p><strong>为什么重要：</strong>${escapeHtml(detail.importance)}</p>`);
+    segments.push(`<p><strong>重要性：</strong>${escapeHtml(detail.importance)}</p>`);
   }
   if (prerequisiteLabels.length) {
-    segments.push(`<p><strong>前置：</strong>${escapeHtml(prerequisiteLabels.join(" / "))}</p>`);
+    segments.push(`<p><strong>建议先了解：</strong>${escapeHtml(prerequisiteLabels.join(" / "))}</p>`);
   }
   if (detail.minimumDemo) {
-    segments.push(`<p><strong>最小实验：</strong>${escapeHtml(detail.minimumDemo)}</p>`);
+    segments.push(`<p><strong>理解路径：</strong>${escapeHtml(detail.minimumDemo)}</p>`);
   }
   if (Array.isArray(detail.coreMetrics) && detail.coreMetrics.length) {
     segments.push(`
-      <p><strong>核心指标：</strong>${escapeHtml(detail.coreMetrics.slice(0, 4).join(" / "))}</p>
+      <p><strong>观察重点：</strong>${escapeHtml(detail.coreMetrics.slice(0, 4).join(" / "))}</p>
     `);
   }
   if (Array.isArray(detail.examples) && detail.examples.length) {
@@ -1569,7 +1569,7 @@ function renderDetailCard(item) {
   }
   if (nextLabels.length) {
     segments.push(`
-      <p><strong>下一步：</strong>${escapeHtml(nextLabels.join(" / "))}</p>
+      <p><strong>延伸阅读：</strong>${escapeHtml(nextLabels.join(" / "))}</p>
     `);
   }
 
@@ -1612,7 +1612,7 @@ function renderDomainRelations(domain) {
   return `
     <details class="detail-group">
       <summary>
-        <strong>本层关系 ${domain.relationNotes.length} 条</strong>
+        <strong>本领域关键关系 ${domain.relationNotes.length} 条</strong>
       </summary>
       <div class="detail-list">
         <article
@@ -1620,7 +1620,7 @@ function renderDomainRelations(domain) {
           data-detail-key="${escapeAttribute(getDomainRelationKey(domain.pathKey))}"
           tabindex="0"
           role="button"
-          aria-label="查看 ${escapeAttribute(domain.displayFullTitle)} 本层关系的详情"
+          aria-label="查看 ${escapeAttribute(domain.displayFullTitle)} 结构关系的详情"
         >
           <ul>
             ${domain.relationNotes.map((note) => `<li>${escapeHtml(note)}</li>`).join("")}

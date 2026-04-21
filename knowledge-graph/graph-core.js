@@ -3,35 +3,35 @@ export const GRAPH_DEFAULT_CONFIG = {
     {
       id: "foundation",
       title: "01 基础底座",
-      description: "先把经典 AI、机器学习、深度学习和底层能力串成一条主线。",
+      description: "从数学、经典 AI、机器学习与深度学习建立共同基础。",
       color: "#96b6df",
       codes: ["A", "B", "C", "D"],
     },
     {
       id: "modalities",
       title: "02 任务域与数据",
-      description: "然后再把语言、视觉、语音、视频、多模态以及数据横切层挂上去。",
+      description: "围绕语言、视觉、语音、视频与多模态任务，理解任务形态及其数据基础。",
       color: "#88aad4",
       codes: ["E", "F"],
     },
     {
       id: "llm-system",
       title: "03 大模型系统",
-      description: "这一段把 LLM 本体、后训练、对齐、检索和外部知识连接起来。",
+      description: "说明大模型的内部机制、对齐方式，以及与检索和外部知识的结合。",
       color: "#799dc8",
       codes: ["G", "H", "I"],
     },
     {
       id: "application",
       title: "04 应用与 Agent",
-      description: "应用工程负责稳定性，Agent 系统负责多步自治、状态和工具编排。",
+      description: "聚焦模型在应用系统、工具调用与多步任务中的组织方式。",
       color: "#6d90ba",
       codes: ["J", "K"],
     },
     {
       id: "production",
       title: "05 运行、治理与产品",
-      description: "最后把运行时、基础设施、评测、安全和产品组织闭环补完整。",
+      description: "覆盖部署、评测、安全、合规与产品落地，形成完整运行闭环。",
       color: "#5f82ac",
       codes: ["L", "M", "N"],
     },
@@ -52,20 +52,20 @@ export const GRAPH_DEFAULT_CONFIG = {
   domainDisplay: {
     E: {
       title: "模态、任务域与智能形态",
-      note: "把模态、多模态、决策、具身与扩展能力拆开阅读，避免混在同一层。",
+      note: "这一层覆盖范围较广，可先按语言、视觉、语音与多模态分别理解，再查阅决策、具身与扩展方向。",
     },
   },
   crosscutNotes: {
-    F: "这是全局数据轴：训练、检索、评测、线上反馈都会经过这里。",
-    L: "这是全局运行时轴：模型访问、服务运行、推理优化和生产指标都会受它约束。",
-    M: "这是全局治理轴：模型、应用与 Agent 的评测、安全和合规边界都在这里收束。",
-    N: "这是全局产品闭环：场景、自动化等级、体验设计与团队流程最终在这里落地。",
+    F: "训练、RAG、评测与线上优化都依赖这一层的数据基础。",
+    L: "系统稳定性、响应效率与成本控制最终都会落实到这一层。",
+    M: "评测、安全与合规不宜后置，建议与系统建设同步推进。",
+    N: "当问题转向场景边界、自动化范围与团队协作时，这一层负责把前述能力转化为产品方案。",
   },
   statusLabels: {
-    none: "未补充",
-    seed: "seed",
-    draft: "draft",
-    deep: "deep",
+    none: "待完善",
+    seed: "概览",
+    draft: "详述",
+    deep: "深入",
   },
 };
 
@@ -656,16 +656,16 @@ function buildSelectionIndex(domains, relationGroups, config) {
     lookup.set(domain.pathKey, {
       key: domain.pathKey,
       type: "domain",
-      eyebrow: `Domain / ${domain.code}`,
+      eyebrow: `${domain.code} 领域`,
       title: domain.displayFullTitle,
       pathKey: domain.pathKey,
       summary:
         domain.detail.definition ||
         domain.summary ||
-        `${domain.modules.length} 个模块，${domain.conceptCount} 个术语节点。`,
+        `包含 ${domain.modules.length} 个专题，共覆盖 ${domain.conceptCount} 个知识点。`,
       detail: domain.detail,
       status: normalizeDetailStatus(domain.detail, config.statusLabels),
-      stats: [`${domain.modules.length} 个模块`, `${domain.conceptCount} 个术语节点`],
+      stats: [`包含 ${domain.modules.length} 个专题`, `覆盖 ${domain.conceptCount} 个知识点`],
       parentTitle: null,
       relatedNotes: domain.relationNotes,
       relatedLinks: [],
@@ -679,13 +679,13 @@ function buildSelectionIndex(domains, relationGroups, config) {
       lookup.set(getDomainRelationKey(domain.pathKey), {
         key: getDomainRelationKey(domain.pathKey),
         type: "domain-relations",
-        eyebrow: `Links / ${domain.code}`,
-        title: `${domain.displayFullTitle} / 本层关系`,
+        eyebrow: `${domain.code} 领域关系`,
+        title: `${domain.displayFullTitle} / 结构关系`,
         pathKey: domain.pathKey,
-        summary: `${domain.relationNotes.length} 条与当前领域直接相关的结构关系。`,
+        summary: `汇总 ${domain.relationNotes.length} 条与当前领域直接相关的结构关系。`,
         detail: {},
         status: "none",
-        stats: [`${domain.relationNotes.length} 条关系`],
+        stats: [`${domain.relationNotes.length} 条结构关系`],
         parentTitle: domain.displayFullTitle,
         relatedNotes: domain.relationNotes,
         relatedLinks: [],
@@ -702,17 +702,17 @@ function buildSelectionIndex(domains, relationGroups, config) {
       lookup.set(module.pathKey, {
         key: module.pathKey,
         type: "module",
-        eyebrow: `Module / ${module.code}`,
+        eyebrow: `${module.code} 专题`,
         title: module.fullTitle,
         pathKey: module.pathKey,
         summary:
           module.detail.definition ||
-          `${module.title} 当前包含 ${conceptCount} 个术语节点，可继续向下展开。`,
+          `${module.title} 下设 ${conceptCount} 个知识点，可继续展开查阅。`,
         detail: module.detail,
         status: normalizeDetailStatus(module.detail, config.statusLabels),
         stats: [
-          `${conceptCount} 个术语节点`,
-          detailNodes.length ? `${detailNodes.length} 个补充节点` : null,
+          `包含 ${conceptCount} 个知识点`,
+          detailNodes.length ? `补充内容 ${detailNodes.length} 项` : null,
         ].filter(Boolean),
         parentTitle: domain.displayFullTitle,
         relatedNotes: [],
@@ -727,13 +727,13 @@ function buildSelectionIndex(domains, relationGroups, config) {
         lookup.set(concept.pathKey, {
           key: concept.pathKey,
           type: "concept",
-          eyebrow: `Concept / ${module.code}`,
+          eyebrow: `${module.code} 知识点`,
           title: concept.title,
           pathKey: concept.pathKey,
           summary: concept.detail.definition || getConceptFallbackSummary(concept),
           detail: concept.detail,
           status: normalizeDetailStatus(concept.detail, config.statusLabels),
-          stats: [concept.children.length ? `${concept.children.length} 个下级概念` : "叶子节点"],
+          stats: [concept.children.length ? `下一级内容 ${concept.children.length} 项` : "最细一级"],
           parentTitle: module.fullTitle,
           relatedNotes: [],
           relatedLinks: [],
@@ -751,10 +751,10 @@ function buildSelectionIndex(domains, relationGroups, config) {
       lookup.set(getRelationDetailKey(group.title, entry.text), {
         key: getRelationDetailKey(group.title, entry.text),
         type: "relation",
-        eyebrow: `Relation / ${group.title}`,
+        eyebrow: `${group.title} / 关键关系`,
         title: entry.text,
         pathKey: null,
-        summary: entry.notes[0] || `${group.title} 中的一条关键结构关系。`,
+        summary: entry.notes[0] || `这是 ${group.title} 中的一条关键结构关系。`,
         detail: {},
         status: "none",
         stats: [entry.notes.length ? `${entry.notes.length} 条补充说明` : "结构关系"],
@@ -766,7 +766,7 @@ function buildSelectionIndex(domains, relationGroups, config) {
         })),
         childTitles: [],
         impactScope: entry.references.length
-          ? `影响范围：${entry.references.map((reference) => reference.code).join(" / ")}`
+          ? `涉及范围：${entry.references.map((reference) => reference.code).join(" / ")}`
           : null,
       });
     }
@@ -818,10 +818,10 @@ function countDetailNodes(domain) {
 
 function getConceptFallbackSummary(concept) {
   if (concept.children.length) {
-    return `当前节点下还有 ${concept.children.length} 个下级概念，可以继续沿结构往下展开。`;
+    return `该节点下设 ${concept.children.length} 个更细的知识点，可继续展开查阅。`;
   }
 
-  return "当前节点还没有补充独立说明，后续可以在 graph.json 中继续细化定义和示例。";
+  return "该节点当前未单独补充说明，建议结合上下文一并理解。";
 }
 
 function attachDetailReferences(domains, lookup) {

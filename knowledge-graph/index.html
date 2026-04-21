@@ -8,7 +8,7 @@
     />
     <meta
       name="description"
-      content="AI 知识图谱路线图页面，基于 graph.json 结构骨架和 sharded detail 数据渲染，适合 GitHub Pages 直接访问。"
+      content="一张按阶段展开的 AI 学习路线图，覆盖基础、模型、应用、Agent 与生产实践。"
     />
     <title>AI 知识图谱</title>
     <link
@@ -21,25 +21,22 @@
     <div class="page-shell">
       <header class="hero">
         <div class="hero-copy">
-          <p class="eyebrow">AI Roadmap / GitHub Pages Ready</p>
+          <p class="eyebrow">AI 学习路线图</p>
           <h1>AI 知识图谱</h1>
           <p class="hero-text">
-            这页不再强调操作，而是强调阅读。它把
-            <code>data/graph.json</code> 里的完整知识骨架，配合
-            <code>data/detail-index.json</code> 和 <code>data/details/*.json</code>
-            的分片节点详情，整理成一张可以顺着往下学、也可以按领域回看的 AI 路线图。
+            将 AI 学习主线按阶段展开：先夯实基础，再理解模型，进而进入应用、Agent
+            与生产实践。既可按顺序系统阅读，也可回到熟悉领域进行查阅。
           </p>
           <div class="hero-tags">
-            <span>主干：基础 → 模型 → 应用 → Agent → 生产</span>
-            <span>分支：语言 / 视觉 / 音频 / 视频 / 多模态 / 决策 / 机器人</span>
-            <span>横切：数据 / 评测 / 安全 / 基础设施 / 产品</span>
+            <span>主线：基础 → 模型 → 应用 → Agent → 生产</span>
+            <span>专题：语言 / 视觉 / 音频 / 视频 / 多模态 / 决策 / 机器人</span>
+            <span>横向主题：数据 / 评测 / 安全 / 基础设施 / 产品</span>
           </div>
         </div>
         <div class="hero-meta">
           <div class="stats-grid" id="hero-stats"></div>
           <p class="hero-note">
-            结构继续写在 <code>data/graph.json</code>；节点详情继续写在
-            <code>data/detail-index.json</code> 和 <code>data/details/*.json</code>。
+            建议先沿主线完成一轮整体浏览，再按领域补充重点内容。上方导航可用于快速定位。
           </p>
         </div>
       </header>
@@ -48,8 +45,7 @@
 
       <section class="reading-strip">
         <p class="reading-note">
-          <strong>阅读提示：</strong>仍然按阶段阅读主干，但每个阶段内部已经带上关键关系预览；
-          E 层会拆成更清楚的子组；右侧详情统一按“是什么 / 解决了什么问题 / 示例”三段式展开。
+          <strong>阅读建议：</strong>建议先按阶段理解主线，再进入具体领域继续阅读。每个阶段均标出关键关系，右侧详情区提供背景、价值与延伸线索。
         </p>
       </section>
 
@@ -59,10 +55,10 @@
 
           <section class="relation-section">
             <div class="section-heading">
-              <p class="section-eyebrow">Cross Links</p>
+              <p class="section-eyebrow">关键关系</p>
               <h2>结构之间的关键关系</h2>
               <p>
-                这里保留跨层关系，让这张图不只是目录，而是一张真正的知识网络。
+                此处汇总了需要跨层理解的关键关系。完成某一阶段后，可通过这些连接补足上下游脉络。
               </p>
             </div>
             <div class="relation-grid" id="relation-grid"></div>
@@ -85,7 +81,7 @@
           aria-labelledby="detail-panel-title"
         >
           <div class="detail-drawer-bar">
-            <p class="detail-drawer-label">Knowledge Detail</p>
+            <p class="detail-drawer-label">内容详情</p>
             <button
               type="button"
               class="detail-drawer-close"
@@ -96,10 +92,10 @@
             </button>
           </div>
           <div class="detail-panel-card" id="detail-panel-card" aria-live="polite">
-            <p class="detail-panel-eyebrow">Detail / Ready</p>
-            <h2 id="detail-panel-title">侧边详情</h2>
+            <p class="detail-panel-eyebrow">阅读提示</p>
+            <h2 id="detail-panel-title">内容详情</h2>
             <p class="detail-panel-summary">
-              点击左侧任意知识项，在这里按“是什么 / 解决了什么问题 / 示例”三段式阅读。后面每个节点继续补内容时，这里会直接承接。
+              选择左侧任一知识项，此处会说明其含义、价值与建议阅读路径。
             </p>
           </div>
         </aside>
@@ -107,7 +103,7 @@
 
       <footer class="page-footer">
         <p>
-          当前页面展示的是“结构骨架 + 分片 detail”的第一版。后续只要继续补结构和对应 shard，它会自然扩展。
+          这张图可作为完整的 AI 学习路线图持续查阅。如已有明确问题，可直接通过上方领域导航定位相关内容。
         </p>
       </footer>
     </div>
