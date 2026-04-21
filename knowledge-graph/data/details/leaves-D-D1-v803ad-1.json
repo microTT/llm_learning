@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-20",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-D-D1-v803ad-1",
     "type": "leaf-batch",
     "label": "D1. 神经网络基础 / Leaves",
@@ -99,9 +99,9 @@
     },
     "D/D1. 神经网络基础/前向传播": {
       "status": "draft",
-      "definition": "前向传播指输入沿着网络结构逐层计算，得到中间激活和最终输出的过程。",
-      "importance": "它定义了模型实际在算什么，也是理解 shape 流动、激活分布和中间表示的基础。",
-      "minimumDemo": "对一个两层网络手动跟踪每一层输入输出形状和数值范围。",
+      "definition": "前向传播是输入按照既定计算图依次经过各层、产生中间激活并最终得到 logits 或预测结果的过程，本质上是在定义模型到底执行了什么映射。",
+      "importance": "训练时很多问题在 backward 之前就已经注定了，比如 shape 接错、激活塌陷、数值爆炸或 train/eval 行为不一致。能读懂前向路径，才知道模型为什么会输出这种结果。",
+      "minimumDemo": "对一个两层 MLP 或最小 Transformer block 挂 forward hook，逐层记录输入输出 shape、均值、方差和最大值，确认每一层都在做预期中的事。",
       "hardwareBudget": "CPU 即可。",
       "examples": [
         "embedding -> attention -> logits",
@@ -109,7 +109,7 @@
       ],
       "pitfalls": [
         "只关心最终输出，不观察中间激活异常",
-        "把前向图当成固定模板，不理解每层作用"
+        "把层顺序和 shape 对上就当逻辑正确，忽略 train/eval 分支或 mask 条件"
       ],
       "prerequisites": [
         "D/D1. 神经网络基础/张量",
@@ -125,8 +125,8 @@
         "activation logging"
       ],
       "failureSigns": [
-        "激活全为 0 或异常爆大",
-        "中间层 shape 不符合预期"
+        "激活全为 0、全接近常数或异常爆大",
+        "中间层 shape 虽然能跑通，但语义维度已经错位"
       ],
       "next": [
         "D/D1. 神经网络基础/反向传播",

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-20",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-F-F1-1rxhcct-1",
     "type": "leaf-batch",
     "label": "F1. 数据类型 / Leaves",
@@ -145,9 +145,9 @@
     },
     "F/F1. 数据类型/Eval datasets": {
       "status": "draft",
-      "definition": "Eval datasets 是专门用于重复评测和回归验证的数据，不应和训练数据混用。",
-      "importance": "没有独立 eval set，所有提升都可能只是训练记忆或口径漂移。",
-      "minimumDemo": "为一个任务单独划出训练集和评测集，并记录它们的来源和隔离方式。",
+      "definition": "Eval datasets 是专门为离线评测、回归测试和版本比较保留的数据集合，目标不是喂给模型学习，而是稳定暴露能力变化和失效边界。",
+      "importance": "没有独立且口径稳定的 eval set，很多“提升”都可能只是训练记忆、prompt 变化或评估口径漂移。它是团队能否持续做对比决策的基准尺。",
+      "minimumDemo": "为一个任务显式划出 train、dev、eval 三套数据，记录来源、冻结日期、污染检查方式和每次版本评测结果。",
       "hardwareBudget": "成本主要在构建、维护和污染检查。",
       "prerequisites": [
         "M/M1. 模型级评测",
@@ -155,7 +155,8 @@
       ],
       "coreMetrics": [
         "reproducibility",
-        "contamination rate"
+        "contamination rate",
+        "version-to-version comparability"
       ],
       "next": [
         "F/F7. 后训练数据构建/Train / validation / test split",

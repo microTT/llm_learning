@@ -26,16 +26,17 @@
   "nodes": {
     "M/M6. Guardrails/Input guardrails": {
       "status": "draft",
-      "definition": "Input guardrails 在用户输入、检索内容或外部上下文进入主链路前做风险检查和清洗。",
-      "importance": "越早发现注入、违规请求和污染内容，后续系统越少承担不必要风险。",
-      "minimumDemo": "在输入进入模型前做分类和规则检查，并记录命中原因与处置动作。",
+      "definition": "Input guardrails 在用户输入、检索结果、网页内容或工具返回进入主模型前做分类、清洗、字段裁剪和风险隔离，目标是把危险输入挡在主链路之外。",
+      "importance": "越早发现注入、违规请求和污染内容，后续系统越少承担不必要风险。输入 guardrail 的关键不只是拦截，还包括把指令、数据和元信息拆开，不让模型把外部文本误当控制命令。",
+      "minimumDemo": "在输入进入模型前做分类和规则检查，并记录命中原因、被裁剪字段和最终送入模型的干净上下文。",
       "prerequisites": [
         "M/M5. 安全控制/Moderation",
         "M/M5. 安全控制/Prompt injection defense"
       ],
       "coreMetrics": [
         "input block rate",
-        "false block rate"
+        "false block rate",
+        "instruction-data separation success"
       ],
       "next": [
         "M/M6. Guardrails/Policy guardrails",
@@ -62,16 +63,17 @@
     },
     "M/M6. Guardrails/Tool guardrails": {
       "status": "draft",
-      "definition": "Tool guardrails 检查工具选择、参数、执行上下文和副作用范围是否符合安全边界。",
-      "importance": "它是模型输出与真实系统动作之间最后一道自动拦截层。",
-      "minimumDemo": "在工具执行前检查参数是否合法、scope 是否允许、是否需要审批。",
+      "definition": "Tool guardrails 在工具真正执行前检查工具选择、参数格式、权限范围、资源目标和副作用级别，确保模型不会把一句看起来合理的话直接转成危险动作。",
+      "importance": "它是模型输出与真实系统动作之间最后一道自动拦截层。很多系统不是答错，而是调错工具、传错参数或在错误租户上执行，工具 guardrail 的价值就在于把这些错挡在执行前。",
+      "minimumDemo": "在工具执行前检查参数是否合法、scope 是否允许、目标资源是否匹配当前上下文，以及是否需要审批或降级到只读模式。",
       "prerequisites": [
         "M/M5. 安全控制/Sensitive tool controls",
         "J/J3. 工具调用/Tool execution"
       ],
       "coreMetrics": [
         "tool block precision",
-        "unsafe tool prevention rate"
+        "unsafe tool prevention rate",
+        "argument validation catch rate"
       ],
       "next": [
         "M/M3. Agent 级评测/Policy compliance",

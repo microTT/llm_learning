@@ -47,16 +47,17 @@
     },
     "L/L7. 生产运行指标/Throughput": {
       "status": "draft",
-      "definition": "Throughput 衡量单位时间内系统能处理多少请求或多少 token，是容量规划和成本优化的核心指标。",
-      "importance": "没有吞吐视角，只盯单请求速度会误判系统整体承载能力。",
-      "minimumDemo": "在固定负载生成器下记录不同并发时的请求吞吐和 token 吞吐。",
+      "definition": "Throughput 衡量系统在稳定运行条件下单位时间能处理多少请求、多少 token 或多少成功任务，是容量规划和调度优化的直接结果指标。",
+      "importance": "没有吞吐视角，只盯单请求速度会误判整体承载能力。很多优化能让单请求更快，却让批量服务能力下降；真正上线时吃的是总吞吐，不是 demo 时的一次响应。",
+      "minimumDemo": "在固定负载生成器下逐步提升并发，记录 req/s、tokens/s、成功任务数和尾延迟，找出吞吐达到平台期前后的拐点。",
       "prerequisites": [
         "L/L3. 推理优化/Continuous batching",
         "L/L6. 硬件层/GPU"
       ],
       "coreMetrics": [
         "req/sec",
-        "tokens/sec"
+        "tokens/sec",
+        "successful tasks/sec"
       ],
       "next": [
         "L/L7. 生产运行指标/Cost",
@@ -65,16 +66,17 @@
     },
     "L/L7. 生产运行指标/Cost": {
       "status": "draft",
-      "definition": "Cost 衡量模型调用、硬件资源、缓存、存储和运维综合后的单位任务或单位 token 成本。",
-      "importance": "很多方案不是做不到，而是做到的成本不可接受；成本指标决定方案能否长期运行。",
-      "minimumDemo": "计算一次成功任务的总成本，并拆分模型、存储、缓存和运维开销。",
+      "definition": "Cost 衡量模型调用、硬件资源、缓存、存储、人工审核和运维综合后的单位任务成本或单位 token 成本，关注的是系统真实交付一件事要花多少钱。",
+      "importance": "很多方案不是做不到，而是做到的成本不可接受。只看模型 API 单价通常会低估真实成本，因为重试、缓存未命中、失败任务和人工兜底都会把账单抬高。",
+      "minimumDemo": "按一次成功任务拆账，分别统计模型调用、检索、缓存、工具执行、人工审批和失败重试成本，形成可复用的 cost per success 模板。",
       "prerequisites": [
         "L/L7. 生产运行指标/Throughput",
         "M/M4. 在线评测/Business KPIs"
       ],
       "coreMetrics": [
         "cost per successful task",
-        "cost per 1k tokens"
+        "cost per 1k tokens",
+        "retry waste ratio"
       ],
       "next": [
         "L/L7. 生产运行指标/Token usage",
@@ -83,9 +85,9 @@
     },
     "L/L7. 生产运行指标/Error rate": {
       "status": "draft",
-      "definition": "Error rate 记录调用失败、超时、OOM、工具异常和协议错误的比例，是系统健康的基础红线指标。",
-      "importance": "错误率通常会先于用户投诉暴露系统退化，是运维和容量告警的第一信号。",
-      "minimumDemo": "按错误类型统计调用失败，并在流量变化时观察错误率是否飙升。",
+      "definition": "Error rate 记录请求失败、超时、OOM、协议不匹配、工具异常和内部降级等错误占比，关键不只是总错误率，还包括不同错误类型的结构。",
+      "importance": "错误率通常会先于用户投诉暴露系统退化，是容量、依赖稳定性和发布质量的第一信号。若只看总数而不拆类型，很难判断是模型、工具、队列还是基础设施在出问题。",
+      "minimumDemo": "按错误类型和调用阶段拆分统计失败，观察流量变化、发布切换或外部依赖异常时哪些错误率先飙升。",
       "prerequisites": [
         "J/J7. 工程可靠性/Error classes",
         "L/L5. 系统基础设施/Queue"
@@ -93,7 +95,8 @@
       "coreMetrics": [
         "error rate",
         "timeout rate",
-        "oom rate"
+        "oom rate",
+        "stage-specific failure rate"
       ],
       "next": [
         "L/L7. 生产运行指标/Availability",

@@ -25,16 +25,17 @@
   "nodes": {
     "M/M8. 对抗测试与审计/Red teaming": {
       "status": "draft",
-      "definition": "Red teaming 是站在攻击者和高风险用户视角，系统性寻找系统绕过路径和危险失效模式。",
-      "importance": "很多高风险问题不会在常规评测里出现，只能靠对抗视角主动发现。",
-      "minimumDemo": "围绕越狱、注入、敏感工具误用和数据泄露设计一组红队任务并执行。",
+      "definition": "Red teaming 是站在攻击者、高风险用户或误用者视角，系统性寻找模型、检索、工具和权限链路中的绕过路径与危险失效模式。",
+      "importance": "很多高风险问题不会在常规评测里出现，只能靠对抗视角主动发现。高价值 red team 不是泛泛地“多试几个坏问题”，而是围绕真实攻击面设计可复现任务和证据链。",
+      "minimumDemo": "围绕越狱、注入、敏感工具误用、跨租户访问和数据泄露设计一组红队任务，记录复现路径、影响范围和拦截缺口。",
       "prerequisites": [
         "M/M5. 安全控制/Jailbreak defense",
         "M/M6. Guardrails/Policy guardrails"
       ],
       "coreMetrics": [
         "attack discovery rate",
-        "critical issue density"
+        "critical issue density",
+        "reproducible exploit rate"
       ],
       "next": [
         "M/M8. 对抗测试与审计/Attack simulation",
@@ -43,16 +44,17 @@
     },
     "M/M8. 对抗测试与审计/Attack simulation": {
       "status": "draft",
-      "definition": "Attack simulation 把常见攻击路径程序化或模板化，反复验证系统在特定攻击模式下的表现。",
-      "importance": "它把一次性红队演练转成可重复的安全回归资产。",
-      "minimumDemo": "为提示注入、越狱和敏感工具误用各写一个自动化攻击样例，并对新版本重放。",
+      "definition": "Attack simulation 把已知攻击路径模板化、脚本化或数据化，在新版本和新配置上持续重放，以验证防护是否依旧有效。",
+      "importance": "它把一次性红队演练转成可重复的安全回归资产。真正的价值不是“模拟很多攻击”，而是让关键攻击路径能在每次版本变化后被稳定重测。",
+      "minimumDemo": "为提示注入、越狱、敏感工具误用和跨边界访问各写一个自动化攻击样例，并在配置变化或版本发布前统一重放。",
       "prerequisites": [
         "M/M8. 对抗测试与审计/Red teaming",
         "M/M5. 安全控制/Prompt injection defense"
       ],
       "coreMetrics": [
         "attack replay pass rate",
-        "mitigation durability"
+        "mitigation durability",
+        "config-regression sensitivity"
       ],
       "next": [
         "M/M8. 对抗测试与审计/Safety regression tests",

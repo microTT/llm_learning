@@ -100,16 +100,17 @@
     },
     "L/L6. 硬件层/Multi-GPU": {
       "status": "draft",
-      "definition": "Multi-GPU 通过多卡并行扩展训练或推理容量，但也引入同步、通信和负载平衡问题。",
-      "importance": "多卡不是线性加速按钮；很多系统一扩到多卡，真正瓶颈才开始暴露。",
-      "minimumDemo": "对同一工作负载比较单卡与多卡的扩展效率和通信开销。",
+      "definition": "Multi-GPU 通过数据并行、张量并行、流水线并行或专家并行把计算分布到多张卡上，用来扩展模型容量、batch 大小或服务吞吐，但同时引入通信和调度复杂度。",
+      "importance": "多卡不是线性加速按钮；一旦进入多卡，通信拓扑、跨卡同步、参数切分和负载均衡都会变成一等公民。很多系统在单卡没问题，上多卡后吞吐提升有限、尾延迟却明显变差。",
+      "minimumDemo": "对同一工作负载比较单卡与多卡的 tokens/s、显存占用、扩展效率和跨卡通信等待时间，确认瓶颈到底在算力还是在互联。",
       "prerequisites": [
         "L/L4. 训练基础设施/DDP",
         "L/L6. 硬件层/Network bandwidth"
       ],
       "coreMetrics": [
         "scale efficiency",
-        "communication overhead"
+        "communication overhead",
+        "load imbalance"
       ],
       "next": [
         "L/L4. 训练基础设施/FSDP",

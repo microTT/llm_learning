@@ -28,16 +28,17 @@
   "nodes": {
     "M/M5. 安全控制/Moderation": {
       "status": "draft",
-      "definition": "Moderation 对输入和输出中的有害、违规或高风险内容做分类和拦截。",
-      "importance": "它是最基础的内容安全网，适合高频但相对标准化的风险过滤。",
-      "minimumDemo": "为一次调用在输入和输出两端接入 moderation，并记录命中类别与处理结果。",
+      "definition": "Moderation 对输入、检索内容和输出中的有害、违规或高风险内容做分类、打标和拦截，是内容安全链路里最标准化的一层。",
+      "importance": "它适合高频、可枚举、需要统一口径的风险过滤，但不能替代上下文相关的策略判断。真正成熟的系统会把 moderation 当成第一道筛网，而不是唯一安全机制。",
+      "minimumDemo": "在输入和输出两端接入 moderation，记录命中类别、拦截动作、人工复核结果和误杀样本，确认规则既挡得住风险也不会误伤正常请求。",
       "prerequisites": [
         "M/M5. 安全控制",
         "M/M6. Guardrails/Input guardrails"
       ],
       "coreMetrics": [
         "unsafe content block rate",
-        "false positive rate"
+        "false positive rate",
+        "review-confirmed precision"
       ],
       "next": [
         "M/M6. Guardrails/Input guardrails",
@@ -136,16 +137,17 @@
     },
     "M/M5. 安全控制/Approval gates": {
       "status": "draft",
-      "definition": "Approval gates 在高风险动作前插入强制人工确认点，把模型建议与真实执行分离开。",
-      "importance": "它是控制副作用风险最直接也最实用的保险丝之一。",
-      "minimumDemo": "对一个会改数据或执行命令的动作强制审批，并记录审批前后的状态变化。",
+      "definition": "Approval gates 在高风险动作真正执行前插入人工确认或显式授权点，把模型产出的建议、计划或参数与实际副作用执行强制分层。",
+      "importance": "它是控制副作用风险最直接也最实用的保险丝之一，尤其适用于写数据、发消息、付费、执行命令和访问敏感系统。关键不只是“有审批”，而是审批点要放在真正危险的边界上。",
+      "minimumDemo": "对一个会改数据或执行命令的动作强制审批，并记录审批前展示的信息是否足以让人判断风险、参数和影响范围。",
       "prerequisites": [
         "K/K8. 人在回路/Approval before side effects",
         "J/J8. 安全与权限/Sensitive action approval"
       ],
       "coreMetrics": [
         "approval trigger precision",
-        "blocked risky action rate"
+        "blocked risky action rate",
+        "unsafe action escape rate"
       ],
       "next": [
         "M/M3. Agent 级评测/Approval correctness",

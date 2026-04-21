@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-20",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-F-F2-1rx2c1j-1",
     "type": "leaf-batch",
     "label": "F2. 数据形态 / Leaves",
@@ -66,16 +66,17 @@
     },
     "F/F2. 数据形态/音频": {
       "status": "draft",
-      "definition": "音频形态关注采样率、声道、时长、噪声和切分方式，是语音与一般音频任务的基础承载形式。",
-      "importance": "采样率和切片方式稍有不一致，ASR、TTS 和音频分类都会明显受影响。",
-      "minimumDemo": "对一批音频做采样率统一、静音切分和时长分布分析。",
+      "definition": "音频形态不仅包含波形文件本身，还包含采样率、声道、位深、时长、静音区间、背景噪声和切片边界等会直接影响模型输入语义的属性。",
+      "importance": "音频问题常常不是“模型不会”，而是前处理把时序信息切坏了。采样率、静音切分和转写对齐稍有不一致，ASR、TTS 和音频分类都会明显退化。",
+      "minimumDemo": "抽一批音频统一到同一采样率后，再比较不同静音切分和归一化策略对转写错误率或分类准确率的影响。",
       "prerequisites": [
         "E/E3. 音频 / 语音",
         "D/D4. 基础模型类型/语音 / 音频基础模型"
       ],
       "coreMetrics": [
         "sample rate consistency",
-        "duration coverage"
+        "duration coverage",
+        "transcript alignment quality"
       ],
       "next": [
         "F/F3. 数据工程/清洗",
@@ -84,9 +85,9 @@
     },
     "F/F2. 数据形态/视频": {
       "status": "draft",
-      "definition": "视频形态在图像基础上增加时间维度，因此要同时处理帧率、时长、编码、镜头和时序标注。",
-      "importance": "视频的真正难点往往不在单帧，而在如何组织和抽样长序列。",
-      "minimumDemo": "对一批视频统计帧率、时长和关键帧抽样覆盖，比较不同采样策略的上下文损失。",
+      "definition": "视频形态是在图像基础上叠加时间轴、镜头切换、帧率、压缩编码和多粒度标注后的复合数据形态，真正处理对象往往是 clip 而不是单帧。",
+      "importance": "视频难点通常不在单帧识别，而在如何在有限计算预算里保住关键时序信息。抽帧、切 clip 和时间标注一旦做错，模型会在看起来“样本很多”的情况下持续丢上下文。",
+      "minimumDemo": "对同一批视频分别做均匀抽帧、关键帧抽样和按事件切 clip，比较三种策略在同一视频理解任务上的覆盖与效果差异。",
       "prerequisites": [
         "E/E4. 视频",
         "D/D4. 基础模型类型/视频基础模型"
@@ -94,7 +95,8 @@
       "coreMetrics": [
         "frame coverage",
         "clip length",
-        "storage cost"
+        "storage cost",
+        "temporal label alignment"
       ],
       "next": [
         "F/F3. 数据工程/切分",
@@ -139,16 +141,17 @@
     },
     "F/F2. 数据形态/图结构": {
       "status": "draft",
-      "definition": "图结构数据由节点、边和属性构成，适合表达关系网络、依赖、知识和交互拓扑。",
-      "importance": "它和表格、文本不同，很多关系模式只有在图结构里才自然可见。",
-      "minimumDemo": "把一批实体关系转换成图结构，并检查节点、边和属性完整性。",
+      "definition": "图结构数据由节点、边及其属性组成，适合表达依赖、知识关系、交互网络和流程拓扑，其核心价值在于把“对象之间的连接方式”显式化。",
+      "importance": "它和表格、文本不同，真正重要的不只是节点属性，而是边的语义、方向和稀疏拓扑。很多推荐、知识图谱和工作流问题，若被拍平为普通样本，会丢掉最关键的关系信号。",
+      "minimumDemo": "把一批实体关系或调用依赖转成图结构，检查孤立节点、反向边缺失和关键属性是否完整，再对照原始关系源做 spot check。",
       "prerequisites": [
         "B/B4. 知识表示/知识图谱",
         "D/D2. 架构家族/Graph Neural Networks"
       ],
       "coreMetrics": [
         "edge coverage",
-        "graph consistency"
+        "graph consistency",
+        "orphan node rate"
       ],
       "next": [
         "E/E8. 扩展领域/推荐系统",
@@ -157,16 +160,17 @@
     },
     "F/F2. 数据形态/时间序列": {
       "status": "draft",
-      "definition": "时间序列数据强调按时间排序的观测、状态或事件，核心是顺序、间隔和随时间变化的模式。",
-      "importance": "很多预测、监控和控制问题的本质都不是静态样本分类，而是对序列演化规律的建模。",
-      "minimumDemo": "对一段时间序列做窗口切分和未来标签构造，检查是否引入未来信息泄漏。",
+      "definition": "时间序列数据由按时间排序的观测值、事件或状态组成，除了值本身，还要保留时间间隔、窗口边界、缺失段和目标发生顺序等语义。",
+      "importance": "很多预测、监控和控制问题的本质不是静态样本分类，而是对演化规律和异常拐点建模。时间索引一旦错位，模型可能在离线看起来很准，线上却完全失效。",
+      "minimumDemo": "对一段时间序列做滑窗切分、未来标签构造和按时间分桶的 train/test 划分，重点检查是否引入未来信息泄漏。",
       "prerequisites": [
         "B/B7. 不确定性与概率推理/时序概率模型",
         "E/E6. 决策与强化学习"
       ],
       "coreMetrics": [
         "window validity",
-        "leakage rate"
+        "leakage rate",
+        "timestamp consistency"
       ],
       "next": [
         "F/F3. 数据工程/切分",

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-20",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-D-D2-nhaalt-1",
     "type": "leaf-batch",
     "label": "D2. 架构家族 / Leaves",
@@ -28,17 +28,17 @@
   "nodes": {
     "D/D2. 架构家族/MLP": {
       "status": "draft",
-      "definition": "MLP 由若干全连接层和非线性激活堆叠而成，是最基础的前馈神经网络架构。",
-      "importance": "它是理解深度学习表达能力的起点，也是很多更复杂架构里子模块的基本原型。",
-      "minimumDemo": "用两层 MLP 在一个小型表格或 MNIST 风格数据集上训练分类器。",
+      "definition": "MLP 由若干线性变换和非线性激活交替堆叠而成，是最基础的前馈神经网络，也是很多复杂架构内部 feed-forward 子层的原型。",
+      "importance": "理解 MLP 的关键不在于它“简单”，而在于它暴露了神经网络最基本的容量来源、过拟合方式和特征混合机制。很多大模型 block 里最吃参数的部分，本质上仍然是 MLP。",
+      "minimumDemo": "用两层 MLP 做一个小型表格分类或 MNIST 分类，同时记录训练/验证曲线，观察隐藏层宽度变化如何影响拟合能力和过拟合。",
       "hardwareBudget": "CPU 即可。",
       "examples": [
         "表格数据分类",
         "作为大模型中的 feed-forward 子层"
       ],
       "pitfalls": [
-        "直接拿 MLP 处理强结构化空间关系",
-        "忽视特征尺度"
+        "直接拿 MLP 处理强结构化空间或长时序关系",
+        "忽视输入特征尺度、离散特征编码和隐藏层宽度选择"
       ],
       "prerequisites": [
         "D/D1. 神经网络基础/激活函数",
@@ -53,6 +53,7 @@
         "PyTorch"
       ],
       "failureSigns": [
+        "训练集能快速记住，但验证集泛化很差",
         "对空间或时序结构任务表现明显不足"
       ],
       "next": [

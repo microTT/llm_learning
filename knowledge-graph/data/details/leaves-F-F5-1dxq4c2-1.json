@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-20",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-F-F5-1dxq4c2-1",
     "type": "leaf-batch",
     "label": "F5. 数据治理 / Leaves",
@@ -84,9 +84,9 @@
     },
     "F/F5. 数据治理/数据保留": {
       "status": "draft",
-      "definition": "数据保留规定数据该保存多久、何时删除、哪些版本需要长期留存、哪些应在特定时间后清理。",
-      "importance": "没有保留策略，数据常会无限堆积，既增加泄露面，也让审计和回滚越来越困难。",
-      "minimumDemo": "给训练集、日志和审计记录分别设定保留期限，并标明删除和归档动作。",
+      "definition": "数据保留定义不同类型数据要保留多久、何时归档、何时删除以及删除后是否仍保留最小审计证据，核心是在可追溯和最小暴露面之间做约束。",
+      "importance": "没有保留策略，日志、trace、缓存和训练产物会无限堆积，既扩大泄露面，也让团队根本说不清哪些数据还应该存在。很多隐私和合规问题并不是“收集错了”，而是“留太久了”。",
+      "minimumDemo": "为训练集、用户日志、agent trace 和审计记录分别定义保留周期、归档介质和删除责任人，并实际验证一批过期样本能被清理或转冷存。",
       "hardwareBudget": "会影响存储和归档成本，但本质是治理问题。",
       "prerequisites": [
         "F/F3. 数据工程/版本管理",
@@ -94,7 +94,8 @@
       ],
       "coreMetrics": [
         "retention compliance",
-        "expired data backlog"
+        "expired data backlog",
+        "deletion verification rate"
       ],
       "next": [
         "F/F5. 数据治理/审计",

@@ -26,16 +26,17 @@
   "nodes": {
     "M/M7. 隐私与合规/PII handling": {
       "status": "draft",
-      "definition": "PII handling 定义系统如何识别、分类、处理、脱敏和避免扩散个人敏感信息。",
-      "importance": "PII 一旦进入提示、日志和产物链路，风险会跨多个组件扩散。",
-      "minimumDemo": "标记一组常见 PII 字段，并验证输入、输出和日志里都按策略处理。",
+      "definition": "PII handling 定义系统如何识别、分类、脱敏、最小化传播和删除个人可识别信息，覆盖输入、输出、日志、缓存、知识库和训练数据全链路。",
+      "importance": "PII 一旦进入提示、日志和产物链路，风险会跨多个组件扩散。真正困难的地方不是识别几个字段，而是确保副本、缓存和导出物都遵守同一处理策略。",
+      "minimumDemo": "列出一组常见 PII 字段和高风险组合字段，验证输入、输出、日志和 trace 在默认路径上都按策略处理，且原值不会留在调试产物中。",
       "prerequisites": [
         "M/M7. 隐私与合规",
         "M/M6. Guardrails/Redaction / filtering"
       ],
       "coreMetrics": [
         "pii detection coverage",
-        "privacy leak rate"
+        "privacy leak rate",
+        "downstream copy suppression rate"
       ],
       "next": [
         "M/M7. 隐私与合规/Data retention",
@@ -80,16 +81,17 @@
     },
     "M/M7. 隐私与合规/Audit logs": {
       "status": "draft",
-      "definition": "Audit logs 记录谁在什么时候访问了什么数据、触发了什么动作、为何被放行或拦截。",
-      "importance": "没有审计日志，很多合规要求和事故追责都无法落地。",
-      "minimumDemo": "为关键读写和审批事件写入结构化审计日志，并验证能按用户、工具和时间回查。",
+      "definition": "Audit logs 记录谁在什么时候访问了什么数据、调用了什么工具、触发了什么审批或拦截，以及这些动作为什么被放行或拒绝。",
+      "importance": "没有审计日志，很多合规要求、事故追责和越权调查都无法落地。好的审计日志不是越多越好，而是能围绕关键动作形成可查询、可解释、不可轻易篡改的证据链。",
+      "minimumDemo": "为关键读写、审批、导出和敏感工具调用写入结构化审计日志，并验证能按用户、租户、工具和时间范围回查完整时间线。",
       "prerequisites": [
         "K/K9. Agent 观测与控制/Auditability",
         "M/M7. 隐私与合规/Access control"
       ],
       "coreMetrics": [
         "audit coverage",
-        "queryability"
+        "queryability",
+        "evidence completeness"
       ],
       "next": [
         "M/M8. 对抗测试与审计/Incident review",
