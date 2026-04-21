@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-J-J3-rtwvkk-1",
     "type": "leaf-batch",
     "label": "J3. 工具调用 / Leaves",
@@ -21,14 +21,120 @@
       "Tool retries / fallback"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "J/J3. 工具调用/Function calling": {},
-    "J/J3. 工具调用/Tool schema design": {},
-    "J/J3. 工具调用/Tool routing": {},
-    "J/J3. 工具调用/Tool execution": {},
-    "J/J3. 工具调用/Tool result injection": {},
-    "J/J3. 工具调用/Tool retries / fallback": {}
+    "J/J3. 工具调用/Function calling": {
+      "status": "draft",
+      "definition": "Function calling 是让模型以结构化方式表达“我想调用哪个工具、带什么参数”，而不是把工具意图埋在自然语言里。",
+      "importance": "它是模型和执行层之间最基础的协议层，决定工具意图能否被稳定识别和消费。",
+      "minimumDemo": "让模型在需要和不需要工具的请求上分别输出函数调用意图，统计调用触发和参数结构是否稳定。",
+      "prerequisites": [
+        "J/J2. 结构化输出/JSON Schema",
+        "J/J3. 工具调用/Tool schema design"
+      ],
+      "coreMetrics": [
+        "call trigger accuracy",
+        "argument format stability"
+      ],
+      "next": [
+        "J/J3. 工具调用/Tool routing",
+        "J/J3. 工具调用/Tool execution"
+      ]
+    },
+    "J/J3. 工具调用/Tool schema design": {
+      "status": "draft",
+      "definition": "Tool schema design 是把工具名称、参数、约束、默认值、枚举、错误语义和副作用边界定义清楚，让模型和执行层共享同一契约。",
+      "importance": "很多工具调用失败不是模型不会调，而是 schema 含糊、字段歧义或约束缺失，导致参数质量天生不稳。",
+      "minimumDemo": "为同一工具设计一版宽松 schema 和一版严格 schema，比较参数正确率和失败类型分布。",
+      "prerequisites": [
+        "H/H1. 不改权重的控制/Tool schemas",
+        "J/J2. 结构化输出/Validation"
+      ],
+      "coreMetrics": [
+        "argument accuracy",
+        "validation failure rate"
+      ],
+      "next": [
+        "J/J3. 工具调用/Function calling",
+        "J/J3. 工具调用/Tool result injection"
+      ]
+    },
+    "J/J3. 工具调用/Tool routing": {
+      "status": "draft",
+      "definition": "Tool routing 关注的是何时该调工具、该调哪个工具、是否需要多工具链，以及何时应该直接回答或升级到人工确认。",
+      "importance": "这是工具调用最容易出错也最有价值的一层，因为很多失败根本不是执行报错，而是路由决策从一开始就错了。",
+      "minimumDemo": "准备一组需要工具、无需工具和需人工审批的任务，统计路由正确率和误调率。",
+      "prerequisites": [
+        "G/G8. 推理模型与模型路由/Model routing policy",
+        "J/J3. 工具调用/Function calling"
+      ],
+      "coreMetrics": [
+        "tool selection accuracy",
+        "false call rate",
+        "escalation correctness"
+      ],
+      "next": [
+        "J/J3. 工具调用/Tool execution",
+        "K/K8. 人在回路/Approval before side effects"
+      ]
+    },
+    "J/J3. 工具调用/Tool execution": {
+      "status": "draft",
+      "definition": "Tool execution 是把模型产出的工具调用意图真正映射到可执行代码、外部 API 或系统动作上，并处理超时、异常、副作用和审计。",
+      "importance": "这一步决定应用是停留在“建议工具调用”，还是能安全完成真实操作；同时它也是副作用风险和可靠性风险最集中的环节。",
+      "minimumDemo": "实现一个只读工具和一个带副作用工具，分别测试执行成功、超时、失败和审批拦截路径。",
+      "prerequisites": [
+        "J/J3. 工具调用/Tool routing",
+        "J/J8. 安全与权限/Sensitive action approval"
+      ],
+      "coreMetrics": [
+        "execution success rate",
+        "timeout rate",
+        "side-effect safety"
+      ],
+      "next": [
+        "J/J3. 工具调用/Tool result injection",
+        "J/J7. 工程可靠性/Timeout"
+      ]
+    },
+    "J/J3. 工具调用/Tool result injection": {
+      "status": "draft",
+      "definition": "Tool result injection 是把工具返回结果以适当粒度和角色重新注入模型上下文，让模型能正确消费结果而不被噪声淹没。",
+      "importance": "很多工具链路明明执行成功，最终任务却失败，原因就在于结果注入方式错误，模型没有真正用上工具结果。",
+      "minimumDemo": "对同一工具结果分别做原样注入、摘要注入和结构化注入，比较后续步骤质量和 token 成本。",
+      "prerequisites": [
+        "J/J1. 模型接口层/System / user / tool messages",
+        "J/J3. 工具调用/Tool execution"
+      ],
+      "coreMetrics": [
+        "result consumption quality",
+        "token overhead",
+        "noise ratio"
+      ],
+      "next": [
+        "J/J1. 模型接口层/Context assembly",
+        "J/J3. 工具调用/Tool retries / fallback"
+      ]
+    },
+    "J/J3. 工具调用/Tool retries / fallback": {
+      "status": "draft",
+      "definition": "Tool retries / fallback 处理工具调用失败后的恢复策略，包括重试、换工具、降级到只读路径、返回部分结果或升级到人工。",
+      "importance": "生产环境里工具失败是常态，不是例外。没有这层，任何一个外部系统抖动都能直接击穿整个 AI 工作流。",
+      "minimumDemo": "人为制造超时、空结果和服务错误，分别验证重试、fallback 和人工兜底路径是否按预期触发。",
+      "prerequisites": [
+        "J/J3. 工具调用/Tool execution",
+        "J/J7. 工程可靠性/Fallback"
+      ],
+      "coreMetrics": [
+        "recovery success rate",
+        "retry amplification",
+        "user-visible failure rate"
+      ],
+      "next": [
+        "J/J7. 工程可靠性/Retry",
+        "J/J7. 工程可靠性/Fallback"
+      ]
+    }
   }
 }

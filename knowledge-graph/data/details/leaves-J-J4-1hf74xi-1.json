@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-J-J4-1hf74xi-1",
     "type": "leaf-batch",
     "label": "J4. 会话与状态 / Leaves",
@@ -22,15 +22,137 @@
       "Token budgeting"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "J/J4. 会话与状态/Conversation state": {},
-    "J/J4. 会话与状态/Session memory": {},
-    "J/J4. 会话与状态/Server-managed state": {},
-    "J/J4. 会话与状态/Client-managed replay": {},
-    "J/J4. 会话与状态/Context compaction": {},
-    "J/J4. 会话与状态/Prompt caching": {},
-    "J/J4. 会话与状态/Token budgeting": {}
+    "J/J4. 会话与状态/Conversation state": {
+      "status": "draft",
+      "definition": "Conversation state 是一次对话在当前时刻的最小工作状态，包括主题、已确认约束、最近工具结果和未完成动作，而不是整段历史文本的简单累积。",
+      "importance": "如果没有显式会话状态，系统只能靠整段历史猜测当前上下文，随着轮次增加会越来越慢、越来越不稳定。",
+      "minimumDemo": "为一个多轮任务显式维护当前主题和已确认参数，比较有无显式 state 时的跨轮一致性。",
+      "prerequisites": [
+        "J/J1. 模型接口层/Context assembly",
+        "J/J4. 会话与状态/Session memory"
+      ],
+      "coreMetrics": [
+        "state retention",
+        "cross-turn consistency"
+      ],
+      "next": [
+        "J/J4. 会话与状态/Server-managed state",
+        "J/J4. 会话与状态/Context compaction"
+      ]
+    },
+    "J/J4. 会话与状态/Session memory": {
+      "status": "draft",
+      "definition": "Session memory 是围绕当前会话生命周期保存的信息层，通常只在一次会话或短时间窗口内有效，不应自动升级成长期用户记忆。",
+      "importance": "它能支撑连续对话和工具链路，但边界不清时很容易和长期记忆、任务记忆混淆，带来隐私和治理问题。",
+      "minimumDemo": "让系统在一次会话内记住用户偏好格式，但结束会话后不再默认继承这些设置。",
+      "prerequisites": [
+        "I/I5. 记忆类型/会话记忆",
+        "K/K6. Agent 记忆/Session memory"
+      ],
+      "coreMetrics": [
+        "session recall quality",
+        "cleanup correctness"
+      ],
+      "next": [
+        "J/J4. 会话与状态/Conversation state",
+        "J/J4. 会话与状态/Server-managed state"
+      ]
+    },
+    "J/J4. 会话与状态/Server-managed state": {
+      "status": "draft",
+      "definition": "Server-managed state 指由服务端统一保存会话、工具执行结果、状态版本和恢复点，而不是把全部历史交给客户端自行回放。",
+      "importance": "服务端统一持有状态更利于审计、权限控制、恢复和多端同步，是复杂 AI 应用常见的主路径。",
+      "minimumDemo": "实现一个服务端会话存储，验证用户刷新页面或换端后仍能恢复一致状态。",
+      "prerequisites": [
+        "J/J4. 会话与状态/Conversation state",
+        "J/J7. 工程可靠性/Idempotency"
+      ],
+      "coreMetrics": [
+        "resume success rate",
+        "state version consistency"
+      ],
+      "next": [
+        "J/J4. 会话与状态/Client-managed replay",
+        "J/J5. 流式与实时/WebSocket / realtime"
+      ]
+    },
+    "J/J4. 会话与状态/Client-managed replay": {
+      "status": "draft",
+      "definition": "Client-managed replay 是由客户端保留必要历史或事件流，在重新连接时把关键上下文回放给后端或模型，以快速恢复交互。",
+      "importance": "它适合轻量场景和离线缓存，但如果和服务端状态模型不一致，很容易造成重复消息、顺序错乱和恢复偏差。",
+      "minimumDemo": "让客户端在断线后用本地事件流回放当前会话，比较与服务端权威状态恢复的差异。",
+      "prerequisites": [
+        "J/J4. 会话与状态/Server-managed state",
+        "J/J5. 流式与实时/Incremental UI updates"
+      ],
+      "coreMetrics": [
+        "replay correctness",
+        "duplication rate"
+      ],
+      "next": [
+        "J/J4. 会话与状态/Prompt caching",
+        "J/J7. 工程可靠性/Retry"
+      ]
+    },
+    "J/J4. 会话与状态/Context compaction": {
+      "status": "draft",
+      "definition": "Context compaction 是把长会话中的旧历史压缩成摘要、结构化状态或关键事实集合，减少 token 开销同时尽量保留约束和决策痕迹。",
+      "importance": "没有压缩，长会话会同时拖垮成本、延迟和质量；压缩做得差，又会丢掉关键约束和工具结果。",
+      "minimumDemo": "对一段长会话分别使用原样回放和压缩后回放，比较 token 成本与关键约束保留情况。",
+      "prerequisites": [
+        "J/J4. 会话与状态/Conversation state",
+        "K/K6. Agent 记忆/Memory injection / compaction"
+      ],
+      "coreMetrics": [
+        "token reduction",
+        "constraint retention",
+        "summary drift rate"
+      ],
+      "next": [
+        "J/J4. 会话与状态/Token budgeting",
+        "J/J4. 会话与状态/Prompt caching"
+      ]
+    },
+    "J/J4. 会话与状态/Prompt caching": {
+      "status": "draft",
+      "definition": "Prompt caching 利用前缀稳定、历史复用或服务端缓存，把重复上下文的构建和推理成本降下来，尤其适用于多轮和模板化场景。",
+      "importance": "在会话持续时间长、系统提示和上下文前缀相对稳定时，缓存命中率会直接决定单位请求成本和首 token 延迟。",
+      "minimumDemo": "对一组多轮请求测试有无 prompt caching 的成本和延迟差异，并检查缓存失效条件是否合理。",
+      "prerequisites": [
+        "J/J4. 会话与状态/Context compaction",
+        "J/J4. 会话与状态/Token budgeting"
+      ],
+      "coreMetrics": [
+        "cache hit rate",
+        "TTFT improvement",
+        "stale cache rate"
+      ],
+      "next": [
+        "J/J5. 流式与实时/Streaming text",
+        "J/J7. 工程可靠性/Observability hooks"
+      ]
+    },
+    "J/J4. 会话与状态/Token budgeting": {
+      "status": "draft",
+      "definition": "Token budgeting 是在每次请求前明确分配 system、history、retrieved context、tool results 和 output 的 token 预算，避免上下文无限膨胀。",
+      "importance": "这是控制成本和质量的直接杠杆；没有预算，长会话最后往往变成“什么都塞一点，但什么都不够好”。",
+      "minimumDemo": "为一个固定应用设定上下文预算表，记录不同部分的实际 token 占比和裁剪策略对结果的影响。",
+      "prerequisites": [
+        "J/J4. 会话与状态/Context compaction",
+        "J/J1. 模型接口层/Context assembly"
+      ],
+      "coreMetrics": [
+        "token allocation accuracy",
+        "cost per turn",
+        "truncation impact"
+      ],
+      "next": [
+        "J/J4. 会话与状态/Prompt caching",
+        "J/J5. 流式与实时"
+      ]
+    }
   }
 }

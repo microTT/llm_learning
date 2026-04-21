@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-18",
+    "updatedAt": "2026-04-21",
     "shardId": "domain-J",
     "type": "domain-overview",
     "label": "J. AI 应用工程 / 概览",
@@ -14,7 +14,7 @@
     "parentTitle": null,
     "leafTitles": [],
     "nodeCount": 10,
-    "filledNodeCount": 1
+    "filledNodeCount": 5
   },
   "nodes": {
     "J": {
@@ -82,10 +82,218 @@
         "J/J9. 应用形态"
       ]
     },
-    "J/J1. 模型接口层": {},
-    "J/J2. 结构化输出": {},
-    "J/J3. 工具调用": {},
-    "J/J4. 会话与状态": {},
+    "J/J1. 模型接口层": {
+      "status": "draft",
+      "definition": "模型接口层关注应用到底如何把用户请求转成对模型的稳定调用契约：走 chat 还是 responses、怎样组织 prompt、system / user / tool message 如何分工、上下文如何装配、输入输出约束如何被程序消费。它不是“调 API”的细节，而是应用层和模型层之间的正式边界。",
+      "importance": "很多 AI 应用一开始能跑，后面却越来越脆，根源就是模型接口层没有被当成产品接口来设计。没有清晰的 message 结构、上下文装配规则和输入输出契约，后面的结构化输出、工具调用、状态管理和可靠性控制都会变成补丁式工程。",
+      "minimumDemo": "实现一个最小后端封装：统一接收业务请求，转换成明确的 message 数组和输入契约；支持 chat / responses 一种稳定接口；记录输入 token、系统提示、工具配置和输出结果。验收标准不是答案是否聪明，而是不同调用路径都能走同一套封装和日志。",
+      "hardwareBudget": "这一层几乎不消耗额外训练算力，主要成本来自 API 调用、日志、缓存和协议演进维护。真正要预算的是上下文长度、重试和流式连接，而不是“接口层代码”本身。",
+      "examples": [
+        "把产品请求统一转成 system / user / tool messages，而不是每个页面自己拼 prompt。",
+        "对复杂任务使用 responses 风格统一承载工具、流式和结构化输出。",
+        "在模型接口层就定义输入字段、输出 schema 和错误类型，供前后端共用。",
+        "把上下文组装逻辑集中到一处，避免不同入口产生不同历史拼接方式。"
+      ],
+      "pitfalls": [
+        "每个调用点都直接拼 prompt，导致行为越来越分裂。",
+        "system prompt、上下文和工具配置散落在前后端多个地方，问题难以定位。",
+        "没有统一输入输出契约，后续只能靠字符串特判接模型输出。",
+        "把不同模型能力差异暴露给业务层，导致调用方不断堆条件分支。"
+      ],
+      "prerequisites": [
+        "G/G8. 推理模型与模型路由",
+        "J/J2. 结构化输出",
+        "J/J3. 工具调用"
+      ],
+      "coreMetrics": [
+        "API success rate",
+        "schema adherence",
+        "latency",
+        "token usage",
+        "error recovery rate"
+      ],
+      "toolchain": [
+        "LLM SDK / gateway",
+        "message builders",
+        "schema validators",
+        "request tracing"
+      ],
+      "failureSigns": [
+        "同类请求在不同入口上表现差异明显。",
+        "模型升级或切换接口后，调用方大面积联动修改。",
+        "线上问题无法还原出系统提示、上下文和工具配置。",
+        "前后端都在各自拼 prompt，导致最终输入不可追踪。"
+      ],
+      "next": [
+        "J/J1. 模型接口层/Chat / responses",
+        "J/J1. 模型接口层/Prompt composition",
+        "J/J1. 模型接口层/System / user / tool messages",
+        "J/J1. 模型接口层/Context assembly",
+        "J/J1. 模型接口层/Input / output contracts",
+        "J/J2. 结构化输出",
+        "J/J3. 工具调用"
+      ]
+    },
+    "J/J2. 结构化输出": {
+      "status": "draft",
+      "definition": "结构化输出关注的是如何让模型稳定地产生程序可消费的结果，而不是只给一段“看起来像对的”自然语言。它涵盖 JSON mode、JSON Schema、typed outputs、解析、校验和错误恢复这些环节，目标是把模型输出变成明确的数据契约。",
+      "importance": "一旦模型结果要进入数据库、工作流、表单、API 或工具链，结构化输出就比文采重要得多。很多 AI 应用从 demo 到生产的分水岭，不在于模型是否更聪明，而在于输出是否足够稳定、可解析、可校验、可恢复。",
+      "minimumDemo": "选一个固定 schema 的抽取或表单生成任务，分别测试自由文本输出、JSON mode 和 JSON Schema 约束输出。记录 parse success、字段完整率、语义正确率、重试次数和恢复成功率，比较三者差异。",
+      "hardwareBudget": "这层几乎不增加训练硬件开销，主要成本来自重试、校验、解析和失败恢复逻辑。真正要控制的是无效输出带来的放大成本，而不是模型算力本身。",
+      "examples": [
+        "从文档中抽取固定字段并写入数据库。",
+        "根据用户意图生成符合类型约束的工具调用参数。",
+        "把客服对话总结成工单对象，而不是一段长描述。",
+        "把多步分析结果拆成结论、证据、风险等级和建议动作四个字段。"
+      ],
+      "pitfalls": [
+        "把“能输出 JSON”误当成“字段内容一定正确”。",
+        "只做 Parsing，不做语义级 Validation 和错误分类。",
+        "输出失败时没有恢复路径，只能把坏 JSON 直接丢给调用方。",
+        "schema 频繁变更，却没有统一契约和版本管理。"
+      ],
+      "prerequisites": [
+        "H/H1. 不改权重的控制/Structured outputs",
+        "H/H6. 行为优化维度/更结构化",
+        "J/J1. 模型接口层/Input / output contracts"
+      ],
+      "coreMetrics": [
+        "parse success rate",
+        "schema adherence",
+        "field completeness",
+        "semantic validity",
+        "recovery success rate"
+      ],
+      "toolchain": [
+        "JSON mode / typed output APIs",
+        "schema validators",
+        "parsers",
+        "retry and fallback handlers"
+      ],
+      "failureSigns": [
+        "JSON 形式上合法，但关键字段经常缺失或类型错误。",
+        "小改 prompt 就导致字段名、嵌套层级或枚举值漂移。",
+        "坏输出无法被归类，只能统一重试或直接报错。",
+        "前端和后端各自维护一份 schema，最终长期不一致。"
+      ],
+      "next": [
+        "J/J2. 结构化输出/JSON mode",
+        "J/J2. 结构化输出/JSON Schema",
+        "J/J2. 结构化输出/Typed outputs",
+        "J/J2. 结构化输出/Validation",
+        "J/J2. 结构化输出/Parsing",
+        "J/J2. 结构化输出/Error recovery",
+        "J/J3. 工具调用"
+      ]
+    },
+    "J/J3. 工具调用": {
+      "status": "draft",
+      "definition": "工具调用关注的是：模型什么时候该调用外部工具、如何表达工具意图、如何传递参数、怎样执行、怎样把结果回灌给模型，以及失败后如何重试或降级。它把模型从“只会说”推进到“能做事”，但代价是系统边界、权限和失败模式都会显著增加。",
+      "importance": "很多 AI 应用真正的价值不在生成一段答案，而在于查询系统、读文件、搜索资料、写工单、执行代码或调用业务 API。工具调用因此是应用工程从内容生成走向任务闭环的关键层。如果这里设计不清，系统很容易出现选错工具、参数错误、结果注入混乱、越权执行和不可恢复失败。",
+      "minimumDemo": "实现一个最小工具链：模型根据请求选择是否调用一个只读工具和一个带副作用工具；工具 schema 明确参数和返回值；执行层记录调用、失败和耗时；高风险调用前要求人工确认。验收标准是工具选择正确、参数可校验、结果能被模型消费、失败可回退。",
+      "hardwareBudget": "这一层主要增加的是 API、网络、工具执行和回放日志成本，而不是训练算力。真正需要预算的是超时、重试放大、副作用保护和人工审批链路，而不是模型本身。",
+      "examples": [
+        "模型根据用户问题调用内部搜索或数据库查询工具，而不是凭记忆回答。",
+        "编码助手先调代码检索和测试工具，再生成修复建议。",
+        "工作流助手在真正创建工单前先展示参数草案并等待审批。",
+        "多步任务里，模型根据前一步工具结果决定下一步该调用哪个工具。"
+      ],
+      "pitfalls": [
+        "把工具调用当成“模型自然会做的事”，不设计明确 schema 和失败路径。",
+        "只关注能不能调通，不关注何时不该调用工具。",
+        "执行层和模型层共同拼参数，最终责任边界不清。",
+        "工具结果直接原样注入模型，导致噪声、泄密或 prompt injection 问题。",
+        "失败后只会无限重试，没有 fallback 或人工兜底。"
+      ],
+      "prerequisites": [
+        "J/J1. 模型接口层",
+        "J/J2. 结构化输出",
+        "K/K7. 工具与外部连接"
+      ],
+      "coreMetrics": [
+        "tool selection accuracy",
+        "argument correctness",
+        "tool success rate",
+        "workflow completion rate",
+        "fallback rate"
+      ],
+      "toolchain": [
+        "function calling APIs",
+        "tool schema registry",
+        "execution sandbox / adapters",
+        "audit logs",
+        "approval gates"
+      ],
+      "failureSigns": [
+        "模型在不需要工具时频繁误调。",
+        "调用成功率看似不低，但端到端任务完成率很差。",
+        "工具返回结果后，模型依然重复调用或忽略结果。",
+        "副作用工具没有审批和隔离边界，线上风险持续累积。"
+      ],
+      "next": [
+        "J/J3. 工具调用/Function calling",
+        "J/J3. 工具调用/Tool schema design",
+        "J/J3. 工具调用/Tool routing",
+        "J/J3. 工具调用/Tool execution",
+        "J/J3. 工具调用/Tool result injection",
+        "J/J3. 工具调用/Tool retries / fallback",
+        "J/J7. 工程可靠性",
+        "J/J8. 安全与权限"
+      ]
+    },
+    "J/J4. 会话与状态": {
+      "status": "draft",
+      "definition": "会话与状态关注应用在多轮交互中到底保存什么、保存在哪里、何时压缩、何时回放，以及哪些状态该由客户端管理、哪些该由服务端持有。它讨论的是交互连续性和资源边界，而不是泛化意义上的“记忆”。",
+      "importance": "很多 AI 应用一开始是单轮可用，多轮就迅速失控，问题通常不在模型，而在状态层：历史越堆越长、上下文越来越脏、客户端和服务端各存一份、会话恢复和断点续接逻辑又彼此不一致。把会话与状态层设计清楚，是后续流式、工具调用、长会话和多端同步的前提。",
+      "minimumDemo": "实现一个最小多轮助手：同一会话可连续追问；服务端保存会话状态；客户端可在刷新后恢复；历史过长时做压缩；每次请求记录 token 预算与裁剪结果。验收标准是跨轮约束不丢、重复信息不过度增长、刷新和恢复后行为一致。",
+      "hardwareBudget": "这一层不增加训练算力，但会显著影响 token 成本、缓存命中率、存储占用和请求延迟。真正要精算的是状态持久化、上下文长度、回放开销和多端同步成本。",
+      "examples": [
+        "聊天助手在用户连续追问时保留当前主题、已确认信息和待办状态。",
+        "工单助手在刷新页面后能恢复上一次编辑进度和工具执行结果。",
+        "长会话中把旧历史压缩成摘要或结构化状态，再继续后续对话。",
+        "移动端只回放必要历史，而服务端维护完整会话和审计记录。"
+      ],
+      "pitfalls": [
+        "把所有历史原样塞回模型，导致成本和噪声同时失控。",
+        "客户端和服务端各自管理状态，最终恢复逻辑长期不一致。",
+        "会话状态和长期用户记忆混在一起，删除和权限边界变得模糊。",
+        "Prompt caching 和上下文压缩没有配合，缓存命中率很低却照样持续付费。"
+      ],
+      "prerequisites": [
+        "J/J1. 模型接口层/Context assembly",
+        "I/I5. 记忆类型",
+        "K/K6. Agent 记忆"
+      ],
+      "coreMetrics": [
+        "cross-turn consistency",
+        "token cost per session",
+        "resume success rate",
+        "cache hit rate",
+        "state drift rate"
+      ],
+      "toolchain": [
+        "session store",
+        "context compaction logic",
+        "prompt cache",
+        "request tracing"
+      ],
+      "failureSigns": [
+        "用户一多轮追问，系统就忘记先前约束或重复确认信息。",
+        "刷新页面后会话恢复结果和原会话不一致。",
+        "历史越长越慢、越贵，但有效信息占比越来越低。",
+        "状态删除后仍能从缓存或回放中看到旧信息。"
+      ],
+      "next": [
+        "J/J4. 会话与状态/Conversation state",
+        "J/J4. 会话与状态/Session memory",
+        "J/J4. 会话与状态/Server-managed state",
+        "J/J4. 会话与状态/Client-managed replay",
+        "J/J4. 会话与状态/Context compaction",
+        "J/J4. 会话与状态/Prompt caching",
+        "J/J4. 会话与状态/Token budgeting",
+        "J/J5. 流式与实时"
+      ]
+    },
     "J/J5. 流式与实时": {},
     "J/J6. 多模态应用": {},
     "J/J7. 工程可靠性": {},

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-I-I5-170c52t-1",
     "type": "leaf-batch",
     "label": "I5. 记忆类型 / Leaves",
@@ -22,15 +22,140 @@
       "Semantic memory"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "I/I5. 记忆类型/参数记忆": {},
-    "I/I5. 记忆类型/非参数知识库": {},
-    "I/I5. 记忆类型/会话记忆": {},
-    "I/I5. 记忆类型/用户长期记忆": {},
-    "I/I5. 记忆类型/任务记忆": {},
-    "I/I5. 记忆类型/Episodic memory": {},
-    "I/I5. 记忆类型/Semantic memory": {}
+    "I/I5. 记忆类型/参数记忆": {
+      "status": "draft",
+      "definition": "参数记忆指模型训练后固化在权重里的知识和行为倾向，更新慢、覆盖广，但不适合实时改动和精细权限控制。",
+      "importance": "它解释了为什么模型能直接回答很多常识问题，但也解释了为什么它会过期、难以审计、难以按用户隔离。",
+      "minimumDemo": "对同一问题分别测试无外部知识和有外部知识两种条件，区分模型是在靠参数记忆作答还是在用检索证据。",
+      "prerequisites": [
+        "G/G3. 上下文与记忆/参数记忆（weights）",
+        "I/I5. 记忆类型/非参数知识库"
+      ],
+      "coreMetrics": [
+        "knowledge freshness gap",
+        "coverage breadth"
+      ],
+      "next": [
+        "I/I5. 记忆类型/非参数知识库",
+        "I/I6. 关键质量点/过期知识"
+      ]
+    },
+    "I/I5. 记忆类型/非参数知识库": {
+      "status": "draft",
+      "definition": "非参数知识库是存放在外部文档、索引、数据库和向量库里的可更新知识层，与参数记忆相对，强调可刷新、可追踪和可授权访问。",
+      "importance": "它是 RAG 和企业知识系统的核心，让模型能在不重训的情况下接入最新、私有和可控的知识。",
+      "minimumDemo": "把一条新知识只写入外部知识库，不改模型，验证系统是否能在刷新后正确回答该问题。",
+      "prerequisites": [
+        "I/I2. 知识库构建",
+        "I/I3. RAG 管线/Retrieval"
+      ],
+      "coreMetrics": [
+        "freshness",
+        "citation quality",
+        "access control correctness"
+      ],
+      "next": [
+        "I/I5. 记忆类型/用户长期记忆",
+        "I/I6. 关键质量点/可追溯性"
+      ]
+    },
+    "I/I5. 记忆类型/会话记忆": {
+      "status": "draft",
+      "definition": "会话记忆保存当前对话中的上下文、约束、已确认事实和最近交互状态，通常生命周期短、范围局部。",
+      "importance": "它决定模型在多轮交互中能否保持连贯和减少重复确认，也是很多助手系统最基础的记忆层。",
+      "minimumDemo": "设计一个多轮任务，让系统在中途引用前文约束和确认结果，检查会话状态是否被正确保留和注入。",
+      "prerequisites": [
+        "G/G3. 上下文与记忆/会话记忆（session memory）",
+        "K/K6. Agent 记忆/Session memory"
+      ],
+      "coreMetrics": [
+        "dialog coherence",
+        "state retention",
+        "context length cost"
+      ],
+      "next": [
+        "I/I5. 记忆类型/任务记忆",
+        "I/I5. 记忆类型/Episodic memory"
+      ]
+    },
+    "I/I5. 记忆类型/用户长期记忆": {
+      "status": "draft",
+      "definition": "用户长期记忆保存跨会话的稳定偏好、常用格式、角色信息或个性化配置，强调长期可复用但必须受权限和删除策略约束。",
+      "importance": "它能显著减少重复配置和上下文浪费，但如果边界不清，也最容易演变成隐私和越权问题。",
+      "minimumDemo": "让系统跨会话记住用户偏好格式，同时验证用户可以修改、删除，且不同用户之间不会互相污染。",
+      "prerequisites": [
+        "I/I5. 记忆类型/会话记忆",
+        "K/K6. Agent 记忆/User memory"
+      ],
+      "coreMetrics": [
+        "personalization lift",
+        "memory precision",
+        "deletion correctness"
+      ],
+      "next": [
+        "I/I6. 关键质量点/授权与权限边界",
+        "M/M7. 隐私与合规/Data retention"
+      ]
+    },
+    "I/I5. 记忆类型/任务记忆": {
+      "status": "draft",
+      "definition": "任务记忆保存某个工作流或任务实例中的中间结论、当前步骤、工具结果和待办状态，通常随任务生命周期存在。",
+      "importance": "在 Agent 和多步骤流程中，没有任务记忆就很难做断点恢复、跨步骤一致性和复杂工具链协作。",
+      "minimumDemo": "构造一个多步骤任务，让系统在中断后恢复执行，检查中间状态是否被正确保留和继续消费。",
+      "prerequisites": [
+        "K/K6. Agent 记忆/Task memory",
+        "I/I5. 记忆类型/会话记忆"
+      ],
+      "coreMetrics": [
+        "workflow continuity",
+        "recovery success rate",
+        "state consistency"
+      ],
+      "next": [
+        "I/I5. 记忆类型/Episodic memory",
+        "M/M3. Agent 级评测/Workflow completion rate"
+      ]
+    },
+    "I/I5. 记忆类型/Episodic memory": {
+      "status": "draft",
+      "definition": "Episodic memory 记录一次次具体经历、交互和事件轨迹，适合保存“发生过什么”，而不是抽象出的长期知识。",
+      "importance": "它适合做复盘、经验回放和任务历史参考，但如果无限堆积，也会迅速带来噪声和存储成本问题。",
+      "minimumDemo": "记录若干次任务执行轨迹，让系统在新任务中引用最相似的历史案例，观察是否真的带来帮助。",
+      "prerequisites": [
+        "K/K6. Agent 记忆/Episodic memory",
+        "I/I5. 记忆类型/任务记忆"
+      ],
+      "coreMetrics": [
+        "episode retrieval quality",
+        "reuse value",
+        "noise growth"
+      ],
+      "next": [
+        "I/I5. 记忆类型/Semantic memory",
+        "K/K6. Agent 记忆/Memory injection / compaction"
+      ]
+    },
+    "I/I5. 记忆类型/Semantic memory": {
+      "status": "draft",
+      "definition": "Semantic memory 更关注从多次经历中抽象出的稳定知识、规则和关系，而不是保留每次事件的完整细节。",
+      "importance": "它有助于把 episodic 轨迹提炼成长期可复用知识，减少原始事件堆积带来的噪声和成本。",
+      "minimumDemo": "从一组 episodic 记录中抽取稳定结论，再用这些结论辅助后续任务，比较是否比直接回放原始历史更高效。",
+      "prerequisites": [
+        "K/K6. Agent 记忆/Semantic memory",
+        "I/I5. 记忆类型/Episodic memory"
+      ],
+      "coreMetrics": [
+        "abstraction quality",
+        "reuse efficiency",
+        "freshness"
+      ],
+      "next": [
+        "I/I5. 记忆类型/非参数知识库",
+        "I/I6. 关键质量点/可追溯性"
+      ]
+    }
   }
 }

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-I-I2-1w5ocmp-1",
     "type": "leaf-batch",
     "label": "Parser types / Leaves",
@@ -19,12 +19,83 @@
       "Code / repository parsers"
     ],
     "nodeCount": 4,
-    "filledNodeCount": 0
+    "filledNodeCount": 4
   },
   "nodes": {
-    "I/I2. 知识库构建/Parser types/Text / Markdown": {},
-    "I/I2. 知识库构建/Parser types/PDF / Office": {},
-    "I/I2. 知识库构建/Parser types/HTML / web content": {},
-    "I/I2. 知识库构建/Parser types/Code / repository parsers": {}
+    "I/I2. 知识库构建/Parser types/Text / Markdown": {
+      "status": "draft",
+      "definition": "Text / Markdown parser 处理结构相对清晰的纯文本和 Markdown 文档，重点是保留标题层级、列表、代码块和链接等轻量结构。",
+      "importance": "这类文档通常是知识库里最容易做好的资料来源，也是很多系统的质量基线。",
+      "minimumDemo": "解析同一份 Markdown，检查标题、列表、代码块和链接是否都能在 chunk 中被稳定保留。",
+      "prerequisites": [
+        "I/I2. 知识库构建/Parser types",
+        "I/I2. 知识库构建/Chunking strategy"
+      ],
+      "coreMetrics": [
+        "structure preservation",
+        "noise rate"
+      ],
+      "next": [
+        "I/I2. 知识库构建/Metadata schema",
+        "I/I2. 知识库构建/Chunking strategy"
+      ]
+    },
+    "I/I2. 知识库构建/Parser types/PDF / Office": {
+      "status": "draft",
+      "definition": "PDF / Office parser 要处理页码、表格、版式、页眉页脚、扫描件和布局噪声，是企业知识接入里最常见也最容易失真的一类解析任务。",
+      "importance": "如果 PDF / Office 解析不好，RAG 系统会看似“有文档”，但其实读到的是错乱文本，最终引用和答案都会漂移。",
+      "minimumDemo": "选一份带表格和多级标题的 PDF 或 Office 文档，检查解析后是否保留页码、章节和表格语义。",
+      "prerequisites": [
+        "I/I2. 知识库构建/Parser types",
+        "I/I2. 知识库构建/Metadata schema"
+      ],
+      "coreMetrics": [
+        "layout fidelity",
+        "OCR / parse accuracy",
+        "table preservation"
+      ],
+      "next": [
+        "I/I2. 知识库构建/Chunking strategy",
+        "I/I3. RAG 管线/Citation span alignment"
+      ]
+    },
+    "I/I2. 知识库构建/Parser types/HTML / web content": {
+      "status": "draft",
+      "definition": "HTML / web content parser 需要从页面中剥离导航、广告、脚本和样式噪声，同时保留正文、标题、链接与内容层次。",
+      "importance": "网页内容更新频繁且噪声多，是很多在线知识源的主要难点；如果清洗不好，检索会被模板噪声主导。",
+      "minimumDemo": "抓取一个真实网页，比较原始 HTML 与清洗后正文在 chunk 质量和检索效果上的差异。",
+      "prerequisites": [
+        "I/I2. 知识库构建/Parser types",
+        "I/I2. 知识库构建/Update / refresh / re-index / delete"
+      ],
+      "coreMetrics": [
+        "content-to-noise ratio",
+        "refresh correctness",
+        "link preservation"
+      ],
+      "next": [
+        "I/I2. 知识库构建/数据接入",
+        "I/I2. 知识库构建/Metadata schema"
+      ]
+    },
+    "I/I2. 知识库构建/Parser types/Code / repository parsers": {
+      "status": "draft",
+      "definition": "Code / repository parsers 面向源码、目录结构、接口注释和仓库元信息，目标是保留代码边界、语言结构和路径上下文，而不是把源码当普通文本乱切。",
+      "importance": "代码知识库对 chunk 边界和 metadata 依赖极强，parser 做不好时，检索和引用会在文件、函数和符号层面集体失真。",
+      "minimumDemo": "选一个小仓库做解析，检查函数、类、文件路径和 README 之间的结构是否能在知识层里被追踪。",
+      "prerequisites": [
+        "I/I2. 知识库构建/Parser types",
+        "I/I2. 知识库构建/Metadata schema"
+      ],
+      "coreMetrics": [
+        "symbol preservation",
+        "path fidelity",
+        "code chunk coherence"
+      ],
+      "next": [
+        "I/I2. 知识库构建/Chunking strategy",
+        "I/I3. RAG 管线/Context packing"
+      ]
+    }
   }
 }

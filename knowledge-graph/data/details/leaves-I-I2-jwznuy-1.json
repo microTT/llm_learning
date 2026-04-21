@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-I-I2-jwznuy-1",
     "type": "leaf-batch",
     "label": "I2. 知识库构建 / Leaves",
@@ -22,16 +22,44 @@
       "Update / refresh / re-index / delete"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 2
+    "filledNodeCount": 7
   },
   "nodes": {
-    "I/I2. 知识库构建/数据接入": {},
+    "I/I2. 知识库构建/数据接入": {
+      "status": "draft",
+      "definition": "数据接入是把原始资料源持续、可追踪地导入知识库的第一步，涵盖抓取、同步、权限映射、去重和来源登记。",
+      "importance": "如果接入层不稳定，后面的 parser、索引和 RAG 管线再好也只能建立在脏数据和断裂更新之上。",
+      "minimumDemo": "接入一组本地文件和一个网页源，记录来源 ID、更新时间和删除状态，并验证后续刷新链路能正确识别变更。",
+      "prerequisites": [
+        "I/I2. 知识库构建",
+        "I/I2. 知识库构建/Update / refresh / re-index / delete"
+      ],
+      "coreMetrics": [
+        "ingestion success rate",
+        "source freshness",
+        "duplicate rate"
+      ],
+      "next": [
+        "I/I2. 知识库构建/Parser types",
+        "I/I2. 知识库构建/Metadata schema"
+      ]
+    },
     "I/I2. 知识库构建/Chunking strategy": {
-      "status": "seed",
+      "status": "draft",
       "definition": "Chunking strategy 决定一份文档如何被切成可索引、可检索、可引用的最小单元，它直接影响召回质量与引用对齐。",
       "importance": "很多 RAG 问题并不是 embedding 模型不够强，而是 chunk 边界、overlap、标题继承和 metadata schema 没设计好。",
       "minimumDemo": "用同一批文档分别跑固定长度 chunk、语义 chunk 和标题分层 chunk，比较召回与引用质量。",
       "hardwareBudget": "CPU 即可；规模大时主要受索引和存储资源约束。",
+      "examples": [
+        "固定长度 chunk 简单易控，但容易切断上下文边界。",
+        "按标题或章节切分更利于引用定位，但要避免超长 chunk。",
+        "代码仓库通常需要按函数、类或文件结构切分，而不是纯字符长度。"
+      ],
+      "pitfalls": [
+        "chunk 太小导致证据被拆散，太大又把噪声一起塞进上下文。",
+        "只设置 overlap，不考虑标题继承和 metadata 对齐。",
+        "不同 parser 输出混用同一切分规则，造成质量极不均匀。"
+      ],
       "prerequisites": [
         "I/I2. 知识库构建",
         "I/I1. 表示与检索基础/Embeddings",
@@ -58,11 +86,21 @@
       ]
     },
     "I/I2. 知识库构建/Metadata schema": {
-      "status": "seed",
+      "status": "draft",
       "definition": "Metadata schema 决定每个 chunk 除正文外还带什么结构化上下文，例如来源、标题层级、时间戳、权限域、语言、文件路径和业务标签。",
       "importance": "没有稳定 metadata，permission-aware retrieval、citation alignment、增量更新和失败排查都会非常脆弱。",
       "minimumDemo": "给同一批 chunk 补上来源路径、标题层级、更新时间和权限标签，再比较检索、过滤和引用定位效果。",
       "hardwareBudget": "CPU 即可，主要消耗在索引与存储。",
+      "examples": [
+        "为每个 chunk 保留文档 ID、章节标题、更新时间和 ACL 范围。",
+        "代码知识库保留仓库、文件路径、语言和符号类型。",
+        "网页知识库保留 URL、抓取时间和正文清洗版本。"
+      ],
+      "pitfalls": [
+        "schema 只保留正文，不保留来源和权限，导致后续所有环节都不可追踪。",
+        "metadata 命名和类型不稳定，过滤逻辑越写越脆。",
+        "删除和刷新链路没有稳定主键，导致旧 chunk 长期残留。"
+      ],
       "prerequisites": [
         "I/I2. 知识库构建",
         "I/I2. 知识库构建/Chunking strategy",
@@ -88,9 +126,81 @@
         "I/I3. RAG 管线/Citation span alignment"
       ]
     },
-    "I/I2. 知识库构建/Indexing": {},
-    "I/I2. 知识库构建/Vector store": {},
-    "I/I2. 知识库构建/Keyword index": {},
-    "I/I2. 知识库构建/Update / refresh / re-index / delete": {}
+    "I/I2. 知识库构建/Indexing": {
+      "status": "draft",
+      "definition": "Indexing 是把 chunk 和 metadata 组织成可高效查询的数据结构，包括向量索引、关键词倒排和混合检索所需的多路索引。",
+      "importance": "同样的数据和表示，不同索引策略会直接改变查询延迟、近似误差和更新复杂度。",
+      "minimumDemo": "对一批 chunk 建立向量和关键词索引，比较建索引时间、查询延迟和 top-k 结果稳定性。",
+      "prerequisites": [
+        "I/I2. 知识库构建/Vector store",
+        "I/I2. 知识库构建/Keyword index"
+      ],
+      "coreMetrics": [
+        "index build time",
+        "query latency",
+        "update complexity"
+      ],
+      "next": [
+        "I/I1. 表示与检索基础/Similarity search",
+        "I/I3. RAG 管线/Retrieval"
+      ]
+    },
+    "I/I2. 知识库构建/Vector store": {
+      "status": "draft",
+      "definition": "Vector store 是承载 embedding 向量、metadata 和相似度搜索的存储与查询层，通常负责 dense retrieval 的在线执行。",
+      "importance": "它不仅是“存向量的地方”，还决定过滤能力、近似搜索策略、刷新机制和多租户隔离方式。",
+      "minimumDemo": "把一批 chunk 写入向量库，验证相似度搜索、metadata 过滤、增删改和批量更新是否都符合预期。",
+      "prerequisites": [
+        "I/I1. 表示与检索基础/Embeddings",
+        "I/I2. 知识库构建/Metadata schema"
+      ],
+      "coreMetrics": [
+        "search latency",
+        "filter correctness",
+        "update freshness"
+      ],
+      "next": [
+        "I/I1. 表示与检索基础/Dense retrieval",
+        "I/I3. RAG 管线/Retrieval"
+      ]
+    },
+    "I/I2. 知识库构建/Keyword index": {
+      "status": "draft",
+      "definition": "Keyword index 是基于词项、倒排表和匹配权重的索引层，用于支持 sparse retrieval 和精确术语检索。",
+      "importance": "在错误码、函数名、产品名、法规条款和命名实体密集的场景里，它往往是 dense retrieval 的必要补充。",
+      "minimumDemo": "对一组包含精确术语的查询，比较只有向量索引和增加关键词索引后的召回差异。",
+      "prerequisites": [
+        "I/I1. 表示与检索基础/Sparse retrieval",
+        "I/I2. 知识库构建/Indexing"
+      ],
+      "coreMetrics": [
+        "term recall",
+        "precision",
+        "index size"
+      ],
+      "next": [
+        "I/I1. 表示与检索基础/Hybrid retrieval",
+        "I/I3. RAG 管线/Retrieval"
+      ]
+    },
+    "I/I2. 知识库构建/Update / refresh / re-index / delete": {
+      "status": "draft",
+      "definition": "Update / refresh / re-index / delete 关注知识库生命周期管理：新增内容如何生效、旧内容如何刷新、索引何时重建、删除和权限变化如何及时反映。",
+      "importance": "知识层的可信度很大程度上取决于更新链路是否完整。没有这一层，RAG 很容易一直回答过期或已删除的信息。",
+      "minimumDemo": "对同一文档做新增、修改、删除和权限变更，验证知识库和检索结果能在预期时间内正确反映变化。",
+      "prerequisites": [
+        "I/I2. 知识库构建/数据接入",
+        "I/I2. 知识库构建/Indexing"
+      ],
+      "coreMetrics": [
+        "refresh latency",
+        "delete correctness",
+        "stale hit rate"
+      ],
+      "next": [
+        "I/I6. 关键质量点/过期知识",
+        "I/I3. RAG 管线/Post-processing"
+      ]
+    }
   }
 }

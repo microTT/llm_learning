@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-I-I6-yh7i5b-1",
     "type": "leaf-batch",
     "label": "I6. 关键质量点 / Leaves",
@@ -22,15 +22,136 @@
       "引用可信度"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "I/I6. 关键质量点/召回率": {},
-    "I/I6. 关键质量点/精准率": {},
-    "I/I6. 关键质量点/Chunk 质量": {},
-    "I/I6. 关键质量点/过期知识": {},
-    "I/I6. 关键质量点/授权与权限边界": {},
-    "I/I6. 关键质量点/可追溯性": {},
-    "I/I6. 关键质量点/引用可信度": {}
+    "I/I6. 关键质量点/召回率": {
+      "status": "draft",
+      "definition": "召回率关心系统是否把真正相关的证据找进候选集合，哪怕它还没排在最前面。",
+      "importance": "如果 gold evidence 根本没被召回，后面的 rerank、packing 和 generation 都无从发挥。",
+      "minimumDemo": "为一组问题标注 gold evidence，计算 recall@k，并区分完全没召回和召回到了但排位过低两类错误。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Retrieval",
+        "I/I1. 表示与检索基础/Dense retrieval"
+      ],
+      "coreMetrics": [
+        "recall@k",
+        "miss rate"
+      ],
+      "next": [
+        "I/I6. 关键质量点/精准率",
+        "I/I4. RAG 形态/Multi-hop RAG"
+      ]
+    },
+    "I/I6. 关键质量点/精准率": {
+      "status": "draft",
+      "definition": "精准率关心召回到的候选里有多少是真正相关且值得进入上下文的，而不是把大量噪声一起带进来。",
+      "importance": "精准率低时，模型虽然“看到了很多”，但上下文会被无关片段稀释，最终 groundedness 反而下降。",
+      "minimumDemo": "对 top-k 候选逐条做相关性标注，比较有无 rerank 时的 precision@k 和最终答案质量。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Rerank",
+        "I/I1. 表示与检索基础/Reranking"
+      ],
+      "coreMetrics": [
+        "precision@k",
+        "noise ratio"
+      ],
+      "next": [
+        "I/I6. 关键质量点/Chunk 质量",
+        "I/I3. RAG 管线/Context packing"
+      ]
+    },
+    "I/I6. 关键质量点/Chunk 质量": {
+      "status": "draft",
+      "definition": "Chunk 质量指被检索单元是否在信息边界、上下文完整性、标题继承和可引用性上足够好，能被模型正确消费。",
+      "importance": "很多 RAG 表现问题最后都能追溯到 chunk 本身：证据被切碎、噪声被混入、章节关系丢失，都会让模型即使召回到相关文档也答不好。",
+      "minimumDemo": "对同一批文档试不同 chunk 策略，并抽样检查引用定位、回答质量和 token 浪费情况。",
+      "prerequisites": [
+        "I/I2. 知识库构建/Chunking strategy",
+        "I/I3. RAG 管线/Context packing"
+      ],
+      "coreMetrics": [
+        "citation alignment",
+        "context waste ratio",
+        "chunk coherence"
+      ],
+      "next": [
+        "I/I6. 关键质量点/精准率",
+        "I/I3. RAG 管线/Citation span alignment"
+      ]
+    },
+    "I/I6. 关键质量点/过期知识": {
+      "status": "draft",
+      "definition": "过期知识指知识库、缓存或记忆层中的内容已经落后于真实世界，但系统仍然继续引用它来回答问题。",
+      "importance": "这会直接破坏用户对系统的信任，也是外部知识层必须比参数记忆更强的一点：可更新、可删除、可刷新。",
+      "minimumDemo": "人为更新一条关键事实，再测系统在 refresh 前后是否能正确切换到新证据，并停止引用旧内容。",
+      "prerequisites": [
+        "I/I2. 知识库构建/Update / refresh / re-index / delete",
+        "I/I5. 记忆类型/参数记忆"
+      ],
+      "coreMetrics": [
+        "stale hit rate",
+        "refresh latency"
+      ],
+      "next": [
+        "I/I6. 关键质量点/可追溯性",
+        "I/I5. 记忆类型/非参数知识库"
+      ]
+    },
+    "I/I6. 关键质量点/授权与权限边界": {
+      "status": "draft",
+      "definition": "授权与权限边界衡量系统是否只在允许的范围内检索、展示和记忆内容，包括候选、引用、缓存和长期记忆层。",
+      "importance": "这是企业级 RAG 最不可妥协的指标之一；一旦做错，质量问题会立刻升级成安全与合规问题。",
+      "minimumDemo": "为同一知识库准备多种权限用户，检查候选、引用和最终答案是否都遵守边界。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Permission-aware retrieval",
+        "J/J8. 安全与权限/Permission scopes"
+      ],
+      "coreMetrics": [
+        "unauthorized recall rate",
+        "authorized answer rate"
+      ],
+      "next": [
+        "M/M5. 安全控制/Least privilege",
+        "M/M7. 隐私与合规/Access control"
+      ]
+    },
+    "I/I6. 关键质量点/可追溯性": {
+      "status": "draft",
+      "definition": "可追溯性指系统能否解释答案来自哪些来源、经过哪些检索与重排步骤、在什么时间和权限上下文下生成。",
+      "importance": "没有可追溯性，答错时无法定位责任环节；答对时也很难让用户信任和复核。",
+      "minimumDemo": "要求系统返回文档来源、chunk ID、重排顺序和生成引用，并在日志中保留完整 trace。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Citation / provenance",
+        "M/M3. Agent 级评测/Trace schema"
+      ],
+      "coreMetrics": [
+        "trace completeness",
+        "source recoverability"
+      ],
+      "next": [
+        "I/I6. 关键质量点/引用可信度",
+        "M/M3. Agent 级评测/Trace grading"
+      ]
+    },
+    "I/I6. 关键质量点/引用可信度": {
+      "status": "draft",
+      "definition": "引用可信度衡量的是：系统给出的引用是否真的支撑答案中的结论，而不是只附带一个看似相关的来源装饰。",
+      "importance": "引用存在本身不等于可信。只有当证据内容、span 对齐和结论支持关系都成立时，引用才真正有价值。",
+      "minimumDemo": "抽样检查带引用答案，判定每条关键结论是否都能被其引用片段直接支持。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Citation span alignment",
+        "I/I3. RAG 管线/Citation / provenance"
+      ],
+      "coreMetrics": [
+        "citation precision",
+        "support rate",
+        "misleading citation rate"
+      ],
+      "next": [
+        "M/M1. 模型级评测/结构化输出正确率",
+        "I/I6. 关键质量点/可追溯性"
+      ]
+    }
   }
 }

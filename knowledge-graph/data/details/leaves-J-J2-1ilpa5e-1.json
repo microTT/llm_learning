@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-J-J2-1ilpa5e-1",
     "type": "leaf-batch",
     "label": "J2. 结构化输出 / Leaves",
@@ -21,14 +21,118 @@
       "Error recovery"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "J/J2. 结构化输出/JSON mode": {},
-    "J/J2. 结构化输出/JSON Schema": {},
-    "J/J2. 结构化输出/Typed outputs": {},
-    "J/J2. 结构化输出/Validation": {},
-    "J/J2. 结构化输出/Parsing": {},
-    "J/J2. 结构化输出/Error recovery": {}
+    "J/J2. 结构化输出/JSON mode": {
+      "status": "draft",
+      "definition": "JSON mode 是要求模型输出合法 JSON 结构的最基础约束方式，重点在保证结果形式上可被解析。",
+      "importance": "它通常是从自由文本走向结构化输出的第一步，能显著降低纯文本混杂导致的解析失败。",
+      "minimumDemo": "对同一抽取任务分别用自由文本和 JSON mode 输出，比较 parse success 和字段漂移。",
+      "prerequisites": [
+        "J/J2. 结构化输出",
+        "J/J1. 模型接口层/Chat / responses"
+      ],
+      "coreMetrics": [
+        "parse success rate",
+        "format stability"
+      ],
+      "next": [
+        "J/J2. 结构化输出/JSON Schema",
+        "J/J2. 结构化输出/Parsing"
+      ]
+    },
+    "J/J2. 结构化输出/JSON Schema": {
+      "status": "draft",
+      "definition": "JSON Schema 用显式字段、类型、枚举和嵌套约束来限定模型输出，不只要求它是 JSON，还要求它符合目标结构。",
+      "importance": "这能把“看起来像 JSON”的结果提升成“形式上满足契约”的结果，是工具调用和业务系统接入的关键一步。",
+      "minimumDemo": "为一个对象定义 schema，比较无 schema 和有 schema 约束时的字段完整率与类型错误率。",
+      "prerequisites": [
+        "J/J2. 结构化输出/JSON mode",
+        "J/J1. 模型接口层/Input / output contracts"
+      ],
+      "coreMetrics": [
+        "schema adherence",
+        "field completeness",
+        "type correctness"
+      ],
+      "next": [
+        "J/J2. 结构化输出/Typed outputs",
+        "J/J2. 结构化输出/Validation"
+      ]
+    },
+    "J/J2. 结构化输出/Typed outputs": {
+      "status": "draft",
+      "definition": "Typed outputs 是把模型输出直接映射到应用层的类型系统或数据模型中，例如后端 DTO、前端类型或数据类，而不仅仅停留在原始 JSON 文本。",
+      "importance": "它把结构化输出和应用代码打通，能减少前后端重复定义、解析漂移和手写字段映射错误。",
+      "minimumDemo": "把模型输出直接绑定到一个显式类型对象，比较手动 JSON 解析和 typed output 绑定的错误率。",
+      "prerequisites": [
+        "J/J2. 结构化输出/JSON Schema",
+        "J/J1. 模型接口层/Input / output contracts"
+      ],
+      "coreMetrics": [
+        "binding success rate",
+        "contract drift rate"
+      ],
+      "next": [
+        "J/J2. 结构化输出/Validation",
+        "J/J7. 工程可靠性/Error classes"
+      ]
+    },
+    "J/J2. 结构化输出/Validation": {
+      "status": "draft",
+      "definition": "Validation 是在 Parsing 之后检查结构和语义是否同时满足业务要求，包括字段范围、跨字段关系、必填规则和外部约束。",
+      "importance": "很多输出在形式上完全合法，但业务上根本不可用。没有 validation，系统只是把坏数据更稳定地写进去了。",
+      "minimumDemo": "为一个固定 schema 定义语义校验规则，统计形式合法但语义不合法的比例。",
+      "prerequisites": [
+        "J/J2. 结构化输出/JSON Schema",
+        "J/J2. 结构化输出/Parsing"
+      ],
+      "coreMetrics": [
+        "semantic validity rate",
+        "validation failure taxonomy"
+      ],
+      "next": [
+        "J/J2. 结构化输出/Error recovery",
+        "J/J3. 工具调用/Tool schema design"
+      ]
+    },
+    "J/J2. 结构化输出/Parsing": {
+      "status": "draft",
+      "definition": "Parsing 是把模型返回的原始字符串或事件流转成应用层对象的过程，负责处理 JSON 解析、字段抽取和基础错误分流。",
+      "importance": "它是结构化输出进入软件系统的入口。如果解析层设计粗糙，后面再好的 schema 和 validation 都没法稳定工作。",
+      "minimumDemo": "对一批真实输出样本做解析，分类统计常见错误：截断、额外文本、字段缺失、类型不匹配和嵌套错误。",
+      "prerequisites": [
+        "J/J2. 结构化输出/JSON mode",
+        "J/J2. 结构化输出/Typed outputs"
+      ],
+      "coreMetrics": [
+        "parse success rate",
+        "parse error classes"
+      ],
+      "next": [
+        "J/J2. 结构化输出/Validation",
+        "J/J2. 结构化输出/Error recovery"
+      ]
+    },
+    "J/J2. 结构化输出/Error recovery": {
+      "status": "draft",
+      "definition": "Error recovery 指结构化输出失败后如何重试、修复、降级或人工兜底，而不是简单返回一条解析异常。",
+      "importance": "生产系统里结构化输出不可能永远成功，恢复路径决定了失败是可控的小抖动，还是直接变成用户可见事故。",
+      "minimumDemo": "为解析失败和 validation 失败分别设计重试、修复和降级策略，统计恢复后的可交付率。",
+      "prerequisites": [
+        "J/J2. 结构化输出/Validation",
+        "J/J7. 工程可靠性/Retry"
+      ],
+      "coreMetrics": [
+        "recovery success rate",
+        "fallback rate",
+        "user-visible failure rate"
+      ],
+      "next": [
+        "J/J7. 工程可靠性/Fallback",
+        "J/J7. 工程可靠性/Error classes"
+      ]
+    }
   }
 }

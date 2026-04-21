@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-I-I3-6k04nt-1",
     "type": "leaf-batch",
     "label": "I3. RAG 管线 / Leaves",
@@ -25,18 +25,80 @@
       "Post-processing"
     ],
     "nodeCount": 10,
-    "filledNodeCount": 1
+    "filledNodeCount": 10
   },
   "nodes": {
-    "I/I3. RAG 管线/Query understanding": {},
-    "I/I3. RAG 管线/Query rewrite": {},
-    "I/I3. RAG 管线/Retrieval": {},
+    "I/I3. RAG 管线/Query understanding": {
+      "status": "draft",
+      "definition": "Query understanding 是在检索前先判断用户真正想问什么、缺了什么上下文、意图属于哪类知识源，以及是否需要权限或任务状态参与检索。",
+      "importance": "很多检索失败并不是库里没知识，而是系统根本没有正确理解查询类型和检索目标。",
+      "minimumDemo": "对一组含缩写、歧义词和上下文依赖的问题，先做意图归类，再比较是否提升后续检索命中。",
+      "prerequisites": [
+        "I/I3. RAG 管线",
+        "I/I3. RAG 管线/Query rewrite"
+      ],
+      "coreMetrics": [
+        "intent classification accuracy",
+        "retrieval success lift"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Query rewrite",
+        "I/I3. RAG 管线/Retrieval"
+      ]
+    },
+    "I/I3. RAG 管线/Query rewrite": {
+      "status": "draft",
+      "definition": "Query rewrite 是把用户原始问法改写成更适合检索系统的检索查询，例如补充同义词、显式实体、时间范围或拆分多跳问题。",
+      "importance": "用户问题经常是自然语言、口语化或上下文依赖的，直接拿去搜往往不如改写后的查询稳定。",
+      "minimumDemo": "对一批口语化问题先直接检索，再加一轮 query rewrite，比较 recall@k 的变化。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Query understanding",
+        "I/I4. RAG 形态/Query rewriting RAG"
+      ],
+      "coreMetrics": [
+        "rewrite gain",
+        "query drift rate"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Retrieval",
+        "I/I4. RAG 形态/Query rewriting RAG"
+      ]
+    },
+    "I/I3. RAG 管线/Retrieval": {
+      "status": "draft",
+      "definition": "Retrieval 是从知识库中召回候选证据的阶段，通常结合 dense、sparse 或 hybrid 检索，负责把可能相关的片段交给后续重排和生成。",
+      "importance": "它是 RAG 成功的第一道门槛：没召回到正确证据，后面的生成再强也只能在错误上下文里工作。",
+      "minimumDemo": "固定一组问题和 gold 证据，测试不同 k、不同检索路由和不同索引组合的 recall@k。",
+      "prerequisites": [
+        "I/I1. 表示与检索基础/Dense retrieval",
+        "I/I1. 表示与检索基础/Hybrid retrieval"
+      ],
+      "coreMetrics": [
+        "recall@k",
+        "latency",
+        "candidate diversity"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Rerank",
+        "I/I6. 关键质量点/召回率"
+      ]
+    },
     "I/I3. RAG 管线/Permission-aware retrieval": {
-      "status": "seed",
+      "status": "draft",
       "definition": "Permission-aware retrieval 指检索阶段就按用户、租户、项目或文档权限过滤候选结果，而不是先检索再在回答阶段“希望模型别看到”。",
       "importance": "RAG 一旦接入企业文档，权限边界就是第一性约束；如果这一步做错，回答质量问题会直接升级成安全事故。",
       "minimumDemo": "为同一知识库构造两组不同权限用户，确保两人检索同一问题时召回集合不同且引用来源不越权。",
       "hardwareBudget": "与硬件关系不大，重点在权限模型和索引设计。",
+      "examples": [
+        "同一问题对不同团队用户返回不同候选集合。",
+        "搜索结果列表和引用片段也必须一起经过权限过滤。",
+        "权限收紧后，旧索引中的 chunk 不能继续被召回。"
+      ],
+      "pitfalls": [
+        "只在最终答案阶段做权限控制，检索日志和引用片段却已经泄露内容。",
+        "权限过滤做得太晚，导致 rerank 和 context packing 已经看过越权内容。",
+        "过滤后 recall 降低，但系统没有 fallback 或提示策略。"
+      ],
       "prerequisites": [
         "I/I2. 知识库构建/Metadata schema",
         "I/I3. RAG 管线",
@@ -63,11 +125,118 @@
         "M/M7. 隐私与合规"
       ]
     },
-    "I/I3. RAG 管线/Rerank": {},
-    "I/I3. RAG 管线/Context packing": {},
-    "I/I3. RAG 管线/Citation span alignment": {},
-    "I/I3. RAG 管线/Generation": {},
-    "I/I3. RAG 管线/Citation / provenance": {},
-    "I/I3. RAG 管线/Post-processing": {}
+    "I/I3. RAG 管线/Rerank": {
+      "status": "draft",
+      "definition": "Rerank 是在初步召回后重新排序候选证据，把最适合当前查询和生成目标的片段放到前面。",
+      "importance": "它经常决定最终喂给模型的上下文是否足够干净，因为 top-k 的前几条质量通常比扩大候选数更关键。",
+      "minimumDemo": "固定召回候选，对比有无 rerank 时 top-k 证据质量和最终答案 groundedness。",
+      "prerequisites": [
+        "I/I1. 表示与检索基础/Reranking",
+        "I/I3. RAG 管线/Retrieval"
+      ],
+      "coreMetrics": [
+        "nDCG",
+        "top-k quality",
+        "grounded answer rate"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Context packing",
+        "I/I6. 关键质量点/精准率"
+      ]
+    },
+    "I/I3. RAG 管线/Context packing": {
+      "status": "draft",
+      "definition": "Context packing 是把有限的上下文预算分配给最有价值的证据片段，控制顺序、去重、压缩和结构，以提升生成阶段的证据密度。",
+      "importance": "召回到好文档并不够，真正送进模型的上下文如何裁剪和排序，往往直接决定答案是否 grounded。",
+      "minimumDemo": "对同一组 top-k 候选试验不同 packing 策略，比较答案正确率、引用质量和 token 成本。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Rerank",
+        "I/I2. 知识库构建/Chunking strategy"
+      ],
+      "coreMetrics": [
+        "context utilization",
+        "token waste ratio",
+        "answer groundedness"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Generation",
+        "I/I6. 关键质量点/Chunk 质量"
+      ]
+    },
+    "I/I3. RAG 管线/Citation span alignment": {
+      "status": "draft",
+      "definition": "Citation span alignment 是把答案中的具体结论或句子对齐到支持它的原文 span，而不是只给一个模糊文档级来源。",
+      "importance": "没有 span 级对齐，引用很容易变成“看起来有出处”，但用户无法核验哪句话到底来自哪里。",
+      "minimumDemo": "对一批带引用答案，检查每个关键结论是否都能回指到正确 chunk 和正确 span。",
+      "prerequisites": [
+        "I/I2. 知识库构建/Metadata schema",
+        "I/I3. RAG 管线/Context packing"
+      ],
+      "coreMetrics": [
+        "span alignment accuracy",
+        "citation precision"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Citation / provenance",
+        "I/I6. 关键质量点/可追溯性"
+      ]
+    },
+    "I/I3. RAG 管线/Generation": {
+      "status": "draft",
+      "definition": "Generation 是在给定检索证据和上下文打包结果后，生成最终答案的阶段，要求模型尽量以证据为锚而不是自由发挥。",
+      "importance": "RAG 的最终价值体现仍然在答案阶段；如果生成器不能正确消费证据，前面的检索质量就无法转化成最终收益。",
+      "minimumDemo": "对同一批证据集测试自由生成与带引用约束生成，比较 groundedness 和幻觉率。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Context packing",
+        "G/G4. 生成与解码/Structured generation"
+      ],
+      "coreMetrics": [
+        "groundedness",
+        "answer accuracy",
+        "hallucination rate"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Citation / provenance",
+        "I/I3. RAG 管线/Post-processing"
+      ]
+    },
+    "I/I3. RAG 管线/Citation / provenance": {
+      "status": "draft",
+      "definition": "Citation / provenance 关注如何把答案和外部知识来源绑定起来，让用户知道信息来自哪个文档、哪个章节、哪个时间点和哪个权限上下文。",
+      "importance": "这决定了系统是否真正可核验、可追责、可审计，而不是只给用户一个“模型说的”。",
+      "minimumDemo": "要求每条答案都返回来源 ID、文档位置和更新时间，并抽样检查引用可信度。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Citation span alignment",
+        "I/I2. 知识库构建/Metadata schema"
+      ],
+      "coreMetrics": [
+        "citation coverage",
+        "citation trustworthiness",
+        "auditability"
+      ],
+      "next": [
+        "I/I6. 关键质量点/引用可信度",
+        "I/I6. 关键质量点/可追溯性"
+      ]
+    },
+    "I/I3. RAG 管线/Post-processing": {
+      "status": "draft",
+      "definition": "Post-processing 是在生成后做结构清洗、引用校验、去重、敏感信息检查和失败恢复，把模型输出变成真正可交付结果。",
+      "importance": "很多 RAG 系统并不是在检索或生成阶段崩，而是在最后一公里因为格式、引用或权限校验缺失而失去可用性。",
+      "minimumDemo": "为答案加入 parse、citation、policy 和 fallback 检查，比较有无后处理时的最终可交付率。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Generation",
+        "J/J2. 结构化输出/Error recovery"
+      ],
+      "coreMetrics": [
+        "delivery success rate",
+        "citation validation pass rate",
+        "recovery rate"
+      ],
+      "next": [
+        "I/I6. 关键质量点",
+        "J/J2. 结构化输出/Validation"
+      ]
+    }
   }
 }

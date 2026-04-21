@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-J-J1-1m8dl11-1",
     "type": "leaf-batch",
     "label": "J1. 模型接口层 / Leaves",
@@ -20,13 +20,102 @@
       "Input / output contracts"
     ],
     "nodeCount": 5,
-    "filledNodeCount": 0
+    "filledNodeCount": 5
   },
   "nodes": {
-    "J/J1. 模型接口层/Chat / responses": {},
-    "J/J1. 模型接口层/Prompt composition": {},
-    "J/J1. 模型接口层/System / user / tool messages": {},
-    "J/J1. 模型接口层/Context assembly": {},
-    "J/J1. 模型接口层/Input / output contracts": {}
+    "J/J1. 模型接口层/Chat / responses": {
+      "status": "draft",
+      "definition": "Chat / responses 指应用层选择怎样的模型调用接口来承载文本、多模态、工具、结构化输出和流式事件。它既是 SDK 选择问题，也是能力编排边界问题。",
+      "importance": "接口层选型会直接影响后续能否统一支持工具调用、流式事件和结构化输出；如果入口选错，后面很多能力只能靠补丁拼上去。",
+      "minimumDemo": "把同一业务请求分别走两种接口封装，比较事件模型、日志字段、结构化输出支持和工具调用一致性。",
+      "prerequisites": [
+        "J/J1. 模型接口层",
+        "J/J3. 工具调用/Function calling"
+      ],
+      "coreMetrics": [
+        "API surface stability",
+        "tooling support",
+        "latency"
+      ],
+      "next": [
+        "J/J1. 模型接口层/Prompt composition",
+        "J/J5. 流式与实时"
+      ]
+    },
+    "J/J1. 模型接口层/Prompt composition": {
+      "status": "draft",
+      "definition": "Prompt composition 是把任务目标、系统规则、上下文片段、示例和工具说明组合成最终可发送输入的过程。",
+      "importance": "如果组合逻辑分散在多个业务入口里，应用行为会越来越不可预测；集中治理 prompt composition 是接口层稳定的关键。",
+      "minimumDemo": "把一个复杂请求拆成 system、history、retrieved context、tool spec 和 user input 五个片段，明确它们的拼接顺序与优先级。",
+      "prerequisites": [
+        "H/H1. 不改权重的控制/Prompt templates",
+        "J/J1. 模型接口层/System / user / tool messages"
+      ],
+      "coreMetrics": [
+        "composition consistency",
+        "token efficiency"
+      ],
+      "next": [
+        "J/J1. 模型接口层/Context assembly",
+        "J/J2. 结构化输出/JSON Schema"
+      ]
+    },
+    "J/J1. 模型接口层/System / user / tool messages": {
+      "status": "draft",
+      "definition": "System / user / tool messages 是把不同来源的意图和状态分层表达出来：系统规则定义边界，用户消息表达目标，工具消息承载外部执行结果。",
+      "importance": "如果这些角色不分层，模型会把工具输出、用户意图和系统政策混在一起理解，导致行为漂移和诊断困难。",
+      "minimumDemo": "对同一任务分别用单段 prompt 和分层 message 表达，比较多轮工具调用时的稳定性和可追踪性。",
+      "prerequisites": [
+        "J/J1. 模型接口层/Prompt composition",
+        "J/J3. 工具调用/Tool result injection"
+      ],
+      "coreMetrics": [
+        "role separation clarity",
+        "debuggability",
+        "policy retention"
+      ],
+      "next": [
+        "J/J1. 模型接口层/Context assembly",
+        "J/J3. 工具调用"
+      ]
+    },
+    "J/J1. 模型接口层/Context assembly": {
+      "status": "draft",
+      "definition": "Context assembly 是在发送请求前，把会话历史、检索证据、任务状态、用户偏好和系统提示按预算与优先级装配成最终上下文。",
+      "importance": "它是应用层里最容易失控的一环：历史越堆越长、证据越加越杂，最终不仅更贵，还更容易把真正关键约束冲淡。",
+      "minimumDemo": "为同一请求做两种上下文组装策略，对比 token 预算、关键约束保留率和最终答案质量。",
+      "prerequisites": [
+        "J/J1. 模型接口层/Prompt composition",
+        "J/J4. 会话与状态/Token budgeting"
+      ],
+      "coreMetrics": [
+        "context utilization",
+        "token cost",
+        "constraint retention"
+      ],
+      "next": [
+        "J/J4. 会话与状态/Context compaction",
+        "I/I3. RAG 管线/Context packing"
+      ]
+    },
+    "J/J1. 模型接口层/Input / output contracts": {
+      "status": "draft",
+      "definition": "Input / output contracts 是把模型调用前后的字段、类型、错误语义和结果形态显式定义成程序契约，而不是靠自然语言约定。",
+      "importance": "没有契约，模型输出再聪明也很难安全接进软件系统；有了契约，才能把结构化输出、校验和错误恢复纳入正常工程流程。",
+      "minimumDemo": "为一个模型能力定义明确输入对象、输出 schema 和错误类型，然后在服务层统一校验与回传。",
+      "prerequisites": [
+        "J/J2. 结构化输出",
+        "J/J1. 模型接口层/Chat / responses"
+      ],
+      "coreMetrics": [
+        "schema adherence",
+        "parse success rate",
+        "error classification quality"
+      ],
+      "next": [
+        "J/J2. 结构化输出/Validation",
+        "J/J7. 工程可靠性/Error classes"
+      ]
+    }
   }
 }

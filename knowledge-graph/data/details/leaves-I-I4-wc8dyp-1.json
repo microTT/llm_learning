@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-I-I4-wc8dyp-1",
     "type": "leaf-batch",
     "label": "I4. RAG 形态 / Leaves",
@@ -21,14 +21,121 @@
       "Long-context + retrieval hybrid"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "I/I4. RAG 形态/Basic RAG": {},
-    "I/I4. RAG 形态/Multi-hop RAG": {},
-    "I/I4. RAG 形态/Query rewriting RAG": {},
-    "I/I4. RAG 形态/Agentic RAG": {},
-    "I/I4. RAG 形态/KG-RAG": {},
-    "I/I4. RAG 形态/Long-context + retrieval hybrid": {}
+    "I/I4. RAG 形态/Basic RAG": {
+      "status": "draft",
+      "definition": "Basic RAG 是最直接的检索增强流程：一次查询、一次召回、一次重排 / 打包、一次生成，适合单跳证据就能回答的问题。",
+      "importance": "它是大多数 RAG 系统的起点，也是衡量更复杂形态是否真正有收益的基线。",
+      "minimumDemo": "对一组 FAQ 或文档问答任务建立 basic RAG 基线，记录 recall、引用质量和成本。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Retrieval",
+        "I/I3. RAG 管线/Generation"
+      ],
+      "coreMetrics": [
+        "grounded answer rate",
+        "latency",
+        "cost"
+      ],
+      "next": [
+        "I/I4. RAG 形态/Multi-hop RAG",
+        "I/I4. RAG 形态/Query rewriting RAG"
+      ]
+    },
+    "I/I4. RAG 形态/Multi-hop RAG": {
+      "status": "draft",
+      "definition": "Multi-hop RAG 面向需要跨多个片段、多个文档或多个中间结论才能答对的问题，通常会做多轮检索或逐步扩展证据链。",
+      "importance": "很多真实问题不是单跳命中就结束，尤其在研究、代码和企业知识场景中，关键事实经常散落在不同来源。",
+      "minimumDemo": "找一组明确需要两段以上证据的问题，对比 basic RAG 和 multi-hop RAG 的最终正确率。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Query rewrite",
+        "I/I3. RAG 管线/Retrieval"
+      ],
+      "coreMetrics": [
+        "hop coverage",
+        "final accuracy",
+        "latency growth"
+      ],
+      "next": [
+        "I/I4. RAG 形态/Agentic RAG",
+        "I/I6. 关键质量点/召回率"
+      ]
+    },
+    "I/I4. RAG 形态/Query rewriting RAG": {
+      "status": "draft",
+      "definition": "Query rewriting RAG 通过先改写查询、补全实体或拆解问题，再进入检索管线，以提高对口语化、歧义或分布偏移问题的召回效果。",
+      "importance": "当用户问法和知识库写法差异较大时，query rewrite 往往比换 embedding 模型更快见效。",
+      "minimumDemo": "对一组口语化问题分别做直接检索和改写后检索，比较 recall@k 和最终 groundedness。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Query rewrite",
+        "I/I3. RAG 管线/Query understanding"
+      ],
+      "coreMetrics": [
+        "rewrite gain",
+        "query drift rate"
+      ],
+      "next": [
+        "I/I4. RAG 形态/Basic RAG",
+        "I/I4. RAG 形态/Multi-hop RAG"
+      ]
+    },
+    "I/I4. RAG 形态/Agentic RAG": {
+      "status": "draft",
+      "definition": "Agentic RAG 把检索当成可规划、可循环、可调用多种外部工具的一部分，而不是固定的一次性检索步骤。",
+      "importance": "它适合知识源多样、需要动态决策或需要把检索与其他工具混合编排的复杂任务，但也显著增加时延、可观测性和失败模式复杂度。",
+      "minimumDemo": "对一组需要动态选择知识源的问题，对比固定 RAG 管线和 agentic RAG 的成功率与成本。",
+      "prerequisites": [
+        "I/I3. RAG 管线",
+        "K/K7. 工具与外部连接"
+      ],
+      "coreMetrics": [
+        "workflow completion rate",
+        "tool selection correctness",
+        "cost / latency"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/File search / web search / code tools",
+        "K/K8. 人在回路/HITL checkpoints"
+      ]
+    },
+    "I/I4. RAG 形态/KG-RAG": {
+      "status": "draft",
+      "definition": "KG-RAG 利用知识图谱或显式实体关系结构辅助检索和推理，适合关系约束强、实体链长或路径可解释性要求高的任务。",
+      "importance": "当问题不是单纯文档相似度，而是实体关系和路径约束时，图谱结构往往比纯向量召回更有优势。",
+      "minimumDemo": "选一组实体关系问答，比较纯文档 RAG 和引入图谱检索后的正确率与解释性。",
+      "prerequisites": [
+        "I/I4. RAG 形态/Multi-hop RAG",
+        "B/B4. 知识表示/知识图谱"
+      ],
+      "coreMetrics": [
+        "path correctness",
+        "entity grounding",
+        "explainability"
+      ],
+      "next": [
+        "I/I6. 关键质量点/可追溯性",
+        "I/I4. RAG 形态/Long-context + retrieval hybrid"
+      ]
+    },
+    "I/I4. RAG 形态/Long-context + retrieval hybrid": {
+      "status": "draft",
+      "definition": "Long-context + retrieval hybrid 结合大上下文窗口和检索系统：先用检索缩小证据范围，再利用长上下文整合更多相关材料，而不是二选一。",
+      "importance": "随着上下文窗口变长，很多系统会误以为不再需要检索；实际更常见的正确做法是两者配合，以控制噪声和成本。",
+      "minimumDemo": "对长文档问题分别测试纯长上下文、纯检索和混合方案，比较 groundedness、延迟和 token 成本。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Context packing",
+        "G/G3. 上下文与记忆/上下文记忆（prompt context）"
+      ],
+      "coreMetrics": [
+        "context utilization",
+        "groundedness",
+        "token cost"
+      ],
+      "next": [
+        "I/I6. 关键质量点/Chunk 质量",
+        "I/I6. 关键质量点/过期知识"
+      ]
+    }
   }
 }

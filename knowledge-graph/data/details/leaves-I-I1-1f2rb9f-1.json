@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-I-I1-1f2rb9f-1",
     "type": "leaf-batch",
     "label": "I1. 表示与检索基础 / Leaves",
@@ -21,14 +21,122 @@
       "Reranking"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "I/I1. 表示与检索基础/Embeddings": {},
-    "I/I1. 表示与检索基础/Dense retrieval": {},
-    "I/I1. 表示与检索基础/Sparse retrieval": {},
-    "I/I1. 表示与检索基础/Hybrid retrieval": {},
-    "I/I1. 表示与检索基础/Similarity search": {},
-    "I/I1. 表示与检索基础/Reranking": {}
+    "I/I1. 表示与检索基础/Embeddings": {
+      "status": "draft",
+      "definition": "Embeddings 是把查询和文档片段映射到向量空间的表示方法，使语义相近的内容在空间中更靠近，从而支持稠密检索和相似度搜索。",
+      "importance": "它决定 dense retrieval 能否跨措辞差异找到相关内容，是现代 RAG 的核心底座之一。",
+      "minimumDemo": "取几组同义问法和不同主题文本，比较它们在 embedding 空间中的相似度排序是否符合直觉。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Embedding",
+        "I/I1. 表示与检索基础/Similarity search"
+      ],
+      "coreMetrics": [
+        "semantic recall",
+        "clustering quality",
+        "latency / cost"
+      ],
+      "next": [
+        "I/I1. 表示与检索基础/Dense retrieval",
+        "I/I2. 知识库构建/Vector store"
+      ]
+    },
+    "I/I1. 表示与检索基础/Dense retrieval": {
+      "status": "draft",
+      "definition": "Dense retrieval 用 embedding 向量表示查询和文档，再按向量相似度召回候选，是面向语义匹配的主流检索方式。",
+      "importance": "它在改写问法、长尾描述和语义相关场景中通常优于纯关键词检索，但也更依赖表示质量和索引实现。",
+      "minimumDemo": "用同一批查询分别跑 dense 和 sparse 检索，比较对措辞变化、同义表达和长尾问题的召回差异。",
+      "prerequisites": [
+        "I/I1. 表示与检索基础/Embeddings",
+        "I/I1. 表示与检索基础/Similarity search"
+      ],
+      "coreMetrics": [
+        "recall@k",
+        "MRR",
+        "semantic robustness"
+      ],
+      "next": [
+        "I/I1. 表示与检索基础/Hybrid retrieval",
+        "I/I3. RAG 管线/Retrieval"
+      ]
+    },
+    "I/I1. 表示与检索基础/Sparse retrieval": {
+      "status": "draft",
+      "definition": "Sparse retrieval 主要依赖关键词、倒排索引和词项权重匹配，在术语精确、符号密集或命名实体敏感的场景里往往很强。",
+      "importance": "很多企业知识库、代码库和专业文档任务里，关键词信号仍然是高质量召回的重要组成部分，不能被 dense retrieval 完全替代。",
+      "minimumDemo": "选一组带专有名词、错误码或 API 名称的查询，对比 dense 与 sparse 的召回表现。",
+      "prerequisites": [
+        "I/I2. 知识库构建/Keyword index",
+        "I/I1. 表示与检索基础/Hybrid retrieval"
+      ],
+      "coreMetrics": [
+        "exact-term recall",
+        "keyword precision",
+        "latency"
+      ],
+      "next": [
+        "I/I1. 表示与检索基础/Hybrid retrieval",
+        "I/I3. RAG 管线/Retrieval"
+      ]
+    },
+    "I/I1. 表示与检索基础/Hybrid retrieval": {
+      "status": "draft",
+      "definition": "Hybrid retrieval 把 dense 与 sparse 两路信号结合起来，尝试同时覆盖语义相关性和关键词精确命中。",
+      "importance": "它经常是实际系统里更稳的默认方案，因为能减少单一路检索在长尾术语或语义偏移上的盲区。",
+      "minimumDemo": "对同一批查询用 dense、sparse、hybrid 三种方式召回，比较整体 recall、噪声比例和候选多样性。",
+      "prerequisites": [
+        "I/I1. 表示与检索基础/Dense retrieval",
+        "I/I1. 表示与检索基础/Sparse retrieval"
+      ],
+      "coreMetrics": [
+        "combined recall",
+        "candidate diversity",
+        "cost / latency trade-off"
+      ],
+      "next": [
+        "I/I1. 表示与检索基础/Reranking",
+        "I/I3. RAG 管线/Retrieval"
+      ]
+    },
+    "I/I1. 表示与检索基础/Similarity search": {
+      "status": "draft",
+      "definition": "Similarity search 是在向量空间中快速找到与查询最相近候选的基础操作，通常是 dense retrieval 的底层执行机制。",
+      "importance": "它本身不是完整检索质量的全部，但会直接影响召回速度、近似误差和大规模索引的可用性。",
+      "minimumDemo": "在同一批向量上比较精确搜索与近似搜索的速度和结果差异，观察近似误差是否影响 top-k 命中。",
+      "prerequisites": [
+        "I/I1. 表示与检索基础/Embeddings",
+        "I/I2. 知识库构建/Indexing"
+      ],
+      "coreMetrics": [
+        "search latency",
+        "approximation error",
+        "top-k stability"
+      ],
+      "next": [
+        "I/I1. 表示与检索基础/Dense retrieval",
+        "I/I2. 知识库构建/Vector store"
+      ]
+    },
+    "I/I1. 表示与检索基础/Reranking": {
+      "status": "draft",
+      "definition": "Reranking 是在初步召回后，对候选文档再做一次更精细的相关性排序，以提升 top-k 质量和上下文密度。",
+      "importance": "它经常比继续盲目扩大召回数更有效，因为真正的问题通常不是“没召回”，而是好候选没排到前面。",
+      "minimumDemo": "固定初步召回集合，比较有无 rerank 时最终喂给模型的 top-k 对答案 groundedness 的影响。",
+      "prerequisites": [
+        "I/I1. 表示与检索基础/Hybrid retrieval",
+        "I/I3. RAG 管线/Rerank"
+      ],
+      "coreMetrics": [
+        "nDCG",
+        "top-k relevance",
+        "grounded answer rate"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Rerank",
+        "I/I6. 关键质量点/精准率"
+      ]
+    }
   }
 }

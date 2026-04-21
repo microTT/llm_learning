@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-18",
+    "updatedAt": "2026-04-21",
     "shardId": "domain-I",
     "type": "domain-overview",
     "label": "I. 检索、记忆与外部知识 / 概览",
@@ -14,7 +14,7 @@
     "parentTitle": null,
     "leafTitles": [],
     "nodeCount": 8,
-    "filledNodeCount": 2
+    "filledNodeCount": 8
   },
   "nodes": {
     "I": {
@@ -77,22 +77,161 @@
         "I/I6. 关键质量点"
       ]
     },
-    "I/I1. 表示与检索基础": {},
-    "I/I2. 知识库构建": {},
-    "I/I2. 知识库构建/Parser types": {},
-    "I/I3. RAG 管线": {
-      "status": "seed",
-      "definition": "RAG 管线的本质是把检索系统、上下文打包和模型生成串成一条可观测的数据流，让模型在回答前先读取外部知识。",
-      "importance": "它解决的是“知识更新、引用可追溯、外部文档接入”问题，而不是替代训练本身。",
-      "minimumDemo": "做一条最小 RAG：parse → chunk → embed → retrieve → rerank → pack → answer，并输出 citation spans。",
-      "hardwareBudget": "小规模原型可用云 API + 托管向量库；本地实验 CPU 即可，量大时需要更多内存和存储。",
+    "I/I1. 表示与检索基础": {
+      "status": "draft",
+      "definition": "表示与检索基础讨论的是：外部知识如何被编码成可匹配的表示，以及查询和文档如何在检索阶段相遇。它涵盖 embedding、稠密检索、稀疏检索、混合检索、相似度搜索和 reranking 这些基础部件，是后面所有 RAG 和记忆系统的“底层物理”。",
+      "importance": "如果这一层不清楚，团队就很容易把所有问题都归因到向量库或 embedding 模型上。实际上，召回失败可能来自表示空间、查询表达、稀疏信号缺失、重排策略不足，或者相似度度量本身选得不对。理解这一层，才能解释为什么“看起来相关”的文档没有被召回，或者为什么 top-k 很高但最终答案仍然不准。",
+      "minimumDemo": "准备一组短文档和一组查询，分别测试 dense、sparse 和 hybrid 三条检索链路，再加入 reranker。记录 recall@k、MRR、延迟和最终答案 groundedness，比较不同检索基础件对结果的影响。",
+      "hardwareBudget": "学习和原型阶段通常不需要高端硬件。大部分成本来自 embedding 生成、索引存储和 rerank 调用，而不是 GPU 训练。随着知识库变大，向量存储、缓存和查询延迟会成为主要工程约束。",
       "examples": [
-        "企业问答助手先检索内部文档，再把召回内容压缩进 prompt。",
-        "代码助手先检索仓库文件、再生成修复方案，并把引用文件路径返回给用户。"
+        "术语相同但语义不相似的查询往往更依赖 sparse 信号。",
+        "用户自然语言问法和文档写法差异较大时，dense retrieval 通常比纯关键词匹配更稳。",
+        "多义词和长尾术语场景下，hybrid retrieval 经常比单路检索更可靠。",
+        "top-k 候选很多但最终上下文仍然杂乱时，reranking 往往比继续增大 k 更有效。"
+      ],
+      "pitfalls": [
+        "把 embedding 维度或模型名当作检索质量的唯一决定因素。",
+        "只看向量召回，不评估稀疏信号、重排和延迟成本。",
+        "把 similarity search 当成最终答案，而不是候选筛选的一步。",
+        "在术语密集、关键词强约束任务里完全放弃 sparse retrieval。"
+      ],
+      "prerequisites": [
+        "G/G1. 语言建模基础/Embedding",
+        "I/I2. 知识库构建",
+        "I/I3. RAG 管线"
+      ],
+      "coreMetrics": [
+        "recall@k",
+        "MRR / nDCG",
+        "latency",
+        "candidate relevance",
+        "cost per query"
+      ],
+      "toolchain": [
+        "embedding model",
+        "vector index",
+        "keyword index",
+        "reranker",
+        "retrieval eval set"
+      ],
+      "failureSigns": [
+        "相关文档总在 top-k 外，但系统不知道问题出在查询、表示还是索引。",
+        "召回很多看似相关文档，真正关键证据却被噪声淹没。",
+        "检索质量一变好，延迟和成本立刻失控，说明基础件组合不合理。"
+      ],
+      "next": [
+        "I/I1. 表示与检索基础/Embeddings",
+        "I/I1. 表示与检索基础/Dense retrieval",
+        "I/I1. 表示与检索基础/Sparse retrieval",
+        "I/I1. 表示与检索基础/Hybrid retrieval",
+        "I/I1. 表示与检索基础/Similarity search",
+        "I/I1. 表示与检索基础/Reranking",
+        "I/I3. RAG 管线"
+      ]
+    },
+    "I/I2. 知识库构建": {
+      "status": "draft",
+      "definition": "知识库构建关注的是：原始资料如何被接入、解析、切分、打标签、索引和持续更新，最终变成一个可检索、可授权、可删除、可刷新、可追踪的知识层。它不是单一的“入库动作”，而是一条持续运行的数据工程链路。",
+      "importance": "很多 RAG 问题本质上不是模型问题，而是知识库构建问题。解析失败、chunk 边界错误、元数据缺失、索引策略不匹配和更新链路不完整，都会直接表现成“模型答错了”或“检索不到”。",
+      "minimumDemo": "拿一小批文档，完成接入、解析、chunk、metadata、索引和更新删除测试。要求系统能回答基于新文档的问题，并且在文档删除或权限变化后不再命中过期或越权内容。",
+      "hardwareBudget": "主要消耗在存储、索引构建、增量刷新和文档解析，而不是大规模训练。随着规模上升，数据管道和索引维护成本会比单次查询成本更关键。",
+      "examples": [
+        "把 PDF、Markdown、网页和代码仓库统一接入到同一知识层。",
+        "为每个 chunk 保留来源路径、标题层级、更新时间和权限标签。",
+        "文档更新后只增量刷新受影响的索引，而不是每次全量重建。",
+        "删除文档后，旧 chunk 和旧引用能被及时清理。"
+      ],
+      "pitfalls": [
+        "把向量化当成知识库构建的全部，忽略 parser、metadata 和更新链路。",
+        "只支持新增，不支持 refresh / re-index / delete。",
+        "文档结构丢失，导致引用无法定位到真实章节和来源。",
+        "索引方案和实际查询类型不匹配，导致召回看似齐全但结果不稳定。"
+      ],
+      "prerequisites": [
+        "I/I1. 表示与检索基础",
+        "F/F3. 数据工程",
+        "F/F5. 数据治理"
+      ],
+      "coreMetrics": [
+        "parse success rate",
+        "index freshness",
+        "metadata completeness",
+        "delete / refresh correctness"
+      ],
+      "toolchain": [
+        "parsers and loaders",
+        "chunking pipeline",
+        "metadata schema",
+        "vector and keyword indexes",
+        "refresh jobs"
+      ],
+      "failureSigns": [
+        "新增文档迟迟不生效，删除文档却长期还在被引用。",
+        "来源定位和章节边界经常错位。",
+        "不同文档类型接入后表现差异极大，说明 parser 层不稳定。"
+      ],
+      "next": [
+        "I/I2. 知识库构建/数据接入",
+        "I/I2. 知识库构建/Parser types",
+        "I/I2. 知识库构建/Chunking strategy",
+        "I/I2. 知识库构建/Metadata schema",
+        "I/I2. 知识库构建/Indexing",
+        "I/I2. 知识库构建/Vector store",
+        "I/I2. 知识库构建/Keyword index",
+        "I/I2. 知识库构建/Update / refresh / re-index / delete",
+        "I/I3. RAG 管线"
+      ]
+    },
+    "I/I2. 知识库构建/Parser types": {
+      "status": "draft",
+      "definition": "Parser types 讨论的是不同资料形态该如何被解析成统一而可检索的文本与结构信息，包括纯文本、Markdown、PDF / Office、HTML 页面以及代码仓库。不同 parser 决定了结构保留程度、噪声水平和后续 chunking 的上限。",
+      "importance": "如果 parser 类型选错或实现粗糙，再好的 embedding 和 reranker 也救不回来。因为模型接触到的不是“原始知识”，而是 parser 输出后的近似表示。",
+      "minimumDemo": "对同一组不同来源文档分别做解析，检查标题、表格、代码块、链接和页码等结构是否被保留，并比较对最终引用定位的影响。",
+      "hardwareBudget": "主要是 CPU、内存和解析耗时问题；复杂 PDF 和大仓库解析时，稳定性和吞吐比 GPU 更关键。",
+      "prerequisites": [
+        "I/I2. 知识库构建/数据接入",
+        "I/I2. 知识库构建/Chunking strategy"
+      ],
+      "coreMetrics": [
+        "parse fidelity",
+        "structure preservation",
+        "noise rate",
+        "throughput"
+      ],
+      "toolchain": [
+        "document parsers",
+        "HTML cleaners",
+        "code parsers",
+        "OCR / layout tools"
+      ],
+      "failureSigns": [
+        "表格、标题层级、代码块和链接在解析后全部被打散。",
+        "同一文档不同 parser 输出差异极大，说明知识层不稳定。"
+      ],
+      "next": [
+        "I/I2. 知识库构建/Parser types/Text / Markdown",
+        "I/I2. 知识库构建/Parser types/PDF / Office",
+        "I/I2. 知识库构建/Parser types/HTML / web content",
+        "I/I2. 知识库构建/Parser types/Code / repository parsers",
+        "I/I2. 知识库构建/Chunking strategy"
+      ]
+    },
+    "I/I3. RAG 管线": {
+      "status": "draft",
+      "definition": "RAG 管线的本质是把“理解查询、检索候选、重排筛选、压缩上下文、生成答案、给出引用”串成一条可观测的数据流，让模型在回答前先读取外部知识。它不是单一的 retrieve + generate，而是一系列可拆分、可优化、可审计的环节。",
+      "importance": "很多团队会把 RAG 简化成‘加个向量库’，但真实系统成败主要取决于查询理解、权限过滤、上下文打包、引用对齐和后处理。只有把管线拆开，才能知道错误到底来自检索、重排、上下文组装还是生成阶段。",
+      "minimumDemo": "做一条最小但可观测的 RAG：query understanding → retrieval → rerank → context packing → generation → citation / provenance。要求日志里至少能看到候选文档、重排后 top-k、最终喂给模型的片段和答案对应的引用 span。",
+      "hardwareBudget": "小规模原型可用云 API + 托管向量库；本地实验 CPU 即可，量大时主要压力在索引、缓存、重排和长上下文费用，而不是训练硬件。",
+      "examples": [
+        "企业问答助手先检索内部文档，再把召回内容压缩进 prompt，并返回出处。",
+        "代码助手先检索仓库文件和设计文档，再生成补丁方案并注明相关文件路径。",
+        "权限敏感场景中，先按 ACL 过滤候选，再重排和生成答案。"
       ],
       "pitfalls": [
         "只做向量召回而不做 rerank，往往会把噪声文档带进上下文。",
-        "知识库数据更新频率、权限控制和 chunk 质量，都会直接决定最终回答质量。"
+        "知识库数据更新频率、权限控制和 chunk 质量，都会直接决定最终回答质量。",
+        "检索日志不透明，导致答错时无法定位是哪一环失效。",
+        "上下文 packing 只按长度拼接，不按任务目标和证据密度筛选。"
       ],
       "prerequisites": [
         "I/I1. 表示与检索基础/Embeddings",
@@ -103,26 +242,192 @@
         "retrieval recall@k",
         "citation precision",
         "answer groundedness",
-        "latency / cost"
+        "latency / cost",
+        "permission correctness"
       ],
       "toolchain": [
         "embeddings",
         "vector store",
         "reranker",
-        "trace logging"
+        "trace logging",
+        "context packer",
+        "citation validators"
       ],
       "failureSigns": [
-        "召回正常但答案脱离证据生成",
-        "权限过滤后结果突然为空而系统没有降级策略"
+        "召回正常但答案脱离证据生成。",
+        "权限过滤后结果突然为空而系统没有降级策略。",
+        "引用看似存在，但 span 和最终结论对不上。",
+        "多跳问题需要两段证据时，系统总在单跳就停住。"
       ],
       "next": [
-        "I/I1. 表示与检索基础",
+        "I/I3. RAG 管线/Query understanding",
+        "I/I3. RAG 管线/Query rewrite",
+        "I/I3. RAG 管线/Retrieval",
+        "I/I3. RAG 管线/Permission-aware retrieval",
+        "I/I3. RAG 管线/Rerank",
+        "I/I3. RAG 管线/Context packing",
+        "I/I3. RAG 管线/Citation span alignment",
+        "I/I3. RAG 管线/Generation",
+        "I/I3. RAG 管线/Citation / provenance",
+        "I/I3. RAG 管线/Post-processing",
         "I/I4. RAG 形态",
         "K/K7. 工具与外部连接"
       ]
     },
-    "I/I4. RAG 形态": {},
-    "I/I5. 记忆类型": {},
-    "I/I6. 关键质量点": {}
+    "I/I4. RAG 形态": {
+      "status": "draft",
+      "definition": "RAG 形态讨论的是不同检索增强系统如何组织查询改写、单跳或多跳检索、工具调用、知识图谱和长上下文协同。它回答的不是“要不要做 RAG”，而是“该用哪种 RAG 形态承载当前问题结构和约束”。",
+      "importance": "很多系统做不好 RAG，不是因为缺少某个单点技术，而是因为选错了形态。单跳问答、跨文档推理、工具驱动检索、图谱约束和长上下文混合方案面对的是不同的问题分布和成本结构。",
+      "minimumDemo": "围绕同一批问题，分别用 basic、query rewriting、multi-hop 和 agentic 四种方案做对照，记录正确率、延迟、工具调用次数和引用质量，观察哪种形态真正匹配你的问题分布。",
+      "hardwareBudget": "原型阶段主要增加的是查询轮数、重排成本、工具调用次数和上下文费用，而不是训练硬件。随着形态更复杂，系统延迟和可观测性成本通常比模型本身更先成为瓶颈。",
+      "examples": [
+        "FAQ 和文档定位任务通常只需要 basic RAG。",
+        "跨两个文档才能答对的问题更适合 multi-hop 或 query rewriting RAG。",
+        "需要动态决定用搜索、数据库还是代码检索时，agentic RAG 更合适。",
+        "当文档本身很长时，long-context 与 retrieval 混合往往比单纯扩大 top-k 更有效。"
+      ],
+      "pitfalls": [
+        "把所有任务都套进同一条 basic RAG 流水线。",
+        "为了追求复杂度而引入 agentic RAG，却没有提升真实任务成功率。",
+        "多跳任务只做单次召回，导致关键中间证据永远缺失。",
+        "长上下文和检索同时叠加，但没有控制成本和噪声。"
+      ],
+      "prerequisites": [
+        "I/I3. RAG 管线",
+        "I/I1. 表示与检索基础",
+        "K/K7. 工具与外部连接"
+      ],
+      "coreMetrics": [
+        "task success rate",
+        "hop coverage",
+        "latency",
+        "cost",
+        "citation quality"
+      ],
+      "toolchain": [
+        "retrieval router",
+        "query rewrite",
+        "graph / KG backends",
+        "agent orchestration"
+      ],
+      "failureSigns": [
+        "单跳任务还能答，多跳和跨源任务集体失效。",
+        "形态越复杂，日志越多，但答案质量没有明显改善。",
+        "长上下文混合后成本明显上升，却没有提升 groundedness。"
+      ],
+      "next": [
+        "I/I4. RAG 形态/Basic RAG",
+        "I/I4. RAG 形态/Multi-hop RAG",
+        "I/I4. RAG 形态/Query rewriting RAG",
+        "I/I4. RAG 形态/Agentic RAG",
+        "I/I4. RAG 形态/KG-RAG",
+        "I/I4. RAG 形态/Long-context + retrieval hybrid"
+      ]
+    },
+    "I/I5. 记忆类型": {
+      "status": "draft",
+      "definition": "记忆类型关注的是：系统到底把什么信息放在参数里、什么放在共享知识库里、什么挂在会话态里、什么沉淀成用户或任务长期状态。它强调不同记忆层的职责边界，而不是把所有“记住信息”的事情都塞进同一机制。",
+      "importance": "很多所谓‘模型记不住’的问题，本质上是记忆分层设计错误。把短期会话状态、长期用户偏好和公共知识库混在一起，会同时带来成本、权限和可维护性问题。",
+      "minimumDemo": "为一个对话系统明确区分参数知识、共享知识库、会话状态、用户长期偏好和任务工作记忆，并在日志里标注每条信息来自哪一层，观察系统在多轮和跨会话中的行为变化。",
+      "hardwareBudget": "记忆类型本身不是训练问题，主要成本来自状态存储、检索延迟、权限隔离和记忆压缩策略。随着会话和用户规模增大，存储与治理成本会迅速上升。",
+      "examples": [
+        "产品文档应放在共享知识库，而不是硬塞进 system prompt。",
+        "一次工单处理过程里的临时结论属于任务记忆，不应永久写入用户偏好。",
+        "用户语言偏好和常用格式适合长期记忆，但必须受权限和删除策略约束。",
+        "多轮工具调用中的中间结果适合放在 episodic 或任务级记忆里。"
+      ],
+      "pitfalls": [
+        "把任何“未来可能有用”的信息都长期保存下来。",
+        "共享知识和个体记忆没有边界，导致跨用户污染。",
+        "任务状态没有压缩策略，会话一长就既贵又乱。",
+        "把参数记忆当成可以实时更新的知识层。"
+      ],
+      "prerequisites": [
+        "G/G3. 上下文与记忆",
+        "I/I3. RAG 管线",
+        "K/K6. Agent 记忆"
+      ],
+      "coreMetrics": [
+        "memory hit quality",
+        "staleness",
+        "permission correctness",
+        "cross-session coherence"
+      ],
+      "toolchain": [
+        "session store",
+        "user profile store",
+        "task memory store",
+        "memory compaction / injection"
+      ],
+      "failureSigns": [
+        "用户偏好、会话状态和共享知识互相污染。",
+        "系统跨会话记住了不该长期保存的信息。",
+        "会话越长越慢，且关键状态越来越难被准确注入。"
+      ],
+      "next": [
+        "I/I5. 记忆类型/参数记忆",
+        "I/I5. 记忆类型/非参数知识库",
+        "I/I5. 记忆类型/会话记忆",
+        "I/I5. 记忆类型/用户长期记忆",
+        "I/I5. 记忆类型/任务记忆",
+        "I/I5. 记忆类型/Episodic memory",
+        "I/I5. 记忆类型/Semantic memory",
+        "K/K6. Agent 记忆"
+      ]
+    },
+    "I/I6. 关键质量点": {
+      "status": "draft",
+      "definition": "关键质量点把 RAG 和记忆系统里真正决定可用性的指标显式化：召回率、精准率、chunk 质量、时效性、权限边界、可追溯性和引用可信度。它不是新模块，而是整个 `I` 域的验收面。",
+      "importance": "没有这些质量点，系统就会停留在‘看起来能答’的 demo 阶段。真正上线时，用户和业务更关心的是是否找对证据、是否越权、是否过期、是否能追溯，而不是回答是否流畅。",
+      "minimumDemo": "为一组带 gold evidence 的问题同时标注召回、引用、权限和时效结果，区分出“没检到”“检到了但排错了”“给了出处但对不上”“答案引用了过期资料”等不同失败类型。",
+      "hardwareBudget": "这一层几乎不吃训练算力，主要消耗在高质量评测集、标注、审计日志和持续回归上。",
+      "examples": [
+        "召回率高但精准率低，意味着系统找到了很多相关文档，却把噪声也一起带进来了。",
+        "引用存在但 span 不准，会让用户误以为系统有证据，实际无法核验。",
+        "知识更新后仍命中旧内容，说明 freshness 和 delete 链路失效。",
+        "同一问题不同用户得到不同结果是好事，前提是这真的是权限边界生效，而不是随机波动。"
+      ],
+      "pitfalls": [
+        "只看最终回答质量，不看证据层质量。",
+        "把权限问题混进一般召回问题，导致诊断方向错误。",
+        "引用有无被当成质量指标，却不检查引用是否真的支撑结论。",
+        "离线评测不覆盖过期知识和权限场景。"
+      ],
+      "prerequisites": [
+        "I/I1. 表示与检索基础",
+        "I/I2. 知识库构建",
+        "I/I3. RAG 管线",
+        "M/M1. 模型级评测",
+        "M/M3. Agent 级评测"
+      ],
+      "coreMetrics": [
+        "recall",
+        "precision",
+        "freshness",
+        "permission correctness",
+        "citation trustworthiness",
+        "traceability"
+      ],
+      "toolchain": [
+        "retrieval eval set",
+        "evidence labels",
+        "audit logs",
+        "citation validators"
+      ],
+      "failureSigns": [
+        "系统经常答对表面问题，但证据层检查一团糟。",
+        "一旦涉及权限和时效，质量立刻断崖式下降。",
+        "答错时无法区分是检索、重排、引用还是生成阶段出了问题。"
+      ],
+      "next": [
+        "I/I6. 关键质量点/召回率",
+        "I/I6. 关键质量点/精准率",
+        "I/I6. 关键质量点/Chunk 质量",
+        "I/I6. 关键质量点/过期知识",
+        "I/I6. 关键质量点/授权与权限边界",
+        "I/I6. 关键质量点/可追溯性",
+        "I/I6. 关键质量点/引用可信度"
+      ]
+    }
   }
 }
