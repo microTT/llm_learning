@@ -25,9 +25,9 @@
   "nodes": {
     "N/N2. 自动化等级/Suggestion only": {
       "status": "draft",
-      "definition": "Suggestion only 只提供建议，不自动修改外部状态，也不代表用户执行高风险动作。",
-      "importance": "这是错误代价高、信任尚未建立时最稳的起点。",
-      "minimumDemo": "让系统只输出建议和解释，不直接执行任何副作用操作。",
+      "definition": "Suggestion only 表示系统只给建议、解释或备选方案，不直接修改外部状态，也不替用户执行任何有副作用的动作。它的定位不是“能力弱”，而是把 AI 放在决策支持层，而不是执行层。",
+      "importance": "当错误代价高、用户信任尚未建立、数据和流程边界还不稳定时，这是最稳的起点。它能先验证价值，再逐步决定哪些环节值得往更高自动化推进。",
+      "minimumDemo": "让系统只输出建议、理由和不确定性说明，不直接发消息、不写系统、不运行命令，并观察用户是否愿意据此做出更快决策。",
       "prerequisites": [
         "N/N1. 场景类型",
         "N/N3. 决策变量/错误代价"
@@ -43,9 +43,9 @@
     },
     "N/N2. 自动化等级/Draft and review": {
       "status": "draft",
-      "definition": "Draft and review 让系统生成草稿或计划，由人决定是否采纳、修改或丢弃。",
-      "importance": "这是很多 Copilot 和文档型应用的最佳平衡点，能兼顾效率和可控性。",
-      "minimumDemo": "让系统先生成邮件、文档或代码草稿，用户确认后再进入正式流程。",
+      "definition": "Draft and review 让系统先生成草稿、计划或结构化建议，再由人决定是否采纳、修改、合并或丢弃。它把 AI 的价值放在“减少空白起草成本”，而不是让 AI 直接成为最终执行者。",
+      "importance": "这是很多 Copilot、文档助手和业务辅助工具的最佳平衡点，因为它既能显著提升效率，又保留了人工最终把关和责任归属。",
+      "minimumDemo": "让系统先生成邮件、文档、SQL 或代码草稿，要求用户能逐段编辑、局部采纳或整体拒绝，然后再进入正式发布或执行流程。",
       "prerequisites": [
         "N/N2. 自动化等级/Suggestion only",
         "J/J9. 应用形态/Copilot"
@@ -61,9 +61,9 @@
     },
     "N/N2. 自动化等级/Execute with approval": {
       "status": "draft",
-      "definition": "Execute with approval 允许系统在获得显式审批后执行外部动作，例如发消息、改数据或运行命令。",
-      "importance": "它是工作流自动化和 coding agent 等高价值场景的关键中间态。",
-      "minimumDemo": "为一个高风险动作加审批门，验证批准后执行、拒绝后回退和状态保留都稳定。",
+      "definition": "Execute with approval 允许系统在获得显式审批后执行外部动作，例如发消息、改数据、调用内部系统或运行命令。审批在这里不是形式化确认，而是风险控制和责任转移节点。",
+      "importance": "它是很多高价值 AI 场景进入生产的关键中间态，因为它既让系统能真正产生副作用，又避免了完全自治带来的不可控风险。",
+      "minimumDemo": "为一个有真实副作用的动作加审批门，验证批准后执行、拒绝后不执行、超时后回退，以及整个状态与审计链路都保持完整。",
       "prerequisites": [
         "K/K8. 人在回路/Approval before side effects",
         "J/J8. 安全与权限/Sensitive action approval"
@@ -79,9 +79,9 @@
     },
     "N/N2. 自动化等级/Narrow autonomous execution": {
       "status": "draft",
-      "definition": "Narrow autonomous execution 指系统在边界清晰、影响面小的任务上可以自动执行，而不要求每次都审批。",
-      "importance": "它能释放 AI 的真实效率，但前提是任务范围足够窄、失败恢复清晰、审计完整。",
-      "minimumDemo": "为一个低风险重复任务设置受限自治执行，并观察成功率和异常升级比例。",
+      "definition": "Narrow autonomous execution 指系统在边界清晰、影响面小、回滚简单的任务上可以自动执行，而不要求每次都审批。这里的关键不在“自动”，而在“范围足够窄且风险可封装”。",
+      "importance": "它能释放 AI 的真实效率，因为高频低风险任务不再需要人工逐次确认；但如果边界定义不清，这一层最容易从小自治滑向大事故。",
+      "minimumDemo": "为一个低风险重复任务设置受限自治执行，明确准入条件、异常升级规则和回滚机制，并观察成功率、升级率和误执行率。",
       "prerequisites": [
         "N/N2. 自动化等级/Execute with approval",
         "M/M3. Agent 级评测/Workflow completion rate"
@@ -97,9 +97,9 @@
     },
     "N/N2. 自动化等级/Human-supervised autonomy": {
       "status": "draft",
-      "definition": "Human-supervised autonomy 允许系统在更长链路中自主推进，但始终保持人可见、可接管和可审计。",
-      "importance": "这是长任务 agent 真正进入生产环境时最常见的终态之一。",
-      "minimumDemo": "让一个长任务 agent 自主推进多步流程，但对关键节点保留人工接管和中途终止能力。",
+      "definition": "Human-supervised autonomy 允许系统在更长链路中自主推进、拆解任务和调用工具，但整个过程始终保持对人可见、可接管、可中止和可审计。它强调的是“人在环上的持续监督”，不是“最后看一眼结果”。",
+      "importance": "这是长任务 agent 进入生产环境时最现实的终态之一，因为它能兼顾长链路效率和组织治理要求，让系统既能多走几步，又不会失去人类主导权。",
+      "minimumDemo": "让一个长任务 agent 自主推进多步流程，并在关键节点提供进度可见性、人工接管、暂停、终止和审批能力，验证这些控制手段能真实改变执行轨迹。",
       "prerequisites": [
         "K/K8. 人在回路/HITL checkpoints",
         "K/K9. Agent 观测与控制/Auditability"
