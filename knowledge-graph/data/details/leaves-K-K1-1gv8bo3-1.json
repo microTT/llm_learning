@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-K-K1-1gv8bo3-1",
     "type": "leaf-batch",
     "label": "K1. Agent 的最小构成 / Leaves",
@@ -22,17 +22,59 @@
       "Human review"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 1
+    "filledNodeCount": 7
   },
   "nodes": {
-    "K/K1. Agent 的最小构成/模型（Model）": {},
-    "K/K1. Agent 的最小构成/指令（Instructions）": {},
+    "K/K1. Agent 的最小构成/模型（Model）": {
+      "status": "draft",
+      "definition": "模型是 Agent 的决策核心，负责理解目标、选择下一步、消费工具结果并生成最终产物。",
+      "importance": "没有模型就没有动态决策；同时模型能力边界也决定了 agent 该承担多复杂的规划与验证职责。",
+      "minimumDemo": "让同一套工具链分别接普通聊天模型和更强推理模型，比较任务完成率和成本差异。",
+      "prerequisites": [
+        "G/G8. 推理模型与模型路由",
+        "K/K1. Agent 的最小构成/指令（Instructions）"
+      ],
+      "coreMetrics": [
+        "task success rate",
+        "cost per task"
+      ],
+      "next": [
+        "K/K2. 执行形态/Agent",
+        "K/K3. 单 Agent 模式"
+      ]
+    },
+    "K/K1. Agent 的最小构成/指令（Instructions）": {
+      "status": "draft",
+      "definition": "指令定义 agent 的目标、边界、风格、停机条件和优先级，是把模型放进某类任务框架中的高层规则。",
+      "importance": "同一个模型和工具，在不同 instructions 下会表现得像完全不同的 agent；不写清规则，系统很容易空转或越界。",
+      "minimumDemo": "为同一任务写两版不同指令，比较是否出现步数膨胀、越权动作和输出风格漂移。",
+      "prerequisites": [
+        "H/H1. 不改权重的控制/System prompt",
+        "K/K1. Agent 的最小构成/模型（Model）"
+      ],
+      "coreMetrics": [
+        "policy adherence",
+        "loop discipline"
+      ],
+      "next": [
+        "K/K1. Agent 的最小构成/编排（Orchestration）",
+        "K/K1. Agent 的最小构成/Guardrails"
+      ]
+    },
     "K/K1. Agent 的最小构成/工具（Tools）": {
-      "status": "seed",
+      "status": "draft",
       "definition": "工具是 Agent 从“只会生成文本”走向“可操作环境”的桥梁。关键不是工具数量，而是 schema、权限边界、错误恢复和观察能力。",
       "importance": "没有工具 schema、审批边界和回滚/重试策略，Agent 很快就会在真实环境里失控。",
       "minimumDemo": "给一个文件操作工具定义输入输出 schema、权限边界和失败返回，再把它接到最小 agent 上。",
       "hardwareBudget": "与硬件关系弱，关键在运行时和权限设计。",
+      "examples": [
+        "代码 agent 通过文件读写和 shell 工具与仓库交互。",
+        "研究 agent 通过网页检索和文档读取工具扩展证据来源。"
+      ],
+      "pitfalls": [
+        "工具越多不等于越强，往往先把路由和恢复复杂度拉高。",
+        "没有清晰 schema 和 side-effect 分类时，模型很难稳定使用工具。"
+      ],
       "prerequisites": [
         "J/J3. 工具调用",
         "M/M5. 安全控制"
@@ -57,9 +99,77 @@
         "M/M5. 安全控制"
       ]
     },
-    "K/K1. Agent 的最小构成/状态 / 记忆（State / Memory）": {},
-    "K/K1. Agent 的最小构成/编排（Orchestration）": {},
-    "K/K1. Agent 的最小构成/Guardrails": {},
-    "K/K1. Agent 的最小构成/Human review": {}
+    "K/K1. Agent 的最小构成/状态 / 记忆（State / Memory）": {
+      "status": "draft",
+      "definition": "状态 / 记忆负责保存当前任务进度、工具结果、会话上下文和长期可复用信息，使 agent 不必每步都从零开始。",
+      "importance": "没有状态层，agent 很难做多步执行和恢复；状态层过重又会把噪声、过期信息和权限问题一起放大。",
+      "minimumDemo": "让 agent 在一次中断后恢复任务，并验证它能继续利用先前结果而不是重新从头开始。",
+      "prerequisites": [
+        "J/J4. 会话与状态",
+        "K/K6. Agent 记忆"
+      ],
+      "coreMetrics": [
+        "resume success rate",
+        "memory hit quality"
+      ],
+      "next": [
+        "K/K1. Agent 的最小构成/编排（Orchestration）",
+        "K/K6. Agent 记忆"
+      ]
+    },
+    "K/K1. Agent 的最小构成/编排（Orchestration）": {
+      "status": "draft",
+      "definition": "编排决定 agent 如何组织步骤、何时调工具、何时结束、何时进入审批或 handoff，是把原子能力串成任务闭环的运行时骨架。",
+      "importance": "模型和工具只是零件，真正让 agent 变成系统的是编排。没有它，步骤顺序、恢复和终止条件都会混乱。",
+      "minimumDemo": "实现一个简单 loop runtime，显式记录 `plan -> act -> observe -> decide next` 的每一步。",
+      "prerequisites": [
+        "K/K2. 执行形态",
+        "K/K1. Agent 的最小构成/指令（Instructions）"
+      ],
+      "coreMetrics": [
+        "step efficiency",
+        "termination correctness"
+      ],
+      "next": [
+        "K/K2. 执行形态",
+        "K/K5. 图式编排"
+      ]
+    },
+    "K/K1. Agent 的最小构成/Guardrails": {
+      "status": "draft",
+      "definition": "Guardrails 是在输入、输出、工具和策略层面为 agent 设置的硬约束与软约束，用来限制越权、异常和高风险行为。",
+      "importance": "agent 一旦具备动态决策和工具执行能力，guardrails 就不再是可选增强，而是运行时的必要边界。",
+      "minimumDemo": "为一个带副作用工具的 agent 加入输入、工具和输出三类 guardrails，并验证危险动作会被拦截。",
+      "prerequisites": [
+        "M/M6. Guardrails",
+        "J/J8. 安全与权限"
+      ],
+      "coreMetrics": [
+        "guardrail block rate",
+        "unsafe action prevention"
+      ],
+      "next": [
+        "K/K1. Agent 的最小构成/Human review",
+        "J/J8. 安全与权限/Sensitive action approval"
+      ]
+    },
+    "K/K1. Agent 的最小构成/Human review": {
+      "status": "draft",
+      "definition": "Human review 指在关键节点由人审阅计划、参数、产物或副作用建议，把自动执行转成受控执行。",
+      "importance": "在高风险或高不确定性场景里，human review 往往比继续加 prompt 更能稳定降低事故风险。",
+      "minimumDemo": "在一个会写数据的 agent 链路里加 review 节点，验证通过、拒绝和修改后三种路径都能继续执行。",
+      "prerequisites": [
+        "K/K1. Agent 的最小构成/Guardrails",
+        "K/K8. 人在回路"
+      ],
+      "coreMetrics": [
+        "review acceptance rate",
+        "human override rate"
+      ],
+      "next": [
+        "K/K8. 人在回路",
+        "J/J8. 安全与权限/Sensitive action approval"
+      ]
+    }
   }
 }

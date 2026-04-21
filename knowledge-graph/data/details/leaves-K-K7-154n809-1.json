@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-K-K7-154n809-1",
     "type": "leaf-batch",
     "label": "Sandbox workspace / Leaves",
@@ -20,13 +20,99 @@
       "Resume same workspace after review"
     ],
     "nodeCount": 5,
-    "filledNodeCount": 0
+    "filledNodeCount": 5
   },
   "nodes": {
-    "K/K7. 工具与外部连接/Sandbox workspace/Workspace filesystem": {},
-    "K/K7. 工具与外部连接/Sandbox workspace/Commands / packages": {},
-    "K/K7. 工具与外部连接/Sandbox workspace/Artifacts": {},
-    "K/K7. 工具与外部连接/Sandbox workspace/Ports / preview": {},
-    "K/K7. 工具与外部连接/Sandbox workspace/Resume same workspace after review": {}
+    "K/K7. 工具与外部连接/Sandbox workspace/Workspace filesystem": {
+      "status": "draft",
+      "definition": "Workspace filesystem 是 agent 在受控目录里读写文件、目录和缓存的基础边界，决定状态是否能稳定落盘。",
+      "importance": "没有稳定文件系统边界，coding agent 和文档型 agent 很难做到可恢复、可审计和不互相污染。",
+      "minimumDemo": "给 agent 一个独立工作目录，让它读写文件并在下一步仍能从同一目录继续。",
+      "prerequisites": [
+        "K/K7. 工具与外部连接/Sandbox workspace",
+        "J/J8. 安全与权限/Isolation boundaries"
+      ],
+      "coreMetrics": [
+        "filesystem isolation quality",
+        "state persistence success"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/Sandbox workspace/Commands / packages",
+        "K/K7. 工具与外部连接/Sandbox workspace/Artifacts"
+      ]
+    },
+    "K/K7. 工具与外部连接/Sandbox workspace/Commands / packages": {
+      "status": "draft",
+      "definition": "Commands / packages 关注 agent 在工作区中能执行哪些命令、装哪些依赖、这些动作如何被限制和记录。",
+      "importance": "很多能力提升都来自命令执行和依赖安装，但这也是最容易把环境污染、成本失控和越权风险一起放大的地方。",
+      "minimumDemo": "允许 agent 执行受限命令，并验证命令历史、退出状态和包安装动作都可追踪。",
+      "prerequisites": [
+        "K/K7. 工具与外部连接/Sandbox workspace/Workspace filesystem",
+        "K/K8. 人在回路/Approval before side effects"
+      ],
+      "coreMetrics": [
+        "command success rate",
+        "environment drift"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/Sandbox workspace/Artifacts",
+        "K/K7. 工具与外部连接/Computer / shell / browser actions"
+      ]
+    },
+    "K/K7. 工具与外部连接/Sandbox workspace/Artifacts": {
+      "status": "draft",
+      "definition": "Artifacts 是 agent 运行过程中产出的文件、报告、截图、补丁和其他可交付对象，需要被明确保存和引用。",
+      "importance": "长任务是否真正产生产物、产物是否可查看和可复核，往往比模型对话本身更接近业务价值。",
+      "minimumDemo": "让 agent 在一次任务里生成一个 artifacts 列表，并能从 UI 或审计记录中回看这些文件。",
+      "prerequisites": [
+        "K/K7. 工具与外部连接/Sandbox workspace/Workspace filesystem",
+        "K/K9. Agent 观测与控制/Tracing"
+      ],
+      "coreMetrics": [
+        "artifact integrity",
+        "artifact retrieval success"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/Sandbox workspace/Ports / preview",
+        "K/K9. Agent 观测与控制/Auditability"
+      ]
+    },
+    "K/K7. 工具与外部连接/Sandbox workspace/Ports / preview": {
+      "status": "draft",
+      "definition": "Ports / preview 让 agent 能启动本地服务、打开预览地址并把可视结果暴露给人或其他评测组件。",
+      "importance": "很多前端、应用或文档任务只有在预览层面才能真正验收，不能只看文本输出。",
+      "minimumDemo": "让 agent 启动一个本地预览端口，并在 trace 里记录访问地址和预览结果。",
+      "prerequisites": [
+        "K/K7. 工具与外部连接/Sandbox workspace/Artifacts",
+        "K/K7. 工具与外部连接/Sandbox workspace/Commands / packages"
+      ],
+      "coreMetrics": [
+        "preview availability",
+        "port stability"
+      ],
+      "next": [
+        "J/J9. 应用形态/Coding assistant",
+        "M/M2. 应用级评测/UX consistency"
+      ]
+    },
+    "K/K7. 工具与外部连接/Sandbox workspace/Resume same workspace after review": {
+      "status": "draft",
+      "definition": "这项能力指任务在人工 review、审批或暂停之后，能回到同一工作区状态继续执行，而不是重新建立环境。",
+      "importance": "它是长任务 agent 真正可用的关键分界点；没有这项能力，人机协作几乎都会退化成重复劳动。",
+      "minimumDemo": "让 agent 在 review 前保存工作区状态，review 后恢复并继续完成同一个任务。",
+      "prerequisites": [
+        "K/K5. 图式编排/Resumability",
+        "K/K8. 人在回路/HITL checkpoints",
+        "K/K7. 工具与外部连接/Sandbox workspace/Workspace filesystem"
+      ],
+      "coreMetrics": [
+        "resume success rate",
+        "workspace continuity"
+      ],
+      "next": [
+        "K/K9. Agent 观测与控制/Auditability",
+        "K/K10. Agent 形态分支/Coding agent"
+      ]
+    }
   }
 }

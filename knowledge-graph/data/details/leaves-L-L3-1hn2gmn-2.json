@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-L-L3-1hn2gmn-2",
     "type": "leaf-batch",
     "label": "L3. 推理优化 / Leaves 2",
@@ -21,14 +21,119 @@
       "Throughput / latency tuning"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "L/L3. 推理优化/Speculative decoding": {},
-    "L/L3. 推理优化/Quantized inference": {},
-    "L/L3. 推理优化/Context length management": {},
-    "L/L3. 推理优化/Compiled graphs / kernels": {},
-    "L/L3. 推理优化/Concurrency control": {},
-    "L/L3. 推理优化/Throughput / latency tuning": {}
+    "L/L3. 推理优化/Speculative decoding": {
+      "status": "draft",
+      "definition": "Speculative decoding 用较小或较快的草稿模型预猜 token，再由目标模型验证，以换取更高生成速度。",
+      "importance": "它是速度优化里最直接的一类方法，但收益依赖草稿模型质量和验证开销平衡。",
+      "minimumDemo": "比较有无 speculative decoding 时的生成速度、成本和答案质量变化。",
+      "prerequisites": [
+        "G/G8. 推理模型与模型路由/Model routing policy",
+        "L/L3. 推理优化/Throughput / latency tuning"
+      ],
+      "coreMetrics": [
+        "tokens/sec gain",
+        "acceptance ratio"
+      ],
+      "next": [
+        "L/L7. 生产运行指标/Throughput",
+        "L/L7. 生产运行指标/Cost"
+      ]
+    },
+    "L/L3. 推理优化/Quantized inference": {
+      "status": "draft",
+      "definition": "Quantized inference 通过降低权重或激活精度来减少显存占用和推理成本，以换取一定质量损失风险。",
+      "importance": "它是本地推理和受限硬件上最常见的生存手段，也是大规模成本优化的常用工具。",
+      "minimumDemo": "对同一模型比较 FP16 和量化版本的速度、显存占用与任务质量。",
+      "prerequisites": [
+        "H/H5. 压缩与效率优化/Quantization",
+        "L/L6. 硬件层/VRAM / RAM / disk constraints"
+      ],
+      "coreMetrics": [
+        "memory reduction",
+        "quality drop",
+        "tokens/sec gain"
+      ],
+      "next": [
+        "L/L1. 模型访问方式/本地推理",
+        "L/L2. 服务运行时/Ollama"
+      ]
+    },
+    "L/L3. 推理优化/Context length management": {
+      "status": "draft",
+      "definition": "Context length management 处理上下文长度、裁剪、压缩和分段策略，避免长上下文把成本和延迟拖爆。",
+      "importance": "上下文不是越长越好；不管理时，会同时伤害时延、成本和模型有效注意力。",
+      "minimumDemo": "比较几种上下文裁剪或压缩策略对质量、成本和稳定性的影响。",
+      "prerequisites": [
+        "J/J4. 会话与状态/Context compaction",
+        "L/L3. 推理优化/KV cache"
+      ],
+      "coreMetrics": [
+        "effective context utilization",
+        "token waste"
+      ],
+      "next": [
+        "L/L7. 生产运行指标/Context pressure",
+        "I/I3. RAG 管线/Context packing"
+      ]
+    },
+    "L/L3. 推理优化/Compiled graphs / kernels": {
+      "status": "draft",
+      "definition": "Compiled graphs / kernels 通过更底层的图编译和 kernel 优化减少调度开销、提升执行效率。",
+      "importance": "当系统已经做了缓存和批处理优化后，底层 kernel 效率会成为新的瓶颈。",
+      "minimumDemo": "比较默认执行与编译优化后的吞吐、延迟和稳定性差异。",
+      "prerequisites": [
+        "L/L2. 服务运行时",
+        "L/L6. 硬件层/GPU"
+      ],
+      "coreMetrics": [
+        "kernel efficiency",
+        "latency reduction"
+      ],
+      "next": [
+        "L/L3. 推理优化/Throughput / latency tuning",
+        "L/L7. 生产运行指标/GPU utilization"
+      ]
+    },
+    "L/L3. 推理优化/Concurrency control": {
+      "status": "draft",
+      "definition": "Concurrency control 管理同时进入系统的请求数量、排队策略和资源争抢，防止高峰期退化失控。",
+      "importance": "没有并发控制，再好的 runtime 和缓存也可能在流量波峰时瞬间失效。",
+      "minimumDemo": "对服务设置并发上限和队列策略，观察不同负载下的 p95 latency 和错误率变化。",
+      "prerequisites": [
+        "L/L3. 推理优化/Continuous batching",
+        "L/L5. 系统基础设施/Queue"
+      ],
+      "coreMetrics": [
+        "queue delay",
+        "p95 latency",
+        "error rate under load"
+      ],
+      "next": [
+        "L/L7. 生产运行指标/Latency",
+        "L/L7. 生产运行指标/Error rate"
+      ]
+    },
+    "L/L3. 推理优化/Throughput / latency tuning": {
+      "status": "draft",
+      "definition": "Throughput / latency tuning 是把各类优化策略放到同一目标函数里权衡：服务要更快、更稳还是更省钱。",
+      "importance": "优化不是单点开关，而是持续寻找吞吐、尾延迟、成本和质量之间的平衡点。",
+      "minimumDemo": "固定一套负载，对不同 batch、cache、量化和并发配置做对比实验，选出目标场景最优点。",
+      "prerequisites": [
+        "L/L3. 推理优化/Concurrency control",
+        "L/L7. 生产运行指标/Latency",
+        "L/L7. 生产运行指标/Throughput"
+      ],
+      "coreMetrics": [
+        "throughput-latency frontier",
+        "cost-performance ratio"
+      ],
+      "next": [
+        "L/L7. 生产运行指标/Cost",
+        "L/L7. 生产运行指标/GPU utilization"
+      ]
+    }
   }
 }

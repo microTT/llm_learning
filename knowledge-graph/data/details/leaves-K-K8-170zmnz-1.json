@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-K-K8-170zmnz-1",
     "type": "leaf-batch",
     "label": "K8. 人在回路 / Leaves",
@@ -21,14 +21,116 @@
       "HITL checkpoints"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "K/K8. 人在回路/Approval before side effects": {},
-    "K/K8. 人在回路/Escalation": {},
-    "K/K8. 人在回路/Review queues": {},
-    "K/K8. 人在回路/Human override": {},
-    "K/K8. 人在回路/Manual correction": {},
-    "K/K8. 人在回路/HITL checkpoints": {}
+    "K/K8. 人在回路/Approval before side effects": {
+      "status": "draft",
+      "definition": "Approval before side effects 要求任何会改变外部世界的动作在执行前都先被人批准，而不是事后补日志。",
+      "importance": "这是把 agent 能力安全接入真实系统的第一道硬边界之一。",
+      "minimumDemo": "在写数据库或执行命令前加入审批节点，验证拒绝和通过两条路径都能正常继续。",
+      "prerequisites": [
+        "J/J8. 安全与权限/Sensitive action approval",
+        "K/K1. Agent 的最小构成/Human review"
+      ],
+      "coreMetrics": [
+        "approval correctness",
+        "blocked side-effect rate"
+      ],
+      "next": [
+        "K/K8. 人在回路/Escalation",
+        "K/K8. 人在回路/HITL checkpoints"
+      ]
+    },
+    "K/K8. 人在回路/Escalation": {
+      "status": "draft",
+      "definition": "Escalation 指 agent 在不确定、失败或高风险场景下主动升级给人工，而不是硬撑着继续执行。",
+      "importance": "没有升级路径，agent 只会在自己最不该自主的时候继续自主。",
+      "minimumDemo": "构造低置信度或权限不足场景，验证 agent 会进入人工处理通道而不是胡乱输出。",
+      "prerequisites": [
+        "K/K8. 人在回路/Approval before side effects",
+        "J/J7. 工程可靠性/Error classes"
+      ],
+      "coreMetrics": [
+        "escalation precision",
+        "missed escalation rate"
+      ],
+      "next": [
+        "K/K8. 人在回路/Review queues",
+        "K/K8. 人在回路/Human override"
+      ]
+    },
+    "K/K8. 人在回路/Review queues": {
+      "status": "draft",
+      "definition": "Review queues 是把需人工处理的任务按优先级、风险和状态组织起来，避免人工介入变成散落消息和临时沟通。",
+      "importance": "没有队列，HITL 机制再多也很难在真实团队中稳定运转。",
+      "minimumDemo": "把审批和升级请求统一进入 review queue，并验证排序、领取和回填状态。",
+      "prerequisites": [
+        "K/K8. 人在回路/Escalation",
+        "M/M2. 应用级评测/Failure recovery"
+      ],
+      "coreMetrics": [
+        "queue turnaround time",
+        "review completion rate"
+      ],
+      "next": [
+        "K/K8. 人在回路/Manual correction",
+        "K/K8. 人在回路/Human override"
+      ]
+    },
+    "K/K8. 人在回路/Human override": {
+      "status": "draft",
+      "definition": "Human override 指人工可以直接改变 agent 当前决策、状态或输出，并让流程在新状态下继续执行。",
+      "importance": "如果人工只能‘批准或拒绝’，但不能真正覆盖错误状态，许多长任务就无法被平滑救回。",
+      "minimumDemo": "让人工修改一条错误计划，再让 agent 从修正后的状态继续执行。",
+      "prerequisites": [
+        "K/K8. 人在回路/Escalation",
+        "K/K6. Agent 记忆/Task memory"
+      ],
+      "coreMetrics": [
+        "override success rate",
+        "state continuity after override"
+      ],
+      "next": [
+        "K/K8. 人在回路/Manual correction",
+        "K/K8. 人在回路/HITL checkpoints"
+      ]
+    },
+    "K/K8. 人在回路/Manual correction": {
+      "status": "draft",
+      "definition": "Manual correction 允许人工对中间产物、参数或最终结果做细粒度修正，再把修正结果重新注入系统。",
+      "importance": "很多场景不需要整条链路退回人工，只需要对某个局部结果做精修，这比完全重跑更高效。",
+      "minimumDemo": "对一个工具参数草案做人类修正，再验证 agent 是否能使用修正后的版本继续执行。",
+      "prerequisites": [
+        "K/K8. 人在回路/Human override",
+        "J/J2. 结构化输出/Validation"
+      ],
+      "coreMetrics": [
+        "correction usefulness",
+        "rework reduction"
+      ],
+      "next": [
+        "K/K8. 人在回路/HITL checkpoints",
+        "K/K6. Agent 记忆/User memory"
+      ]
+    },
+    "K/K8. 人在回路/HITL checkpoints": {
+      "status": "draft",
+      "definition": "HITL checkpoints 是在图式执行中预先定义必须停下来等人的节点，而不是等系统出问题后再临时人工插手。",
+      "importance": "它能把人工介入常态化、结构化，从而在高风险场景中稳定控制节奏和责任边界。",
+      "minimumDemo": "在长任务图中设置两个固定人工 checkpoint，验证流程能稳定暂停、恢复和审计。",
+      "prerequisites": [
+        "K/K5. 图式编排/Checkpoints",
+        "K/K8. 人在回路/Approval before side effects"
+      ],
+      "coreMetrics": [
+        "checkpoint compliance",
+        "resume success rate"
+      ],
+      "next": [
+        "K/K9. Agent 观测与控制/Auditability",
+        "J/J9. 应用形态/Workflow assistant"
+      ]
+    }
   }
 }

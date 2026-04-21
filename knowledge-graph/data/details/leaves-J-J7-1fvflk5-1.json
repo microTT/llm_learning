@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-J-J7-1fvflk5-1",
     "type": "leaf-batch",
     "label": "J7. 工程可靠性 / Leaves",
@@ -22,15 +22,139 @@
       "Observability hooks"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "J/J7. 工程可靠性/Retry": {},
-    "J/J7. 工程可靠性/Timeout": {},
-    "J/J7. 工程可靠性/Idempotency": {},
-    "J/J7. 工程可靠性/Fallback": {},
-    "J/J7. 工程可靠性/Circuit breaking": {},
-    "J/J7. 工程可靠性/Error classes": {},
-    "J/J7. 工程可靠性/Observability hooks": {}
+    "J/J7. 工程可靠性/Retry": {
+      "status": "draft",
+      "definition": "Retry 是在请求、工具或下游依赖临时失败时重新尝试，以提高成功率，但前提是错误类型和副作用边界适合重试。",
+      "importance": "AI 应用的下游经常包含模型 API、搜索、数据库和文件系统，短时抖动很常见；合理重试能显著提升可用性，不合理重试会把系统推向放大故障。",
+      "minimumDemo": "对可重试和不可重试错误分别做故障注入，比较固定重试和分类重试策略的成功率与放大成本。",
+      "prerequisites": [
+        "J/J3. 工具调用/Tool retries / fallback",
+        "J/J7. 工程可靠性/Error classes"
+      ],
+      "coreMetrics": [
+        "retry success rate",
+        "retry amplification",
+        "duplicate side-effect rate"
+      ],
+      "next": [
+        "J/J7. 工程可靠性/Timeout",
+        "J/J7. 工程可靠性/Idempotency"
+      ]
+    },
+    "J/J7. 工程可靠性/Timeout": {
+      "status": "draft",
+      "definition": "Timeout 是给模型调用、工具执行和流式连接设定明确的时间边界，避免请求无限挂起并拖垮整体资源。",
+      "importance": "AI 链路常比传统 API 更长、更不确定，没有超时边界时，一个慢请求就可能占住连接、会话状态和前端等待窗口。",
+      "minimumDemo": "为模型请求和工具执行分别设置超时，观察超时后是否能正确取消、回收资源并触发恢复路径。",
+      "prerequisites": [
+        "J/J5. 流式与实时/WebSocket / realtime",
+        "J/J7. 工程可靠性/Fallback"
+      ],
+      "coreMetrics": [
+        "timeout rate",
+        "resource cleanup success",
+        "user-visible timeout rate"
+      ],
+      "next": [
+        "J/J7. 工程可靠性/Retry",
+        "J/J7. 工程可靠性/Circuit breaking"
+      ]
+    },
+    "J/J7. 工程可靠性/Idempotency": {
+      "status": "draft",
+      "definition": "Idempotency 确保同一个副作用请求即使被重试、回放或断线重连，也不会被执行多次或产生不一致结果。",
+      "importance": "一旦 AI 应用能创建工单、发消息、写数据库或触发外部动作，幂等性就是重试和恢复能否安全落地的前提。",
+      "minimumDemo": "为一个带副作用工具增加幂等键，模拟网络抖动和重复提交，确认系统只执行一次。",
+      "prerequisites": [
+        "J/J3. 工具调用/Tool execution",
+        "J/J7. 工程可靠性/Retry"
+      ],
+      "coreMetrics": [
+        "duplicate prevention rate",
+        "idempotency collision rate"
+      ],
+      "next": [
+        "J/J8. 安全与权限/Sensitive action approval",
+        "J/J7. 工程可靠性/Fallback"
+      ]
+    },
+    "J/J7. 工程可靠性/Fallback": {
+      "status": "draft",
+      "definition": "Fallback 是主路径失败时的降级方案，例如换小模型、缩短上下文、跳过某个工具、返回部分结果或升级到人工处理。",
+      "importance": "没有 fallback，任何一个依赖故障都会直接变成用户可见失败；有了 fallback，系统至少能退到较低能力但仍可交付的状态。",
+      "minimumDemo": "让模型、工具和流式链路分别失败一次，验证降级路径是否都能触发，并比较恢复后的任务完成率。",
+      "prerequisites": [
+        "J/J3. 工具调用/Tool retries / fallback",
+        "J/J7. 工程可靠性/Error classes"
+      ],
+      "coreMetrics": [
+        "fallback rate",
+        "recovery success rate",
+        "degraded task success"
+      ],
+      "next": [
+        "J/J7. 工程可靠性/Circuit breaking",
+        "M/M2. 应用级评测/Failure recovery"
+      ]
+    },
+    "J/J7. 工程可靠性/Circuit breaking": {
+      "status": "draft",
+      "definition": "Circuit breaking 是在下游依赖持续异常时主动熔断一段时间，避免无限继续调用并把故障扩大到整个系统。",
+      "importance": "AI 应用链路长、依赖多，一旦模型服务或工具服务抖动，没有熔断就很容易把线程、连接和重试队列一起拖垮。",
+      "minimumDemo": "人为让某个工具持续失败，观察熔断前后的请求延迟、错误率和资源占用变化。",
+      "prerequisites": [
+        "J/J7. 工程可靠性/Timeout",
+        "J/J7. 工程可靠性/Fallback"
+      ],
+      "coreMetrics": [
+        "trip frequency",
+        "recovery latency",
+        "error containment"
+      ],
+      "next": [
+        "J/J7. 工程可靠性/Observability hooks",
+        "J/J8. 安全与权限/Isolation boundaries"
+      ]
+    },
+    "J/J7. 工程可靠性/Error classes": {
+      "status": "draft",
+      "definition": "Error classes 是把模型、工具、网络、解析、权限和用户输入等失败场景分类，确保不同错误能走不同恢复和观测路径。",
+      "importance": "如果错误分类不清，重试、fallback、告警和人工介入都会混成一团，最后系统只剩‘请求失败’一个模糊状态。",
+      "minimumDemo": "给同一条链路里的模型超时、JSON 解析失败、权限拒绝和工具 500 分别打上错误类，检查恢复策略是否分流正确。",
+      "prerequisites": [
+        "J/J2. 结构化输出/Error recovery",
+        "J/J3. 工具调用/Tool execution"
+      ],
+      "coreMetrics": [
+        "classification coverage",
+        "misrouted recovery rate"
+      ],
+      "next": [
+        "J/J7. 工程可靠性/Retry",
+        "J/J7. 工程可靠性/Observability hooks"
+      ]
+    },
+    "J/J7. 工程可靠性/Observability hooks": {
+      "status": "draft",
+      "definition": "Observability hooks 是为请求、会话、工具、流式事件和失败路径加上统一 trace、日志和指标钩子，让系统能被回放、定位和评估。",
+      "importance": "没有可观测性，AI 应用的很多问题都只能靠人工复现猜测；一旦接入多轮状态、工具和流式链路，这会迅速变得不可维护。",
+      "minimumDemo": "为一次请求记录模型输入摘要、工具事件、错误类型、token 成本和最终结果，并验证能按 request ID 回放。",
+      "prerequisites": [
+        "J/J5. 流式与实时/Streaming tool events",
+        "J/J7. 工程可靠性/Error classes"
+      ],
+      "coreMetrics": [
+        "trace completeness",
+        "debug turnaround time",
+        "event loss rate"
+      ],
+      "next": [
+        "M/M2. 应用级评测/Failure recovery",
+        "M/M2. 应用级评测/UX consistency"
+      ]
+    }
   }
 }

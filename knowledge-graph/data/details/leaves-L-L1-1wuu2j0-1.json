@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-L-L1-1wuu2j0-1",
     "type": "leaf-batch",
     "label": "L1. 模型访问方式 / Leaves",
@@ -20,13 +20,50 @@
       "混合推理"
     ],
     "nodeCount": 5,
-    "filledNodeCount": 2
+    "filledNodeCount": 5
   },
   "nodes": {
-    "L/L1. 模型访问方式/云 API": {},
-    "L/L1. 模型访问方式/自托管推理": {},
+    "L/L1. 模型访问方式/云 API": {
+      "status": "draft",
+      "definition": "云 API 指通过托管模型服务访问推理能力，应用方主要关心接口、配额、延迟和成本，而不直接管理底层推理集群。",
+      "importance": "这是最快起步、运维负担最低的访问方式，特别适合先验证产品价值和快速迭代。",
+      "minimumDemo": "接入一个云模型接口，记录端到端延迟、错误率和单位成功任务成本，并与本地或自托管方案对比。",
+      "prerequisites": [
+        "L/L1. 模型访问方式",
+        "J/J1. 模型接口层"
+      ],
+      "coreMetrics": [
+        "p95 latency",
+        "availability",
+        "cost per successful task"
+      ],
+      "next": [
+        "L/L1. 模型访问方式/混合推理",
+        "L/L7. 生产运行指标/Cost"
+      ]
+    },
+    "L/L1. 模型访问方式/自托管推理": {
+      "status": "draft",
+      "definition": "自托管推理由团队自己部署模型权重和 serving runtime，掌控模型选择、缓存策略、批处理和网络边界。",
+      "importance": "它提供更强的可控性和成本优化空间，也带来更高的运维、容量规划和安全责任。",
+      "minimumDemo": "部署一个自托管推理服务，比较与云 API 在延迟、吞吐、隐私边界和运维复杂度上的差异。",
+      "prerequisites": [
+        "L/L1. 模型访问方式",
+        "L/L2. 服务运行时/vLLM",
+        "L/L6. 硬件层/GPU"
+      ],
+      "coreMetrics": [
+        "throughput",
+        "GPU utilization",
+        "operational overhead"
+      ],
+      "next": [
+        "L/L2. 服务运行时/vLLM",
+        "L/L3. 推理优化/Continuous batching"
+      ]
+    },
     "L/L1. 模型访问方式/本地推理": {
-      "status": "seed",
+      "status": "draft",
       "definition": "本地推理指模型权重和推理 runtime 直接运行在开发机或边缘设备上，而不是每次请求都走云 API。",
       "importance": "它最适合做隐私敏感、低网络依赖、快速迭代的工作流，也特别适合前端工程师先把推理链路、缓存和交互体验跑通。",
       "minimumDemo": "分别在 Apple silicon 和独显机器上启动一个本地模型，记录首 token 延迟、吞吐、内存占用和上下文上限，再和云 API 做对比。",
@@ -67,7 +104,7 @@
       ]
     },
     "L/L1. 模型访问方式/浏览器 / Edge 推理": {
-      "status": "seed",
+      "status": "draft",
       "definition": "浏览器 / Edge 推理把模型执行放到 Web 运行时里，通过 WebGPU、WASM 或专门的 edge runtime 直接完成推理，而不是把所有请求都转发到后端。",
       "importance": "这条路线非常适合前端工程师，因为它把模型能力直接接到 UI、交互和端侧资源管理上，能最快验证“AI 能不能成为产品默认能力”。",
       "minimumDemo": "在一个静态页面里接入浏览器侧模型，完成一次本地推理，并记录模型加载时间、首 token 时间和页面交互是否卡顿。",
@@ -107,6 +144,25 @@
         "J/J9. 应用形态/Coding assistant"
       ]
     },
-    "L/L1. 模型访问方式/混合推理": {}
+    "L/L1. 模型访问方式/混合推理": {
+      "status": "draft",
+      "definition": "混合推理把多个访问方式组合起来，例如优先本地或边缘、小模型先路由、复杂请求再回退到云 API 或自托管大模型。",
+      "importance": "这通常是现实系统里最实用的折中方案，能同时平衡时延、成本、隐私和质量。",
+      "minimumDemo": "实现一个简单路由器，让短任务走本地或边缘，复杂任务走云或自托管模型，并比较整体成本与体验。",
+      "prerequisites": [
+        "L/L1. 模型访问方式/云 API",
+        "L/L1. 模型访问方式/本地推理",
+        "G/G8. 推理模型与模型路由/Model routing policy"
+      ],
+      "coreMetrics": [
+        "routing win rate",
+        "blended cost",
+        "fallback success rate"
+      ],
+      "next": [
+        "L/L7. 生产运行指标/Latency",
+        "L/L7. 生产运行指标/Cost"
+      ]
+    }
   }
 }

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-K-K2-pqhozi-1",
     "type": "leaf-batch",
     "label": "Workflow / Leaves",
@@ -17,10 +17,44 @@
       "规则驱动"
     ],
     "nodeCount": 2,
-    "filledNodeCount": 0
+    "filledNodeCount": 2
   },
   "nodes": {
-    "K/K2. 执行形态/Workflow/固定路径": {},
-    "K/K2. 执行形态/Workflow/规则驱动": {}
+    "K/K2. 执行形态/Workflow/固定路径": {
+      "status": "draft",
+      "definition": "固定路径 workflow 通过预定义步骤顺序和显式状态转换来执行任务，不允许模型自由重写整体流程。",
+      "importance": "它最适合高合规、高审计和高稳定性的业务链路。",
+      "minimumDemo": "把一个审批流程写成固定节点序列，并验证每一步输入输出都可预测。",
+      "prerequisites": [
+        "K/K2. 执行形态/Workflow",
+        "K/K5. 图式编排/Edges"
+      ],
+      "coreMetrics": [
+        "path determinism",
+        "approval correctness"
+      ],
+      "next": [
+        "K/K2. 执行形态/Workflow/规则驱动",
+        "K/K2. 执行形态/Hybrid system"
+      ]
+    },
+    "K/K2. 执行形态/Workflow/规则驱动": {
+      "status": "draft",
+      "definition": "规则驱动 workflow 允许流程根据显式条件和规则走不同分支，但分支集合本身仍然是预定义和可审计的。",
+      "importance": "它能在保持可控性的同时覆盖更多任务变化，是很多业务自动化系统的现实折中。",
+      "minimumDemo": "为同一流程加入几条显式分支规则，比较是否能覆盖常见异常而不引入开放式 agent 复杂度。",
+      "prerequisites": [
+        "K/K2. 执行形态/Workflow/固定路径",
+        "K/K5. 图式编排/Conditional branches"
+      ],
+      "coreMetrics": [
+        "branch coverage",
+        "rule maintenance cost"
+      ],
+      "next": [
+        "K/K2. 执行形态/Hybrid system/固定骨架 + 局部 agent 决策",
+        "J/J9. 应用形态/Workflow assistant"
+      ]
+    }
   }
 }

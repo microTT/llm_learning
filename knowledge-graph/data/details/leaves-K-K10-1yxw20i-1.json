@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-K-K10-1yxw20i-1",
     "type": "leaf-batch",
     "label": "K10. Agent 形态分支 / Leaves",
@@ -22,15 +22,141 @@
       "Multi-agent organization"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "K/K10. Agent 形态分支/Knowledge agent": {},
-    "K/K10. Agent 形态分支/Research agent": {},
-    "K/K10. Agent 形态分支/Coding agent": {},
-    "K/K10. Agent 形态分支/Workflow automation agent": {},
-    "K/K10. Agent 形态分支/Voice agent": {},
-    "K/K10. Agent 形态分支/Computer-use agent": {},
-    "K/K10. Agent 形态分支/Multi-agent organization": {}
+    "K/K10. Agent 形态分支/Knowledge agent": {
+      "status": "draft",
+      "definition": "Knowledge agent 以检索、知识组织、引用和记忆整合为中心，目标是把外部知识转成稳定可用的上下文。",
+      "importance": "它是很多企业 agent 的基础形态，因为大多数任务首先不是行动，而是找到对的知识并保持来源可信。",
+      "minimumDemo": "做一个能检索知识库、聚合证据、输出带引用答案并把结果沉淀进记忆层的最小 knowledge agent。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Retrieval",
+        "K/K6. Agent 记忆/Long-term distilled memory"
+      ],
+      "coreMetrics": [
+        "knowledge hit quality",
+        "citation trustworthiness"
+      ],
+      "next": [
+        "J/J9. 应用形态/Search / QA",
+        "K/K10. Agent 形态分支/Research agent"
+      ]
+    },
+    "K/K10. Agent 形态分支/Research agent": {
+      "status": "draft",
+      "definition": "Research agent 面向开放问题探索，会主动拆问题、继续检索、比较来源并在证据不足时保持不确定性。",
+      "importance": "它最能体现 agent 相比单轮问答的价值，因为研究任务往往路径不定、证据分散且需要多轮修正。",
+      "minimumDemo": "让 agent 围绕一个开放问题执行“拆问题 → 检索 → 对比来源 → 汇总结论”，并给出证据链。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Query rewrite",
+        "K/K3. 单 Agent 模式/Retrieval-first agent"
+      ],
+      "coreMetrics": [
+        "evidence coverage",
+        "research loop usefulness"
+      ],
+      "next": [
+        "J/J9. 应用形态/Search / QA",
+        "K/K4. 多 Agent 模式/Reviewer / critic / verifier"
+      ]
+    },
+    "K/K10. Agent 形态分支/Coding agent": {
+      "status": "draft",
+      "definition": "Coding agent 把模型放进代码工作区、命令执行、测试验证和补丁生成闭环里，强调可执行产物而不是只给建议。",
+      "importance": "这是当前最容易观察 agent 能力上限和风险边界的形态之一，因为输入、工具和验收标准相对清晰。",
+      "minimumDemo": "让 coding agent 在受控仓库中完成读文件、修改代码、运行验证和输出 diff 的最小闭环。",
+      "prerequisites": [
+        "J/J9. 应用形态/Coding assistant",
+        "K/K7. 工具与外部连接/Computer / shell / browser actions",
+        "K/K8. 人在回路/Approval before side effects"
+      ],
+      "coreMetrics": [
+        "patch acceptance rate",
+        "verification pass rate",
+        "unsafe action block rate"
+      ],
+      "next": [
+        "K/K9. Agent 观测与控制/Tracing",
+        "M/M3. Agent 级评测/Tool selection correctness"
+      ]
+    },
+    "K/K10. Agent 形态分支/Workflow automation agent": {
+      "status": "draft",
+      "definition": "Workflow automation agent 面向业务系统中的多步状态推进、审批和副作用执行，重点是稳定推进而不是开放探索。",
+      "importance": "很多真实落地都属于这类形态，因为它直接连接工单、表单、消息、审批和后台系统。",
+      "minimumDemo": "让 agent 在一个受控业务流程中读取上下文、调用系统接口、等待审批并把结果回填到流程状态。",
+      "prerequisites": [
+        "J/J9. 应用形态/Workflow assistant",
+        "J/J8. 安全与权限/Sensitive action approval"
+      ],
+      "coreMetrics": [
+        "workflow completion rate",
+        "approval correctness",
+        "side-effect accuracy"
+      ],
+      "next": [
+        "K/K2. 执行形态/Hybrid system",
+        "K/K8. 人在回路/HITL checkpoints"
+      ]
+    },
+    "K/K10. Agent 形态分支/Voice agent": {
+      "status": "draft",
+      "definition": "Voice agent 以语音为主交互通道，把实时 ASR、TTS、打断处理和状态同步放进 agent 闭环中。",
+      "importance": "它暴露的是系统是否真正支持实时、多模态和中途修正，而不是只会流式输出文本。",
+      "minimumDemo": "构建一个支持实时听写、语音回应和中途打断的 voice agent，并验证音频与文本状态一致。",
+      "prerequisites": [
+        "J/J9. 应用形态/Voice assistant",
+        "E/E3. 音频 / 语音/自动语音识别（ASR）",
+        "E/E3. 音频 / 语音/文本转语音（TTS）"
+      ],
+      "coreMetrics": [
+        "speech round-trip latency",
+        "barge-in success rate"
+      ],
+      "next": [
+        "J/J5. 流式与实时/Voice interaction",
+        "J/J6. 多模态应用/Audio input/output"
+      ]
+    },
+    "K/K10. Agent 形态分支/Computer-use agent": {
+      "status": "draft",
+      "definition": "Computer-use agent 通过桌面、浏览器或 shell 环境直接执行点击、输入、读取和命令操作，面向强副作用场景。",
+      "importance": "这是连接通用环境自动化的高能力形态，但同时也是权限、审计和恢复要求最高的形态之一。",
+      "minimumDemo": "让 agent 在受控浏览器或桌面环境中完成一组可回放操作，并对写操作设置显式审批。",
+      "prerequisites": [
+        "K/K7. 工具与外部连接/Computer / shell / browser actions",
+        "J/J8. 安全与权限/Isolation boundaries",
+        "K/K8. 人在回路/Approval before side effects"
+      ],
+      "coreMetrics": [
+        "action success rate",
+        "unsafe action block rate",
+        "recovery success rate"
+      ],
+      "next": [
+        "K/K9. Agent 观测与控制/Auditability",
+        "J/J9. 应用形态/Coding assistant"
+      ]
+    },
+    "K/K10. Agent 形态分支/Multi-agent organization": {
+      "status": "draft",
+      "definition": "Multi-agent organization 把多个角色、子图或专长 agent 组合成整体系统，强调路由、交接、审查和协同。",
+      "importance": "它不是为了‘更像组织’，而是为了在任务拆分、并行和交叉校验中获得单 agent 难以兼顾的覆盖面。",
+      "minimumDemo": "实现一个 manager-route-review 的三角色系统，验证任务拆分、handoff 和记分是否可追踪。",
+      "prerequisites": [
+        "K/K4. 多 Agent 模式/Subgraphs",
+        "K/K9. Agent 观测与控制/Handoff records"
+      ],
+      "coreMetrics": [
+        "routing quality",
+        "handoff correctness",
+        "coordination overhead"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Routing quality",
+        "M/M3. Agent 级评测/Handoff correctness"
+      ]
+    }
   }
 }

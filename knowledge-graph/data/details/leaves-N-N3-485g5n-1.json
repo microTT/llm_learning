@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-N-N3-485g5n-1",
     "type": "leaf-batch",
     "label": "N3. 决策变量 / Leaves",
@@ -23,16 +23,152 @@
       "是否需要可审计流程"
     ],
     "nodeCount": 8,
-    "filledNodeCount": 0
+    "filledNodeCount": 8
   },
   "nodes": {
-    "N/N3. 决策变量/质量要求": {},
-    "N/N3. 决策变量/延迟要求": {},
-    "N/N3. 决策变量/成本预算": {},
-    "N/N3. 决策变量/错误代价": {},
-    "N/N3. 决策变量/安全风险": {},
-    "N/N3. 决策变量/是否需要最新知识": {},
-    "N/N3. 决策变量/是否需要外部动作": {},
-    "N/N3. 决策变量/是否需要可审计流程": {}
+    "N/N3. 决策变量/质量要求": {
+      "status": "draft",
+      "definition": "质量要求定义系统在当前场景下需要达到多高正确性、稳定性和引用可信度，容忍什么样的错误。",
+      "importance": "不先定质量门槛，就无法合理选择模型、流程和评测方式。",
+      "minimumDemo": "为一个场景明确最低正确率、严重错误上限和是否必须给出依据。",
+      "prerequisites": [
+        "M/M2. 应用级评测/最终答案正确性",
+        "M/M2. 应用级评测/引用真实性"
+      ],
+      "coreMetrics": [
+        "quality threshold clarity",
+        "severe error tolerance"
+      ],
+      "next": [
+        "N/N3. 决策变量/错误代价",
+        "N/N2. 自动化等级/Suggestion only"
+      ]
+    },
+    "N/N3. 决策变量/延迟要求": {
+      "status": "draft",
+      "definition": "延迟要求决定系统是否能接受等待、是否适合多轮验证以及是否必须做流式或端侧优化。",
+      "importance": "很多方案在质量上可行，但在时延要求下根本不成立。",
+      "minimumDemo": "给场景定义目标响应时间，再判断是否要做缓存、流式输出或混合路由。",
+      "prerequisites": [
+        "L/L7. 生产运行指标/Latency",
+        "J/J5. 流式与实时"
+      ],
+      "coreMetrics": [
+        "target response time",
+        "latency budget"
+      ],
+      "next": [
+        "N/N3. 决策变量/成本预算",
+        "N/N2. 自动化等级/Draft and review"
+      ]
+    },
+    "N/N3. 决策变量/成本预算": {
+      "status": "draft",
+      "definition": "成本预算定义单位任务、单位用户或单位时间内可接受的模型、基础设施和人工成本范围。",
+      "importance": "预算约束决定是否适合上更强模型、更多检索、更重验证或更多人工审核。",
+      "minimumDemo": "为一个产品能力算出每次成功任务的可承受成本上限，再反推模型与流程设计。",
+      "prerequisites": [
+        "L/L7. 生产运行指标/Cost",
+        "M/M4. 在线评测/Business KPIs"
+      ],
+      "coreMetrics": [
+        "cost budget",
+        "cost per successful task"
+      ],
+      "next": [
+        "N/N3. 决策变量/延迟要求",
+        "N/N2. 自动化等级/Narrow autonomous execution"
+      ]
+    },
+    "N/N3. 决策变量/错误代价": {
+      "status": "draft",
+      "definition": "错误代价衡量系统出错后带来的业务损失、信任损失、人工返工或合规风险。",
+      "importance": "它通常是决定自动化等级和审批边界的最关键变量。",
+      "minimumDemo": "把错误按轻微、中等、严重分级，并为不同等级定义处理和上线边界。",
+      "prerequisites": [
+        "M/M8. 对抗测试与审计/Incident review",
+        "M/M7. 隐私与合规/Regulatory compliance"
+      ],
+      "coreMetrics": [
+        "severe error cost",
+        "rework load"
+      ],
+      "next": [
+        "N/N2. 自动化等级/Suggestion only",
+        "N/N3. 决策变量/安全风险"
+      ]
+    },
+    "N/N3. 决策变量/安全风险": {
+      "status": "draft",
+      "definition": "安全风险反映系统是否会接触敏感信息、敏感动作或高风险环境，以及潜在攻击面有多大。",
+      "importance": "安全风险越高，越需要 guardrails、审批和更保守的自动化级别。",
+      "minimumDemo": "列出系统的敏感数据和敏感动作，再判断需要哪些安全控制和人工门槛。",
+      "prerequisites": [
+        "M/M5. 安全控制",
+        "M/M7. 隐私与合规"
+      ],
+      "coreMetrics": [
+        "risk exposure",
+        "control coverage"
+      ],
+      "next": [
+        "N/N2. 自动化等级/Execute with approval",
+        "N/N3. 决策变量/是否需要可审计流程"
+      ]
+    },
+    "N/N3. 决策变量/是否需要最新知识": {
+      "status": "draft",
+      "definition": "这一变量判断任务是否依赖实时信息、企业新文档或频繁更新的数据，而不能只靠模型参数记忆。",
+      "importance": "它决定系统是否必须接检索、外部数据源或工具，而不是单纯对话。",
+      "minimumDemo": "区分哪些问题可以只靠模型回答，哪些必须接 RAG 或在线 API。",
+      "prerequisites": [
+        "I/I3. RAG 管线",
+        "N/N1. 场景类型/问答 / 检索"
+      ],
+      "coreMetrics": [
+        "freshness need",
+        "staleness tolerance"
+      ],
+      "next": [
+        "N/N3. 决策变量/是否需要外部动作",
+        "N/N1. 场景类型/研究"
+      ]
+    },
+    "N/N3. 决策变量/是否需要外部动作": {
+      "status": "draft",
+      "definition": "这一变量判断系统是否需要真正调用工具、改动外部系统或在世界中执行动作，而不是停在建议层。",
+      "importance": "是否有外部动作，直接改变系统的风险级别、审批机制和基础设施设计。",
+      "minimumDemo": "明确任务是否只产出建议，还是必须发消息、写数据库、运行命令或操作界面。",
+      "prerequisites": [
+        "J/J3. 工具调用",
+        "K/K7. 工具与外部连接"
+      ],
+      "coreMetrics": [
+        "side-effect necessity",
+        "action risk"
+      ],
+      "next": [
+        "N/N2. 自动化等级/Execute with approval",
+        "N/N1. 场景类型/工作流自动化"
+      ]
+    },
+    "N/N3. 决策变量/是否需要可审计流程": {
+      "status": "draft",
+      "definition": "这一变量判断系统是否需要留下足够细的过程记录，以满足追责、复盘、合规或组织治理需求。",
+      "importance": "一旦要求可审计，系统就不能只看最终答案，而必须保留 trace、审批和关键决策记录。",
+      "minimumDemo": "明确一个场景是否必须支持事后回放，并检查当前系统能否回答是谁、为何、怎么做的。",
+      "prerequisites": [
+        "K/K9. Agent 观测与控制/Auditability",
+        "M/M7. 隐私与合规/Audit logs"
+      ],
+      "coreMetrics": [
+        "audit requirement",
+        "trace completeness"
+      ],
+      "next": [
+        "N/N2. 自动化等级/Human-supervised autonomy",
+        "N/N4. 体验设计/长任务可见性"
+      ]
+    }
   }
 }

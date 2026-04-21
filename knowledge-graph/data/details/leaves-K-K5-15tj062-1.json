@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-K-K5-15tj062-1",
     "type": "leaf-batch",
     "label": "K5. 图式编排 / Leaves",
@@ -23,16 +23,153 @@
       "Resumability"
     ],
     "nodeCount": 8,
-    "filledNodeCount": 0
+    "filledNodeCount": 8
   },
   "nodes": {
-    "K/K5. 图式编排/State": {},
-    "K/K5. 图式编排/Nodes": {},
-    "K/K5. 图式编排/Edges": {},
-    "K/K5. 图式编排/Conditional branches": {},
-    "K/K5. 图式编排/Loops": {},
-    "K/K5. 图式编排/Parallel execution": {},
-    "K/K5. 图式编排/Checkpoints": {},
-    "K/K5. 图式编排/Resumability": {}
+    "K/K5. 图式编排/State": {
+      "status": "draft",
+      "definition": "State 是图式编排中流经节点的统一上下文，承载任务输入、中间结果、控制标记和恢复所需信息。",
+      "importance": "没有显式 state，图上的节点和边就只是伪装成工程化的 prompt 串联。",
+      "minimumDemo": "定义一个结构化 state 对象，让不同节点读写同一份状态并可回放。",
+      "prerequisites": [
+        "J/J4. 会话与状态/Conversation state",
+        "K/K6. Agent 记忆/Task memory"
+      ],
+      "coreMetrics": [
+        "state consistency",
+        "serialization correctness"
+      ],
+      "next": [
+        "K/K5. 图式编排/Nodes",
+        "K/K5. 图式编排/Checkpoints"
+      ]
+    },
+    "K/K5. 图式编排/Nodes": {
+      "status": "draft",
+      "definition": "Nodes 是图中的执行单元，可以是模型调用、工具执行、路由判断、审批节点或数据变换节点。",
+      "importance": "节点粒度决定了流程的可复用性和可调试性；过粗难观测，过细则会把图拆得支离破碎。",
+      "minimumDemo": "把一个 agent 任务拆成 3 到 5 类明确节点，并检查每种节点的输入输出是否清晰。",
+      "prerequisites": [
+        "K/K5. 图式编排/State",
+        "K/K2. 执行形态"
+      ],
+      "coreMetrics": [
+        "node reuse rate",
+        "debug clarity"
+      ],
+      "next": [
+        "K/K5. 图式编排/Edges",
+        "K/K5. 图式编排/Conditional branches"
+      ]
+    },
+    "K/K5. 图式编排/Edges": {
+      "status": "draft",
+      "definition": "Edges 定义节点之间的状态传递和控制流连接，是图执行路径的基础。",
+      "importance": "边如果定义不清，handoff、状态传递和错误恢复都会变成隐式行为。",
+      "minimumDemo": "为一个简单图显式定义每条边传递的状态字段和触发条件。",
+      "prerequisites": [
+        "K/K5. 图式编排/Nodes",
+        "K/K5. 图式编排/State"
+      ],
+      "coreMetrics": [
+        "transition correctness",
+        "state handoff quality"
+      ],
+      "next": [
+        "K/K5. 图式编排/Conditional branches",
+        "K/K5. 图式编排/Loops"
+      ]
+    },
+    "K/K5. 图式编排/Conditional branches": {
+      "status": "draft",
+      "definition": "Conditional branches 根据状态、规则或模型判断选择不同路径，是把固定图转成可适应图的关键机制。",
+      "importance": "它决定系统能否在保持图结构可审计的前提下，对不同输入和失败类型做差异化处理。",
+      "minimumDemo": "为同一流程定义成功、失败和需审批三条分支，验证状态分流是否稳定。",
+      "prerequisites": [
+        "K/K5. 图式编排/Edges",
+        "K/K2. 执行形态/Workflow/规则驱动"
+      ],
+      "coreMetrics": [
+        "branch precision",
+        "branch coverage"
+      ],
+      "next": [
+        "K/K5. 图式编排/Loops",
+        "K/K5. 图式编排/Parallel execution"
+      ]
+    },
+    "K/K5. 图式编排/Loops": {
+      "status": "draft",
+      "definition": "Loops 允许图在满足条件时重复一段子流程，例如重试、继续检索、再验证或逐步修正。",
+      "importance": "循环让图能覆盖开放任务，但如果没有明确停机条件，也最容易演化成空转和成本失控。",
+      "minimumDemo": "实现一个最多三轮的修正循环，并记录每轮是否真正推进了任务状态。",
+      "prerequisites": [
+        "K/K5. 图式编排/Conditional branches",
+        "K/K3. 单 Agent 模式/Reflect / retry"
+      ],
+      "coreMetrics": [
+        "loop usefulness",
+        "max-iteration hit rate"
+      ],
+      "next": [
+        "K/K5. 图式编排/Checkpoints",
+        "J/J7. 工程可靠性/Retry"
+      ]
+    },
+    "K/K5. 图式编排/Parallel execution": {
+      "status": "draft",
+      "definition": "Parallel execution 让多个独立节点或子任务同时运行，以减少等待时间或并行探索不同分支。",
+      "importance": "并行是少数既可能显著提速、也可能迅速放大成本和状态复杂度的机制，需要明确独立性边界。",
+      "minimumDemo": "把两个互不依赖的检索或分析子任务并行执行，并比较与串行方案的耗时差异。",
+      "prerequisites": [
+        "K/K5. 图式编排/Conditional branches",
+        "K/K4. 多 Agent 模式/Subgraphs"
+      ],
+      "coreMetrics": [
+        "parallel speedup",
+        "merge correctness",
+        "cost overhead"
+      ],
+      "next": [
+        "K/K5. 图式编排/Checkpoints",
+        "K/K5. 图式编排/Resumability"
+      ]
+    },
+    "K/K5. 图式编排/Checkpoints": {
+      "status": "draft",
+      "definition": "Checkpoints 是在关键节点持久化状态快照，使长任务可以从安全位置恢复，而不是每次从头重跑。",
+      "importance": "多步 agent 一旦没有检查点，任何中途失败都可能把成本和人工操作放大数倍。",
+      "minimumDemo": "在一个长任务图中设置两个 checkpoint，并验证从中间失败后能从最近快照恢复。",
+      "prerequisites": [
+        "K/K5. 图式编排/State",
+        "K/K5. 图式编排/Loops"
+      ],
+      "coreMetrics": [
+        "checkpoint recovery rate",
+        "recovery latency"
+      ],
+      "next": [
+        "K/K5. 图式编排/Resumability",
+        "J/J4. 会话与状态/Server-managed state"
+      ]
+    },
+    "K/K5. 图式编排/Resumability": {
+      "status": "draft",
+      "definition": "Resumability 指任务在中断、失败、审批暂停或人工接管后，能否利用现有状态与检查点继续推进而不是重新执行。",
+      "importance": "这是长任务 agent 是否真正可用的关键特征之一，也是从 demo 迈向生产系统的分界点。",
+      "minimumDemo": "在任务进行到一半时模拟断线或审批暂停，再恢复执行并检查最终状态一致性。",
+      "prerequisites": [
+        "K/K5. 图式编排/Checkpoints",
+        "J/J4. 会话与状态/Server-managed state"
+      ],
+      "coreMetrics": [
+        "resume success rate",
+        "state continuity"
+      ],
+      "next": [
+        "K/K9. Agent 观测与控制/Tracing",
+        "J/J7. 工程可靠性/Idempotency"
+      ]
+    }
   }
 }

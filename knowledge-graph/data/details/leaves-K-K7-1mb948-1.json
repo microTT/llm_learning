@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-K-K7-1mb948-1",
     "type": "leaf-batch",
     "label": "K7. 工具与外部连接 / Leaves",
@@ -20,13 +20,99 @@
       "Computer / shell / browser actions"
     ],
     "nodeCount": 5,
-    "filledNodeCount": 0
+    "filledNodeCount": 5
   },
   "nodes": {
-    "K/K7. 工具与外部连接/Built-in tools": {},
-    "K/K7. 工具与外部连接/Function tools": {},
-    "K/K7. 工具与外部连接/File search / web search / code tools": {},
-    "K/K7. 工具与外部连接/Connectors": {},
-    "K/K7. 工具与外部连接/Computer / shell / browser actions": {}
+    "K/K7. 工具与外部连接/Built-in tools": {
+      "status": "draft",
+      "definition": "Built-in tools 是由模型提供方或运行时直接内建的能力，例如内置搜索、文件处理、代码执行或系统工具接口。",
+      "importance": "它们通常集成成本低、开箱即用，但可控性、可定制度和跨平台一致性往往弱于自定义工具。",
+      "minimumDemo": "接入一种内建工具能力，比较它与自定义 function tool 在可用性、可观测性和权限边界上的差异。",
+      "prerequisites": [
+        "K/K7. 工具与外部连接",
+        "J/J3. 工具调用/Function calling"
+      ],
+      "coreMetrics": [
+        "tool availability",
+        "provider lock-in risk"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/Function tools",
+        "K/K7. 工具与外部连接/File search / web search / code tools"
+      ]
+    },
+    "K/K7. 工具与外部连接/Function tools": {
+      "status": "draft",
+      "definition": "Function tools 是应用方定义 schema、权限和执行逻辑的工具形式，模型只负责选择和产生命令参数。",
+      "importance": "这是当前最通用也最可控的工具接入方式，适合把业务能力、安全边界和审计链路留在应用侧。",
+      "minimumDemo": "定义 2 到 3 个 function tools，并验证 schema 约束、参数校验、执行结果注入和失败重试都可观察。",
+      "prerequisites": [
+        "J/J3. 工具调用/Tool schema design",
+        "J/J3. 工具调用/Function calling"
+      ],
+      "coreMetrics": [
+        "schema adherence",
+        "tool execution success"
+      ],
+      "next": [
+        "J/J3. 工具调用/Tool execution",
+        "K/K7. 工具与外部连接/MCP servers/Tools"
+      ]
+    },
+    "K/K7. 工具与外部连接/File search / web search / code tools": {
+      "status": "draft",
+      "definition": "这类工具把高频的外部读取任务抽象成专门接口，例如文件检索、网页检索、代码搜索和代码理解。",
+      "importance": "它们直接决定 agent 获取上下文的效率和质量，是 research agent、knowledge agent 和 coding agent 的常见基础能力。",
+      "minimumDemo": "为同一任务接入 file search、web search 或 code search 中的一种，并比较命中质量和上下文噪声。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Retrieval",
+        "K/K7. 工具与外部连接"
+      ],
+      "coreMetrics": [
+        "retrieval precision",
+        "evidence usefulness"
+      ],
+      "next": [
+        "J/J9. 应用形态/Search / QA",
+        "J/J9. 应用形态/Coding assistant"
+      ]
+    },
+    "K/K7. 工具与外部连接/Connectors": {
+      "status": "draft",
+      "definition": "Connectors 把外部应用、数据源和 SaaS 系统包装成可访问能力，使 agent 能在统一权限边界下读写外部世界。",
+      "importance": "很多真实业务价值来自系统连接，而不是模型本身；但 connector 也会把身份、权限和审计问题一起带进来。",
+      "minimumDemo": "接一个只读 connector 和一个带副作用 connector，验证身份传播、scope 控制和审批路径。",
+      "prerequisites": [
+        "J/J8. 安全与权限/Auth",
+        "J/J8. 安全与权限/Permission scopes"
+      ],
+      "coreMetrics": [
+        "connector auth success",
+        "scope correctness"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/MCP protocol stack/Authorization",
+        "K/K10. Agent 形态分支/Workflow automation agent"
+      ]
+    },
+    "K/K7. 工具与外部连接/Computer / shell / browser actions": {
+      "status": "draft",
+      "definition": "这类动作让 agent 直接操作 shell、浏览器或桌面环境，拥有最强的环境交互能力，也带来最高的副作用风险。",
+      "importance": "它是 coding agent 和 computer-use agent 的关键底座，但必须和隔离、审批、回放能力一起设计。",
+      "minimumDemo": "让 agent 在受控环境里执行读取、点击或命令动作，并记录每次动作及其结果。",
+      "prerequisites": [
+        "K/K7. 工具与外部连接/Sandbox workspace",
+        "J/J8. 安全与权限/Isolation boundaries",
+        "K/K8. 人在回路/Approval before side effects"
+      ],
+      "coreMetrics": [
+        "action success rate",
+        "unsafe action block rate"
+      ],
+      "next": [
+        "K/K10. Agent 形态分支/Coding agent",
+        "K/K10. Agent 形态分支/Computer-use agent"
+      ]
+    }
   }
 }

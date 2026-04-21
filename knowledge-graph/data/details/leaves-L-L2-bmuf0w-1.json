@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-L-L2-bmuf0w-1",
     "type": "leaf-batch",
     "label": "L2. 服务运行时 / Leaves",
@@ -20,13 +20,50 @@
       "其他 OpenAI-compatible servers"
     ],
     "nodeCount": 5,
-    "filledNodeCount": 1
+    "filledNodeCount": 5
   },
   "nodes": {
-    "L/L2. 服务运行时/vLLM": {},
-    "L/L2. 服务运行时/Ollama": {},
+    "L/L2. 服务运行时/vLLM": {
+      "status": "draft",
+      "definition": "vLLM 是面向高吞吐 serving 的推理 runtime，擅长通过 PagedAttention、continuous batching 等机制提升 GPU 利用率。",
+      "importance": "它是理解现代开源 serving 栈的关键入口，尤其适合研究长上下文和高并发场景下的推理优化。",
+      "minimumDemo": "用 vLLM 起一个兼容 OpenAI 风格接口的服务，测量不同并发与上下文下的延迟和吞吐。",
+      "prerequisites": [
+        "L/L1. 模型访问方式/自托管推理",
+        "L/L3. 推理优化/PagedAttention",
+        "L/L3. 推理优化/Continuous batching"
+      ],
+      "coreMetrics": [
+        "tokens/sec",
+        "GPU utilization",
+        "p95 latency"
+      ],
+      "next": [
+        "L/L3. 推理优化/PagedAttention",
+        "L/L3. 推理优化/Continuous batching"
+      ]
+    },
+    "L/L2. 服务运行时/Ollama": {
+      "status": "draft",
+      "definition": "Ollama 是面向开发机和轻量部署场景的本地运行时，强调上手快、模型管理简单和统一本地调用体验。",
+      "importance": "它非常适合作为本地原型和小团队开发的第一站，尤其适合前端或应用工程师快速接通本地模型。",
+      "minimumDemo": "在本地机器上用 Ollama 跑一个 7B 级模型，比较不同量化和上下文长度下的体验。",
+      "prerequisites": [
+        "L/L1. 模型访问方式/本地推理",
+        "L/L6. 硬件层/VRAM / RAM / disk constraints"
+      ],
+      "coreMetrics": [
+        "load time",
+        "developer setup time",
+        "memory footprint"
+      ],
+      "next": [
+        "L/L1. 模型访问方式/本地推理",
+        "L/L3. 推理优化/Quantized inference"
+      ]
+    },
     "L/L2. 服务运行时/MLX / MLX-LM": {
-      "status": "seed",
+      "status": "draft",
       "definition": "MLX / MLX-LM 是面向 Apple silicon 的本地推理与微调路线，优势在于统一内存、较低部署门槛和对开发机工作流的贴合。",
       "importance": "如果主要开发环境是 Mac，MLX 路线几乎是学习本地 LLM 推理、量化和小规模适配的最高 ROI 入口。",
       "minimumDemo": "在 Apple silicon 上加载同一个模型的不同量化版本，比较启动时间、吞吐和回答质量，再尝试一次小规模 LoRA/微调实验。",
@@ -58,7 +95,42 @@
         "H/H5. 压缩与效率优化"
       ]
     },
-    "L/L2. 服务运行时/Transformers.js": {},
-    "L/L2. 服务运行时/其他 OpenAI-compatible servers": {}
+    "L/L2. 服务运行时/Transformers.js": {
+      "status": "draft",
+      "definition": "Transformers.js 把模型推理带到 JavaScript 运行时，适合浏览器或边缘场景中的轻量模型执行。",
+      "importance": "它让前端栈可以直接验证端侧 AI 交互，不必一开始就把所有能力都压到后端。",
+      "minimumDemo": "在浏览器或 edge 环境中加载一个轻量模型，用 Transformers.js 完成一次实际推理。",
+      "prerequisites": [
+        "L/L1. 模型访问方式/浏览器 / Edge 推理",
+        "J/J5. 流式与实时/Incremental UI updates"
+      ],
+      "coreMetrics": [
+        "bundle size",
+        "cold start",
+        "UI blocking time"
+      ],
+      "next": [
+        "L/L1. 模型访问方式/浏览器 / Edge 推理",
+        "L/L7. 生产运行指标/Latency"
+      ]
+    },
+    "L/L2. 服务运行时/其他 OpenAI-compatible servers": {
+      "status": "draft",
+      "definition": "其他 OpenAI-compatible servers 指以统一接口暴露推理能力的服务层，帮助应用在不同后端之间保持较稳定的接入面。",
+      "importance": "统一接口能显著降低应用迁移和混合部署成本，也便于做路由、灰度和 fallback。",
+      "minimumDemo": "让应用通过统一接口分别接多个后端，验证切换和回退逻辑是否平滑。",
+      "prerequisites": [
+        "L/L1. 模型访问方式/云 API",
+        "L/L1. 模型访问方式/自托管推理"
+      ],
+      "coreMetrics": [
+        "switching cost",
+        "compatibility coverage"
+      ],
+      "next": [
+        "L/L1. 模型访问方式/混合推理",
+        "J/J1. 模型接口层/Input / output contracts"
+      ]
+    }
   }
 }

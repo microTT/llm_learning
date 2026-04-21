@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-M-M1-1lohovz-1",
     "type": "leaf-batch",
     "label": "M1. 模型级评测 / Leaves",
@@ -22,15 +22,134 @@
       "延迟/成本"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "M/M1. 模型级评测/语言能力": {},
-    "M/M1. 模型级评测/推理能力": {},
-    "M/M1. 模型级评测/多模态能力": {},
-    "M/M1. 模型级评测/结构化输出正确率": {},
-    "M/M1. 模型级评测/安全性": {},
-    "M/M1. 模型级评测/稳定性": {},
-    "M/M1. 模型级评测/延迟/成本": {}
+    "M/M1. 模型级评测/语言能力": {
+      "status": "draft",
+      "definition": "语言能力评测模型在理解、生成、摘要、翻译、改写和信息抽取等语言任务上的基础表现。",
+      "importance": "这是很多应用的底盘，如果语言基础不稳，后续再复杂的系统工程也只能放大缺陷。",
+      "minimumDemo": "用同一组固定文本任务评估多个模型的理解、生成和抽取质量，并保留误差样例。",
+      "prerequisites": [
+        "M/M1. 模型级评测",
+        "E/E1. 语言（NLP / LLM）"
+      ],
+      "coreMetrics": [
+        "text task accuracy",
+        "instruction following quality"
+      ],
+      "next": [
+        "M/M1. 模型级评测/推理能力",
+        "M/M2. 应用级评测/最终答案正确性"
+      ]
+    },
+    "M/M1. 模型级评测/推理能力": {
+      "status": "draft",
+      "definition": "推理能力评测模型在多步推导、规则应用、规划、比较和一致性判断上的表现，而不是只看语言流畅度。",
+      "importance": "很多 agent 和高价值应用失败，根源并不在语言生成，而在规划、约束遵守和多步判断。",
+      "minimumDemo": "准备一组需要多步思考和明确验证的任务，比较模型是否稳定给出正确中间推导和最终结论。",
+      "prerequisites": [
+        "M/M1. 模型级评测",
+        "G/G8. 推理模型与模型路由"
+      ],
+      "coreMetrics": [
+        "reasoning accuracy",
+        "consistency under reformulation"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Process checks",
+        "M/M1. 模型级评测/稳定性"
+      ]
+    },
+    "M/M1. 模型级评测/多模态能力": {
+      "status": "draft",
+      "definition": "多模态能力评测模型在文本之外处理图像、音频、文件或混合输入时的理解与生成能力。",
+      "importance": "一旦应用接触图片、语音或复杂文件，单文本评测就不再足够，会直接漏掉关键失败模式。",
+      "minimumDemo": "用一组图像、音频或文件任务测试模型的读取、解释和跨模态回答质量。",
+      "prerequisites": [
+        "M/M1. 模型级评测",
+        "E/E5. 多模态"
+      ],
+      "coreMetrics": [
+        "cross-modal accuracy",
+        "modality robustness"
+      ],
+      "next": [
+        "J/J6. 多模态应用",
+        "M/M2. 应用级评测/UX consistency"
+      ]
+    },
+    "M/M1. 模型级评测/结构化输出正确率": {
+      "status": "draft",
+      "definition": "结构化输出正确率检查模型是否能稳定产出符合 schema、字段类型和约束的结构化结果。",
+      "importance": "这项能力直接决定模型能否可靠接入工具、工作流和自动化系统。",
+      "minimumDemo": "给模型一组需要 JSON 或 typed output 的任务，检查解析、校验和字段完整性。",
+      "prerequisites": [
+        "J/J2. 结构化输出/JSON Schema",
+        "J/J2. 结构化输出/Validation"
+      ],
+      "coreMetrics": [
+        "schema pass rate",
+        "parse success rate"
+      ],
+      "next": [
+        "M/M2. 应用级评测/Schema adherence",
+        "M/M1. 模型级评测/稳定性"
+      ]
+    },
+    "M/M1. 模型级评测/安全性": {
+      "status": "draft",
+      "definition": "安全性评测模型在越狱、提示注入、有害内容和敏感任务上的基础风险暴露与拒绝表现。",
+      "importance": "模型安全底盘如果薄弱，应用层再加 guardrail 也只能部分补救，且成本会迅速上升。",
+      "minimumDemo": "用一组对抗提示和高风险请求测试模型的拒答、转义和误放行情况。",
+      "prerequisites": [
+        "M/M5. 安全控制",
+        "M/M6. Guardrails"
+      ],
+      "coreMetrics": [
+        "attack success rate",
+        "unsafe completion rate"
+      ],
+      "next": [
+        "M/M5. 安全控制/Jailbreak defense",
+        "M/M6. Guardrails/Policy guardrails"
+      ]
+    },
+    "M/M1. 模型级评测/稳定性": {
+      "status": "draft",
+      "definition": "稳定性评测模型在提示稍变、顺序稍变、采样参数变化时结果是否仍然一致可用。",
+      "importance": "很多系统问题不是平均能力不够，而是输出波动过大，导致产品行为不稳定、难回归和难解释。",
+      "minimumDemo": "对同一任务做多次重跑和轻微改写，比较结果波动、失败类别和恢复能力。",
+      "prerequisites": [
+        "M/M1. 模型级评测/推理能力",
+        "M/M1. 模型级评测/结构化输出正确率"
+      ],
+      "coreMetrics": [
+        "variance across runs",
+        "prompt sensitivity"
+      ],
+      "next": [
+        "M/M4. 在线评测/Canary / regression set",
+        "M/M2. 应用级评测/Failure recovery"
+      ]
+    },
+    "M/M1. 模型级评测/延迟/成本": {
+      "status": "draft",
+      "definition": "延迟/成本评测模型在不同任务和输出长度下的响应时间、token 消耗和单位任务成本。",
+      "importance": "模型再强，如果成本和时延超出产品预算，也无法成为生产可用选择。",
+      "minimumDemo": "对固定任务集记录首 token 延迟、总时延、token 用量和单位成功任务成本。",
+      "prerequisites": [
+        "M/M1. 模型级评测",
+        "J/J5. 流式与实时"
+      ],
+      "coreMetrics": [
+        "p50/p95 latency",
+        "cost per successful task"
+      ],
+      "next": [
+        "M/M4. 在线评测/Business KPIs",
+        "M/M4. 在线评测/A/B tests"
+      ]
+    }
   }
 }

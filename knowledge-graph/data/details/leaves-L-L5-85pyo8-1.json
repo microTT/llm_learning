@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-L-L5-85pyo8-1",
     "type": "leaf-batch",
     "label": "L5. 系统基础设施 / Leaves",
@@ -22,15 +22,134 @@
       "Container / deployment layer"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "L/L5. 系统基础设施/SQL / NoSQL": {},
-    "L/L5. 系统基础设施/Vector DB": {},
-    "L/L5. 系统基础设施/Object storage": {},
-    "L/L5. 系统基础设施/Cache": {},
-    "L/L5. 系统基础设施/Queue": {},
-    "L/L5. 系统基础设施/Artifact storage": {},
-    "L/L5. 系统基础设施/Container / deployment layer": {}
+    "L/L5. 系统基础设施/SQL / NoSQL": {
+      "status": "draft",
+      "definition": "SQL / NoSQL 用于保存结构化业务状态、会话元数据、配置和部分运行时记录，是 AI 系统的基本数据底座。",
+      "importance": "很多应用并不只依赖向量库；真正决定系统状态稳定性的往往是业务数据库和会话存储。",
+      "minimumDemo": "为一个 AI 应用设计最小数据表或文档结构，保存会话、任务和工具执行元数据。",
+      "prerequisites": [
+        "J/J4. 会话与状态",
+        "K/K5. 图式编排/State"
+      ],
+      "coreMetrics": [
+        "query latency",
+        "state consistency"
+      ],
+      "next": [
+        "L/L5. 系统基础设施/Cache",
+        "L/L5. 系统基础设施/Queue"
+      ]
+    },
+    "L/L5. 系统基础设施/Vector DB": {
+      "status": "draft",
+      "definition": "Vector DB 负责 embedding 检索、近邻搜索和相似性召回，是 RAG 场景常见的底层组件。",
+      "importance": "它直接影响召回速度、过滤能力和多租户隔离，是知识增强系统的关键基础设施。",
+      "minimumDemo": "构建一个最小向量索引，比较不同查询和过滤条件下的召回质量与延迟。",
+      "prerequisites": [
+        "I/I1. 表示与检索基础/Embeddings",
+        "I/I2. 知识库构建"
+      ],
+      "coreMetrics": [
+        "retrieval latency",
+        "recall@k"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Retrieval",
+        "L/L5. 系统基础设施/Cache"
+      ]
+    },
+    "L/L5. 系统基础设施/Object storage": {
+      "status": "draft",
+      "definition": "Object storage 保存训练 checkpoint、原始文件、解析中间产物和大型静态资源，强调低成本与高耐久。",
+      "importance": "很多 AI 资产体积大且不适合放数据库；对象存储是文件和制品链路的核心。",
+      "minimumDemo": "把上传文件或训练产物写入对象存储，并验证版本、权限和恢复链路。",
+      "prerequisites": [
+        "J/J6. 多模态应用/File input",
+        "L/L4. 训练基础设施/Checkpointing"
+      ],
+      "coreMetrics": [
+        "artifact durability",
+        "fetch latency"
+      ],
+      "next": [
+        "L/L5. 系统基础设施/Artifact storage",
+        "I/I2. 知识库构建/Parser types/PDF / Office"
+      ]
+    },
+    "L/L5. 系统基础设施/Cache": {
+      "status": "draft",
+      "definition": "Cache 用于减少重复计算和重复读取，例如前缀缓存、embedding 缓存、结果缓存和会话热点数据缓存。",
+      "importance": "缓存是把 AI 系统从‘每次都重新算’推向‘可承受并发与成本’的关键组件。",
+      "minimumDemo": "为一个高频请求路径加缓存，并比较命中前后的延迟和成本。",
+      "prerequisites": [
+        "L/L3. 推理优化/Prefix cache",
+        "L/L5. 系统基础设施/SQL / NoSQL"
+      ],
+      "coreMetrics": [
+        "cache hit rate",
+        "cost saved"
+      ],
+      "next": [
+        "L/L3. 推理优化/Prefix cache sharing / invalidation",
+        "L/L7. 生产运行指标/Cost"
+      ]
+    },
+    "L/L5. 系统基础设施/Queue": {
+      "status": "draft",
+      "definition": "Queue 用于吸收突发流量、解耦长任务和后台处理，防止请求直接把推理服务或 agent runtime 打爆。",
+      "importance": "很多长任务、批处理和高峰保护都依赖队列来平衡吞吐与稳定性。",
+      "minimumDemo": "把高耗时任务改成入队执行，观察峰值流量下的错误率和端到端时延变化。",
+      "prerequisites": [
+        "L/L3. 推理优化/Concurrency control",
+        "J/J7. 工程可靠性/Circuit breaking"
+      ],
+      "coreMetrics": [
+        "queue delay",
+        "backlog size"
+      ],
+      "next": [
+        "K/K5. 图式编排/Parallel execution",
+        "L/L7. 生产运行指标/Error rate"
+      ]
+    },
+    "L/L5. 系统基础设施/Artifact storage": {
+      "status": "draft",
+      "definition": "Artifact storage 统一保存评测报告、生成文件、训练产物和可部署制品，并提供版本化访问。",
+      "importance": "没有制品存储，训练、评测和发布链路会断开，系统难以复盘和回滚。",
+      "minimumDemo": "把评测输出、训练 checkpoint 和应用构建产物统一写入一个可追踪的制品仓。",
+      "prerequisites": [
+        "L/L5. 系统基础设施/Object storage",
+        "K/K7. 工具与外部连接/Sandbox workspace/Artifacts"
+      ],
+      "coreMetrics": [
+        "artifact retrieval success",
+        "version traceability"
+      ],
+      "next": [
+        "L/L4. 训练基础设施/Checkpointing",
+        "N/N6. 持续改进闭环/部署新版本"
+      ]
+    },
+    "L/L5. 系统基础设施/Container / deployment layer": {
+      "status": "draft",
+      "definition": "Container / deployment layer 承载服务打包、部署、滚动升级、扩缩容和环境隔离。",
+      "importance": "AI 服务要从原型走向生产，部署层决定了能否稳定上线、回滚和做灰度。",
+      "minimumDemo": "把一个推理服务容器化并部署到可回滚环境中，验证升级和回退路径。",
+      "prerequisites": [
+        "L/L5. 系统基础设施/Artifact storage",
+        "M/M4. 在线评测/Canary / regression set"
+      ],
+      "coreMetrics": [
+        "deploy success rate",
+        "rollback time"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/部署新版本",
+        "L/L7. 生产运行指标/Availability"
+      ]
+    }
   }
 }

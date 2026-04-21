@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-M-M5-1xznjc9-1",
     "type": "leaf-batch",
     "label": "M5. 安全控制 / Leaves",
@@ -23,16 +23,152 @@
       "Rate limiting"
     ],
     "nodeCount": 8,
-    "filledNodeCount": 0
+    "filledNodeCount": 8
   },
   "nodes": {
-    "M/M5. 安全控制/Moderation": {},
-    "M/M5. 安全控制/Jailbreak defense": {},
-    "M/M5. 安全控制/Prompt injection defense": {},
-    "M/M5. 安全控制/Sensitive tool controls": {},
-    "M/M5. 安全控制/Least privilege": {},
-    "M/M5. 安全控制/Sandboxing": {},
-    "M/M5. 安全控制/Approval gates": {},
-    "M/M5. 安全控制/Rate limiting": {}
+    "M/M5. 安全控制/Moderation": {
+      "status": "draft",
+      "definition": "Moderation 对输入和输出中的有害、违规或高风险内容做分类和拦截。",
+      "importance": "它是最基础的内容安全网，适合高频但相对标准化的风险过滤。",
+      "minimumDemo": "为一次调用在输入和输出两端接入 moderation，并记录命中类别与处理结果。",
+      "prerequisites": [
+        "M/M5. 安全控制",
+        "M/M6. Guardrails/Input guardrails"
+      ],
+      "coreMetrics": [
+        "unsafe content block rate",
+        "false positive rate"
+      ],
+      "next": [
+        "M/M6. Guardrails/Input guardrails",
+        "M/M6. Guardrails/Output guardrails"
+      ]
+    },
+    "M/M5. 安全控制/Jailbreak defense": {
+      "status": "draft",
+      "definition": "Jailbreak defense 针对诱导模型绕过系统规则和安全边界的攻击做检测、降权和阻断。",
+      "importance": "很多安全策略失败不是因为规则不存在，而是因为模型被引导忽略了规则。",
+      "minimumDemo": "用一组越狱提示测试系统，验证拦截、拒答和降级策略是否触发。",
+      "prerequisites": [
+        "M/M1. 模型级评测/安全性",
+        "M/M5. 安全控制/Moderation"
+      ],
+      "coreMetrics": [
+        "jailbreak success rate",
+        "refusal robustness"
+      ],
+      "next": [
+        "M/M8. 对抗测试与审计/Red teaming",
+        "M/M6. Guardrails/Policy guardrails"
+      ]
+    },
+    "M/M5. 安全控制/Prompt injection defense": {
+      "status": "draft",
+      "definition": "Prompt injection defense 针对外部文档、网页、工具结果或用户输入中的恶意指令污染做隔离和防御。",
+      "importance": "一旦系统接检索和工具，注入攻击会成为最现实也最隐蔽的风险之一。",
+      "minimumDemo": "向检索结果或网页内容中注入恶意指令，检查系统是否把它当数据而不是控制指令执行。",
+      "prerequisites": [
+        "I/I3. RAG 管线",
+        "M/M5. 安全控制/Jailbreak defense"
+      ],
+      "coreMetrics": [
+        "injection block rate",
+        "instruction-data separation quality"
+      ],
+      "next": [
+        "M/M6. Guardrails/Input guardrails",
+        "M/M8. 对抗测试与审计/Attack simulation"
+      ]
+    },
+    "M/M5. 安全控制/Sensitive tool controls": {
+      "status": "draft",
+      "definition": "Sensitive tool controls 为写操作、付款、发消息、执行命令等高风险工具设定额外限制、审批或白名单。",
+      "importance": "工具一旦有副作用，错误不再只是文本错误，而会直接变成系统层事故。",
+      "minimumDemo": "把一个写操作工具标记为敏感工具，要求审批和显式 scope 才能调用。",
+      "prerequisites": [
+        "J/J8. 安全与权限/Permission scopes",
+        "K/K7. 工具与外部连接/Connectors"
+      ],
+      "coreMetrics": [
+        "unsafe tool block rate",
+        "sensitive tool misuse rate"
+      ],
+      "next": [
+        "M/M5. 安全控制/Approval gates",
+        "M/M6. Guardrails/Tool guardrails"
+      ]
+    },
+    "M/M5. 安全控制/Least privilege": {
+      "status": "draft",
+      "definition": "Least privilege 要求模型、工具和执行环境只获得完成任务所需的最小权限，而不是方便起见给全量权限。",
+      "importance": "最小权限是限制事故影响面的核心原则，也是很多合规要求的基础。",
+      "minimumDemo": "为同一工具区分只读和写权限，验证 agent 在默认情况下只能拿到只读能力。",
+      "prerequisites": [
+        "J/J8. 安全与权限/Permission scopes",
+        "M/M7. 隐私与合规/Access control"
+      ],
+      "coreMetrics": [
+        "scope minimization rate",
+        "over-privilege incidents"
+      ],
+      "next": [
+        "M/M5. 安全控制/Sandboxing",
+        "M/M5. 安全控制/Sensitive tool controls"
+      ]
+    },
+    "M/M5. 安全控制/Sandboxing": {
+      "status": "draft",
+      "definition": "Sandboxing 通过隔离文件系统、命令、网络和运行环境，把 agent 副作用控制在可恢复、可审计的边界内。",
+      "importance": "对 coding agent 和 computer-use agent 来说，sandbox 是防止环境污染和越权扩散的关键底座。",
+      "minimumDemo": "把 agent 放进受限工作区，验证文件、命令和网络边界都被限制且有日志。",
+      "prerequisites": [
+        "K/K7. 工具与外部连接/Sandbox workspace",
+        "J/J8. 安全与权限/Isolation boundaries"
+      ],
+      "coreMetrics": [
+        "sandbox escape rate",
+        "environment isolation quality"
+      ],
+      "next": [
+        "M/M7. 隐私与合规/Access control",
+        "M/M8. 对抗测试与审计/Attack simulation"
+      ]
+    },
+    "M/M5. 安全控制/Approval gates": {
+      "status": "draft",
+      "definition": "Approval gates 在高风险动作前插入强制人工确认点，把模型建议与真实执行分离开。",
+      "importance": "它是控制副作用风险最直接也最实用的保险丝之一。",
+      "minimumDemo": "对一个会改数据或执行命令的动作强制审批，并记录审批前后的状态变化。",
+      "prerequisites": [
+        "K/K8. 人在回路/Approval before side effects",
+        "J/J8. 安全与权限/Sensitive action approval"
+      ],
+      "coreMetrics": [
+        "approval trigger precision",
+        "blocked risky action rate"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Approval correctness",
+        "M/M6. Guardrails/Policy guardrails"
+      ]
+    },
+    "M/M5. 安全控制/Rate limiting": {
+      "status": "draft",
+      "definition": "Rate limiting 对请求频率、工具调用频率或高风险动作频率设上限，防止攻击放大和失控重试。",
+      "importance": "没有限流时，模型或工具一旦进入异常模式，成本和风险会迅速指数化扩散。",
+      "minimumDemo": "为用户请求和敏感工具调用设置限流，观察超限后的降级和告警表现。",
+      "prerequisites": [
+        "M/M5. 安全控制",
+        "J/J7. 工程可靠性/Circuit breaking"
+      ],
+      "coreMetrics": [
+        "rate-limit hit rate",
+        "cost containment effectiveness"
+      ],
+      "next": [
+        "M/M4. 在线评测/Business KPIs",
+        "M/M8. 对抗测试与审计/Attack simulation"
+      ]
+    }
   }
 }

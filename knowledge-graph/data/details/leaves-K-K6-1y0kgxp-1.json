@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-K-K6-1y0kgxp-1",
     "type": "leaf-batch",
     "label": "K6. Agent 记忆 / Leaves",
@@ -22,15 +22,135 @@
       "Memory injection / compaction"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "K/K6. Agent 记忆/Session memory": {},
-    "K/K6. Agent 记忆/Episodic memory": {},
-    "K/K6. Agent 记忆/Semantic memory": {},
-    "K/K6. Agent 记忆/User memory": {},
-    "K/K6. Agent 记忆/Task memory": {},
-    "K/K6. Agent 记忆/Long-term distilled memory": {},
-    "K/K6. Agent 记忆/Memory injection / compaction": {}
+    "K/K6. Agent 记忆/Session memory": {
+      "status": "draft",
+      "definition": "Session memory 保存当前交互会话内的短期上下文、用户刚给出的约束和最近一步结果，生命周期通常短于长期用户记忆。",
+      "importance": "它是大多数 agent 能稳定跨几步工作的最低要求，同时也是最容易被无节制历史拼接替代错的部分。",
+      "minimumDemo": "让 agent 在一次会话内记住用户刚确认的要求，并在后续步骤中稳定使用。",
+      "prerequisites": [
+        "I/I5. 记忆类型/会话记忆",
+        "J/J4. 会话与状态/Session memory"
+      ],
+      "coreMetrics": [
+        "session recall quality",
+        "cleanup correctness"
+      ],
+      "next": [
+        "K/K6. Agent 记忆/Task memory",
+        "K/K6. Agent 记忆/Memory injection / compaction"
+      ]
+    },
+    "K/K6. Agent 记忆/Episodic memory": {
+      "status": "draft",
+      "definition": "Episodic memory 记录一次次具体执行经历、工具结果和中间轨迹，适合保存“发生过什么”。",
+      "importance": "它为复盘、案例检索和失败恢复提供原始材料，但如果无限累积，也会快速变成噪声仓库。",
+      "minimumDemo": "保存几次任务执行轨迹，再让 agent 在新任务中检索类似 episode 作为参考。",
+      "prerequisites": [
+        "I/I5. 记忆类型/Episodic memory",
+        "K/K9. Agent 观测与控制/Step logs"
+      ],
+      "coreMetrics": [
+        "episode reuse value",
+        "noise growth"
+      ],
+      "next": [
+        "K/K6. Agent 记忆/Semantic memory",
+        "K/K6. Agent 记忆/Long-term distilled memory"
+      ]
+    },
+    "K/K6. Agent 记忆/Semantic memory": {
+      "status": "draft",
+      "definition": "Semantic memory 保存从多次任务中抽象出的稳定知识、规则和关系，而不是具体某次执行细节。",
+      "importance": "它能让 agent 从经历中沉淀通用知识，减少每次都回放原始 episode 的成本。",
+      "minimumDemo": "从多次相似任务里提炼出通用规则，并在新任务中优先注入这些规则。",
+      "prerequisites": [
+        "I/I5. 记忆类型/Semantic memory",
+        "K/K6. Agent 记忆/Episodic memory"
+      ],
+      "coreMetrics": [
+        "abstraction quality",
+        "reuse efficiency"
+      ],
+      "next": [
+        "K/K6. Agent 记忆/Long-term distilled memory",
+        "K/K6. Agent 记忆/Memory injection / compaction"
+      ]
+    },
+    "K/K6. Agent 记忆/User memory": {
+      "status": "draft",
+      "definition": "User memory 保存跨任务和跨会话的用户偏好、角色、长期约束和个性化信息。",
+      "importance": "它能显著降低重复确认成本，但也最容易引出隐私、删除和跨用户污染问题。",
+      "minimumDemo": "让 agent 记住用户偏好的输出格式，并验证其他用户不会继承这些信息。",
+      "prerequisites": [
+        "I/I5. 记忆类型/用户长期记忆",
+        "J/J8. 安全与权限/Auth"
+      ],
+      "coreMetrics": [
+        "personalization lift",
+        "cross-user leak rate"
+      ],
+      "next": [
+        "K/K8. 人在回路/Manual correction",
+        "M/M7. 隐私与合规/Access control"
+      ]
+    },
+    "K/K6. Agent 记忆/Task memory": {
+      "status": "draft",
+      "definition": "Task memory 保存当前任务实例的中间状态、已完成步骤、待执行计划和工具返回结果，是长任务连续推进的核心。",
+      "importance": "没有 task memory，agent 一中断就几乎等于清零；有了它，恢复和人机协作才真正可行。",
+      "minimumDemo": "让 agent 在任务执行到一半时暂停，再从 task memory 恢复继续完成。",
+      "prerequisites": [
+        "I/I5. 记忆类型/任务记忆",
+        "K/K5. 图式编排/Checkpoints"
+      ],
+      "coreMetrics": [
+        "resume success rate",
+        "task continuity"
+      ],
+      "next": [
+        "K/K5. 图式编排/Resumability",
+        "K/K6. Agent 记忆/Memory injection / compaction"
+      ]
+    },
+    "K/K6. Agent 记忆/Long-term distilled memory": {
+      "status": "draft",
+      "definition": "Long-term distilled memory 是从大量 episodic 或 task memory 中蒸馏出的长期稳定知识，用更低成本支持未来任务。",
+      "importance": "它能防止长期记忆无节制增长，同时把经验转成更适合注入和检索的形态。",
+      "minimumDemo": "从一批历史任务里提炼长期经验摘要，并比较其对新任务的帮助是否优于直接回放原始历史。",
+      "prerequisites": [
+        "K/K6. Agent 记忆/Episodic memory",
+        "K/K6. Agent 记忆/Semantic memory"
+      ],
+      "coreMetrics": [
+        "distillation quality",
+        "storage efficiency"
+      ],
+      "next": [
+        "K/K6. Agent 记忆/Memory injection / compaction",
+        "K/K10. Agent 形态分支/Knowledge agent"
+      ]
+    },
+    "K/K6. Agent 记忆/Memory injection / compaction": {
+      "status": "draft",
+      "definition": "Memory injection / compaction 处理哪些记忆该在当前步被注入、以什么粒度注入，以及如何在不丢关键信息的前提下压缩上下文。",
+      "importance": "记忆命中本身不够，真正决定效果的是注入质量。注入过多会污染上下文，注入过少又会让记忆失去价值。",
+      "minimumDemo": "比较原样注入、摘要注入和结构化注入三种策略对长任务质量和成本的影响。",
+      "prerequisites": [
+        "J/J4. 会话与状态/Context compaction",
+        "K/K6. Agent 记忆/Task memory"
+      ],
+      "coreMetrics": [
+        "context efficiency",
+        "memory hit usefulness",
+        "token overhead"
+      ],
+      "next": [
+        "K/K5. 图式编排/Resumability",
+        "K/K9. Agent 观测与控制/Tracing"
+      ]
+    }
   }
 }

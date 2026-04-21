@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-J-J8-18pvnpw-1",
     "type": "leaf-batch",
     "label": "J8. 安全与权限 / Leaves",
@@ -20,13 +20,98 @@
       "Isolation boundaries"
     ],
     "nodeCount": 5,
-    "filledNodeCount": 0
+    "filledNodeCount": 5
   },
   "nodes": {
-    "J/J8. 安全与权限/Auth": {},
-    "J/J8. 安全与权限/Secret management": {},
-    "J/J8. 安全与权限/Permission scopes": {},
-    "J/J8. 安全与权限/Sensitive action approval": {},
-    "J/J8. 安全与权限/Isolation boundaries": {}
+    "J/J8. 安全与权限/Auth": {
+      "status": "draft",
+      "definition": "Auth 负责识别当前请求是谁发起的、属于哪个租户和会话，并把身份信息稳定传递给模型调用、工具执行和审计链路。",
+      "importance": "没有身份，就谈不上权限、审批和审计；AI 应用里任何后续安全控制都建立在 auth 可靠的前提上。",
+      "minimumDemo": "让两个不同用户访问同一应用，验证会话、知识访问和工具调用都能按身份区分。",
+      "prerequisites": [
+        "J/J8. 安全与权限",
+        "J/J8. 安全与权限/Permission scopes"
+      ],
+      "coreMetrics": [
+        "auth success rate",
+        "identity propagation correctness"
+      ],
+      "next": [
+        "J/J8. 安全与权限/Permission scopes",
+        "J/J8. 安全与权限/Isolation boundaries"
+      ]
+    },
+    "J/J8. 安全与权限/Secret management": {
+      "status": "draft",
+      "definition": "Secret management 关注模型、工具和后端依赖使用的密钥、令牌和凭据如何安全存储、注入、轮换和回收，而不是把这些敏感信息散落在代码或上下文里。",
+      "importance": "一旦应用接工具和外部系统，凭据泄露就会直接变成横向事故；而 AI 应用又特别容易因为调试、日志和 prompt 拼接把秘密带出来。",
+      "minimumDemo": "让工具调用通过服务端短期令牌完成，并验证日志、客户端和模型上下文都看不到长期密钥。",
+      "prerequisites": [
+        "J/J8. 安全与权限/Auth",
+        "J/J8. 安全与权限/Isolation boundaries"
+      ],
+      "coreMetrics": [
+        "secret exposure incidents",
+        "rotation success rate"
+      ],
+      "next": [
+        "J/J8. 安全与权限/Sensitive action approval",
+        "M/M7. 隐私与合规/Audit logs"
+      ]
+    },
+    "J/J8. 安全与权限/Permission scopes": {
+      "status": "draft",
+      "definition": "Permission scopes 把用户和工具权限细分到可执行操作、资源范围和租户边界，而不是简单用‘能不能访问应用’来粗暴控制。",
+      "importance": "AI 应用最常见的安全错误不是完全无权限，而是 scope 太大：本来只该读某个项目，却能读整个系统；本来只该查，不该写，却直接获得副作用权限。",
+      "minimumDemo": "为同一工具定义 read-only 和 write 两种 scope，验证不同用户只能触发各自允许的动作。",
+      "prerequisites": [
+        "J/J8. 安全与权限/Auth",
+        "J/J3. 工具调用/Tool routing"
+      ],
+      "coreMetrics": [
+        "scope enforcement rate",
+        "unauthorized action rate"
+      ],
+      "next": [
+        "J/J8. 安全与权限/Sensitive action approval",
+        "M/M5. 安全控制/Least privilege"
+      ]
+    },
+    "J/J8. 安全与权限/Sensitive action approval": {
+      "status": "draft",
+      "definition": "Sensitive action approval 是在执行发消息、改数据、跑命令、付费或其他高风险动作前，把模型建议转换成人可审阅、可批准、可拒绝的步骤。",
+      "importance": "它是把模型能力接入真实副作用世界时最关键的保险丝之一，尤其适用于工具自动化和 agent 场景。",
+      "minimumDemo": "为一个带副作用工具加入审批节点，验证模型能先生成草案，再在用户批准后执行。",
+      "prerequisites": [
+        "J/J8. 安全与权限/Permission scopes",
+        "K/K8. 人在回路/Approval before side effects"
+      ],
+      "coreMetrics": [
+        "approval correctness",
+        "blocked risky action rate"
+      ],
+      "next": [
+        "J/J7. 工程可靠性/Idempotency",
+        "J/J9. 应用形态/Workflow assistant"
+      ]
+    },
+    "J/J8. 安全与权限/Isolation boundaries": {
+      "status": "draft",
+      "definition": "Isolation boundaries 关注会话、租户、文件、工具执行环境和工作区之间如何隔离，防止状态串扰、越权访问和副作用扩散。",
+      "importance": "AI 应用常常同时持有上下文、文件、缓存和工具句柄，没有隔离边界时，一个错误会很快跨用户、跨任务扩散。",
+      "minimumDemo": "准备两个不同租户或工作区，验证它们的文件、工具调用和缓存互不可见，且日志能分域追踪。",
+      "prerequisites": [
+        "J/J8. 安全与权限/Auth",
+        "K/K7. 工具与外部连接/Sandbox workspace"
+      ],
+      "coreMetrics": [
+        "cross-tenant leak rate",
+        "sandbox escape rate"
+      ],
+      "next": [
+        "M/M5. 安全控制/Sandboxing",
+        "M/M7. 隐私与合规/Access control"
+      ]
+    }
   }
 }

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-K-K2-11mnpfg-1",
     "type": "leaf-batch",
     "label": "Agent / Leaves",
@@ -17,10 +17,44 @@
       "动态决定工具"
     ],
     "nodeCount": 2,
-    "filledNodeCount": 0
+    "filledNodeCount": 2
   },
   "nodes": {
-    "K/K2. 执行形态/Agent/动态决定步骤": {},
-    "K/K2. 执行形态/Agent/动态决定工具": {}
+    "K/K2. 执行形态/Agent/动态决定步骤": {
+      "status": "draft",
+      "definition": "动态决定步骤意味着 agent 不依赖预先写死的完整路径，而是根据当前状态、证据和失败信息选择下一步动作。",
+      "importance": "这是 agent 相比 workflow 最核心的差异之一，也是 agent 能处理开放任务的来源。",
+      "minimumDemo": "给 agent 一个开放问题和有限工具，让它根据中间结果调整执行步骤而不是照本宣科。",
+      "prerequisites": [
+        "K/K2. 执行形态/Agent",
+        "K/K3. 单 Agent 模式/ReAct / reason-act loop"
+      ],
+      "coreMetrics": [
+        "adaptive step quality",
+        "looping rate"
+      ],
+      "next": [
+        "K/K2. 执行形态/Agent/动态决定工具",
+        "K/K3. 单 Agent 模式/Plan-then-act"
+      ]
+    },
+    "K/K2. 执行形态/Agent/动态决定工具": {
+      "status": "draft",
+      "definition": "动态决定工具指 agent 基于当前上下文、任务阶段和证据缺口，临场选择该调用哪种工具，或是否根本不调用工具。",
+      "importance": "它直接决定工具链是否真的为任务服务，而不是被固定路由限制住覆盖面。",
+      "minimumDemo": "提供多个工具和一组混合任务，评估 agent 是否能选对工具并在不需要时保持克制。",
+      "prerequisites": [
+        "K/K2. 执行形态/Agent/动态决定步骤",
+        "J/J3. 工具调用/Tool routing"
+      ],
+      "coreMetrics": [
+        "tool selection accuracy",
+        "false call rate"
+      ],
+      "next": [
+        "K/K3. 单 Agent 模式/Tool-using agent",
+        "K/K4. 多 Agent 模式/Agents-as-tools"
+      ]
+    }
   }
 }

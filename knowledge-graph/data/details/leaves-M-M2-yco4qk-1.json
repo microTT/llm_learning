@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-M-M2-yco4qk-1",
     "type": "leaf-batch",
     "label": "M2. 应用级评测 / Leaves",
@@ -21,14 +21,116 @@
       "Failure recovery"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "M/M2. 应用级评测/最终答案正确性": {},
-    "M/M2. 应用级评测/引用真实性": {},
-    "M/M2. 应用级评测/Schema adherence": {},
-    "M/M2. 应用级评测/Tool execution success": {},
-    "M/M2. 应用级评测/UX consistency": {},
-    "M/M2. 应用级评测/Failure recovery": {}
+    "M/M2. 应用级评测/最终答案正确性": {
+      "status": "draft",
+      "definition": "最终答案正确性检查用户最终看到的答案是否满足任务目标，而不是只看模型中间推理是否像样。",
+      "importance": "应用最终还是要对用户结果负责；过程再漂亮，只要答案错了，业务价值就没有建立起来。",
+      "minimumDemo": "为一个具体应用准备带标准答案或人工判定规则的任务集，直接评估最终输出。",
+      "prerequisites": [
+        "M/M2. 应用级评测",
+        "M/M1. 模型级评测/语言能力"
+      ],
+      "coreMetrics": [
+        "final answer accuracy",
+        "false confident answer rate"
+      ],
+      "next": [
+        "M/M2. 应用级评测/引用真实性",
+        "M/M4. 在线评测/Task completion"
+      ]
+    },
+    "M/M2. 应用级评测/引用真实性": {
+      "status": "draft",
+      "definition": "引用真实性检查答案引用的来源是否真实存在、是否支持当前结论，以及引用位置是否对得上。",
+      "importance": "RAG 和资料类应用一旦引用不真，用户信任会快速崩塌，即使答案表面看起来合理也不够。",
+      "minimumDemo": "抽样检查答案中的引用片段、出处链接和原文支撑关系，并标注不一致类型。",
+      "prerequisites": [
+        "I/I3. RAG 管线/Citation / provenance",
+        "I/I6. 关键质量点/引用可信度"
+      ],
+      "coreMetrics": [
+        "citation accuracy",
+        "unsupported claim rate"
+      ],
+      "next": [
+        "M/M2. 应用级评测/最终答案正确性",
+        "M/M4. 在线评测/Human feedback"
+      ]
+    },
+    "M/M2. 应用级评测/Schema adherence": {
+      "status": "draft",
+      "definition": "Schema adherence 评估应用在真实上下文中是否稳定产出满足接口契约的结构化输出。",
+      "importance": "模型级结构化输出通过，不代表在复杂上下文、长历史和工具结果注入后仍然稳定。",
+      "minimumDemo": "在真实应用链路中收集结构化输出结果，检查解析、校验和字段语义是否一致。",
+      "prerequisites": [
+        "J/J2. 结构化输出/Typed outputs",
+        "J/J2. 结构化输出/Validation"
+      ],
+      "coreMetrics": [
+        "schema pass rate",
+        "semantic field correctness"
+      ],
+      "next": [
+        "M/M2. 应用级评测/Tool execution success",
+        "M/M1. 模型级评测/结构化输出正确率"
+      ]
+    },
+    "M/M2. 应用级评测/Tool execution success": {
+      "status": "draft",
+      "definition": "Tool execution success 评估应用里工具调用是否被正确触发、成功执行、结果是否被正确吸收并推动任务前进。",
+      "importance": "很多看似是回答错误的问题，根源其实是工具没有执行成功或结果没有被正确处理。",
+      "minimumDemo": "记录真实任务里的工具调用，检查触发率、成功率、超时、重试和结果注入质量。",
+      "prerequisites": [
+        "J/J3. 工具调用/Tool execution",
+        "J/J3. 工具调用/Tool retries / fallback"
+      ],
+      "coreMetrics": [
+        "tool success rate",
+        "useful tool call ratio"
+      ],
+      "next": [
+        "M/M2. 应用级评测/Failure recovery",
+        "M/M3. Agent 级评测/Tool selection correctness"
+      ]
+    },
+    "M/M2. 应用级评测/UX consistency": {
+      "status": "draft",
+      "definition": "UX consistency 关注应用在流式、语音、多模态和错误场景下，体验是否连贯、可理解且与系统状态一致。",
+      "importance": "很多用户并不会把问题归因到模型，而只会感知‘这个产品不稳定、不可信、体验割裂’。",
+      "minimumDemo": "检查正常路径、超时路径和失败路径下的界面、状态提示和结果展示是否一致。",
+      "prerequisites": [
+        "J/J5. 流式与实时",
+        "J/J9. 应用形态"
+      ],
+      "coreMetrics": [
+        "UX defect rate",
+        "state-to-UI consistency"
+      ],
+      "next": [
+        "M/M4. 在线评测/Acceptance rate",
+        "M/M4. 在线评测/Human feedback"
+      ]
+    },
+    "M/M2. 应用级评测/Failure recovery": {
+      "status": "draft",
+      "definition": "Failure recovery 评估应用在工具失败、模型不确定、超时或人工拒绝后，能否优雅恢复而不是直接崩坏。",
+      "importance": "真实系统的关键不只是成功率，还包括失败时是否还能保持边界和用户信任。",
+      "minimumDemo": "为几类常见失败注入故障，检查系统是否能重试、回退、解释失败或升级到人工处理。",
+      "prerequisites": [
+        "J/J7. 工程可靠性/Fallback",
+        "J/J7. 工程可靠性/Retry"
+      ],
+      "coreMetrics": [
+        "recovery success rate",
+        "graceful failure rate"
+      ],
+      "next": [
+        "M/M4. 在线评测/Real-user failure mining",
+        "M/M3. Agent 级评测/Workflow completion rate"
+      ]
+    }
   }
 }

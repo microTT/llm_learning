@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-J-J5-10w4rph-1",
     "type": "leaf-batch",
     "label": "J5. 流式与实时 / Leaves",
@@ -20,18 +20,80 @@
       "Incremental UI updates"
     ],
     "nodeCount": 5,
-    "filledNodeCount": 1
+    "filledNodeCount": 5
   },
   "nodes": {
-    "J/J5. 流式与实时/Streaming text": {},
-    "J/J5. 流式与实时/Streaming tool events": {},
-    "J/J5. 流式与实时/WebSocket / realtime": {},
+    "J/J5. 流式与实时/Streaming text": {
+      "status": "draft",
+      "definition": "Streaming text 是把模型生成的文本 token 或片段按增量方式持续发送给前端，而不是等整个回答完成后一次性返回。",
+      "importance": "它是最直接的感知优化手段，能显著降低等待焦虑，并为取消、插入状态提示和增量 UI 打下基础。",
+      "minimumDemo": "对同一请求分别做整段返回和流式返回，记录首 token 延迟、用户感知等待和中断后的恢复行为。",
+      "prerequisites": [
+        "J/J5. 流式与实时",
+        "J/J5. 流式与实时/Incremental UI updates"
+      ],
+      "coreMetrics": [
+        "time to first token",
+        "stream interruption rate"
+      ],
+      "next": [
+        "J/J5. 流式与实时/Streaming tool events",
+        "J/J5. 流式与实时/WebSocket / realtime"
+      ]
+    },
+    "J/J5. 流式与实时/Streaming tool events": {
+      "status": "draft",
+      "definition": "Streaming tool events 是把工具调用过程中的计划、开始、进度、完成和失败事件实时暴露给前端或上层系统，而不是只在最终结果里隐式体现。",
+      "importance": "这能把 Agent 和工具链路从黑盒变成可观察流程，用户和开发者都能更早知道系统在做什么、卡在哪里。",
+      "minimumDemo": "让一个带工具调用的请求实时发送 `started / running / completed / failed` 事件，并检查 UI 状态是否同步。",
+      "prerequisites": [
+        "J/J3. 工具调用/Tool execution",
+        "J/J5. 流式与实时/Streaming text"
+      ],
+      "coreMetrics": [
+        "event delivery latency",
+        "state sync accuracy"
+      ],
+      "next": [
+        "J/J5. 流式与实时/Incremental UI updates",
+        "J/J7. 工程可靠性/Observability hooks"
+      ]
+    },
+    "J/J5. 流式与实时/WebSocket / realtime": {
+      "status": "draft",
+      "definition": "WebSocket / realtime 指用双向长连接承载文本、音频、工具事件和控制信号，以支持低延迟、可打断和多事件并发的实时交互。",
+      "importance": "当交互不再是简单请求-响应，而是持续会话、语音和事件流时，realtime 通道往往比单向文本流更合适。",
+      "minimumDemo": "建立一个支持文本流、取消和工具事件回传的 WebSocket 通道，测试断线重连和会话恢复。",
+      "prerequisites": [
+        "J/J5. 流式与实时/Streaming text",
+        "J/J4. 会话与状态/Server-managed state"
+      ],
+      "coreMetrics": [
+        "round-trip latency",
+        "reconnect success rate",
+        "state continuity"
+      ],
+      "next": [
+        "J/J5. 流式与实时/Voice interaction",
+        "J/J7. 工程可靠性/Timeout"
+      ]
+    },
     "J/J5. 流式与实时/Voice interaction": {
-      "status": "seed",
+      "status": "draft",
       "definition": "Voice interaction 不是简单的 ASR + TTS 拼接，而是把语音输入、实时转写、打断、回声控制和响应节奏整合成一条低延迟交互链。",
       "importance": "它直接决定语音产品是否像“对话”而不是“点按录音再等结果”，也是实时 agent 体验的门槛能力。",
       "minimumDemo": "做一条最小语音回路：麦克风输入、实时转写、模型响应和语音播报，并支持用户在播报中途打断。",
       "hardwareBudget": "本地调试主要依赖稳定麦克风、耳机和浏览器/客户端音频栈；核心瓶颈通常是实时链路延迟而不是显存。",
+      "examples": [
+        "用户说到一半停顿，系统能先开始低延迟反馈而不必等整段结束。",
+        "播报中途用户插话后，系统能正确取消旧回复并切换到新轮次。",
+        "语音和文本界面共享同一会话状态，而不是各自维护一份。"
+      ],
+      "pitfalls": [
+        "把语音当成普通文本输入输出，忽略打断、节奏和回声控制。",
+        "转写、推理和播报各自延迟都不高，但串起来后整体体验仍然卡顿。",
+        "语音链路和文本链路状态不同步，用户一打断就错位。"
+      ],
       "prerequisites": [
         "J/J5. 流式与实时/WebSocket / realtime",
         "J/J6. 多模态应用/Audio input/output",
@@ -59,6 +121,24 @@
         "M/M2. 应用级评测"
       ]
     },
-    "J/J5. 流式与实时/Incremental UI updates": {}
+    "J/J5. 流式与实时/Incremental UI updates": {
+      "status": "draft",
+      "definition": "Incremental UI updates 是把流式文本、工具事件、部分结构化结果和错误状态逐步映射到界面，而不是每次都全量重绘或只在结束时更新。",
+      "importance": "前端是否能正确消费流式事件，决定了流式体验是顺滑、可信，还是闪烁、跳变、状态错乱。",
+      "minimumDemo": "让前端分别接收文本片段、工具状态和最终结果，检查增量渲染、取消和失败回退是否一致。",
+      "prerequisites": [
+        "J/J5. 流式与实时/Streaming text",
+        "J/J5. 流式与实时/Streaming tool events"
+      ],
+      "coreMetrics": [
+        "UI consistency",
+        "render latency",
+        "cancel correctness"
+      ],
+      "next": [
+        "J/J5. 流式与实时/Voice interaction",
+        "M/M2. 应用级评测/UX consistency"
+      ]
+    }
   }
 }

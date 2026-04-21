@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-G-G1-qqrpxv-1",
     "type": "leaf-batch",
     "label": "G1. 语言建模基础 / Leaves",
@@ -21,16 +21,99 @@
       "Token efficiency"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 1
+    "filledNodeCount": 6
   },
   "nodes": {
-    "G/G1. 语言建模基础/Token": {},
-    "G/G1. 语言建模基础/Vocabulary": {},
-    "G/G1. 语言建模基础/Embedding": {},
-    "G/G1. 语言建模基础/Positional information": {},
-    "G/G1. 语言建模基础/Next-token prediction": {},
+    "G/G1. 语言建模基础/Token": {
+      "status": "draft",
+      "definition": "Token 是模型处理文本时的基本离散单位，可以对应字符片段、词片段、符号或特殊控制标记。",
+      "importance": "理解 token 才能理解上下文长度、成本和模型真正看到的输入是什么。",
+      "minimumDemo": "把一段文本 token 化并逐个查看 token 与原文本片段的对应关系。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Tokenization pipeline"
+      ],
+      "coreMetrics": [
+        "tokens per input",
+        "token boundary stability"
+      ],
+      "next": [
+        "G/G1. 语言建模基础/Vocabulary",
+        "G/G1. 语言建模基础/Embedding"
+      ]
+    },
+    "G/G1. 语言建模基础/Vocabulary": {
+      "status": "draft",
+      "definition": "Vocabulary 是 tokenizer 可识别 token 的全集，决定哪些片段能被高效表示、哪些会被拆得很碎。",
+      "importance": "词表设计直接影响多语言效率、代码表示成本和结构化文本的稳定性。",
+      "minimumDemo": "查看一个 tokenizer 的词表并比较同一文本在不同词表下的 token 长度差异。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Token"
+      ],
+      "coreMetrics": [
+        "coverage",
+        "token efficiency"
+      ],
+      "next": [
+        "G/G1. 语言建模基础/Token efficiency",
+        "G/G1. 语言建模基础/Embedding"
+      ]
+    },
+    "G/G1. 语言建模基础/Embedding": {
+      "status": "draft",
+      "definition": "Embedding 把离散 token id 映射成连续向量，使模型可以在向量空间里学习语义和模式。",
+      "importance": "它是从符号输入过渡到可计算表示的第一步，也是语义相近 token 能共享统计规律的基础。",
+      "minimumDemo": "取几个 token 的 embedding，观察它们作为向量进入后续 attention 计算前的形式。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Token",
+        "A/A1. 数学基础/线性代数/向量、矩阵、张量"
+      ],
+      "coreMetrics": [
+        "representation quality",
+        "embedding dimension"
+      ],
+      "next": [
+        "G/G1. 语言建模基础/Positional information",
+        "I/I1. 表示与检索基础/Embeddings"
+      ]
+    },
+    "G/G1. 语言建模基础/Positional information": {
+      "status": "draft",
+      "definition": "Positional information 为 token 注入顺序信息，避免模型只看到一个无序 token 集合。",
+      "importance": "没有位置信息，序列结构、代码顺序和长上下文关系都难以表达。",
+      "minimumDemo": "比较打乱顺序前后加入位置信息的差异，理解模型为何能区分先后关系。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Embedding",
+        "G/G2. Transformer 机制/Self-attention"
+      ],
+      "coreMetrics": [
+        "order sensitivity",
+        "long-context robustness"
+      ],
+      "next": [
+        "G/G2. Transformer 机制",
+        "G/G1. 语言建模基础/Next-token prediction"
+      ]
+    },
+    "G/G1. 语言建模基础/Next-token prediction": {
+      "status": "draft",
+      "definition": "Next-token prediction 指模型在给定前文后预测下一个最可能 token 的训练与推理目标。",
+      "importance": "这是大多数 LLM 的统一训练目标，也是各种语言、代码和结构化生成能力的共同基础。",
+      "minimumDemo": "给定一段前文，查看模型输出的候选下一 token 分布，并比较不同上下文下的变化。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Embedding",
+        "G/G1. 语言建模基础/Positional information"
+      ],
+      "coreMetrics": [
+        "next-token accuracy",
+        "perplexity"
+      ],
+      "next": [
+        "G/G4. 生成与解码",
+        "G/G1. 语言建模基础/Token efficiency"
+      ]
+    },
     "G/G1. 语言建模基础/Token efficiency": {
-      "status": "seed",
+      "status": "draft",
       "definition": "Token efficiency 关注的是同样的信息量在不同 tokenizer、语言和数据形态下会消耗多少 token，以及这会如何影响成本、上下文窗口和延迟。",
       "importance": "只看“支持 128k 上下文”没有意义，真正决定能装下多少业务信息的是 token efficiency，尤其是中文、代码、表格和 JSON。",
       "minimumDemo": "拿一段中文、一段代码和一段 JSON，分别统计它们在不同 tokenizer 下的 token 长度，并估算成本和可容纳上下文差异。",

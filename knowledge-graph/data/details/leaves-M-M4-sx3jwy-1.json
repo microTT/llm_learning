@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-M-M4-sx3jwy-1",
     "type": "leaf-batch",
     "label": "M4. 在线评测 / Leaves",
@@ -22,16 +22,101 @@
       "Real-user failure mining"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 2
+    "filledNodeCount": 7
   },
   "nodes": {
-    "M/M4. 在线评测/A/B tests": {},
-    "M/M4. 在线评测/Human feedback": {},
-    "M/M4. 在线评测/Acceptance rate": {},
-    "M/M4. 在线评测/Task completion": {},
-    "M/M4. 在线评测/Business KPIs": {},
+    "M/M4. 在线评测/A/B tests": {
+      "status": "draft",
+      "definition": "A/B tests 在真实流量里比较两个版本在接受率、完成率、成本和业务指标上的差异，而不是只看离线样本。",
+      "importance": "很多优化在离线看起来更好，上线后却因为时延、交互或失败恢复变差而拉低整体表现。",
+      "minimumDemo": "把一个核心能力按流量切分成 A/B 两组，对比接受率、完成率和单位成功任务成本。",
+      "prerequisites": [
+        "M/M4. 在线评测",
+        "M/M1. 模型级评测/延迟/成本"
+      ],
+      "coreMetrics": [
+        "lift",
+        "statistical confidence"
+      ],
+      "next": [
+        "M/M4. 在线评测/Acceptance rate",
+        "M/M4. 在线评测/Business KPIs"
+      ]
+    },
+    "M/M4. 在线评测/Human feedback": {
+      "status": "draft",
+      "definition": "Human feedback 收集用户或审核人员对结果有用性、正确性和可接受性的直接反馈。",
+      "importance": "在线上很多关键质量信号无法被自动指标完全覆盖，尤其是主观体验和业务适配度。",
+      "minimumDemo": "为关键交互加上简单反馈入口，并把反馈与具体 trace 和版本关联起来。",
+      "prerequisites": [
+        "M/M4. 在线评测",
+        "K/K9. Agent 观测与控制/Tracing"
+      ],
+      "coreMetrics": [
+        "feedback rate",
+        "negative feedback concentration"
+      ],
+      "next": [
+        "M/M4. 在线评测/Acceptance rate",
+        "M/M4. 在线评测/Real-user failure mining"
+      ]
+    },
+    "M/M4. 在线评测/Acceptance rate": {
+      "status": "draft",
+      "definition": "Acceptance rate 衡量用户或审核者在给出建议、结果或操作草案后，真正接受并继续使用的比例。",
+      "importance": "这是最直接的在线质量信号之一，常常比静态正确率更接近产品价值。",
+      "minimumDemo": "统计建议被接受、拒绝、修改后接受的比例，并按场景细分。",
+      "prerequisites": [
+        "M/M4. 在线评测",
+        "J/J9. 应用形态/Copilot"
+      ],
+      "coreMetrics": [
+        "acceptance rate",
+        "edit-before-accept rate"
+      ],
+      "next": [
+        "M/M4. 在线评测/Task completion",
+        "M/M4. 在线评测/Business KPIs"
+      ]
+    },
+    "M/M4. 在线评测/Task completion": {
+      "status": "draft",
+      "definition": "Task completion 衡量真实用户任务是否在可接受成本和时延内走到完成状态。",
+      "importance": "对 workflow、agent 和复杂应用来说，完成率往往比单轮回答满意度更重要。",
+      "minimumDemo": "给一类典型任务打上开始和完成事件，统计端到端完成率和中途放弃原因。",
+      "prerequisites": [
+        "M/M3. Agent 级评测/Workflow completion rate",
+        "M/M2. 应用级评测/最终答案正确性"
+      ],
+      "coreMetrics": [
+        "task completion rate",
+        "abandonment rate"
+      ],
+      "next": [
+        "M/M4. 在线评测/Business KPIs",
+        "M/M4. 在线评测/Real-user failure mining"
+      ]
+    },
+    "M/M4. 在线评测/Business KPIs": {
+      "status": "draft",
+      "definition": "Business KPIs 把 AI 系统结果映射到业务目标，例如转化、处理时长、人工成本下降或服务质量提升。",
+      "importance": "如果指标无法落到业务结果，团队很容易陷入只优化模型分数却解释不了价值的循环。",
+      "minimumDemo": "为一个上线能力选 1 到 2 个业务指标，建立与模型版本和关键行为指标的关联看板。",
+      "prerequisites": [
+        "M/M4. 在线评测",
+        "M/M4. 在线评测/Acceptance rate"
+      ],
+      "coreMetrics": [
+        "business lift",
+        "cost savings"
+      ],
+      "next": [
+        "N/N3. 决策变量/成本预算",
+        "N/N6. 持续改进闭环"
+      ]
+    },
     "M/M4. 在线评测/Canary / regression set": {
-      "status": "seed",
+      "status": "draft",
       "definition": "Canary / regression set 是一组体量小但高信号的固定任务，用来在模型、提示词、工具或路由策略变更后快速判断有没有明显退化。",
       "importance": "没有这层小样本守门，团队很容易在追求新能力时把旧能力悄悄打坏，而且往往要上线后才发现。",
       "minimumDemo": "为一个 coding assistant 维护 20~50 条高频高风险任务，每次改模型、prompt 或工具链都自动回归一次。",
@@ -57,12 +142,13 @@
         "回归集越来越大却没有关键场景优先级"
       ],
       "next": [
+        "M/M4. 在线评测/A/B tests",
         "M/M4. 在线评测/Real-user failure mining",
         "N/N6. 持续改进闭环"
       ]
     },
     "M/M4. 在线评测/Real-user failure mining": {
-      "status": "seed",
+      "status": "draft",
       "definition": "Real-user failure mining 指从真实线上交互、trace、人工反馈和拒绝样本里持续挖掘失败案例，再把它们回流到回归集、rubric 和优化队列。",
       "importance": "Agent 和应用系统的很多关键失败只有在线上才能暴露；如果不做 failure mining，离线 eval 很快就会和真实世界脱节。",
       "minimumDemo": "把线上失败按 retrieval / routing / tool / approval / UX 分类，每周抽样回放，并把高频失败转成 canary case 或数据修复任务。",
@@ -89,6 +175,7 @@
         "相同失败一周又一周重复出现，却没有回流进回归集"
       ],
       "next": [
+        "M/M3. Agent 级评测/Failure taxonomy",
         "M/M4. 在线评测/Canary / regression set",
         "N/N6. 持续改进闭环",
         "H/H7. 后训练数据构建"

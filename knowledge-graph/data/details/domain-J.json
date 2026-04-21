@@ -14,7 +14,7 @@
     "parentTitle": null,
     "leafTitles": [],
     "nodeCount": 10,
-    "filledNodeCount": 5
+    "filledNodeCount": 10
   },
   "nodes": {
     "J": {
@@ -294,10 +294,269 @@
         "J/J5. 流式与实时"
       ]
     },
-    "J/J5. 流式与实时": {},
-    "J/J6. 多模态应用": {},
-    "J/J7. 工程可靠性": {},
-    "J/J8. 安全与权限": {},
-    "J/J9. 应用形态": {}
+    "J/J5. 流式与实时": {
+      "status": "draft",
+      "definition": "流式与实时关注应用如何把模型输出从“等整段结果回来”改造成持续、低延迟、可中断、可同步的交互过程。它涵盖文本流式输出、工具事件流、WebSocket / realtime 通道、语音交互和增量 UI 更新，核心目标是让用户感知到系统正在连续工作，而不是卡在一个黑盒请求里。",
+      "importance": "很多 AI 应用的体验差异，并不来自模型答案本身，而来自交互链路是否实时、是否可打断、是否能在部分结果出现时立刻反馈。做好这一层，能显著提升等待体验、可控性和任务透明度；做不好，则会出现流式断裂、状态错乱、工具结果延迟和 UI 与后端不同步的问题。",
+      "minimumDemo": "实现一个最小流式助手：文本 token 逐步输出；工具调用过程能实时显示状态；前端支持增量更新和取消；后端记录流式开始、结束、断开和重连。验收标准不是“有流式输出”，而是中断、重试、工具事件和 UI 状态都能保持一致。",
+      "hardwareBudget": "这一层主要增加的是连接管理、事件缓冲、音频流处理和前后端同步成本，而不是训练算力。真正需要预算的是长连接并发、客户端回放、重连策略和实时多模态链路的延迟控制。",
+      "examples": [
+        "聊天助手边生成边显示文本，而不是整段完成后一次性渲染。",
+        "工具调用链路中实时展示“正在检索”“正在执行”“已拿到结果”等阶段状态。",
+        "语音助手允许用户在播报过程中打断并立即切换话轮。",
+        "文档助手在大任务过程中逐步刷新提取进度和部分结果，而不是只显示加载中。"
+      ],
+      "pitfalls": [
+        "只有文本在流式，工具执行和状态变化却完全黑盒。",
+        "前端一边增量渲染，后端一边重试重放，结果状态错乱。",
+        "实时链路没有取消和断线恢复，用户一中断就必须从头再来。",
+        "为了追求低延迟牺牲一致性，导致最终 UI 和真实执行结果不一致。"
+      ],
+      "prerequisites": [
+        "J/J4. 会话与状态",
+        "J/J1. 模型接口层",
+        "J/J7. 工程可靠性"
+      ],
+      "coreMetrics": [
+        "time to first token",
+        "stream interruption rate",
+        "tool event latency",
+        "cancel / resume success rate",
+        "UX consistency"
+      ],
+      "toolchain": [
+        "SSE / WebSocket / realtime transport",
+        "streaming event protocol",
+        "incremental renderer",
+        "audio streaming stack",
+        "trace and replay logs"
+      ],
+      "failureSigns": [
+        "首 token 很快，但最终结果和中间状态频繁不一致。",
+        "工具调用完成了，前端却长时间停留在旧状态。",
+        "断线重连后会话继续，但 UI 或音频流完全错位。",
+        "语音打断和文本流取消经常把状态机打坏。"
+      ],
+      "next": [
+        "J/J5. 流式与实时/Streaming text",
+        "J/J5. 流式与实时/Streaming tool events",
+        "J/J5. 流式与实时/WebSocket / realtime",
+        "J/J5. 流式与实时/Voice interaction",
+        "J/J5. 流式与实时/Incremental UI updates",
+        "J/J9. 应用形态"
+      ]
+    },
+    "J/J6. 多模态应用": {
+      "status": "draft",
+      "definition": "多模态应用关注的是产品层如何接收、组织和消费图像、音频、文件等非纯文本输入，以及如何把这些模态与文本、工具和状态管理组合成统一交互链路。它讨论的不是模型底层是否具备视觉或语音能力，而是应用接口、上传流程、消息结构、回显方式和失败恢复如何围绕多模态重新设计。",
+      "importance": "一旦输入不再只是文本，应用层复杂度会明显上升：文件上传、格式校验、转码、预处理、权限、大小限制、异步处理和前端预览都会进入主路径。如果这层设计不到位，模型能力再强，产品也会卡在“用户不会传”“系统收不到”“结果无法展示”这些工程问题上。",
+      "minimumDemo": "实现一个最小多模态助手：支持图像上传、音频输入和文件输入；后端统一把这些输入转成明确的模型请求结构；前端能展示处理状态和部分结果；错误能区分为格式不支持、内容不可解析和模型推理失败。验收标准是输入路径稳定、状态透明、输出可回显，而不是只要模型偶尔答对就算完成。",
+      "hardwareBudget": "这一层主要增加的是文件存储、转码、上传带宽、预处理和多模态推理费用，而不是训练算力。真正需要预算的是媒体大小限制、异步处理队列、流式音频链路和多模态请求的延迟放大。",
+      "examples": [
+        "用户上传截图后，系统做 OCR / 版面理解并返回结构化字段。",
+        "语音助手在说话同时持续转写，并把识别结果和模型回应同步展示。",
+        "文档助手接收 PDF 或表格文件，先抽取内容，再让模型生成摘要或工单。",
+        "同一个界面中混合图像、文本和工具结果，逐步拼出最终任务答案。"
+      ],
+      "pitfalls": [
+        "把多模态输入当成纯文本附件，忽略格式、大小和预处理差异。",
+        "前端上传成功但后端没有稳定的媒体生命周期管理，导致引用失效或重复上传。",
+        "音频、图片和文件各走一套消息协议，后续状态和日志完全无法统一。",
+        "只关注模型能否看懂内容，不关注用户如何预览、纠错和重传。"
+      ],
+      "prerequisites": [
+        "J/J1. 模型接口层",
+        "J/J5. 流式与实时",
+        "E/E5. 多模态"
+      ],
+      "coreMetrics": [
+        "upload success rate",
+        "media processing latency",
+        "multimodal task success rate",
+        "preview / replay correctness",
+        "cost per multimodal request"
+      ],
+      "toolchain": [
+        "file upload pipeline",
+        "media preprocessing / transcoding",
+        "multimodal model APIs",
+        "preview and annotation UI",
+        "asset storage and lifecycle management"
+      ],
+      "failureSigns": [
+        "用户上传成功但模型端经常拿不到可用内容。",
+        "音频、图像和文件请求在日志里难以统一追踪。",
+        "多模态输入一大就明显超时或失败，但系统没有分片和降级路径。",
+        "同一请求的预览内容、模型看到的内容和最终结果彼此不一致。"
+      ],
+      "next": [
+        "J/J6. 多模态应用/Image input",
+        "J/J6. 多模态应用/Audio input/output",
+        "J/J6. 多模态应用/File input",
+        "J/J6. 多模态应用/Mixed-modal interfaces",
+        "J/J9. 应用形态"
+      ]
+    },
+    "J/J7. 工程可靠性": {
+      "status": "draft",
+      "definition": "工程可靠性关注的不是模型本身有多强，而是应用在超时、抖动、重试、部分失败和依赖异常下是否还能稳定服务。它涵盖重试、超时、幂等、降级、熔断、错误分类和可观测性这些常规后端能力，但在 AI 应用里会因为长链路、工具调用和不确定输出而更加复杂。",
+      "importance": "很多 AI 应用线上问题并不是“模型答错了”，而是请求偶发超时、工具服务抖动、流式断开后状态错乱、重试导致重复副作用，或者失败无法被正确分类和恢复。没有这一层，应用越复杂、工具越多、流式链路越长，整体可用性就越差。",
+      "minimumDemo": "为一个带工具调用和流式输出的最小助手加上超时、重试、错误分类和 fallback；人为制造模型超时、工具失败和网络断连，观察系统是否能恢复、降级并留下完整 trace。验收标准是失败可归类、可恢复、可观测，而不是“偶尔成功”。",
+      "hardwareBudget": "这一层主要消耗在超时控制、重试放大、日志、监控和缓存，而不是训练算力。真正要预算的是失败路径的放大成本，例如重复调用、并发堆积和长连接断线恢复。",
+      "examples": [
+        "模型超时后自动降级到更小模型或更短上下文。",
+        "工具调用失败时先重试只读操作，再回退到人工确认或部分结果。",
+        "流式输出中途断开后，前端和后端都能识别为可恢复错误而不是重复执行。",
+        "对副作用请求使用幂等键，避免重试造成重复创建工单或重复扣费。"
+      ],
+      "pitfalls": [
+        "把所有失败都统一重试，结果把系统推向雪崩。",
+        "没有区分可重试错误和不可重试错误，导致恢复策略混乱。",
+        "只做主路径埋点，失败路径完全不可见。",
+        "幂等性没设计好，重试一多就出现重复副作用。"
+      ],
+      "prerequisites": [
+        "J/J3. 工具调用",
+        "J/J5. 流式与实时",
+        "M/M2. 应用级评测"
+      ],
+      "coreMetrics": [
+        "success rate",
+        "timeout rate",
+        "recovery success rate",
+        "fallback rate",
+        "duplicate side-effect rate"
+      ],
+      "toolchain": [
+        "retry / timeout middleware",
+        "circuit breaker",
+        "idempotency store",
+        "trace / metrics / logs"
+      ],
+      "failureSigns": [
+        "同一类错误有时重试、有时报错，没有稳定策略。",
+        "工具或模型服务一抖动，整个应用延迟和失败率立刻连锁上升。",
+        "事故后无法定位是模型、工具、网络还是前端流式链路出了问题。",
+        "用户侧频繁出现重复执行、空白状态或半完成结果。"
+      ],
+      "next": [
+        "J/J7. 工程可靠性/Retry",
+        "J/J7. 工程可靠性/Timeout",
+        "J/J7. 工程可靠性/Idempotency",
+        "J/J7. 工程可靠性/Fallback",
+        "J/J7. 工程可靠性/Circuit breaking",
+        "J/J7. 工程可靠性/Error classes",
+        "J/J7. 工程可靠性/Observability hooks",
+        "J/J8. 安全与权限"
+      ]
+    },
+    "J/J8. 安全与权限": {
+      "status": "draft",
+      "definition": "安全与权限关注 AI 应用在真实环境中如何做身份识别、凭据管理、权限范围控制、敏感动作审批和运行隔离。它不是给模型“补一句不要乱来”，而是把安全边界真正落到身份、令牌、工具权限、会话隔离和审计流程上。",
+      "importance": "AI 应用一旦接入私有知识、外部工具或副作用操作，安全与权限就不是附加项，而是主链路。如果这层设计不清，系统就会从“偶尔答错”升级成“越权读取、误执行或泄露敏感信息”的事故源。",
+      "minimumDemo": "做一个最小受控助手：要求登录后才能使用；不同用户有不同工具 scope；敏感工具调用必须审批；密钥只在服务端可见；所有调用都能被审计。验收标准不是“能不能跑通”，而是越权时能被稳定拦截、敏感操作能被暂停、审计日志能追到人和动作。",
+      "hardwareBudget": "这一层几乎不增加训练算力，主要成本来自鉴权、密钥管理、审批、隔离和审计基础设施。真正要预算的是身份系统接入、日志保留和高风险动作的人工 review 开销。",
+      "examples": [
+        "不同租户只能访问各自知识库和工具范围。",
+        "创建工单、发送邮件、执行 shell 等副作用动作前必须弹出审批。",
+        "模型运行时拿到的是短期工具令牌，而不是长期主密钥。",
+        "浏览器、工作区和文件系统操作在隔离边界内执行并留痕。"
+      ],
+      "pitfalls": [
+        "把权限控制只做在 UI 层，后端工具层仍然全权限开放。",
+        "把长期密钥直接暴露给模型或客户端。",
+        "敏感动作和只读动作走同一条无审批路径。",
+        "日志只有“调用失败”，没有记录谁发起、调了什么、作用到哪里。"
+      ],
+      "prerequisites": [
+        "J/J3. 工具调用",
+        "J/J7. 工程可靠性",
+        "M/M5. 安全控制",
+        "M/M7. 隐私与合规"
+      ],
+      "coreMetrics": [
+        "unauthorized action rate",
+        "approval correctness",
+        "secret exposure incidents",
+        "audit coverage",
+        "isolation breach rate"
+      ],
+      "toolchain": [
+        "auth / identity provider",
+        "secret manager",
+        "approval workflow",
+        "sandbox / tenancy isolation",
+        "audit log pipeline"
+      ],
+      "failureSigns": [
+        "模型能看到或间接推断出不该看到的凭据和内部状态。",
+        "副作用动作没有清晰审批痕迹或执行责任人。",
+        "不同用户或会话之间出现上下文、文件或工具结果串扰。",
+        "越权失败只能从业务事故里看出来，系统内没有明确拦截记录。"
+      ],
+      "next": [
+        "J/J8. 安全与权限/Auth",
+        "J/J8. 安全与权限/Secret management",
+        "J/J8. 安全与权限/Permission scopes",
+        "J/J8. 安全与权限/Sensitive action approval",
+        "J/J8. 安全与权限/Isolation boundaries",
+        "J/J9. 应用形态"
+      ]
+    },
+    "J/J9. 应用形态": {
+      "status": "draft",
+      "definition": "应用形态关注的是：相同的模型与工具能力，在不同产品形态中应该如何组合成可用界面、交互节奏、权限路径和结果交付方式。`Chat app`、`Copilot`、`Search / QA`、`Document assistant`、`Coding assistant`、`Workflow assistant`、`Voice assistant` 不是不同模型，而是不同产品编排方式。",
+      "importance": "很多团队把“AI 应用”说得很泛，但真实落地时，不同形态的成功标准完全不同。Search / QA 更看重引用和可靠性，Copilot 更强调嵌入现有工作流，Workflow assistant 更看重副作用控制，Voice assistant 则首先受限于实时链路和 UX 一致性。",
+      "minimumDemo": "围绕同一套模型能力，分别做一个最小 chat app、search / QA 和 workflow assistant 原型，比较它们在输入组织、状态管理、结果展示和安全边界上的差异。这样能快速识别“同一能力在不同产品形态下该怎么包装”。",
+      "hardwareBudget": "这一层不主要受训练硬件限制，更受界面形态、接入系统、交互时延和观测成本约束。真正的预算差异往往来自文件处理、工具链深度、长连接和人工 review，而不是模型尺寸本身。",
+      "examples": [
+        "聊天应用强调连续对话和低门槛输入。",
+        "Copilot 强调在 IDE、表格或编辑器中与现有工作流并行协作。",
+        "Search / QA 强调证据和出处，而不是开放式生成。",
+        "Workflow assistant 强调结构化输入、审批和副作用控制。",
+        "Voice assistant 强调低延迟打断、音频回放和多端同步。"
+      ],
+      "pitfalls": [
+        "把一个 demo UI 套到所有场景上，导致交互方式和成功标准错位。",
+        "把 Coding assistant 或 Workflow assistant 当成普通聊天页，忽略工具、审批和 trace。",
+        "Search / QA 没有引用与证据展示，最后退化成纯聊天。",
+        "Voice assistant 只复用文本聊天栈，忽略实时状态和音频链路。"
+      ],
+      "prerequisites": [
+        "J/J5. 流式与实时",
+        "J/J6. 多模态应用",
+        "J/J8. 安全与权限"
+      ],
+      "coreMetrics": [
+        "task completion rate",
+        "UX consistency",
+        "human override rate",
+        "time to useful output",
+        "form-factor fit"
+      ],
+      "toolchain": [
+        "chat UI",
+        "embedded copilots",
+        "workflow forms",
+        "voice / realtime clients",
+        "trace and approval surfaces"
+      ],
+      "failureSigns": [
+        "同一能力在不同页面里呈现方式完全不一致。",
+        "产品形态看起来多样，但都绕回同一种聊天交互。",
+        "用户能看到模型答案，却无法在对应场景中真正完成任务。",
+        "高风险形态没有额外审批和恢复设计。"
+      ],
+      "next": [
+        "J/J9. 应用形态/Chat app",
+        "J/J9. 应用形态/Copilot",
+        "J/J9. 应用形态/Search / QA",
+        "J/J9. 应用形态/Document assistant",
+        "J/J9. 应用形态/Coding assistant",
+        "J/J9. 应用形态/Workflow assistant",
+        "J/J9. 应用形态/Voice assistant",
+        "K/K1. Agent 的最小构成"
+      ]
+    }
   }
 }

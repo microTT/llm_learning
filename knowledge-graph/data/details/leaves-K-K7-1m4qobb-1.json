@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-K-K7-1m4qobb-1",
     "type": "leaf-batch",
     "label": "MCP servers / Leaves",
@@ -18,11 +18,62 @@
       "Tools"
     ],
     "nodeCount": 3,
-    "filledNodeCount": 0
+    "filledNodeCount": 3
   },
   "nodes": {
-    "K/K7. 工具与外部连接/MCP servers/Resources": {},
-    "K/K7. 工具与外部连接/MCP servers/Prompts": {},
-    "K/K7. 工具与外部连接/MCP servers/Tools": {}
+    "K/K7. 工具与外部连接/MCP servers/Resources": {
+      "status": "draft",
+      "definition": "Resources 是 MCP server 暴露的只读上下文对象，适合承载文件、文档、结构化数据和其他可被模型读取的内容。",
+      "importance": "把只读上下文做成 resources，能让 client 明确地区分“读取知识”和“执行动作”，减少不必要的工具调用。",
+      "minimumDemo": "在一个 MCP server 里暴露 1 到 2 个 resources，并让 client 读取内容作为模型上下文输入。",
+      "prerequisites": [
+        "K/K7. 工具与外部连接/MCP servers",
+        "K/K7. 工具与外部连接/MCP protocol stack/Lifecycle & capability negotiation"
+      ],
+      "coreMetrics": [
+        "resource readability",
+        "discovery success"
+      ],
+      "next": [
+        "I/I2. 知识库构建",
+        "K/K10. Agent 形态分支/Knowledge agent"
+      ]
+    },
+    "K/K7. 工具与外部连接/MCP servers/Prompts": {
+      "status": "draft",
+      "definition": "Prompts 是 server 侧发布的可复用提示模板或提示构造能力，用来统一某类任务的输入骨架。",
+      "importance": "它适合沉淀组织级模板，但不能替代应用侧状态管理；否则很容易把动态运行逻辑塞进静态模板。",
+      "minimumDemo": "让 MCP server 暴露一个 prompt 模板，client 读取后按当前任务变量填充并执行。",
+      "prerequisites": [
+        "K/K7. 工具与外部连接/MCP servers",
+        "J/J1. 模型接口层/Prompt composition"
+      ],
+      "coreMetrics": [
+        "prompt reuse rate",
+        "template drift"
+      ],
+      "next": [
+        "J/J1. 模型接口层/System / user / tool messages",
+        "K/K7. 工具与外部连接/MCP servers/Tools"
+      ]
+    },
+    "K/K7. 工具与外部连接/MCP servers/Tools": {
+      "status": "draft",
+      "definition": "MCP server 里的 tools 是可被 client 调用的执行能力对象，通常带参数 schema、权限边界和返回结果结构。",
+      "importance": "它让工具调用在统一协议下被发现和消费，适合跨应用共享能力，同时保留服务端执行控制。",
+      "minimumDemo": "暴露一个带 schema 的 MCP tool，并验证 client 能发现、调用、处理结果和错误。",
+      "prerequisites": [
+        "K/K7. 工具与外部连接/MCP protocol stack/Authorization",
+        "J/J3. 工具调用/Tool schema design"
+      ],
+      "coreMetrics": [
+        "tool discoverability",
+        "protocol-level execution success"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/Function tools",
+        "K/K7. 工具与外部连接/Connectors"
+      ]
+    }
   }
 }

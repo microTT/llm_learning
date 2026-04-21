@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-L-L6-188qdvk-1",
     "type": "leaf-batch",
     "label": "L6. 硬件层 / Leaves",
@@ -22,15 +22,136 @@
       "Network bandwidth"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "L/L6. 硬件层/CPU": {},
-    "L/L6. 硬件层/GPU": {},
-    "L/L6. 硬件层/NPU": {},
-    "L/L6. 硬件层/Apple silicon unified memory": {},
-    "L/L6. 硬件层/Multi-GPU": {},
-    "L/L6. 硬件层/VRAM / RAM / disk constraints": {},
-    "L/L6. 硬件层/Network bandwidth": {}
+    "L/L6. 硬件层/CPU": {
+      "status": "draft",
+      "definition": "CPU 在 AI 系统中承担控制流、数据处理、轻量模型推理和部分后处理工作，不只是 GPU 的配角。",
+      "importance": "很多检索、解析、调度和小模型任务主要吃 CPU；忽略它会误判瓶颈来源。",
+      "minimumDemo": "对同一任务分离统计 CPU 侧解析、检索和推理前后处理耗时。",
+      "prerequisites": [
+        "L/L5. 系统基础设施/Queue",
+        "L/L7. 生产运行指标/Latency"
+      ],
+      "coreMetrics": [
+        "cpu utilization",
+        "host-side latency"
+      ],
+      "next": [
+        "L/L6. 硬件层/GPU",
+        "L/L6. 硬件层/VRAM / RAM / disk constraints"
+      ]
+    },
+    "L/L6. 硬件层/GPU": {
+      "status": "draft",
+      "definition": "GPU 是当前大多数大模型训练和高性能推理的主力算力单元，决定了模型尺寸、batch 和吞吐上限。",
+      "importance": "理解 GPU 约束是理解 serving 和训练成本结构的核心。",
+      "minimumDemo": "在 GPU 上跑一次推理或训练任务，记录显存占用、吞吐和尾延迟。",
+      "prerequisites": [
+        "L/L3. 推理优化",
+        "L/L4. 训练基础设施/PyTorch"
+      ],
+      "coreMetrics": [
+        "tokens/sec",
+        "gpu utilization",
+        "vram usage"
+      ],
+      "next": [
+        "L/L6. 硬件层/Multi-GPU",
+        "L/L7. 生产运行指标/GPU utilization"
+      ]
+    },
+    "L/L6. 硬件层/NPU": {
+      "status": "draft",
+      "definition": "NPU 指面向端侧或专用推理场景的神经网络加速单元，常用于移动端、边缘设备和特定硬件平台。",
+      "importance": "随着端侧 AI 增长，NPU 会越来越影响哪些模型能上设备、哪些交互能本地完成。",
+      "minimumDemo": "选择一个支持 NPU 的设备，比较同一轻量模型在 CPU 和 NPU 上的速度与功耗。",
+      "prerequisites": [
+        "L/L1. 模型访问方式/浏览器 / Edge 推理",
+        "E/E5. 多模态"
+      ],
+      "coreMetrics": [
+        "edge latency",
+        "power efficiency"
+      ],
+      "next": [
+        "L/L1. 模型访问方式/浏览器 / Edge 推理",
+        "L/L7. 生产运行指标/Cost"
+      ]
+    },
+    "L/L6. 硬件层/Apple silicon unified memory": {
+      "status": "draft",
+      "definition": "Apple silicon unified memory 让 CPU/GPU 共享统一内存池，改变了本地模型在 Mac 上的容量和调优方式。",
+      "importance": "它是当前本地 LLM 原型开发里最有代表性的硬件路径之一，尤其影响本地推理体验和模型选择。",
+      "minimumDemo": "在 Apple silicon 上比较不同模型尺寸和量化版本的统一内存占用与实际体验。",
+      "prerequisites": [
+        "L/L1. 模型访问方式/本地推理",
+        "L/L2. 服务运行时/MLX / MLX-LM"
+      ],
+      "coreMetrics": [
+        "memory pressure",
+        "usable model size"
+      ],
+      "next": [
+        "L/L2. 服务运行时/MLX / MLX-LM",
+        "L/L3. 推理优化/Quantized inference"
+      ]
+    },
+    "L/L6. 硬件层/Multi-GPU": {
+      "status": "draft",
+      "definition": "Multi-GPU 通过多卡并行扩展训练或推理容量，但也引入同步、通信和负载平衡问题。",
+      "importance": "多卡不是线性加速按钮；很多系统一扩到多卡，真正瓶颈才开始暴露。",
+      "minimumDemo": "对同一工作负载比较单卡与多卡的扩展效率和通信开销。",
+      "prerequisites": [
+        "L/L4. 训练基础设施/DDP",
+        "L/L6. 硬件层/Network bandwidth"
+      ],
+      "coreMetrics": [
+        "scale efficiency",
+        "communication overhead"
+      ],
+      "next": [
+        "L/L4. 训练基础设施/FSDP",
+        "L/L7. 生产运行指标/Throughput"
+      ]
+    },
+    "L/L6. 硬件层/VRAM / RAM / disk constraints": {
+      "status": "draft",
+      "definition": "这一层关注显存、内存和磁盘约束如何共同决定模型能否加载、上下文能开多长以及缓存和 checkpoint 是否可行。",
+      "importance": "很多‘模型慢’或‘模型跑不动’的问题，根本不是算法问题，而是资源层级被打满。",
+      "minimumDemo": "记录一次长上下文推理或训练时的 VRAM、RAM 和磁盘占用变化，定位真正瓶颈。",
+      "prerequisites": [
+        "L/L3. 推理优化/KV cache",
+        "L/L4. 训练基础设施/Checkpointing"
+      ],
+      "coreMetrics": [
+        "oom rate",
+        "memory pressure",
+        "disk spill rate"
+      ],
+      "next": [
+        "L/L3. 推理优化/KV offload",
+        "L/L7. 生产运行指标/Context pressure"
+      ]
+    },
+    "L/L6. 硬件层/Network bandwidth": {
+      "status": "draft",
+      "definition": "Network bandwidth 影响多机训练、远程存储访问、模型下载和服务间调用，在分布式系统里经常成为隐藏瓶颈。",
+      "importance": "一旦进入多机多卡或重依赖远程存储的场景，网络就可能比 GPU 更先拖垮系统。",
+      "minimumDemo": "在分布式训练或远程制品拉取中记录带宽占用和等待时间，检查网络是否成为瓶颈。",
+      "prerequisites": [
+        "L/L4. 训练基础设施/Distributed training",
+        "L/L5. 系统基础设施/Object storage"
+      ],
+      "coreMetrics": [
+        "network throughput",
+        "communication wait time"
+      ],
+      "next": [
+        "L/L6. 硬件层/Multi-GPU",
+        "L/L7. 生产运行指标/Availability"
+      ]
+    }
   }
 }

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-18",
+    "updatedAt": "2026-04-21",
     "shardId": "domain-N",
     "type": "domain-overview",
     "label": "N. 产品、场景与组织 / 概览",
@@ -14,7 +14,7 @@
     "parentTitle": null,
     "leafTitles": [],
     "nodeCount": 7,
-    "filledNodeCount": 1
+    "filledNodeCount": 7
   },
   "nodes": {
     "N": {
@@ -88,11 +88,150 @@
         "N/N6. 持续改进闭环"
       ]
     },
-    "N/N1. 场景类型": {},
-    "N/N2. 自动化等级": {},
-    "N/N3. 决策变量": {},
-    "N/N4. 体验设计": {},
-    "N/N5. 团队与流程": {},
-    "N/N6. 持续改进闭环": {}
+    "N/N1. 场景类型": {
+      "status": "draft",
+      "definition": "场景类型回答的是：AI 系统究竟在替用户完成什么任务，是问答、Copilot、编码、数据分析、文档处理、工作流自动化、研究、多模态交互还是机器人/具身任务。",
+      "importance": "场景选型先于模型选型。不同场景的成功标准、风险边界、交互形态和自动化级别都不同。",
+      "minimumDemo": "先把一个任务明确归到某类场景，再根据该场景决定是否需要检索、工具、审批和多模态输入。",
+      "prerequisites": [
+        "N",
+        "J/J9. 应用形态"
+      ],
+      "coreMetrics": [
+        "task fit",
+        "user adoption",
+        "workflow gain"
+      ],
+      "next": [
+        "N/N1. 场景类型/问答 / 检索",
+        "N/N1. 场景类型/助手 / Copilot",
+        "N/N1. 场景类型/编码",
+        "N/N1. 场景类型/数据分析",
+        "N/N1. 场景类型/文档处理",
+        "N/N1. 场景类型/工作流自动化",
+        "N/N1. 场景类型/研究",
+        "N/N1. 场景类型/多模态交互",
+        "N/N1. 场景类型/机器人 / 具身任务"
+      ]
+    },
+    "N/N2. 自动化等级": {
+      "status": "draft",
+      "definition": "自动化等级回答的是：系统是只给建议、生成草稿待审、审批后执行、有限自治执行，还是在人工监督下持续自治。",
+      "importance": "自动化不是越高越好，而是要与错误代价、审批要求和用户信任匹配。",
+      "minimumDemo": "给同一场景分别设计建议模式和审批后执行模式，对比采纳率、人工负担和风险暴露。",
+      "prerequisites": [
+        "N/N1. 场景类型",
+        "K/K8. 人在回路"
+      ],
+      "coreMetrics": [
+        "automation coverage",
+        "human intervention rate",
+        "approval load"
+      ],
+      "next": [
+        "N/N2. 自动化等级/Suggestion only",
+        "N/N2. 自动化等级/Draft and review",
+        "N/N2. 自动化等级/Execute with approval",
+        "N/N2. 自动化等级/Narrow autonomous execution",
+        "N/N2. 自动化等级/Human-supervised autonomy"
+      ]
+    },
+    "N/N3. 决策变量": {
+      "status": "draft",
+      "definition": "决策变量是产品与工程在方案设计时要共同权衡的输入，包括质量要求、延迟要求、成本预算、错误代价、安全风险、是否需要最新知识、是否需要外部动作以及是否需要可审计流程。",
+      "importance": "很多“方案争论”本质上不是技术对错，而是这些变量没有被显式对齐。",
+      "minimumDemo": "在立项前把 8 个变量逐项打分或排序，再据此决定模型、自动化级别和上线边界。",
+      "prerequisites": [
+        "N/N1. 场景类型",
+        "L/L7. 生产运行指标",
+        "M"
+      ],
+      "coreMetrics": [
+        "decision clarity",
+        "design rework rate"
+      ],
+      "next": [
+        "N/N3. 决策变量/质量要求",
+        "N/N3. 决策变量/延迟要求",
+        "N/N3. 决策变量/成本预算",
+        "N/N3. 决策变量/错误代价",
+        "N/N3. 决策变量/安全风险",
+        "N/N3. 决策变量/是否需要最新知识",
+        "N/N3. 决策变量/是否需要外部动作",
+        "N/N3. 决策变量/是否需要可审计流程"
+      ]
+    },
+    "N/N4. 体验设计": {
+      "status": "draft",
+      "definition": "体验设计关注 AI 产品如何建立信任、给出透明度、展示引用、保留用户控制权、支持撤销与纠错，并让长任务过程可见。",
+      "importance": "AI 产品的价值不只在结果，还在用户是否敢用、会用、愿意纠正和持续依赖。",
+      "minimumDemo": "为一个最小原型加入依据展示、撤销入口和失败说明，观察用户是否更愿意把结果纳入正式流程。",
+      "prerequisites": [
+        "N/N1. 场景类型",
+        "J/J9. 应用形态"
+      ],
+      "coreMetrics": [
+        "trust",
+        "acceptance rate",
+        "correction rate"
+      ],
+      "next": [
+        "N/N4. 体验设计/信任",
+        "N/N4. 体验设计/透明度",
+        "N/N4. 体验设计/引用",
+        "N/N4. 体验设计/控制权",
+        "N/N4. 体验设计/可撤销",
+        "N/N4. 体验设计/纠错入口",
+        "N/N4. 体验设计/长任务可见性"
+      ]
+    },
+    "N/N5. 团队与流程": {
+      "status": "draft",
+      "definition": "团队与流程回答的是：产品、应用工程、模型工程、数据工程、评测/QA、安全/Policy 和运维/平台如何分工协作，才能让 AI 系统持续上线与改进。",
+      "importance": "AI 项目一旦跨模型、数据、工具和安全边界，没有清晰责任分工就会反复返工。",
+      "minimumDemo": "为一个具体 AI 能力明确 owner、评测人、上线准入人和事故处理人。",
+      "prerequisites": [
+        "N",
+        "M/M7. 隐私与合规/Governance policies"
+      ],
+      "coreMetrics": [
+        "ownership clarity",
+        "handoff speed"
+      ],
+      "next": [
+        "N/N5. 团队与流程/产品经理",
+        "N/N5. 团队与流程/应用工程师",
+        "N/N5. 团队与流程/模型工程师",
+        "N/N5. 团队与流程/数据工程师",
+        "N/N5. 团队与流程/Eval / QA",
+        "N/N5. 团队与流程/安全 / Policy",
+        "N/N5. 团队与流程/运维 / 平台"
+      ]
+    },
+    "N/N6. 持续改进闭环": {
+      "status": "draft",
+      "definition": "持续改进闭环描述的是：从用户问题和日志出发，沉淀数据、构建新 eval、改 prompt/tool/routing、做 fine-tuning 或蒸馏、发布新版本，再评测和回看结果。",
+      "importance": "没有闭环，AI 系统只能停留在 demo 阶段；有闭环，系统才会越用越稳、越贴业务。",
+      "minimumDemo": "把线上失败样例回流进回归集，再推动一次 prompt 或工具调整并验证指标提升。",
+      "prerequisites": [
+        "M/M4. 在线评测",
+        "M/M8. 对抗测试与审计/Postmortem"
+      ],
+      "coreMetrics": [
+        "iteration velocity",
+        "repeat failure rate",
+        "regression catch rate"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/用户问题 / 场景",
+        "N/N6. 持续改进闭环/日志与 traces",
+        "N/N6. 持续改进闭环/数据沉淀",
+        "N/N6. 持续改进闭环/新 evals",
+        "N/N6. 持续改进闭环/Prompt / tool / routing 改进",
+        "N/N6. 持续改进闭环/Fine-tuning / distillation",
+        "N/N6. 持续改进闭环/部署新版本",
+        "N/N6. 持续改进闭环/再评测"
+      ]
+    }
   }
 }

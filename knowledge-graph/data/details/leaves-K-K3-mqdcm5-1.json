@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-K-K3-mqdcm5-1",
     "type": "leaf-batch",
     "label": "K3. 单 Agent 模式 / Leaves",
@@ -21,14 +21,116 @@
       "Verification loop"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "K/K3. 单 Agent 模式/ReAct / reason-act loop": {},
-    "K/K3. 单 Agent 模式/Plan-then-act": {},
-    "K/K3. 单 Agent 模式/Reflect / retry": {},
-    "K/K3. 单 Agent 模式/Tool-using agent": {},
-    "K/K3. 单 Agent 模式/Retrieval-first agent": {},
-    "K/K3. 单 Agent 模式/Verification loop": {}
+    "K/K3. 单 Agent 模式/ReAct / reason-act loop": {
+      "status": "draft",
+      "definition": "ReAct / reason-act loop 通过交替思考与行动，让 agent 在每一步观察结果后决定下一步，是最经典的单 agent 模式之一。",
+      "importance": "它简单直接，适合快速原型和开放任务，但也最容易因为缺少明确终止条件而循环或发散。",
+      "minimumDemo": "让 agent 围绕单一任务做 3 到 6 步 reason-act 循环，并记录每步证据与动作。",
+      "prerequisites": [
+        "K/K2. 执行形态/Agent/动态决定步骤",
+        "J/J3. 工具调用/Tool execution"
+      ],
+      "coreMetrics": [
+        "useful step ratio",
+        "looping rate"
+      ],
+      "next": [
+        "K/K3. 单 Agent 模式/Reflect / retry",
+        "K/K3. 单 Agent 模式/Tool-using agent"
+      ]
+    },
+    "K/K3. 单 Agent 模式/Plan-then-act": {
+      "status": "draft",
+      "definition": "Plan-then-act 先产出阶段性计划，再按计划执行步骤，适合任务结构相对清晰且中间可检验的场景。",
+      "importance": "它能减少纯 ReAct 的局部贪心和频繁跳步问题，但如果计划过早冻结，也会降低对环境变化的适应性。",
+      "minimumDemo": "对同一任务比较先规划后执行与纯 ReAct 的完成率和步数差异。",
+      "prerequisites": [
+        "K/K2. 执行形态/Agent/动态决定步骤",
+        "G/G8. 推理模型与模型路由/Planner / executor split"
+      ],
+      "coreMetrics": [
+        "plan quality",
+        "execution adherence"
+      ],
+      "next": [
+        "K/K3. 单 Agent 模式/Reflect / retry",
+        "K/K4. 多 Agent 模式/Manager / worker"
+      ]
+    },
+    "K/K3. 单 Agent 模式/Reflect / retry": {
+      "status": "draft",
+      "definition": "Reflect / retry 让 agent 在失败、低置信度或验证不通过时复盘前一步并选择重试、改路或结束。",
+      "importance": "没有反思和重试，单 agent 遇到一次工具错误或错误假设就容易直接崩掉；但没有边界的反思又会无限打转。",
+      "minimumDemo": "人为制造一次工具失败，观察 agent 是否能反思并走向有效重试而不是重复原动作。",
+      "prerequisites": [
+        "K/K3. 单 Agent 模式/ReAct / reason-act loop",
+        "J/J7. 工程可靠性/Retry"
+      ],
+      "coreMetrics": [
+        "self-correction rate",
+        "retry effectiveness"
+      ],
+      "next": [
+        "K/K3. 单 Agent 模式/Verification loop",
+        "J/J7. 工程可靠性/Fallback"
+      ]
+    },
+    "K/K3. 单 Agent 模式/Tool-using agent": {
+      "status": "draft",
+      "definition": "Tool-using agent 把工具调用作为主执行手段，而不是只在少数节点辅助生成，强调环境交互与结果消费能力。",
+      "importance": "这是多数实用 agent 的核心形态，因为没有工具，很多任务根本无法闭环完成。",
+      "minimumDemo": "给 agent 两到三个工具，让它围绕一个实际任务多次调用并基于结果推进。",
+      "prerequisites": [
+        "K/K2. 执行形态/Agent/动态决定工具",
+        "J/J3. 工具调用"
+      ],
+      "coreMetrics": [
+        "tool success rate",
+        "task completion rate"
+      ],
+      "next": [
+        "K/K3. 单 Agent 模式/Retrieval-first agent",
+        "K/K7. 工具与外部连接"
+      ]
+    },
+    "K/K3. 单 Agent 模式/Retrieval-first agent": {
+      "status": "draft",
+      "definition": "Retrieval-first agent 在大多数步骤前优先补齐外部证据，再决定是否继续规划、执行或生成，强调先接地再行动。",
+      "importance": "它能降低幻觉和盲目行动，特别适合研究、问答和文档密集型任务。",
+      "minimumDemo": "让 agent 在每个关键决策前先检索证据，比较与直接行动模式的 groundedness 差异。",
+      "prerequisites": [
+        "I/I3. RAG 管线",
+        "K/K3. 单 Agent 模式/Tool-using agent"
+      ],
+      "coreMetrics": [
+        "groundedness",
+        "retrieval hit quality"
+      ],
+      "next": [
+        "K/K3. 单 Agent 模式/Verification loop",
+        "J/J9. 应用形态/Search / QA"
+      ]
+    },
+    "K/K3. 单 Agent 模式/Verification loop": {
+      "status": "draft",
+      "definition": "Verification loop 在单 agent 内部加入独立验证步骤，用来检查当前结论、工具结果或中间产物是否足够可信，再决定继续或结束。",
+      "importance": "很多看起来“很会做事”的 agent 最后失败，不是因为不会执行，而是因为不会验证自己做得到底对不对。",
+      "minimumDemo": "让 agent 在给出最终答案前先跑一轮 verifier 或自检步骤，比较错误拦截率。",
+      "prerequisites": [
+        "K/K3. 单 Agent 模式/Reflect / retry",
+        "G/G8. 推理模型与模型路由/Verifier / judge"
+      ],
+      "coreMetrics": [
+        "error catch rate",
+        "verification overhead"
+      ],
+      "next": [
+        "K/K4. 多 Agent 模式/Reviewer / critic / verifier",
+        "M/M3. Agent 级评测/Outcome checks"
+      ]
+    }
   }
 }

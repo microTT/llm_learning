@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-M-M6-14yzjle-1",
     "type": "leaf-batch",
     "label": "M6. Guardrails / Leaves",
@@ -21,14 +21,116 @@
       "Redaction / filtering"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "M/M6. Guardrails/Input guardrails": {},
-    "M/M6. Guardrails/Output guardrails": {},
-    "M/M6. Guardrails/Tool guardrails": {},
-    "M/M6. Guardrails/Policy guardrails": {},
-    "M/M6. Guardrails/Schema validation": {},
-    "M/M6. Guardrails/Redaction / filtering": {}
+    "M/M6. Guardrails/Input guardrails": {
+      "status": "draft",
+      "definition": "Input guardrails 在用户输入、检索内容或外部上下文进入主链路前做风险检查和清洗。",
+      "importance": "越早发现注入、违规请求和污染内容，后续系统越少承担不必要风险。",
+      "minimumDemo": "在输入进入模型前做分类和规则检查，并记录命中原因与处置动作。",
+      "prerequisites": [
+        "M/M5. 安全控制/Moderation",
+        "M/M5. 安全控制/Prompt injection defense"
+      ],
+      "coreMetrics": [
+        "input block rate",
+        "false block rate"
+      ],
+      "next": [
+        "M/M6. Guardrails/Policy guardrails",
+        "M/M6. Guardrails/Redaction / filtering"
+      ]
+    },
+    "M/M6. Guardrails/Output guardrails": {
+      "status": "draft",
+      "definition": "Output guardrails 在模型生成后、结果展示前检查有害内容、违规建议、越权动作或不合规表达。",
+      "importance": "很多风险直到输出形成时才暴露，例如泄露敏感信息、错误引用或违规建议。",
+      "minimumDemo": "在输出显示前增加检查层，对命中风险的结果做拒绝、重写或降级处理。",
+      "prerequisites": [
+        "M/M5. 安全控制/Moderation",
+        "M/M2. 应用级评测/最终答案正确性"
+      ],
+      "coreMetrics": [
+        "unsafe output catch rate",
+        "rewrite success rate"
+      ],
+      "next": [
+        "M/M2. 应用级评测/UX consistency",
+        "M/M6. Guardrails/Redaction / filtering"
+      ]
+    },
+    "M/M6. Guardrails/Tool guardrails": {
+      "status": "draft",
+      "definition": "Tool guardrails 检查工具选择、参数、执行上下文和副作用范围是否符合安全边界。",
+      "importance": "它是模型输出与真实系统动作之间最后一道自动拦截层。",
+      "minimumDemo": "在工具执行前检查参数是否合法、scope 是否允许、是否需要审批。",
+      "prerequisites": [
+        "M/M5. 安全控制/Sensitive tool controls",
+        "J/J3. 工具调用/Tool execution"
+      ],
+      "coreMetrics": [
+        "tool block precision",
+        "unsafe tool prevention rate"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Policy compliance",
+        "M/M5. 安全控制/Approval gates"
+      ]
+    },
+    "M/M6. Guardrails/Policy guardrails": {
+      "status": "draft",
+      "definition": "Policy guardrails 把组织策略、权限规则和业务红线编码成可执行检查，使系统在运行时持续遵守策略。",
+      "importance": "单靠系统提示表达策略并不可靠，运行时策略检查才是实际执行边界。",
+      "minimumDemo": "把一组业务禁令和权限规则实现为 guardrail，并检查违规请求会被稳定拦截。",
+      "prerequisites": [
+        "M/M5. 安全控制/Approval gates",
+        "J/J8. 安全与权限/Permission scopes"
+      ],
+      "coreMetrics": [
+        "policy pass rate",
+        "policy bypass rate"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Policy compliance",
+        "M/M8. 对抗测试与审计/Red teaming"
+      ]
+    },
+    "M/M6. Guardrails/Schema validation": {
+      "status": "draft",
+      "definition": "Schema validation 对结构化输出、工具参数和中间状态做格式与约束校验，防止脏数据继续流动。",
+      "importance": "很多系统故障来自一个字段错类型或缺字段，而不是宏观能力缺失。",
+      "minimumDemo": "在模型输出和工具调用前后做 schema 校验，并为失败路径定义恢复策略。",
+      "prerequisites": [
+        "J/J2. 结构化输出/Validation",
+        "M/M2. 应用级评测/Schema adherence"
+      ],
+      "coreMetrics": [
+        "validation catch rate",
+        "schema repair rate"
+      ],
+      "next": [
+        "M/M2. 应用级评测/Schema adherence",
+        "M/M2. 应用级评测/Failure recovery"
+      ]
+    },
+    "M/M6. Guardrails/Redaction / filtering": {
+      "status": "draft",
+      "definition": "Redaction / filtering 对敏感字段、PII 或不应外露的信息做脱敏、删减或过滤。",
+      "importance": "很多合规问题不在模型会不会生成，而在系统有没有把本不该出现的信息放出来。",
+      "minimumDemo": "在日志和用户可见输出中对敏感字段做统一脱敏，并验证原始值不会外泄。",
+      "prerequisites": [
+        "M/M7. 隐私与合规/PII handling",
+        "M/M7. 隐私与合规/Audit logs"
+      ],
+      "coreMetrics": [
+        "redaction coverage",
+        "privacy leak rate"
+      ],
+      "next": [
+        "M/M7. 隐私与合规/PII handling",
+        "M/M7. 隐私与合规/Regulatory compliance"
+      ]
+    }
   }
 }

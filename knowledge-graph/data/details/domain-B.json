@@ -174,10 +174,80 @@
         "B/B6. 规划/Plan search"
       ]
     },
-    "B/B2. 搜索/无信息搜索": {},
-    "B/B2. 搜索/启发式搜索": {},
-    "B/B2. 搜索/局部搜索": {},
-    "B/B2. 搜索/对抗搜索": {},
+    "B/B2. 搜索/无信息搜索": {
+      "status": "draft",
+      "definition": "无信息搜索不使用问题特定启发知识，只依赖状态扩展规则和队列策略来遍历状态空间，例如 BFS、DFS 和 UCS。",
+      "importance": "它是理解完备性、最优性、时间/空间开销和搜索顺序影响的共同基线。",
+      "minimumDemo": "在同一个迷宫或图上比较 BFS、DFS 和 UCS，观察它们找到的解与资源消耗差异。",
+      "prerequisites": [
+        "B/B2. 搜索"
+      ],
+      "coreMetrics": [
+        "扩展节点数",
+        "运行时间",
+        "内存占用"
+      ],
+      "next": [
+        "B/B2. 搜索/无信息搜索/BFS",
+        "B/B2. 搜索/无信息搜索/DFS",
+        "B/B2. 搜索/无信息搜索/Uniform Cost Search"
+      ]
+    },
+    "B/B2. 搜索/启发式搜索": {
+      "status": "draft",
+      "definition": "启发式搜索利用对目标距离或代价的估计来优先扩展更有希望的状态，从而减少盲目遍历。",
+      "importance": "它把问题知识引入搜索顺序，是从基础遍历走向高效求解的关键一步。",
+      "minimumDemo": "在同一张图上比较 Greedy 和 A* 与 BFS/UCS 的差异，观察启发式对扩展顺序的影响。",
+      "prerequisites": [
+        "B/B2. 搜索/无信息搜索/Uniform Cost Search"
+      ],
+      "coreMetrics": [
+        "启发式有效分支因子",
+        "路径质量",
+        "扩展节点数"
+      ],
+      "next": [
+        "B/B2. 搜索/启发式搜索/Greedy",
+        "B/B2. 搜索/启发式搜索/A*"
+      ]
+    },
+    "B/B2. 搜索/局部搜索": {
+      "status": "draft",
+      "definition": "局部搜索直接在候选解空间里做邻域改良，不显式维护整棵搜索树，常用于近似优化和大规模组合问题。",
+      "importance": "它展示了不依赖完整路径搜索也能得到实用解的另一条主线。",
+      "minimumDemo": "用 N-Queens 或排班问题比较 Hill Climbing 与 Simulated Annealing 的行为差异。",
+      "prerequisites": [
+        "B/B2. 搜索"
+      ],
+      "coreMetrics": [
+        "目标函数改进幅度",
+        "局部最优停滞率"
+      ],
+      "next": [
+        "B/B2. 搜索/局部搜索/Hill Climbing",
+        "B/B2. 搜索/局部搜索/Simulated Annealing"
+      ]
+    },
+    "B/B2. 搜索/对抗搜索": {
+      "status": "draft",
+      "definition": "对抗搜索考虑环境中存在会主动反制的对手，因此不再只找一条好路径，而要在最坏对手行为下选稳健动作。",
+      "importance": "它把搜索从单主体问题扩展到博弈与竞争场景，是博弈树和 verifier 视角的重要基础。",
+      "minimumDemo": "在井字棋或取石子游戏上实现 Minimax，并比较 Alpha-Beta 与 MCTS 的差异。",
+      "prerequisites": [
+        "B/B2. 搜索",
+        "B/B8. 决策与多智能体/博弈论直觉"
+      ],
+      "coreMetrics": [
+        "胜率",
+        "展开节点数",
+        "搜索深度"
+      ],
+      "next": [
+        "B/B2. 搜索/对抗搜索/Minimax",
+        "B/B2. 搜索/对抗搜索/Alpha-Beta Pruning",
+        "B/B2. 搜索/对抗搜索/Monte Carlo Tree Search"
+      ]
+    },
     "B/B3. 约束满足与组合问题": {
       "status": "draft",
       "definition": "约束满足与组合问题关注的不是在状态图里一路走到目标，而是在大量变量赋值或组合候选中，找到一组同时满足约束的可行解，必要时再进一步优化目标函数。它强调变量、取值域、约束结构、传播和剪枝，而不一定依赖显式路径。",

@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-K-K4-1d6ojq7-1",
     "type": "leaf-batch",
     "label": "K4. 多 Agent 模式 / Leaves",
@@ -22,15 +22,134 @@
       "Subgraphs"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "K/K4. 多 Agent 模式/Manager / worker": {},
-    "K/K4. 多 Agent 模式/Router / specialists": {},
-    "K/K4. 多 Agent 模式/Handoff": {},
-    "K/K4. 多 Agent 模式/Agents-as-tools": {},
-    "K/K4. 多 Agent 模式/Reviewer / critic / verifier": {},
-    "K/K4. 多 Agent 模式/Debate / voting": {},
-    "K/K4. 多 Agent 模式/Subgraphs": {}
+    "K/K4. 多 Agent 模式/Manager / worker": {
+      "status": "draft",
+      "definition": "Manager / worker 用上层 manager 负责拆任务、跟踪进度和整合结果，worker 负责执行具体子任务。",
+      "importance": "它适合任务天然可拆、需要中央协调的场景，但 manager 质量会直接决定整体效率。",
+      "minimumDemo": "让 manager 拆两个子任务给 worker，并检查任务分配、回收和汇总是否稳定。",
+      "prerequisites": [
+        "K/K3. 单 Agent 模式/Plan-then-act",
+        "K/K4. 多 Agent 模式/Handoff"
+      ],
+      "coreMetrics": [
+        "subtask success rate",
+        "coordination overhead"
+      ],
+      "next": [
+        "K/K4. 多 Agent 模式/Router / specialists",
+        "K/K4. 多 Agent 模式/Reviewer / critic / verifier"
+      ]
+    },
+    "K/K4. 多 Agent 模式/Router / specialists": {
+      "status": "draft",
+      "definition": "Router / specialists 由路由器根据任务类型把请求分给不同专长 agent，例如 coding、research 或 workflow specialists。",
+      "importance": "它能避免一个 agent 什么都做却什么都不精，但前提是路由标准清晰、specialist 真有明确分工。",
+      "minimumDemo": "让 router 在三类任务上分发给不同 specialists，并比较与单 agent 的差异。",
+      "prerequisites": [
+        "G/G8. 推理模型与模型路由/Model routing policy",
+        "K/K4. 多 Agent 模式/Handoff"
+      ],
+      "coreMetrics": [
+        "routing quality",
+        "specialist win rate"
+      ],
+      "next": [
+        "K/K4. 多 Agent 模式/Agents-as-tools",
+        "M/M3. Agent 级评测/Routing quality"
+      ]
+    },
+    "K/K4. 多 Agent 模式/Handoff": {
+      "status": "draft",
+      "definition": "Handoff 是多 agent 协作中把任务状态、上下文、责任和预期输出从一个 agent 转移到另一个 agent 的过程。",
+      "importance": "很多多 agent 系统失败不是因为单个 agent 不行，而是 handoff 时上下文丢失、责任模糊或格式不一致。",
+      "minimumDemo": "让一个 agent 生成中间状态并 handoff 给另一个 agent，检查接收方是否能无歧义继续执行。",
+      "prerequisites": [
+        "K/K4. 多 Agent 模式",
+        "M/M3. Agent 级评测/Handoff correctness"
+      ],
+      "coreMetrics": [
+        "handoff correctness",
+        "context loss rate"
+      ],
+      "next": [
+        "K/K4. 多 Agent 模式/Subgraphs",
+        "K/K8. 人在回路/Escalation"
+      ]
+    },
+    "K/K4. 多 Agent 模式/Agents-as-tools": {
+      "status": "draft",
+      "definition": "Agents-as-tools 把某些专长 agent 当成可调用工具，由主 agent 通过标准接口触发，而不是所有 agent 平权协作。",
+      "importance": "这种模式能保留统一控制面，同时复用 specialist 能力，通常比全平权多 agent 更容易管理。",
+      "minimumDemo": "把一个 review agent 封装成主 agent 可调用的工具，比较与普通工具调用的差异。",
+      "prerequisites": [
+        "K/K4. 多 Agent 模式/Router / specialists",
+        "J/J3. 工具调用/Function calling"
+      ],
+      "coreMetrics": [
+        "sub-agent utility",
+        "integration simplicity"
+      ],
+      "next": [
+        "K/K4. 多 Agent 模式/Reviewer / critic / verifier",
+        "K/K7. 工具与外部连接/Function tools"
+      ]
+    },
+    "K/K4. 多 Agent 模式/Reviewer / critic / verifier": {
+      "status": "draft",
+      "definition": "Reviewer / critic / verifier 由独立 agent 负责审查产物、指出风险或验证结果，避免执行 agent 自己给自己打分。",
+      "importance": "它把‘会做’和‘会检查’分开，特别适合代码、研究和高风险副作用场景。",
+      "minimumDemo": "让 worker 产出结果，再由 reviewer 做独立审查，比较是否能拦下明显错误。",
+      "prerequisites": [
+        "K/K3. 单 Agent 模式/Verification loop",
+        "M/M3. Agent 级评测/Outcome checks"
+      ],
+      "coreMetrics": [
+        "review catch rate",
+        "false reject rate"
+      ],
+      "next": [
+        "K/K4. 多 Agent 模式/Debate / voting",
+        "M/M3. Agent 级评测/Trace grading"
+      ]
+    },
+    "K/K4. 多 Agent 模式/Debate / voting": {
+      "status": "draft",
+      "definition": "Debate / voting 通过多个 agent 给出不同解或观点，再用投票或裁决机制选择最终结果，强调多样性与互相纠错。",
+      "importance": "它适合高不确定性或高风险任务，但成本和延迟也会显著放大，不能当作默认模式。",
+      "minimumDemo": "让两个 agent 对同一问题给出独立答案，再用第三方裁决或投票选择最终结果。",
+      "prerequisites": [
+        "K/K4. 多 Agent 模式/Reviewer / critic / verifier",
+        "K/K4. 多 Agent 模式/Handoff"
+      ],
+      "coreMetrics": [
+        "consensus quality",
+        "cost overhead"
+      ],
+      "next": [
+        "K/K4. 多 Agent 模式/Subgraphs",
+        "M/M3. Agent 级评测/Failure taxonomy"
+      ]
+    },
+    "K/K4. 多 Agent 模式/Subgraphs": {
+      "status": "draft",
+      "definition": "Subgraphs 指把多 agent 协作封装成可复用的局部子图或子流程，再嵌入更大执行图中，形成模块化 agent 组织。",
+      "importance": "它有助于复用和治理复杂协作逻辑，是从“多 agent demo”走向“可维护系统”的关键一步。",
+      "minimumDemo": "把一个 research-review 两段式协作封装成子图，再嵌入更大的主流程里。",
+      "prerequisites": [
+        "K/K4. 多 Agent 模式/Handoff",
+        "K/K5. 图式编排/Nodes"
+      ],
+      "coreMetrics": [
+        "reuse rate",
+        "composition stability"
+      ],
+      "next": [
+        "K/K5. 图式编排",
+        "K/K9. Agent 观测与控制"
+      ]
+    }
   }
 }

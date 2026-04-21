@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-M-M3-kxt1tw-1",
     "type": "leaf-batch",
     "label": "M3. Agent 级评测 / Leaves 1",
@@ -22,11 +22,11 @@
       "Tool selection correctness"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 2
+    "filledNodeCount": 7
   },
   "nodes": {
     "M/M3. Agent 级评测/Trace schema": {
-      "status": "seed",
+      "status": "draft",
       "definition": "Trace schema 定义一次 agent 执行里必须被记录的单元：step、tool call、artifact、handoff、guardrail、approval、结果状态等。",
       "importance": "没有统一 trace schema，就无法做 process checks、artifact checks、failure taxonomy 和线上 failure mining；Agent eval 会退化成“只看最后答案”。",
       "minimumDemo": "为一个多步 agent 记录标准 trace JSON，再用 grader 对 step、tool、artifact 和 final outcome 分别打分。",
@@ -55,7 +55,7 @@
       ]
     },
     "M/M3. Agent 级评测/Grader rubric": {
-      "status": "seed",
+      "status": "draft",
       "definition": "Grader rubric 定义评分器到底在检查什么：成功条件、失败类型、容忍范围、证据来源都要提前明确，而不是让 grader 只凭感觉打分。",
       "importance": "没有 rubric，trace grader 和 artifact checker 往往只能给出不稳定的主观分数，最后很难驱动优化决策。",
       "minimumDemo": "为一个 coding agent 任务写出明确 rubric，并分别对 final answer、trace 和 artifacts 打分，比较 grader 一致性。",
@@ -86,10 +86,96 @@
         "M/M4. 在线评测/Canary / regression set"
       ]
     },
-    "M/M3. Agent 级评测/Outcome checks": {},
-    "M/M3. Agent 级评测/Process checks": {},
-    "M/M3. Agent 级评测/Artifact checks": {},
-    "M/M3. Agent 级评测/Trace grading": {},
-    "M/M3. Agent 级评测/Tool selection correctness": {}
+    "M/M3. Agent 级评测/Outcome checks": {
+      "status": "draft",
+      "definition": "Outcome checks 只针对任务结果本身做判定，检查最终产出是否达标、是否完成目标、是否满足用户约束。",
+      "importance": "它保证 agent 评测不会丢掉“最终结果是否有用”这个最基本问题。",
+      "minimumDemo": "为一个 agent 任务定义最终产出标准，并把正确、部分正确和失败明确区分开。",
+      "prerequisites": [
+        "M/M3. Agent 级评测/Grader rubric",
+        "M/M2. 应用级评测/最终答案正确性"
+      ],
+      "coreMetrics": [
+        "outcome pass rate",
+        "partial success rate"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Process checks",
+        "M/M3. Agent 级评测/Trace grading"
+      ]
+    },
+    "M/M3. Agent 级评测/Process checks": {
+      "status": "draft",
+      "definition": "Process checks 检查 agent 是否按合理流程完成任务，例如是否检索了必要信息、是否验证过结果、是否按策略执行审批。",
+      "importance": "很多最终答案碰巧正确的执行过程其实不可复用，过程检查就是为了识别这种伪成功。",
+      "minimumDemo": "为典型任务列出必须出现的关键步骤，再对 trace 逐项检查是否满足。",
+      "prerequisites": [
+        "M/M3. Agent 级评测/Trace schema",
+        "K/K3. 单 Agent 模式"
+      ],
+      "coreMetrics": [
+        "required-step coverage",
+        "shortcut violation rate"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Trace grading",
+        "M/M3. Agent 级评测/Policy compliance"
+      ]
+    },
+    "M/M3. Agent 级评测/Artifact checks": {
+      "status": "draft",
+      "definition": "Artifact checks 评估 agent 生成的文件、补丁、截图、报告等产物是否完整、可读、可执行且与任务目标一致。",
+      "importance": "对于 coding、document 或 computer-use agent，产物本身往往比最终一句回答更值得验收。",
+      "minimumDemo": "对一次任务的输出 artifacts 做格式、存在性和语义正确性检查。",
+      "prerequisites": [
+        "M/M3. Agent 级评测/Trace schema",
+        "K/K7. 工具与外部连接/Sandbox workspace/Artifacts"
+      ],
+      "coreMetrics": [
+        "artifact validity",
+        "artifact usability"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Trace grading",
+        "M/M4. 在线评测/Task completion"
+      ]
+    },
+    "M/M3. Agent 级评测/Trace grading": {
+      "status": "draft",
+      "definition": "Trace grading 是对整条执行轨迹做综合评分，把结果、过程、工具、审批和失败类型统一映射成可比较分数。",
+      "importance": "它把分散的检查项整合成可追踪的总体判断，便于比较版本和筛选回归。",
+      "minimumDemo": "让 grader 读取一条完整 trace，并输出分项得分、总分和关键失败原因。",
+      "prerequisites": [
+        "M/M3. Agent 级评测/Outcome checks",
+        "M/M3. Agent 级评测/Process checks",
+        "M/M3. Agent 级评测/Artifact checks"
+      ],
+      "coreMetrics": [
+        "grader agreement",
+        "ranking usefulness"
+      ],
+      "next": [
+        "M/M4. 在线评测/Canary / regression set",
+        "M/M3. Agent 级评测/Failure taxonomy"
+      ]
+    },
+    "M/M3. Agent 级评测/Tool selection correctness": {
+      "status": "draft",
+      "definition": "Tool selection correctness 检查 agent 是否选了对的工具、是否在该用工具时调用了工具，以及是否避免了不必要或危险的调用。",
+      "importance": "工具选错通常会直接带来成本浪费、失败链扩散或副作用风险。",
+      "minimumDemo": "为一组需要不同工具的任务标注理想选择，再对 agent 的真实选择做对比评分。",
+      "prerequisites": [
+        "J/J3. 工具调用/Tool routing",
+        "K/K9. Agent 观测与控制/Tool-call records"
+      ],
+      "coreMetrics": [
+        "tool precision",
+        "unnecessary tool call rate"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Routing quality",
+        "M/M2. 应用级评测/Tool execution success"
+      ]
+    }
   }
 }

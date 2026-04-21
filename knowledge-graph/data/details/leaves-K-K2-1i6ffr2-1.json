@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-K-K2-1i6ffr2-1",
     "type": "leaf-batch",
     "label": "Hybrid system / Leaves",
@@ -16,9 +16,26 @@
       "固定骨架 + 局部 agent 决策"
     ],
     "nodeCount": 1,
-    "filledNodeCount": 0
+    "filledNodeCount": 1
   },
   "nodes": {
-    "K/K2. 执行形态/Hybrid system/固定骨架 + 局部 agent 决策": {}
+    "K/K2. 执行形态/Hybrid system/固定骨架 + 局部 agent 决策": {
+      "status": "draft",
+      "definition": "固定骨架 + 局部 agent 决策指系统大框架和高风险节点保持预定义，而把检索、分析或局部规划这类不确定部分交给 agent 自主完成。",
+      "importance": "它通常是把 agent 能力接进生产系统最稳的一步，因为既保留了审计和审批边界，又获得了局部适应性。",
+      "minimumDemo": "在一个固定审批流程里，把中间的检索与分析节点交给 agent 决策，比较与纯 workflow 的覆盖面差异。",
+      "prerequisites": [
+        "K/K2. 执行形态/Workflow/规则驱动",
+        "K/K2. 执行形态/Agent/动态决定步骤"
+      ],
+      "coreMetrics": [
+        "controlled flexibility",
+        "hybrid task success"
+      ],
+      "next": [
+        "J/J9. 应用形态/Workflow assistant",
+        "K/K5. 图式编排/Conditional branches"
+      ]
+    }
   }
 }

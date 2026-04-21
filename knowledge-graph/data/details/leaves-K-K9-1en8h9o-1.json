@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-K-K9-1en8h9o-1",
     "type": "leaf-batch",
     "label": "K9. Agent 观测与控制 / Leaves",
@@ -21,14 +21,119 @@
       "Auditability"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "K/K9. Agent 观测与控制/Tracing": {},
-    "K/K9. Agent 观测与控制/Step logs": {},
-    "K/K9. Agent 观测与控制/Tool-call records": {},
-    "K/K9. Agent 观测与控制/Handoff records": {},
-    "K/K9. Agent 观测与控制/Guardrail results": {},
-    "K/K9. Agent 观测与控制/Auditability": {}
+    "K/K9. Agent 观测与控制/Tracing": {
+      "status": "draft",
+      "definition": "Tracing 是把 agent 执行过程表示成可查询、可关联、可回放的结构化轨迹，而不是零散日志。",
+      "importance": "多步 agent 没有 trace，最终只会留下一个答案和一堆猜测，几乎无法定位问题究竟出在模型、工具、路由还是状态。",
+      "minimumDemo": "让一次 agent 执行生成统一 trace id，并把每步输入、输出、工具事件和状态变化挂到同一条轨迹上。",
+      "prerequisites": [
+        "J/J7. 工程可靠性/Observability hooks",
+        "M/M3. Agent 级评测/Trace schema"
+      ],
+      "coreMetrics": [
+        "trace completeness",
+        "event correlation quality"
+      ],
+      "next": [
+        "K/K9. Agent 观测与控制/Step logs",
+        "K/K9. Agent 观测与控制/Tool-call records",
+        "M/M3. Agent 级评测/Trace grading"
+      ]
+    },
+    "K/K9. Agent 观测与控制/Step logs": {
+      "status": "draft",
+      "definition": "Step logs 记录 agent 每一步的目标、决策、结果和状态变化，是对高层 trace 的逐步展开。",
+      "importance": "它决定人和评测器能否看清 agent 是否真的推进了任务，而不是只在表面上显得忙碌。",
+      "minimumDemo": "让 agent 在 3 到 6 步任务中输出结构化 step log，至少包含 step type、输入、结果和下一步理由。",
+      "prerequisites": [
+        "K/K9. Agent 观测与控制/Tracing",
+        "K/K3. 单 Agent 模式/ReAct / reason-act loop"
+      ],
+      "coreMetrics": [
+        "useful step ratio",
+        "step explainability"
+      ],
+      "next": [
+        "K/K9. Agent 观测与控制/Tool-call records",
+        "K/K9. Agent 观测与控制/Guardrail results"
+      ]
+    },
+    "K/K9. Agent 观测与控制/Tool-call records": {
+      "status": "draft",
+      "definition": "Tool-call records 记录工具名称、参数、执行结果、失败类型和重试情况，是副作用和外部依赖的核心证据。",
+      "importance": "很多 agent 失败并不是 reasoning 错，而是工具用错、参数错或结果解释错；没有工具记录，这类问题很难被识别。",
+      "minimumDemo": "为每次工具调用保存 schema 校验结果、执行耗时、返回摘要和错误分类，并与对应 step 关联。",
+      "prerequisites": [
+        "J/J3. 工具调用/Tool execution",
+        "K/K9. Agent 观测与控制/Step logs"
+      ],
+      "coreMetrics": [
+        "tool record completeness",
+        "tool failure diagnosability"
+      ],
+      "next": [
+        "K/K9. Agent 观测与控制/Guardrail results",
+        "K/K9. Agent 观测与控制/Auditability"
+      ]
+    },
+    "K/K9. Agent 观测与控制/Handoff records": {
+      "status": "draft",
+      "definition": "Handoff records 记录任务在 agent 之间或在人机之间交接时，传递了什么状态、责任和待办。",
+      "importance": "多 agent 系统最常见的问题不是单点能力不够，而是交接信息缺失、重复劳动和责任不清。",
+      "minimumDemo": "让一次多 agent 任务在 handoff 时输出接手方、交接摘要、未完成事项和引用的上游证据。",
+      "prerequisites": [
+        "K/K4. 多 Agent 模式/Handoff",
+        "K/K9. Agent 观测与控制/Tracing"
+      ],
+      "coreMetrics": [
+        "handoff completeness",
+        "context continuity"
+      ],
+      "next": [
+        "K/K9. Agent 观测与控制/Auditability",
+        "M/M3. Agent 级评测/Handoff correctness"
+      ]
+    },
+    "K/K9. Agent 观测与控制/Guardrail results": {
+      "status": "draft",
+      "definition": "Guardrail results 记录输入、输出、工具和策略守护是否命中、为何放行或拦截，以及是否触发人工介入。",
+      "importance": "如果 guardrail 只在系统里静默生效，事后很难知道它究竟在保护系统还是误伤正常任务。",
+      "minimumDemo": "对一次执行记录所有 guardrail check 的结果、命中规则、决策和后续处理动作。",
+      "prerequisites": [
+        "M/M6. Guardrails/Tool guardrails",
+        "M/M6. Guardrails/Policy guardrails",
+        "K/K9. Agent 观测与控制/Tool-call records"
+      ],
+      "coreMetrics": [
+        "guardrail hit explainability",
+        "false block rate"
+      ],
+      "next": [
+        "K/K9. Agent 观测与控制/Auditability",
+        "M/M3. Agent 级评测/Policy compliance"
+      ]
+    },
+    "K/K9. Agent 观测与控制/Auditability": {
+      "status": "draft",
+      "definition": "Auditability 指系统是否能在事后重建一次任务的关键决策、工具行为、审批痕迹和最终副作用。",
+      "importance": "一旦 agent 开始操作真实系统，审计能力就不再是可选项，而是上线边界的一部分。",
+      "minimumDemo": "随机抽取一次执行，要求仅凭审计材料就能回答谁触发、做了什么、为何放行、影响了什么。",
+      "prerequisites": [
+        "K/K9. Agent 观测与控制/Handoff records",
+        "K/K9. Agent 观测与控制/Guardrail results",
+        "J/J8. 安全与权限/Sensitive action approval"
+      ],
+      "coreMetrics": [
+        "audit reconstruction success",
+        "policy evidence completeness"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Trace grading",
+        "M/M3. Agent 级评测/Failure taxonomy"
+      ]
+    }
   }
 }

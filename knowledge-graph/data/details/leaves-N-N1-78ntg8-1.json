@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-N-N1-78ntg8-1",
     "type": "leaf-batch",
     "label": "N1. 场景类型 / Leaves",
@@ -24,17 +24,170 @@
       "机器人 / 具身任务"
     ],
     "nodeCount": 9,
-    "filledNodeCount": 0
+    "filledNodeCount": 9
   },
   "nodes": {
-    "N/N1. 场景类型/问答 / 检索": {},
-    "N/N1. 场景类型/助手 / Copilot": {},
-    "N/N1. 场景类型/编码": {},
-    "N/N1. 场景类型/数据分析": {},
-    "N/N1. 场景类型/文档处理": {},
-    "N/N1. 场景类型/工作流自动化": {},
-    "N/N1. 场景类型/研究": {},
-    "N/N1. 场景类型/多模态交互": {},
-    "N/N1. 场景类型/机器人 / 具身任务": {}
+    "N/N1. 场景类型/问答 / 检索": {
+      "status": "draft",
+      "definition": "问答 / 检索场景的核心是从外部知识中找到、组织并呈现答案，而不是单纯自由生成。",
+      "importance": "这是企业和个人知识应用里最常见的起点，成功关键在引用可信度和召回质量。",
+      "minimumDemo": "做一个带引用的问答页面，要求用户能看到答案来源并追溯原文。",
+      "prerequisites": [
+        "I/I3. RAG 管线",
+        "J/J9. 应用形态/Search / QA"
+      ],
+      "coreMetrics": [
+        "answer correctness",
+        "citation trustworthiness"
+      ],
+      "next": [
+        "N/N2. 自动化等级/Draft and review",
+        "N/N4. 体验设计/引用"
+      ]
+    },
+    "N/N1. 场景类型/助手 / Copilot": {
+      "status": "draft",
+      "definition": "助手 / Copilot 场景强调在既有工作界面中辅助用户完成任务，而不是让用户跳到独立聊天工具。",
+      "importance": "它更贴近真实工作流，容易获得高采纳率，但也要求更好的上下文感知和 UX 设计。",
+      "minimumDemo": "在现有编辑器、文档或业务页面里加入一个上下文感知助手，支持建议与一键采纳。",
+      "prerequisites": [
+        "J/J9. 应用形态/Copilot",
+        "N/N2. 自动化等级/Draft and review"
+      ],
+      "coreMetrics": [
+        "acceptance rate",
+        "workflow interruption cost"
+      ],
+      "next": [
+        "N/N4. 体验设计/控制权",
+        "N/N3. 决策变量/质量要求"
+      ]
+    },
+    "N/N1. 场景类型/编码": {
+      "status": "draft",
+      "definition": "编码场景以读代码、改代码、跑验证和输出补丁为核心，强调工作区、工具和评测闭环。",
+      "importance": "它是当前最容易验证 agent 上限和安全边界的高价值场景之一。",
+      "minimumDemo": "做一个最小 coding assistant，能读取仓库、生成 diff 并跑一次验证。",
+      "prerequisites": [
+        "J/J9. 应用形态/Coding assistant",
+        "K/K10. Agent 形态分支/Coding agent"
+      ],
+      "coreMetrics": [
+        "task completion rate",
+        "patch acceptance rate"
+      ],
+      "next": [
+        "N/N2. 自动化等级/Execute with approval",
+        "N/N3. 决策变量/错误代价"
+      ]
+    },
+    "N/N1. 场景类型/数据分析": {
+      "status": "draft",
+      "definition": "数据分析场景围绕查询、聚合、可视化解释和结论表达，通常需要结构化输出与工具调用配合。",
+      "importance": "这类场景很容易从‘解释数据’滑向‘胡乱编数字’，所以需要强约束和依据展示。",
+      "minimumDemo": "让系统针对一组结构化数据生成分析结论，并附带查询或计算依据。",
+      "prerequisites": [
+        "J/J2. 结构化输出",
+        "J/J3. 工具调用"
+      ],
+      "coreMetrics": [
+        "analysis correctness",
+        "evidence availability"
+      ],
+      "next": [
+        "N/N4. 体验设计/透明度",
+        "N/N3. 决策变量/是否需要可审计流程"
+      ]
+    },
+    "N/N1. 场景类型/文档处理": {
+      "status": "draft",
+      "definition": "文档处理场景聚焦文件上传、解析、摘要、抽取、比对和问答，常常需要文件输入、引用和结构化输出同时成立。",
+      "importance": "它是企业落地里极常见的高价值场景，但对解析质量和 UX 要求也很高。",
+      "minimumDemo": "实现一个文档助手，支持上传 PDF/Office 文件、抽取字段并展示出处。",
+      "prerequisites": [
+        "J/J9. 应用形态/Document assistant",
+        "J/J6. 多模态应用/File input"
+      ],
+      "coreMetrics": [
+        "extraction precision",
+        "document task success rate"
+      ],
+      "next": [
+        "N/N4. 体验设计/引用",
+        "N/N2. 自动化等级/Draft and review"
+      ]
+    },
+    "N/N1. 场景类型/工作流自动化": {
+      "status": "draft",
+      "definition": "工作流自动化场景强调多步状态推进、系统间调用和副作用执行，关键不在回答，而在稳定完成流程。",
+      "importance": "这是很多企业 AI 真正产生 ROI 的地方，同时也是风险最容易放大的地方。",
+      "minimumDemo": "做一个带审批和状态回填的 workflow assistant，能驱动一个真实流程前进。",
+      "prerequisites": [
+        "J/J9. 应用形态/Workflow assistant",
+        "K/K10. Agent 形态分支/Workflow automation agent"
+      ],
+      "coreMetrics": [
+        "workflow completion rate",
+        "approval correctness"
+      ],
+      "next": [
+        "N/N2. 自动化等级/Execute with approval",
+        "N/N3. 决策变量/是否需要外部动作"
+      ]
+    },
+    "N/N1. 场景类型/研究": {
+      "status": "draft",
+      "definition": "研究场景围绕开放问题探索、证据聚合和结论形成，通常需要多轮检索、比较和不确定性表达。",
+      "importance": "它最能体现 agent 在开放任务中的价值，也最容易暴露检索和验证链路的问题。",
+      "minimumDemo": "让系统围绕一个开放问题做多轮检索，最后输出带证据链的结论。",
+      "prerequisites": [
+        "K/K10. Agent 形态分支/Research agent",
+        "J/J9. 应用形态/Search / QA"
+      ],
+      "coreMetrics": [
+        "evidence coverage",
+        "grounded conclusion rate"
+      ],
+      "next": [
+        "N/N4. 体验设计/透明度",
+        "N/N3. 决策变量/是否需要最新知识"
+      ]
+    },
+    "N/N1. 场景类型/多模态交互": {
+      "status": "draft",
+      "definition": "多模态交互场景需要系统同时处理文本、图像、音频、文件或视频，并在同一任务中完成输入理解和输出协同。",
+      "importance": "它决定产品是否能真正进入更自然的用户任务流，而不只局限于文本框。",
+      "minimumDemo": "做一个同时接收文本和文件或音频输入的交互页面，并验证结果能保持上下文一致。",
+      "prerequisites": [
+        "E/E5. 多模态",
+        "J/J6. 多模态应用"
+      ],
+      "coreMetrics": [
+        "cross-modal task success",
+        "ux consistency"
+      ],
+      "next": [
+        "N/N4. 体验设计/透明度",
+        "N/N1. 场景类型/机器人 / 具身任务"
+      ]
+    },
+    "N/N1. 场景类型/机器人 / 具身任务": {
+      "status": "draft",
+      "definition": "机器人 / 具身任务场景要求系统感知环境、做动作规划并对物理世界产生影响。",
+      "importance": "它把 AI 从信息任务推进到行动任务，也把安全、延迟和恢复要求拉到最高。",
+      "minimumDemo": "在受控环境中让系统完成一个带感知和动作序列的小任务，并记录失败与恢复路径。",
+      "prerequisites": [
+        "E/E7. 机器人与具身智能",
+        "K/K10. Agent 形态分支/Computer-use agent"
+      ],
+      "coreMetrics": [
+        "task success rate",
+        "unsafe action rate"
+      ],
+      "next": [
+        "N/N2. 自动化等级/Human-supervised autonomy",
+        "N/N3. 决策变量/安全风险"
+      ]
+    }
   }
 }

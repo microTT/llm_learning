@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-L-L3-1hn2gmn-1",
     "type": "leaf-batch",
     "label": "L3. 推理优化 / Leaves 1",
@@ -22,11 +22,11 @@
       "KV offload"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 2
+    "filledNodeCount": 7
   },
   "nodes": {
     "L/L3. 推理优化/PagedAttention": {
-      "status": "seed",
+      "status": "draft",
       "definition": "PagedAttention 通过把 KV cache 组织成分页块，减少长上下文推理时的大块连续内存需求，让 serving 更容易在动态 batch 下复用内存。",
       "importance": "这是现代高并发 serving 从“能跑”走向“能稳定高利用率运行”的关键术语之一，也是理解 vLLM 这类系统的入口。",
       "minimumDemo": "对比普通 KV cache 管理和 paged cache 的显存占用与吞吐差异，至少观察长上下文和动态 batch 场景。",
@@ -57,7 +57,7 @@
       ]
     },
     "L/L3. 推理优化/Continuous batching": {
-      "status": "seed",
+      "status": "draft",
       "definition": "Continuous batching 让推理服务不必等整批请求一起结束再接下一批，而是在解码过程中持续把新请求插入可执行队列里。",
       "importance": "它是现代在线 serving 的核心能力之一，因为真实流量不是整齐批处理；没有 continuous batching，吞吐和尾延迟通常都会明显变差。",
       "minimumDemo": "用在线 serving benchmark 对比 static batch 和 continuous batch，在混合短请求/长请求场景下观察吞吐与 p95 latency。",
@@ -87,10 +87,95 @@
         "L/L7. 生产运行指标"
       ]
     },
-    "L/L3. 推理优化/Chunked prefill": {},
-    "L/L3. 推理优化/KV cache": {},
-    "L/L3. 推理优化/Prefix cache": {},
-    "L/L3. 推理优化/Prefix cache sharing / invalidation": {},
-    "L/L3. 推理优化/KV offload": {}
+    "L/L3. 推理优化/Chunked prefill": {
+      "status": "draft",
+      "definition": "Chunked prefill 把长输入的预填充分块执行，降低首段大请求对队列和显存的瞬时压力。",
+      "importance": "它对长上下文和混合流量尤其关键，能减少长请求把短请求全部堵死的情况。",
+      "minimumDemo": "在长 prompt 场景下对比开启和关闭 chunked prefill 的首 token 延迟和队列等待时间。",
+      "prerequisites": [
+        "L/L3. 推理优化/Continuous batching",
+        "L/L3. 推理优化/Context length management"
+      ],
+      "coreMetrics": [
+        "time to first token",
+        "queue wait time"
+      ],
+      "next": [
+        "L/L3. 推理优化/Throughput / latency tuning",
+        "L/L7. 生产运行指标/Latency"
+      ]
+    },
+    "L/L3. 推理优化/KV cache": {
+      "status": "draft",
+      "definition": "KV cache 复用 Transformer 解码中已计算的 key/value，避免每个 token 都从头重算历史上下文。",
+      "importance": "这是几乎所有现代 LLM serving 的基本优化项，也是理解显存压力和上下文成本的关键入口。",
+      "minimumDemo": "观察在开启和关闭 KV cache 时，同一生成任务的 tokens/sec 和显存占用变化。",
+      "prerequisites": [
+        "G/G2. Transformer 机制/Self-attention",
+        "L/L6. 硬件层/VRAM / RAM / disk constraints"
+      ],
+      "coreMetrics": [
+        "tokens/sec",
+        "cache memory footprint"
+      ],
+      "next": [
+        "L/L3. 推理优化/Prefix cache",
+        "L/L3. 推理优化/KV offload"
+      ]
+    },
+    "L/L3. 推理优化/Prefix cache": {
+      "status": "draft",
+      "definition": "Prefix cache 复用多个请求共享前缀的预填充结果，减少重复计算。",
+      "importance": "对系统提示、共享文档前缀或模板化请求很多的场景，它能明显降低计算浪费。",
+      "minimumDemo": "让多条请求共享相同前缀，比较 prefix cache 命中前后的首 token 时间。",
+      "prerequisites": [
+        "L/L3. 推理优化/KV cache",
+        "J/J1. 模型接口层/System / user / tool messages"
+      ],
+      "coreMetrics": [
+        "prefix cache hit rate",
+        "prefill time reduction"
+      ],
+      "next": [
+        "L/L3. 推理优化/Prefix cache sharing / invalidation",
+        "L/L7. 生产运行指标/Cost"
+      ]
+    },
+    "L/L3. 推理优化/Prefix cache sharing / invalidation": {
+      "status": "draft",
+      "definition": "这一层关注 prefix cache 如何在多请求间共享，以及在提示、权限或上下文变化时如何安全失效。",
+      "importance": "缓存命中很有价值，但错误共享或失效不当会直接引入隐私和正确性问题。",
+      "minimumDemo": "测试共享前缀在多租户或多版本提示下的命中与失效策略，检查是否有串扰。",
+      "prerequisites": [
+        "L/L3. 推理优化/Prefix cache",
+        "M/M7. 隐私与合规/Access control"
+      ],
+      "coreMetrics": [
+        "cache correctness",
+        "cross-tenant leak rate"
+      ],
+      "next": [
+        "L/L5. 系统基础设施/Cache",
+        "M/M7. 隐私与合规/Data retention"
+      ]
+    },
+    "L/L3. 推理优化/KV offload": {
+      "status": "draft",
+      "definition": "KV offload 把部分 KV cache 从高价值显存移到较慢层级，例如内存或其他设备，以换取更大上下文或更多并发。",
+      "importance": "它常用于显存受限但仍需支撑长上下文的场景，是容量与速度的直接权衡。",
+      "minimumDemo": "在显存受限环境下启用 KV offload，观察可支持上下文长度与延迟退化程度。",
+      "prerequisites": [
+        "L/L3. 推理优化/KV cache",
+        "L/L6. 硬件层/VRAM / RAM / disk constraints"
+      ],
+      "coreMetrics": [
+        "max usable context",
+        "latency penalty"
+      ],
+      "next": [
+        "L/L3. 推理优化/Context length management",
+        "L/L7. 生产运行指标/Context pressure"
+      ]
+    }
   }
 }

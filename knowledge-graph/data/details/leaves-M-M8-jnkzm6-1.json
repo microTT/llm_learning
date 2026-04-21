@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-M-M8-jnkzm6-1",
     "type": "leaf-batch",
     "label": "M8. 对抗测试与审计 / Leaves",
@@ -20,13 +20,98 @@
       "Postmortem"
     ],
     "nodeCount": 5,
-    "filledNodeCount": 0
+    "filledNodeCount": 5
   },
   "nodes": {
-    "M/M8. 对抗测试与审计/Red teaming": {},
-    "M/M8. 对抗测试与审计/Attack simulation": {},
-    "M/M8. 对抗测试与审计/Safety regression tests": {},
-    "M/M8. 对抗测试与审计/Incident review": {},
-    "M/M8. 对抗测试与审计/Postmortem": {}
+    "M/M8. 对抗测试与审计/Red teaming": {
+      "status": "draft",
+      "definition": "Red teaming 是站在攻击者和高风险用户视角，系统性寻找系统绕过路径和危险失效模式。",
+      "importance": "很多高风险问题不会在常规评测里出现，只能靠对抗视角主动发现。",
+      "minimumDemo": "围绕越狱、注入、敏感工具误用和数据泄露设计一组红队任务并执行。",
+      "prerequisites": [
+        "M/M5. 安全控制/Jailbreak defense",
+        "M/M6. Guardrails/Policy guardrails"
+      ],
+      "coreMetrics": [
+        "attack discovery rate",
+        "critical issue density"
+      ],
+      "next": [
+        "M/M8. 对抗测试与审计/Attack simulation",
+        "M/M8. 对抗测试与审计/Safety regression tests"
+      ]
+    },
+    "M/M8. 对抗测试与审计/Attack simulation": {
+      "status": "draft",
+      "definition": "Attack simulation 把常见攻击路径程序化或模板化，反复验证系统在特定攻击模式下的表现。",
+      "importance": "它把一次性红队演练转成可重复的安全回归资产。",
+      "minimumDemo": "为提示注入、越狱和敏感工具误用各写一个自动化攻击样例，并对新版本重放。",
+      "prerequisites": [
+        "M/M8. 对抗测试与审计/Red teaming",
+        "M/M5. 安全控制/Prompt injection defense"
+      ],
+      "coreMetrics": [
+        "attack replay pass rate",
+        "mitigation durability"
+      ],
+      "next": [
+        "M/M8. 对抗测试与审计/Safety regression tests",
+        "M/M4. 在线评测/Canary / regression set"
+      ]
+    },
+    "M/M8. 对抗测试与审计/Safety regression tests": {
+      "status": "draft",
+      "definition": "Safety regression tests 把曾经发现的高风险失败沉淀成稳定回归集，防止修好后再次复发。",
+      "importance": "如果安全失败不回流为回归测试，团队会持续重复踩同一类坑。",
+      "minimumDemo": "把历史安全事故和红队发现转成自动化测试，并接入版本回归流程。",
+      "prerequisites": [
+        "M/M8. 对抗测试与审计/Attack simulation",
+        "M/M4. 在线评测/Canary / regression set"
+      ],
+      "coreMetrics": [
+        "safety regression catch rate",
+        "repeat incident rate"
+      ],
+      "next": [
+        "M/M4. 在线评测/Canary / regression set",
+        "N/N6. 持续改进闭环/新 evals"
+      ]
+    },
+    "M/M8. 对抗测试与审计/Incident review": {
+      "status": "draft",
+      "definition": "Incident review 在安全事件、严重失败或合规异常发生后，对事实、影响、时间线和控制失效点做复盘。",
+      "importance": "没有事件复盘，系统就只能在事故后恢复运行，而不能真正变得更稳。",
+      "minimumDemo": "对一次线上安全或合规事件整理时间线、影响面、根因和修复动作。",
+      "prerequisites": [
+        "M/M7. 隐私与合规/Audit logs",
+        "K/K9. Agent 观测与控制/Auditability"
+      ],
+      "coreMetrics": [
+        "time to root cause",
+        "remediation completeness"
+      ],
+      "next": [
+        "M/M8. 对抗测试与审计/Postmortem",
+        "N/N6. 持续改进闭环"
+      ]
+    },
+    "M/M8. 对抗测试与审计/Postmortem": {
+      "status": "draft",
+      "definition": "Postmortem 是把事故复盘转成可执行改进的文档和行动列表，明确责任、优先级和回归项。",
+      "importance": "只有把复盘结果落成责任人和回归资产，事故经验才不会停留在口头讨论。",
+      "minimumDemo": "为一次事故输出 postmortem，包含根因、修复、负责人、完成时限和新增回归项。",
+      "prerequisites": [
+        "M/M8. 对抗测试与审计/Incident review",
+        "N/N6. 持续改进闭环"
+      ],
+      "coreMetrics": [
+        "action item closure rate",
+        "recurrence reduction"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环",
+        "M/M8. 对抗测试与审计/Safety regression tests"
+      ]
+    }
   }
 }

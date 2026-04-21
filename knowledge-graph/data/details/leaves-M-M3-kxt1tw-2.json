@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-M-M3-kxt1tw-2",
     "type": "leaf-batch",
     "label": "M3. Agent 级评测 / Leaves 2",
@@ -21,14 +21,116 @@
       "Failure taxonomy"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 0
+    "filledNodeCount": 6
   },
   "nodes": {
-    "M/M3. Agent 级评测/Handoff correctness": {},
-    "M/M3. Agent 级评测/Routing quality": {},
-    "M/M3. Agent 级评测/Policy compliance": {},
-    "M/M3. Agent 级评测/Workflow completion rate": {},
-    "M/M3. Agent 级评测/Approval correctness": {},
-    "M/M3. Agent 级评测/Failure taxonomy": {}
+    "M/M3. Agent 级评测/Handoff correctness": {
+      "status": "draft",
+      "definition": "Handoff correctness 检查任务在 agent 或人机之间交接时，必要状态、证据和待办是否被完整传递。",
+      "importance": "多 agent 失败很大一部分不是模型不行，而是交接把上下文丢了。",
+      "minimumDemo": "抽样多 agent 任务，检查 handoff 前后任务目标、证据和未完成事项是否一致。",
+      "prerequisites": [
+        "K/K4. 多 Agent 模式/Handoff",
+        "K/K9. Agent 观测与控制/Handoff records"
+      ],
+      "coreMetrics": [
+        "handoff completeness",
+        "context loss rate"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Routing quality",
+        "M/M3. Agent 级评测/Failure taxonomy"
+      ]
+    },
+    "M/M3. Agent 级评测/Routing quality": {
+      "status": "draft",
+      "definition": "Routing quality 评估系统是否把任务送到了合适模型、合适工具或合适专长 agent，而不是随机碰运气。",
+      "importance": "路由一旦错，后面的每一步都可能在错误轨道上高成本运行。",
+      "minimumDemo": "为一组需要不同专家或工具的任务检查路由决策是否匹配目标和上下文。",
+      "prerequisites": [
+        "K/K4. 多 Agent 模式/Router / specialists",
+        "M/M3. Agent 级评测/Trace schema"
+      ],
+      "coreMetrics": [
+        "routing precision",
+        "misroute cost"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Tool selection correctness",
+        "M/M3. Agent 级评测/Failure taxonomy"
+      ]
+    },
+    "M/M3. Agent 级评测/Policy compliance": {
+      "status": "draft",
+      "definition": "Policy compliance 检查 agent 在真实执行过程中是否遵守权限、审批、安全和内容策略，而不是只看最终文本有没有违规。",
+      "importance": "agent 一旦有副作用能力，过程合规往往比回答内容本身更关键。",
+      "minimumDemo": "针对带审批和 guardrail 的任务，检查 agent 是否绕过限制、误放行或遗漏校验。",
+      "prerequisites": [
+        "M/M6. Guardrails/Policy guardrails",
+        "K/K9. Agent 观测与控制/Guardrail results"
+      ],
+      "coreMetrics": [
+        "policy pass rate",
+        "bypass rate"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Approval correctness",
+        "M/M3. Agent 级评测/Failure taxonomy"
+      ]
+    },
+    "M/M3. Agent 级评测/Workflow completion rate": {
+      "status": "draft",
+      "definition": "Workflow completion rate 评估 agent 在多步任务中真正把目标推进到完成状态的比例，而不是停在半路或循环空转。",
+      "importance": "对 agent 来说，完成率比单步正确率更接近业务价值，因为很多失败都出在长路径稳定性。",
+      "minimumDemo": "用一组真实多步任务统计完成率、平均步数、失败阶段和中途人工介入情况。",
+      "prerequisites": [
+        "K/K5. 图式编排/Resumability",
+        "M/M2. 应用级评测/Failure recovery"
+      ],
+      "coreMetrics": [
+        "workflow completion rate",
+        "average steps to completion"
+      ],
+      "next": [
+        "M/M4. 在线评测/Task completion",
+        "M/M3. Agent 级评测/Failure taxonomy"
+      ]
+    },
+    "M/M3. Agent 级评测/Approval correctness": {
+      "status": "draft",
+      "definition": "Approval correctness 检查系统是否在该拦截时拦截、该放行时放行，并且审批上下文足以支持人做判断。",
+      "importance": "审批点如果设计错了，要么形同虚设，要么把人类 review 队列拖垮。",
+      "minimumDemo": "抽样带审批任务，检查审批触发时机、展示信息和最终放行决策是否合理。",
+      "prerequisites": [
+        "K/K8. 人在回路/Approval before side effects",
+        "J/J8. 安全与权限/Sensitive action approval"
+      ],
+      "coreMetrics": [
+        "approval precision",
+        "false approval rate"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Policy compliance",
+        "M/M4. 在线评测/Human feedback"
+      ]
+    },
+    "M/M3. Agent 级评测/Failure taxonomy": {
+      "status": "draft",
+      "definition": "Failure taxonomy 把 agent 失败稳定归类为 retrieval、routing、tool、approval、policy、state、UX 等类型，供修复和回归使用。",
+      "importance": "没有稳定失败分类，团队只能每次从头吵一遍“这到底算模型问题还是系统问题”。",
+      "minimumDemo": "给一批失败 trace 打标签，形成统一 taxonomy，并把它接进回归和线上问题归因流程。",
+      "prerequisites": [
+        "M/M3. Agent 级评测/Trace schema",
+        "M/M4. 在线评测/Real-user failure mining"
+      ],
+      "coreMetrics": [
+        "failure attribution consistency",
+        "repeat failure rate"
+      ],
+      "next": [
+        "M/M4. 在线评测/Real-user failure mining",
+        "N/N6. 持续改进闭环"
+      ]
+    }
   }
 }

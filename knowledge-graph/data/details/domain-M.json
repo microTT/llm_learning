@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-18",
+    "updatedAt": "2026-04-21",
     "shardId": "domain-M",
     "type": "domain-overview",
     "label": "M. 评测、安全与治理 / 概览",
@@ -14,7 +14,7 @@
     "parentTitle": null,
     "leafTitles": [],
     "nodeCount": 9,
-    "filledNodeCount": 1
+    "filledNodeCount": 9
   },
   "nodes": {
     "M": {
@@ -88,13 +88,211 @@
         "M/M8. 对抗测试与审计"
       ]
     },
-    "M/M1. 模型级评测": {},
-    "M/M2. 应用级评测": {},
-    "M/M3. Agent 级评测": {},
-    "M/M4. 在线评测": {},
-    "M/M5. 安全控制": {},
-    "M/M6. Guardrails": {},
-    "M/M7. 隐私与合规": {},
-    "M/M8. 对抗测试与审计": {}
+    "M/M1. 模型级评测": {
+      "status": "draft",
+      "definition": "模型级评测聚焦基础模型本身的能力与约束，不依赖完整应用或 agent 环境，主要回答“这个模型本体擅长什么、不稳定在哪、成本怎样”。",
+      "importance": "它是模型选型、版本切换和基础回归的第一层。如果这层不清楚，后续应用问题很容易把模型能力缺口、提示词问题和系统问题混在一起。",
+      "minimumDemo": "拿同一组固定任务对比 2 到 3 个模型，覆盖语言、推理、结构化输出、安全和延迟成本，并输出统一报告。",
+      "prerequisites": [
+        "M",
+        "J/J2. 结构化输出",
+        "G/G6. 局限面"
+      ],
+      "coreMetrics": [
+        "capability pass rate",
+        "safety violation rate",
+        "latency",
+        "cost"
+      ],
+      "next": [
+        "M/M1. 模型级评测/语言能力",
+        "M/M1. 模型级评测/推理能力",
+        "M/M1. 模型级评测/多模态能力",
+        "M/M1. 模型级评测/结构化输出正确率",
+        "M/M1. 模型级评测/安全性",
+        "M/M1. 模型级评测/稳定性",
+        "M/M1. 模型级评测/延迟/成本"
+      ]
+    },
+    "M/M2. 应用级评测": {
+      "status": "draft",
+      "definition": "应用级评测关注真实产品形态里的结果质量：最终答案对不对、引用真不真、结构化输出是否合法、工具有没有成功执行、用户体验是否一致。",
+      "importance": "同一个模型在不同应用里的表现可能差别极大；只有到应用层，检索、提示、状态、工具和前端交互的组合效果才会显现。",
+      "minimumDemo": "选一个具体应用形态，准备一组真实任务样本，分别对答案、引用、schema、工具和恢复路径打分。",
+      "prerequisites": [
+        "M/M1. 模型级评测",
+        "J/J9. 应用形态",
+        "I/I3. RAG 管线"
+      ],
+      "coreMetrics": [
+        "answer correctness",
+        "citation accuracy",
+        "schema adherence",
+        "failure recovery"
+      ],
+      "next": [
+        "M/M2. 应用级评测/最终答案正确性",
+        "M/M2. 应用级评测/引用真实性",
+        "M/M2. 应用级评测/Schema adherence",
+        "M/M2. 应用级评测/Tool execution success",
+        "M/M2. 应用级评测/UX consistency",
+        "M/M2. 应用级评测/Failure recovery"
+      ]
+    },
+    "M/M3. Agent 级评测": {
+      "status": "draft",
+      "definition": "Agent 级评测不只看最终答案，还检查过程、工具选择、交接、审批和产物，回答“这个 agent 是不是以正确方式完成了任务”。",
+      "importance": "agent 系统的很多失败不会反映在最终文本里，而藏在 trace、routing、tool 使用和副作用控制中；没有这层就无法真正治理 agent。",
+      "minimumDemo": "为一个多步 agent 任务定义 trace schema、rubric 和 artifact checker，并分别对结果、过程和审批正确性评分。",
+      "prerequisites": [
+        "K/K9. Agent 观测与控制",
+        "K/K4. 多 Agent 模式",
+        "M/M2. 应用级评测"
+      ],
+      "coreMetrics": [
+        "workflow completion rate",
+        "tool selection correctness",
+        "policy compliance",
+        "approval correctness"
+      ],
+      "next": [
+        "M/M3. Agent 级评测/Trace schema",
+        "M/M3. Agent 级评测/Grader rubric",
+        "M/M3. Agent 级评测/Outcome checks",
+        "M/M3. Agent 级评测/Process checks",
+        "M/M3. Agent 级评测/Artifact checks",
+        "M/M3. Agent 级评测/Trace grading",
+        "M/M3. Agent 级评测/Tool selection correctness",
+        "M/M3. Agent 级评测/Handoff correctness",
+        "M/M3. Agent 级评测/Routing quality",
+        "M/M3. Agent 级评测/Policy compliance",
+        "M/M3. Agent 级评测/Workflow completion rate",
+        "M/M3. Agent 级评测/Approval correctness",
+        "M/M3. Agent 级评测/Failure taxonomy"
+      ]
+    },
+    "M/M4. 在线评测": {
+      "status": "draft",
+      "definition": "在线评测关注系统进入真实流量后的表现，包括 A/B、人工反馈、接受率、任务完成率、业务指标、灰度回归和真实失败样本挖掘。",
+      "importance": "离线分数只能说明一部分问题；真实用户行为、上下文噪声和组织流程约束，通常只有在线上才会完整暴露。",
+      "minimumDemo": "给一个已上线能力接入接受率、任务完成率和失败回放，并维护一组 canary cases 守住关键回归。",
+      "prerequisites": [
+        "M/M2. 应用级评测",
+        "M/M3. Agent 级评测",
+        "J/J7. 工程可靠性"
+      ],
+      "coreMetrics": [
+        "acceptance rate",
+        "task completion",
+        "business lift",
+        "failure discovery rate"
+      ],
+      "next": [
+        "M/M4. 在线评测/A/B tests",
+        "M/M4. 在线评测/Human feedback",
+        "M/M4. 在线评测/Acceptance rate",
+        "M/M4. 在线评测/Task completion",
+        "M/M4. 在线评测/Business KPIs",
+        "M/M4. 在线评测/Canary / regression set",
+        "M/M4. 在线评测/Real-user failure mining"
+      ]
+    },
+    "M/M5. 安全控制": {
+      "status": "draft",
+      "definition": "安全控制是面向运行时风险的主动约束层，覆盖内容审查、越狱防护、提示注入防护、敏感工具限制、最小权限、sandbox、审批门和限流。",
+      "importance": "这是把模型与真实副作用世界隔开的第一道工程边界；没有它，系统再聪明也不具备上线条件。",
+      "minimumDemo": "给一个带工具和外部数据访问的应用加入 moderation、审批、最小权限和 sandbox 四类控制，并验证它们真的生效。",
+      "prerequisites": [
+        "J/J8. 安全与权限",
+        "K/K7. 工具与外部连接",
+        "M/M1. 模型级评测/安全性"
+      ],
+      "coreMetrics": [
+        "unsafe action block rate",
+        "attack success rate",
+        "false positive rate"
+      ],
+      "next": [
+        "M/M5. 安全控制/Moderation",
+        "M/M5. 安全控制/Jailbreak defense",
+        "M/M5. 安全控制/Prompt injection defense",
+        "M/M5. 安全控制/Sensitive tool controls",
+        "M/M5. 安全控制/Least privilege",
+        "M/M5. 安全控制/Sandboxing",
+        "M/M5. 安全控制/Approval gates",
+        "M/M5. 安全控制/Rate limiting"
+      ]
+    },
+    "M/M6. Guardrails": {
+      "status": "draft",
+      "definition": "Guardrails 是运行时的轻量检查与拦截层，作用在输入、输出、工具、策略、schema 和敏感信息处理上。",
+      "importance": "它不是替代安全控制，而是把高频可自动判断的边界前移到执行链路中，减少明显错误进入后续步骤。",
+      "minimumDemo": "给一次调用链加上输入检查、输出检查、工具检查和 schema 校验，并记录每次放行或拦截原因。",
+      "prerequisites": [
+        "M/M5. 安全控制",
+        "J/J2. 结构化输出",
+        "K/K9. Agent 观测与控制"
+      ],
+      "coreMetrics": [
+        "guardrail hit rate",
+        "false block rate",
+        "policy pass rate"
+      ],
+      "next": [
+        "M/M6. Guardrails/Input guardrails",
+        "M/M6. Guardrails/Output guardrails",
+        "M/M6. Guardrails/Tool guardrails",
+        "M/M6. Guardrails/Policy guardrails",
+        "M/M6. Guardrails/Schema validation",
+        "M/M6. Guardrails/Redaction / filtering"
+      ]
+    },
+    "M/M7. 隐私与合规": {
+      "status": "draft",
+      "definition": "隐私与合规关注个人信息、访问边界、留存策略、审计留痕和组织治理要求，确保 AI 系统不仅可用，也符合法规和组织约束。",
+      "importance": "很多 AI 系统的最大风险并不在回答错，而在越权读写、留存过久、泄露敏感信息或缺乏审计证据。",
+      "minimumDemo": "为一个涉及用户数据的应用定义 PII 处理、访问控制、保留周期和审计日志，并检查链路是否可追踪。",
+      "prerequisites": [
+        "J/J8. 安全与权限",
+        "M/M6. Guardrails",
+        "K/K9. Agent 观测与控制/Auditability"
+      ],
+      "coreMetrics": [
+        "access violation rate",
+        "redaction coverage",
+        "audit coverage"
+      ],
+      "next": [
+        "M/M7. 隐私与合规/PII handling",
+        "M/M7. 隐私与合规/Data retention",
+        "M/M7. 隐私与合规/Access control",
+        "M/M7. 隐私与合规/Audit logs",
+        "M/M7. 隐私与合规/Regulatory compliance",
+        "M/M7. 隐私与合规/Governance policies"
+      ]
+    },
+    "M/M8. 对抗测试与审计": {
+      "status": "draft",
+      "definition": "对抗测试与审计关注在攻击、事故和边界情境下系统会如何失效，并把这些发现转成回归测试、审计材料和改进动作。",
+      "importance": "如果只在正常样本上测系统，很多高风险问题直到事故发生才会真正暴露。",
+      "minimumDemo": "对一个带检索和工具调用的系统做一次小型红队演练，并把发现的问题沉淀成安全回归用例和 postmortem。",
+      "prerequisites": [
+        "M/M5. 安全控制",
+        "M/M6. Guardrails",
+        "M/M7. 隐私与合规"
+      ],
+      "coreMetrics": [
+        "attack discovery rate",
+        "incident recurrence rate",
+        "postmortem closure rate"
+      ],
+      "next": [
+        "M/M8. 对抗测试与审计/Red teaming",
+        "M/M8. 对抗测试与审计/Attack simulation",
+        "M/M8. 对抗测试与审计/Safety regression tests",
+        "M/M8. 对抗测试与审计/Incident review",
+        "M/M8. 对抗测试与审计/Postmortem"
+      ]
+    }
   }
 }

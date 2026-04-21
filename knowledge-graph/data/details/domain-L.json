@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-18",
+    "updatedAt": "2026-04-21",
     "shardId": "domain-L",
     "type": "domain-overview",
     "label": "L. 运行时与基础设施 / 概览",
@@ -14,7 +14,7 @@
     "parentTitle": null,
     "leafTitles": [],
     "nodeCount": 8,
-    "filledNodeCount": 1
+    "filledNodeCount": 8
   },
   "nodes": {
     "L": {
@@ -88,12 +88,186 @@
         "L/L7. 生产运行指标"
       ]
     },
-    "L/L1. 模型访问方式": {},
-    "L/L2. 服务运行时": {},
-    "L/L3. 推理优化": {},
-    "L/L4. 训练基础设施": {},
-    "L/L5. 系统基础设施": {},
-    "L/L6. 硬件层": {},
-    "L/L7. 生产运行指标": {}
+    "L/L1. 模型访问方式": {
+      "status": "draft",
+      "definition": "模型访问方式回答的是模型能力从哪里来、以什么边界被应用调用：直接走云 API、自托管推理、本地推理、浏览器/边缘推理，或做混合路由。",
+      "importance": "这一步决定了隐私边界、延迟上限、成本结构和工程复杂度。很多技术方案不是模型选错，而是访问方式与场景不匹配。",
+      "minimumDemo": "用同一类任务分别接云 API 和本地或自托管模型，对比延迟、成本、可控性和部署复杂度。",
+      "prerequisites": [
+        "L",
+        "J/J1. 模型接口层",
+        "L/L6. 硬件层"
+      ],
+      "coreMetrics": [
+        "latency",
+        "cost",
+        "privacy boundary",
+        "operational complexity"
+      ],
+      "next": [
+        "L/L1. 模型访问方式/云 API",
+        "L/L1. 模型访问方式/自托管推理",
+        "L/L1. 模型访问方式/本地推理",
+        "L/L1. 模型访问方式/浏览器 / Edge 推理",
+        "L/L1. 模型访问方式/混合推理"
+      ]
+    },
+    "L/L2. 服务运行时": {
+      "status": "draft",
+      "definition": "服务运行时是承载模型推理的执行层，例如 vLLM、Ollama、MLX / MLX-LM、Transformers.js 和其他 OpenAI-compatible servers。",
+      "importance": "同样的模型落在不同 runtime 上，吞吐、尾延迟、显存利用率和运维成本会有明显差异。",
+      "minimumDemo": "在同一模型上比较两种 runtime 的部署、吞吐和观测能力，并记录适合的使用场景。",
+      "prerequisites": [
+        "L/L1. 模型访问方式",
+        "L/L3. 推理优化"
+      ],
+      "coreMetrics": [
+        "throughput",
+        "p95 latency",
+        "runtime stability"
+      ],
+      "next": [
+        "L/L2. 服务运行时/vLLM",
+        "L/L2. 服务运行时/Ollama",
+        "L/L2. 服务运行时/MLX / MLX-LM",
+        "L/L2. 服务运行时/Transformers.js",
+        "L/L2. 服务运行时/其他 OpenAI-compatible servers"
+      ]
+    },
+    "L/L3. 推理优化": {
+      "status": "draft",
+      "definition": "推理优化关注在固定模型能力下，如何通过缓存、批处理、量化、编译和并发控制把服务做得更快、更稳、更便宜。",
+      "importance": "生产问题常常不是模型不会答，而是同样答案要花太久、太贵或高并发下顶不住。",
+      "minimumDemo": "拿一个 serving 场景，对比开启和关闭 cache、continuous batching 或量化后的延迟与吞吐差异。",
+      "prerequisites": [
+        "L/L2. 服务运行时",
+        "G/G2. Transformer 机制/Self-attention"
+      ],
+      "coreMetrics": [
+        "first-token latency",
+        "throughput",
+        "GPU utilization",
+        "cost per token"
+      ],
+      "next": [
+        "L/L3. 推理优化/PagedAttention",
+        "L/L3. 推理优化/Continuous batching",
+        "L/L3. 推理优化/Chunked prefill",
+        "L/L3. 推理优化/KV cache",
+        "L/L3. 推理优化/Prefix cache",
+        "L/L3. 推理优化/Prefix cache sharing / invalidation",
+        "L/L3. 推理优化/KV offload",
+        "L/L3. 推理优化/Speculative decoding",
+        "L/L3. 推理优化/Quantized inference",
+        "L/L3. 推理优化/Context length management",
+        "L/L3. 推理优化/Compiled graphs / kernels",
+        "L/L3. 推理优化/Concurrency control",
+        "L/L3. 推理优化/Throughput / latency tuning"
+      ]
+    },
+    "L/L4. 训练基础设施": {
+      "status": "draft",
+      "definition": "训练基础设施关注训练和微调作业用什么框架、如何分布式运行、如何 checkpoint、如何追踪实验以及如何把训练产物稳定交付给后续系统。",
+      "importance": "没有训练基础设施，后训练、蒸馏和持续改进就很难从一次实验变成可复现流程。",
+      "minimumDemo": "搭一个最小训练闭环：运行一次微调任务、保存 checkpoint、记录实验参数并验证可恢复。",
+      "prerequisites": [
+        "H/H4. 参数高效适配",
+        "H/H5. 压缩与效率优化",
+        "L/L6. 硬件层"
+      ],
+      "coreMetrics": [
+        "train throughput",
+        "checkpoint reliability",
+        "experiment reproducibility"
+      ],
+      "next": [
+        "L/L4. 训练基础设施/PyTorch",
+        "L/L4. 训练基础设施/Accelerate",
+        "L/L4. 训练基础设施/DDP",
+        "L/L4. 训练基础设施/FSDP",
+        "L/L4. 训练基础设施/Checkpointing",
+        "L/L4. 训练基础设施/Distributed training",
+        "L/L4. 训练基础设施/Experiment tracking"
+      ]
+    },
+    "L/L5. 系统基础设施": {
+      "status": "draft",
+      "definition": "系统基础设施是承载 AI 服务的通用底座，包括数据库、向量库、对象存储、缓存、队列、制品仓库和部署层。",
+      "importance": "很多 AI 系统的不稳定并不在模型层，而在存储、队列和部署链路是否与推理、检索和 agent 行为匹配。",
+      "minimumDemo": "把一个最小 AI 应用接上对象存储、缓存和队列，并观察延迟、恢复和并发行为变化。",
+      "prerequisites": [
+        "I/I2. 知识库构建",
+        "J/J7. 工程可靠性",
+        "K/K7. 工具与外部连接/Sandbox workspace"
+      ],
+      "coreMetrics": [
+        "cache hit rate",
+        "queue delay",
+        "artifact availability"
+      ],
+      "next": [
+        "L/L5. 系统基础设施/SQL / NoSQL",
+        "L/L5. 系统基础设施/Vector DB",
+        "L/L5. 系统基础设施/Object storage",
+        "L/L5. 系统基础设施/Cache",
+        "L/L5. 系统基础设施/Queue",
+        "L/L5. 系统基础设施/Artifact storage",
+        "L/L5. 系统基础设施/Container / deployment layer"
+      ]
+    },
+    "L/L6. 硬件层": {
+      "status": "draft",
+      "definition": "硬件层描述 CPU、GPU、NPU、统一内存、多卡和网络带宽等资源约束如何直接塑造训练和推理系统设计。",
+      "importance": "模型是否能跑、多大 batch 合理、上下文能开多长、是否适合多机扩展，最终都会落到硬件边界上。",
+      "minimumDemo": "在两类不同硬件上运行相同工作负载，比较吞吐、成本和内存压力的差异。",
+      "prerequisites": [
+        "L",
+        "L/L3. 推理优化",
+        "L/L4. 训练基础设施"
+      ],
+      "coreMetrics": [
+        "tokens/sec",
+        "GPU utilization",
+        "memory pressure",
+        "network bottleneck"
+      ],
+      "next": [
+        "L/L6. 硬件层/CPU",
+        "L/L6. 硬件层/GPU",
+        "L/L6. 硬件层/NPU",
+        "L/L6. 硬件层/Apple silicon unified memory",
+        "L/L6. 硬件层/Multi-GPU",
+        "L/L6. 硬件层/VRAM / RAM / disk constraints",
+        "L/L6. 硬件层/Network bandwidth"
+      ]
+    },
+    "L/L7. 生产运行指标": {
+      "status": "draft",
+      "definition": "生产运行指标是把推理系统的健康状态转成可持续监控和调优的指标体系，例如延迟、吞吐、成本、错误率、可用性、token 使用、GPU 利用率和上下文压力。",
+      "importance": "没有统一指标口径，很多优化和事故都只能凭感觉讨论，无法稳定复盘或做容量规划。",
+      "minimumDemo": "为一个推理服务接入延迟、吞吐、错误率和成本看板，并观察配置变更后的指标波动。",
+      "prerequisites": [
+        "L/L2. 服务运行时",
+        "L/L3. 推理优化",
+        "M/M4. 在线评测"
+      ],
+      "coreMetrics": [
+        "latency",
+        "throughput",
+        "cost",
+        "error rate",
+        "availability"
+      ],
+      "next": [
+        "L/L7. 生产运行指标/Latency",
+        "L/L7. 生产运行指标/Throughput",
+        "L/L7. 生产运行指标/Cost",
+        "L/L7. 生产运行指标/Error rate",
+        "L/L7. 生产运行指标/Availability",
+        "L/L7. 生产运行指标/Token usage",
+        "L/L7. 生产运行指标/GPU utilization",
+        "L/L7. 生产运行指标/Context pressure"
+      ]
+    }
   }
 }

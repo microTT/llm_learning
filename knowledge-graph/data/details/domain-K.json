@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-18",
+    "updatedAt": "2026-04-21",
     "shardId": "domain-K",
     "type": "domain-overview",
     "label": "K. Agent 系统 / 概览",
@@ -14,7 +14,7 @@
     "parentTitle": null,
     "leafTitles": [],
     "nodeCount": 17,
-    "filledNodeCount": 4
+    "filledNodeCount": 17
   },
   "nodes": {
     "K": {
@@ -80,7 +80,7 @@
       ]
     },
     "K/K1. Agent 的最小构成": {
-      "status": "seed",
+      "status": "draft",
       "definition": "一个最小可工作的 Agent 系统至少需要模型、指令、工具、状态/记忆和编排，还需要 guardrails 与 human review 来控制副作用。",
       "importance": "这组原语把“能对话的模型”提升成“能完成多步任务的系统”，也是后续拆分单 Agent / 多 Agent / 图式编排的统一抽象。",
       "minimumDemo": "做一个最小 coding agent：读取文件、执行 shell、保存状态，并在危险操作前请求审批。",
@@ -119,21 +119,353 @@
         "M/M6. Guardrails"
       ]
     },
-    "K/K2. 执行形态": {},
-    "K/K2. 执行形态/Workflow": {},
-    "K/K2. 执行形态/Agent": {},
-    "K/K2. 执行形态/Hybrid system": {},
-    "K/K3. 单 Agent 模式": {},
-    "K/K4. 多 Agent 模式": {},
-    "K/K5. 图式编排": {},
-    "K/K6. Agent 记忆": {},
-    "K/K7. 工具与外部连接": {},
+    "K/K2. 执行形态": {
+      "status": "draft",
+      "definition": "执行形态关注系统把模型放进什么样的控制框架里：完全固定路径的 workflow、能动态决定步骤和工具的 agent，或两者混合的 hybrid system。它回答的不是“能不能调工具”，而是“谁来决定下一步、在哪些地方允许动态性、在哪些地方保持固定骨架”。",
+      "importance": "很多系统并不需要 full agent，也不是纯 workflow 就够。执行形态选错了，通常会在两个极端里摇摆：要么流程太死，遇到变化就失败；要么动态性太强，成本、时延和风险都失控。",
+      "minimumDemo": "拿同一类任务分别实现 workflow、agent 和 hybrid 三种执行形态，对比任务完成率、平均步数、延迟和人工介入率。",
+      "hardwareBudget": "这层的成本主要体现在编排复杂度、调用次数和观测，而不是训练硬件。动态性越高，通常 token、工具调用和调试成本也越高。",
+      "examples": [
+        "固定审批流更适合 workflow，而不是让 agent 每步自由决定。",
+        "开放式研究任务更适合 agent，因为路径事先难以穷举。",
+        "很多实际系统采用 hybrid：主骨架固定，局部节点放给 agent 自主处理。"
+      ],
+      "pitfalls": [
+        "把固定 workflow 错叫成 agent，导致系统设计目标混乱。",
+        "为简单任务引入过多动态决策，收益远低于复杂度。",
+        "缺少明确终止条件，agent 模式容易空转。"
+      ],
+      "prerequisites": [
+        "K/K1. Agent 的最小构成",
+        "J/J3. 工具调用",
+        "J/J7. 工程可靠性"
+      ],
+      "coreMetrics": [
+        "task success rate",
+        "average steps",
+        "latency",
+        "cost",
+        "human intervention rate"
+      ],
+      "toolchain": [
+        "workflow runtime",
+        "agent loop runtime",
+        "trace logging",
+        "approval gates"
+      ],
+      "failureSigns": [
+        "简单任务路径被动态决策拖得又慢又贵。",
+        "开放任务被固定 workflow 卡死在预设分支里。",
+        "同类任务在不同执行形态下没有统一评测，难以选型。"
+      ],
+      "next": [
+        "K/K2. 执行形态/Workflow",
+        "K/K2. 执行形态/Agent",
+        "K/K2. 执行形态/Hybrid system",
+        "K/K3. 单 Agent 模式",
+        "K/K4. 多 Agent 模式"
+      ]
+    },
+    "K/K2. 执行形态/Workflow": {
+      "status": "draft",
+      "definition": "Workflow 以固定路径、显式状态机和规则驱动为主，模型通常只负责填补局部判断或生成内容，而不自由决定整体流程。",
+      "importance": "它最适合要求强审计、强稳定性和明确审批边界的业务流程，是许多生产系统的默认起点。",
+      "minimumDemo": "把一个审批或表单处理任务用固定节点和条件分支实现，验证每步输入输出都可预测。",
+      "prerequisites": [
+        "K/K2. 执行形态",
+        "K/K5. 图式编排"
+      ],
+      "coreMetrics": [
+        "path determinism",
+        "recovery success",
+        "approval correctness"
+      ],
+      "next": [
+        "K/K2. 执行形态/Hybrid system",
+        "K/K5. 图式编排/Conditional branches"
+      ]
+    },
+    "K/K2. 执行形态/Agent": {
+      "status": "draft",
+      "definition": "Agent 模式允许系统在执行中动态决定下一步、工具选择和终止条件，强调适应开放任务和不完整信息。",
+      "importance": "它能覆盖更复杂任务，但代价是更高的不确定性、成本和失败模式复杂度。",
+      "minimumDemo": "给一个开放任务只定义目标和工具，不预先写死路径，观察 agent 在 3 到 6 步内如何推进。",
+      "prerequisites": [
+        "K/K2. 执行形态",
+        "K/K3. 单 Agent 模式/ReAct / reason-act loop"
+      ],
+      "coreMetrics": [
+        "adaptive success rate",
+        "step efficiency",
+        "looping rate"
+      ],
+      "next": [
+        "K/K3. 单 Agent 模式",
+        "K/K4. 多 Agent 模式"
+      ]
+    },
+    "K/K2. 执行形态/Hybrid system": {
+      "status": "draft",
+      "definition": "Hybrid system 用固定骨架承载主要流程，把少数高不确定性节点交给 agent 自主决策，平衡稳定性与灵活性。",
+      "importance": "这是实际系统里最常见也最实用的折中方案，特别适合需要审批、状态机和部分开放决策共存的任务。",
+      "minimumDemo": "在一个固定工作流里把检索和分析节点换成 agent 决策，比较整体稳定性和覆盖面。",
+      "prerequisites": [
+        "K/K2. 执行形态/Workflow",
+        "K/K2. 执行形态/Agent"
+      ],
+      "coreMetrics": [
+        "hybrid task success",
+        "controlled flexibility",
+        "cost trade-off"
+      ],
+      "next": [
+        "K/K5. 图式编排/Conditional branches",
+        "J/J9. 应用形态/Workflow assistant"
+      ]
+    },
+    "K/K3. 单 Agent 模式": {
+      "status": "draft",
+      "definition": "单 Agent 模式讨论一个 agent 如何在自己的 loop 里完成观察、计划、调用工具、读结果、验证和终止，而不依赖多 agent 分工。",
+      "importance": "这是大多数 agent 系统的第一步，因为单 agent 更容易调试、更容易评测，也更能看清真实瓶颈到底来自模型、工具还是状态设计。",
+      "minimumDemo": "实现一个受控单 agent loop，支持检索、工具调用和结果验证，并输出逐步 trace。",
+      "hardwareBudget": "主要成本在多步推理和工具链，而不是训练硬件。相比多 agent，单 agent 更容易控制 token 和同步成本。",
+      "examples": [
+        "单 agent coding loop：读错误、改代码、跑测试、根据结果继续或结束。",
+        "单 agent research loop：检索资料、总结证据、检查缺口、继续检索。"
+      ],
+      "pitfalls": [
+        "把所有模式都塞进一个大 prompt，导致决策和状态边界混乱。",
+        "单 agent 一旦过度承担规划、执行、审查全部职责，就会变得难调且不稳。"
+      ],
+      "prerequisites": [
+        "K/K2. 执行形态/Agent",
+        "K/K1. Agent 的最小构成"
+      ],
+      "coreMetrics": [
+        "loop completion rate",
+        "useful step ratio",
+        "self-correction rate"
+      ],
+      "toolchain": [
+        "agent loop runtime",
+        "tool adapter",
+        "trace log"
+      ],
+      "failureSigns": [
+        "agent 经常在同一类步骤中循环。",
+        "最后答案看似合理，但 trace 显示关键证据从未出现。"
+      ],
+      "next": [
+        "K/K3. 单 Agent 模式/ReAct / reason-act loop",
+        "K/K3. 单 Agent 模式/Plan-then-act",
+        "K/K3. 单 Agent 模式/Reflect / retry",
+        "K/K3. 单 Agent 模式/Tool-using agent",
+        "K/K3. 单 Agent 模式/Retrieval-first agent",
+        "K/K3. 单 Agent 模式/Verification loop",
+        "K/K4. 多 Agent 模式"
+      ]
+    },
+    "K/K4. 多 Agent 模式": {
+      "status": "draft",
+      "definition": "多 Agent 模式把任务拆给不同职责或专长的 agent 协作完成，例如 manager / worker、router / specialists、reviewer / critic 等模式。",
+      "importance": "它适合职责天然可拆、评审和验证独立、或需要多种专长并行的任务，但会显著增加上下文传递、handoff 和协调成本。",
+      "minimumDemo": "做一个两 agent 系统：planner 负责拆任务，worker 负责执行，再比较与单 agent 的完成率和 trace 复杂度。",
+      "hardwareBudget": "多 agent 往往放大 token、调度和同步成本；即使单个模型不大，整体成本也可能迅速超过单 agent。",
+      "examples": [
+        "router 把请求分给 coding、research 和 workflow specialists。",
+        "reviewer 专门检查 worker 产物，决定是否通过或返工。",
+        "manager 汇总多个子任务结果后生成最终答案。"
+      ],
+      "pitfalls": [
+        "为简单任务过度拆 agent，协调成本高于收益。",
+        "handoff 格式不清，导致上下文不断丢失和重复。",
+        "每个 agent 都在做相似推理，实际没有形成真正分工。"
+      ],
+      "prerequisites": [
+        "K/K2. 执行形态/Agent",
+        "K/K3. 单 Agent 模式",
+        "M/M3. Agent 级评测"
+      ],
+      "coreMetrics": [
+        "handoff correctness",
+        "coordination overhead",
+        "parallel gain",
+        "review effectiveness"
+      ],
+      "toolchain": [
+        "agent router",
+        "handoff schema",
+        "review / verifier agents",
+        "trace graph"
+      ],
+      "failureSigns": [
+        "多个 agent 同时忙碌，但任务整体推进很少。",
+        "handoff 后责任边界模糊，出错无法定位是哪一段造成。"
+      ],
+      "next": [
+        "K/K4. 多 Agent 模式/Manager / worker",
+        "K/K4. 多 Agent 模式/Router / specialists",
+        "K/K4. 多 Agent 模式/Handoff",
+        "K/K4. 多 Agent 模式/Agents-as-tools",
+        "K/K4. 多 Agent 模式/Reviewer / critic / verifier",
+        "K/K4. 多 Agent 模式/Debate / voting",
+        "K/K4. 多 Agent 模式/Subgraphs",
+        "K/K8. 人在回路"
+      ]
+    },
+    "K/K5. 图式编排": {
+      "status": "draft",
+      "definition": "图式编排把 agent 运行时显式表达成图：状态是流经图的上下文，节点承载执行单元，边决定控制流，条件分支、循环、并行、检查点和恢复机制共同构成可维护的执行骨架。",
+      "importance": "一旦任务超过简单 loop，靠隐式 prompt 很难维持长期稳定。图式编排能把复杂 agent 逻辑转成可审计、可调试、可恢复的结构，是从 demo 走向工程化系统的关键一步。",
+      "minimumDemo": "把一个带检索、工具调用和审批节点的 agent 流程画成显式图，并支持失败后从某个 checkpoint 恢复继续执行。",
+      "hardwareBudget": "主要增加状态存储、编排运行时和恢复逻辑成本，而不是模型算力。真正贵的是复杂图里每个节点的推理和工具调用放大。 ",
+      "examples": [
+        "固定入口节点后，根据条件分支走向不同工具路径。",
+        "在关键节点写 checkpoint，失败后从最近检查点恢复。",
+        "对互不依赖的子任务做并行执行，再汇总结果。"
+      ],
+      "pitfalls": [
+        "图结构过于细碎，最终每个节点都只是绕一层 prompt。",
+        "没有显式状态模型，图再复杂也只是隐式流程图。",
+        "并行和循环一上来就用，结果调试和恢复成本爆炸。"
+      ],
+      "prerequisites": [
+        "K/K2. 执行形态",
+        "K/K4. 多 Agent 模式",
+        "J/J7. 工程可靠性"
+      ],
+      "coreMetrics": [
+        "graph execution success",
+        "resume success rate",
+        "parallel efficiency",
+        "state consistency"
+      ],
+      "toolchain": [
+        "graph runtime",
+        "checkpoint store",
+        "state machine / serializer",
+        "trace viewer"
+      ],
+      "failureSigns": [
+        "流程图看起来清晰，运行时却无法恢复或回放。",
+        "状态在节点之间传递时经常丢字段或错版本。",
+        "循环和并行一多，排障复杂度明显高于收益。"
+      ],
+      "next": [
+        "K/K5. 图式编排/State",
+        "K/K5. 图式编排/Nodes",
+        "K/K5. 图式编排/Edges",
+        "K/K5. 图式编排/Conditional branches",
+        "K/K5. 图式编排/Loops",
+        "K/K5. 图式编排/Parallel execution",
+        "K/K5. 图式编排/Checkpoints",
+        "K/K5. 图式编排/Resumability"
+      ]
+    },
+    "K/K6. Agent 记忆": {
+      "status": "draft",
+      "definition": "Agent 记忆关注执行体如何保存当前会话、任务、历史经历和长期抽象知识，并在合适时机注入给模型。它不是简单的历史拼接，而是围绕任务推进和恢复需求设计的分层状态系统。",
+      "importance": "没有记忆，agent 会在长任务里不断重来；记忆设计不好，又会把噪声、过期信息和隐私问题持续注入每一步。理解这层，是让 agent 稳定跨步骤工作的前提。",
+      "minimumDemo": "让 agent 在一次中断后恢复执行，并利用先前工具结果和已确认信息继续推进，而不是重新从头搜索和计划。",
+      "hardwareBudget": "主要成本在存储、检索和压缩，而不是训练硬件。长任务和多用户场景下，记忆治理成本往往比模型推理更快膨胀。",
+      "examples": [
+        "保留当前任务的中间结果，避免每次重算。",
+        "把多次执行的 episodic 经验压缩成长期语义记忆。",
+        "将用户偏好与任务状态分开保存，避免污染。"
+      ],
+      "pitfalls": [
+        "什么都存，导致噪声和敏感信息长期残留。",
+        "会话记忆、用户记忆和任务记忆边界不清。",
+        "记忆注入没有预算控制，最后把关键新证据挤出上下文。"
+      ],
+      "prerequisites": [
+        "I/I5. 记忆类型",
+        "J/J4. 会话与状态",
+        "K/K1. Agent 的最小构成/状态 / 记忆（State / Memory）"
+      ],
+      "coreMetrics": [
+        "memory hit quality",
+        "resume success rate",
+        "staleness",
+        "memory injection efficiency"
+      ],
+      "toolchain": [
+        "memory store",
+        "compaction / summarization",
+        "state serializer",
+        "retrieval adapters"
+      ],
+      "failureSigns": [
+        "同一任务做了多步，agent 却反复遗忘已确认事实。",
+        "记忆越积越多，token 成本和错误率同时上升。",
+        "用户长期信息和单次任务状态在回放中互相污染。"
+      ],
+      "next": [
+        "K/K6. Agent 记忆/Session memory",
+        "K/K6. Agent 记忆/Episodic memory",
+        "K/K6. Agent 记忆/Semantic memory",
+        "K/K6. Agent 记忆/User memory",
+        "K/K6. Agent 记忆/Task memory",
+        "K/K6. Agent 记忆/Long-term distilled memory",
+        "K/K6. Agent 记忆/Memory injection / compaction"
+      ]
+    },
+    "K/K7. 工具与外部连接": {
+      "status": "draft",
+      "definition": "工具与外部连接定义 agent 如何越过纯文本生成，去读文件、查知识、调用 API、操作系统、连接外部应用，并把这些能力放进统一可控的执行边界里。",
+      "importance": "很多 agent 的真正能力上限不取决于模型本身，而取决于它能接入哪些外部能力、这些能力如何被授权、如何被观测，以及失败后如何恢复。",
+      "minimumDemo": "给一个最小 agent 提供 3 类能力：函数工具、只读知识检索和受控工作区执行；要求每次调用都能被记录、审批和回放。",
+      "hardwareBudget": "学习和原型阶段主要依赖本地开发机、托管模型 API 和少量存储；成本重点在工具执行、网络访问、工作区隔离和审计，而不是训练算力。",
+      "examples": [
+        "用 function tools 调后端 API，完成查数据和写数据前的审批闭环。",
+        "用 file/web/code 工具让 agent 搜索资料、读代码并把证据回写到上下文。",
+        "通过 sandbox workspace 执行命令、产出 artifacts，并在人工 review 后回到同一工作区继续。"
+      ],
+      "pitfalls": [
+        "把工具接通就等于可用，忽略了权限、审批、回放和失败恢复。",
+        "让 agent 同时持有过大 scope 的外部权限，出错时影响面会迅速扩大。",
+        "没有统一的工具记录和审计，最后只能看到结果，看不到执行路径。"
+      ],
+      "prerequisites": [
+        "J/J3. 工具调用",
+        "J/J8. 安全与权限",
+        "K/K1. Agent 的最小构成"
+      ],
+      "coreMetrics": [
+        "tool success rate",
+        "permission correctness",
+        "workspace recovery success",
+        "unsafe action block rate"
+      ],
+      "toolchain": [
+        "tool adapters",
+        "MCP client/server stack",
+        "sandbox workspace",
+        "connectors",
+        "trace and audit store"
+      ],
+      "failureSigns": [
+        "模型能规划步骤，但一到外部调用就失败或越权。",
+        "副作用发生后没有足够的记录来解释是谁、为何、怎么做的。",
+        "审批回来后上下文或工作区状态已经丢失。"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/Built-in tools",
+        "K/K7. 工具与外部连接/Function tools",
+        "K/K7. 工具与外部连接/File search / web search / code tools",
+        "K/K7. 工具与外部连接/MCP protocol stack",
+        "K/K7. 工具与外部连接/MCP servers",
+        "K/K7. 工具与外部连接/Sandbox workspace",
+        "K/K7. 工具与外部连接/Connectors",
+        "K/K7. 工具与外部连接/Computer / shell / browser actions"
+      ]
+    },
     "K/K7. 工具与外部连接/MCP protocol stack": {
-      "status": "seed",
-      "definition": "MCP protocol stack 关注的是协议本身，而不是某一个 server：JSON-RPC 基座、生命周期、能力协商、授权、transport、roots / sampling 都在这里。",
-      "importance": "把 MCP 当成“某个工具列表”会错过它真正的工程价值：跨系统统一地暴露 resources / prompts / tools，并把权限和生命周期放进协议层。",
-      "minimumDemo": "起一个最小 MCP server，声明 resources 和 tools，再用 client 跑一次 capability negotiation 与调用。",
-      "hardwareBudget": "CPU 即可，重点是协议实现和权限配置。",
+      "status": "draft",
+      "definition": "MCP protocol stack 关注 client 和 server 如何在统一协议下声明能力、做授权、选择 transport，并把 resources、prompts、tools 作为可发现对象暴露出来。",
+      "importance": "它把“外部能力接入”从一堆临时约定提升为协议层能力，对跨工具、跨环境和跨组织协作尤其关键。",
+      "minimumDemo": "起一个最小 MCP server，暴露 resources 和 tools，再用 client 完成 initialize、capability negotiation、授权和一次调用。",
+      "hardwareBudget": "CPU 即可，重点在协议实现、权限边界和调试工具，而不是算力。",
       "prerequisites": [
         "A/A2. 计算机基础/网络与协议/RPC / JSON-RPC",
         "K/K7. 工具与外部连接",
@@ -142,25 +474,61 @@
       "coreMetrics": [
         "capability negotiation success",
         "auth success rate",
-        "tool call latency"
+        "tool call latency",
+        "transport reliability"
       ],
       "toolchain": [
         "MCP SDK / spec",
         "JSON-RPC transport",
-        "server logs"
+        "server logs",
+        "protocol inspector"
       ],
       "failureSigns": [
         "client 能连上 transport，但拿不到能力声明",
-        "授权通过后 resources / tools 仍然不可见"
+        "授权通过后 resources / tools 仍然不可见",
+        "server 能返回结果，但调用方无法判断能力是否变化"
       ],
       "next": [
-        "K/K7. 工具与外部连接/Sandbox workspace",
-        "J/J3. 工具调用"
+        "K/K7. 工具与外部连接/MCP protocol stack/Base protocol（JSON-RPC）",
+        "K/K7. 工具与外部连接/MCP protocol stack/Lifecycle & capability negotiation",
+        "K/K7. 工具与外部连接/MCP protocol stack/Authorization",
+        "K/K7. 工具与外部连接/MCP protocol stack/Transports（stdio / HTTP）",
+        "K/K7. 工具与外部连接/MCP protocol stack/Roots / sampling",
+        "K/K7. 工具与外部连接/MCP protocol stack/Logging / argument completion"
       ]
     },
-    "K/K7. 工具与外部连接/MCP servers": {},
+    "K/K7. 工具与外部连接/MCP servers": {
+      "status": "draft",
+      "definition": "MCP servers 是按协议暴露资源、提示模板和工具的服务端实体，回答的是“外部能力以什么对象模型被发现和调用”。",
+      "importance": "理解 server 层语义，才能把只读上下文、可复用提示和可执行动作分开设计，而不是把所有东西都塞成工具调用。",
+      "minimumDemo": "做一个最小 MCP server，同时暴露一个 resource、一个 prompt 和一个 tool，再让 client 区分三者的消费方式。",
+      "hardwareBudget": "通常是 CPU 和网络 I/O 场景；复杂度主要在对象建模、权限和生命周期，而不是硬件。",
+      "prerequisites": [
+        "K/K7. 工具与外部连接/MCP protocol stack",
+        "K/K7. 工具与外部连接"
+      ],
+      "coreMetrics": [
+        "object discovery success",
+        "capability separation quality"
+      ],
+      "toolchain": [
+        "MCP server SDK",
+        "resource registry",
+        "prompt templates",
+        "tool executor"
+      ],
+      "failureSigns": [
+        "本应做成 resource 的只读上下文被硬塞成工具调用。",
+        "prompt、resource、tool 的边界不清，client 侧难以稳定消费。"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/MCP servers/Resources",
+        "K/K7. 工具与外部连接/MCP servers/Prompts",
+        "K/K7. 工具与外部连接/MCP servers/Tools"
+      ]
+    },
     "K/K7. 工具与外部连接/Sandbox workspace": {
-      "status": "seed",
+      "status": "draft",
       "definition": "Sandbox workspace 是 Agent 运行时的一等资源：文件系统、命令、包、产物、端口和预览能力都应该有独立边界，而不是散落在若干工具定义里。",
       "importance": "对 coding agent、computer-use agent、workflow agent 来说，workspace 决定了状态是否可恢复、结果是否可审计、以及审批后能否回到同一上下文继续执行。",
       "minimumDemo": "做一个最小工作区：能写文件、执行命令、产出 artifacts，并在人工审批后恢复到同一目录状态继续运行。",
@@ -183,16 +551,153 @@
       ],
       "failureSigns": [
         "审批回来后 agent 丢失上下文或找不到之前的文件",
-        "命令执行结果和产物没有稳定落盘"
+        "命令执行结果和产物没有稳定落盘",
+        "工作区隔离不完整，任务之间互相污染"
       ],
       "next": [
-        "L/L5. 系统基础设施",
-        "M/M5. 安全控制",
-        "M/M7. 隐私与合规"
+        "K/K7. 工具与外部连接/Sandbox workspace/Workspace filesystem",
+        "K/K7. 工具与外部连接/Sandbox workspace/Commands / packages",
+        "K/K7. 工具与外部连接/Sandbox workspace/Artifacts",
+        "K/K7. 工具与外部连接/Sandbox workspace/Ports / preview",
+        "K/K7. 工具与外部连接/Sandbox workspace/Resume same workspace after review"
       ]
     },
-    "K/K8. 人在回路": {},
-    "K/K9. Agent 观测与控制": {},
-    "K/K10. Agent 形态分支": {}
+    "K/K8. 人在回路": {
+      "status": "draft",
+      "definition": "人在回路关注人在 agent 系统中以什么粒度、什么时机、什么权限参与执行，包括审批、升级、复核、人工纠偏和中途接管。",
+      "importance": "越接近真实副作用和高风险环境，HITL 就越不是可选增强，而是系统边界的一部分。没有它，agent 的能力越强，风险也越大。",
+      "minimumDemo": "在一个有副作用工具的 agent 流程里加入审批、拒绝、修改和人工接管四条路径，并验证状态能够继续推进。",
+      "hardwareBudget": "主要消耗在人审流程、通知、队列和审计，而不是模型算力。设计不当时，人工介入会迅速成为吞吐瓶颈。",
+      "examples": [
+        "执行 shell 或写数据库前先请求审批。",
+        "不确定度过高时升级到人工 review 队列。",
+        "人工可直接覆盖 agent 产物并让流程继续。"
+      ],
+      "pitfalls": [
+        "把审批做成只读提示，实际不能阻断执行。",
+        "人工介入后状态丢失，导致必须从头来。",
+        "没有定义什么场景必须升级，结果 review 队列被噪声淹没。"
+      ],
+      "prerequisites": [
+        "J/J8. 安全与权限",
+        "J/J9. 应用形态/Workflow assistant",
+        "K/K1. Agent 的最小构成/Human review"
+      ],
+      "coreMetrics": [
+        "approval correctness",
+        "escalation precision",
+        "manual correction success",
+        "human latency"
+      ],
+      "toolchain": [
+        "approval UI",
+        "review queue",
+        "audit log",
+        "resume / override controls"
+      ],
+      "failureSigns": [
+        "需要审批时系统直接执行了。",
+        "人工修改后 agent 继续沿用旧状态。",
+        "review 队列没有优先级和上下文，人工无法高效接手。"
+      ],
+      "next": [
+        "K/K8. 人在回路/Approval before side effects",
+        "K/K8. 人在回路/Escalation",
+        "K/K8. 人在回路/Review queues",
+        "K/K8. 人在回路/Human override",
+        "K/K8. 人在回路/Manual correction",
+        "K/K8. 人在回路/HITL checkpoints"
+      ]
+    },
+    "K/K9. Agent 观测与控制": {
+      "status": "draft",
+      "definition": "Agent 观测与控制关注如何记录并查看 agent 的每一步：trace、step log、工具记录、handoff、guardrail 命中和审计链路，让系统从黑盒变成可回放、可调参、可治理的运行体。",
+      "importance": "Agent 如果没有观测面，出了问题就只能靠猜；一旦任务跨多步、多工具或多 agent，这种黑盒性会迅速让系统不可维护。",
+      "minimumDemo": "为一次多步 agent 任务记录完整 trace，并能从 request ID 追到每一步、每次工具调用、每次 handoff 和最终结果。",
+      "hardwareBudget": "这层主要增加日志、trace 存储和可视化成本，而不是推理算力。高并发场景下，trace 体积和保留策略会成为主要治理问题。",
+      "examples": [
+        "能回放 agent 每一步做了什么、看到了什么、为什么继续下一步。",
+        "工具失败和 guardrail 命中都能在 trace 中被显式看到。",
+        "多 agent handoff 的责任链完整留痕。"
+      ],
+      "pitfalls": [
+        "只有最终答案日志，没有过程记录。",
+        "step log 太粗，无法支持定位和评测；太细，又没有聚合视图。",
+        "审计要求和开发调试日志混在一起，既不安全也不好用。"
+      ],
+      "prerequisites": [
+        "J/J7. 工程可靠性/Observability hooks",
+        "M/M3. Agent 级评测"
+      ],
+      "coreMetrics": [
+        "trace completeness",
+        "debug turnaround time",
+        "audit coverage"
+      ],
+      "toolchain": [
+        "trace store",
+        "step log viewer",
+        "audit pipeline",
+        "metrics and alerts"
+      ],
+      "failureSigns": [
+        "同一任务失败两次，但你看不出两次失败是不是同一类原因。",
+        "handoff、guardrail 和工具事件各记各的，无法统一关联。"
+      ],
+      "next": [
+        "K/K9. Agent 观测与控制/Tracing",
+        "K/K9. Agent 观测与控制/Step logs",
+        "K/K9. Agent 观测与控制/Tool-call records",
+        "K/K9. Agent 观测与控制/Handoff records",
+        "K/K9. Agent 观测与控制/Guardrail results",
+        "K/K9. Agent 观测与控制/Auditability"
+      ]
+    },
+    "K/K10. Agent 形态分支": {
+      "status": "draft",
+      "definition": "Agent 形态分支是把共通的 agent 基础能力映射到不同任务形态上，例如知识、研究、编码、工作流、语音、电脑操作和多 agent 组织。它关注的不是“名字不同”，而是不同形态在工具、状态、评测和风险上的差异。",
+      "importance": "不同 agent 形态共享一套基础件，但成功标准完全不同。把它们混为一谈，会导致错误的评测、错误的权限边界和错误的产品形态设计。",
+      "minimumDemo": "用同一套基础 runtime 分别做 knowledge、coding 和 workflow 三类 agent 原型，比较它们在工具、状态和评测侧的差异。",
+      "hardwareBudget": "形态差异主要放大的是工具成本、交互成本和运行时复杂度，而不是单纯的模型参数规模。比如 voice 和 computer-use 往往先受实时链路和环境控制约束。 ",
+      "examples": [
+        "知识型 agent 更依赖检索和引用。",
+        "coding agent 更依赖工作区、测试和 diff 回显。",
+        "workflow automation agent 更依赖审批、幂等和副作用控制。",
+        "computer-use agent 更依赖环境感知和动作安全。"
+      ],
+      "pitfalls": [
+        "拿同一套 prompt 和评测去衡量所有 agent 形态。",
+        "忽略形态差异导致工具和权限边界错位。",
+        "把 research agent、knowledge agent 和 search / QA 混成同一种产品。"
+      ],
+      "prerequisites": [
+        "K/K1. Agent 的最小构成",
+        "J/J9. 应用形态",
+        "K/K7. 工具与外部连接"
+      ],
+      "coreMetrics": [
+        "task-form fit",
+        "shape-specific success rate",
+        "risk alignment"
+      ],
+      "toolchain": [
+        "agent runtime",
+        "shape-specific tools",
+        "trace and eval harness"
+      ],
+      "failureSigns": [
+        "不同形态的 agent 用起来都像同一个聊天机器人。",
+        "工具和评测侧没有跟着形态变化而变化。"
+      ],
+      "next": [
+        "K/K10. Agent 形态分支/Knowledge agent",
+        "K/K10. Agent 形态分支/Research agent",
+        "K/K10. Agent 形态分支/Coding agent",
+        "K/K10. Agent 形态分支/Workflow automation agent",
+        "K/K10. Agent 形态分支/Voice agent",
+        "K/K10. Agent 形态分支/Computer-use agent",
+        "K/K10. Agent 形态分支/Multi-agent organization"
+      ]
+    }
   }
 }

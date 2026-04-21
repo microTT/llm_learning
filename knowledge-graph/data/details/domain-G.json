@@ -75,9 +75,32 @@
         "G/G8. 推理模型与模型路由"
       ]
     },
-    "G/G1. 语言建模基础": {},
+    "G/G1. 语言建模基础": {
+      "status": "draft",
+      "definition": "语言建模基础解释了文本如何被表示成 token 和向量、位置信息如何被编码，以及模型如何把下一 token 预测组织成完整语言生成过程。",
+      "importance": "这是理解 tokenizer、上下文成本、结构化输出稳定性和长上下文边界的共同入口。",
+      "minimumDemo": "对同一段文本依次观察 token 化、embedding、位置编码和 next-token 预测输出，建立从字符串到概率分布的直觉。",
+      "prerequisites": [
+        "A/A1. 数学基础/线性代数",
+        "A/A1. 数学基础/概率统计"
+      ],
+      "coreMetrics": [
+        "token efficiency",
+        "next-token accuracy",
+        "round-trip fidelity"
+      ],
+      "next": [
+        "G/G1. 语言建模基础/Token",
+        "G/G1. 语言建模基础/Vocabulary",
+        "G/G1. 语言建模基础/Embedding",
+        "G/G1. 语言建模基础/Positional information",
+        "G/G1. 语言建模基础/Next-token prediction",
+        "G/G1. 语言建模基础/Tokenization pipeline",
+        "G/G1. 语言建模基础/Token efficiency"
+      ]
+    },
     "G/G1. 语言建模基础/Tokenization pipeline": {
-      "status": "seed",
+      "status": "draft",
       "definition": "Tokenizer 不是单个算法名，而是一条把原始文本转换成 token ids 的完整流水线：规范化、切分、建模、后处理和解码都在这里发生。",
       "importance": "这一层直接决定多语言 token 效率、代码长度成本、chat template 行为和结构化输出边界。如果 tokenizer 理解不清，后面的上下文长度、成本和模型路由都会悬空。",
       "minimumDemo": "用 Hugging Face Tokenizers 或 tiktoken 对同一段中英混合文本分别做 encode / decode，比较 token 长度、special tokens 和 round-trip 行为。",

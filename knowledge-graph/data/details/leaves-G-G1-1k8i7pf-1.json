@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-G-G1-1k8i7pf-1",
     "type": "leaf-batch",
     "label": "Tokenization pipeline / Leaves",
@@ -21,11 +21,11 @@
       "Special tokens / chat templates"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 2
+    "filledNodeCount": 6
   },
   "nodes": {
     "G/G1. 语言建模基础/Tokenization pipeline/Normalization": {
-      "status": "seed",
+      "status": "draft",
       "definition": "Normalization 会先把原始文本统一成 tokenizer 期待的标准形式，例如 Unicode 规范化、大小写折叠或空白清理。",
       "importance": "它决定语义等价字符串是否会被稳定映射成相似 token 序列，也是多语言、OCR、代码拷贝文本中最容易被忽略的误差源。",
       "minimumDemo": "对包含全角/半角、变音符号和不同空白字符的文本做 normalization 前后对比，再观察 token ids 的变化。",
@@ -50,12 +50,77 @@
         "G/G1. 语言建模基础/Tokenization pipeline"
       ]
     },
-    "G/G1. 语言建模基础/Tokenization pipeline/Pre-tokenization": {},
-    "G/G1. 语言建模基础/Tokenization pipeline/Model（BPE / WordPiece / Unigram）": {},
-    "G/G1. 语言建模基础/Tokenization pipeline/Post-processing": {},
-    "G/G1. 语言建模基础/Tokenization pipeline/Decoding": {},
+    "G/G1. 语言建模基础/Tokenization pipeline/Pre-tokenization": {
+      "status": "draft",
+      "definition": "Pre-tokenization 会先按空白、标点或规则把原文本切成较粗粒度片段，为后续子词模型处理做准备。",
+      "importance": "它影响词边界、代码符号处理和多语言文本的切分稳定性。",
+      "minimumDemo": "对一段含自然语言、代码和标点的文本查看 pre-tokenization 前后的片段变化。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Tokenization pipeline/Normalization"
+      ],
+      "coreMetrics": [
+        "boundary stability",
+        "segment count"
+      ],
+      "next": [
+        "G/G1. 语言建模基础/Tokenization pipeline/Model（BPE / WordPiece / Unigram）"
+      ]
+    },
+    "G/G1. 语言建模基础/Tokenization pipeline/Model（BPE / WordPiece / Unigram）": {
+      "status": "draft",
+      "definition": "这一层定义具体如何把片段进一步映射成子词 token，例如 BPE、WordPiece 或 Unigram。",
+      "importance": "不同子词模型会影响词表大小、token 长度和对长尾词的表示方式。",
+      "minimumDemo": "用几种常见子词算法比较同一文本的切分差异和 token 数。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Vocabulary",
+        "G/G1. 语言建模基础/Tokenization pipeline/Pre-tokenization"
+      ],
+      "coreMetrics": [
+        "token count",
+        "oov handling"
+      ],
+      "next": [
+        "G/G1. 语言建模基础/Tokenization pipeline/Post-processing",
+        "G/G1. 语言建模基础/Token efficiency"
+      ]
+    },
+    "G/G1. 语言建模基础/Tokenization pipeline/Post-processing": {
+      "status": "draft",
+      "definition": "Post-processing 在子词切分后插入 special tokens、拼接 role 信息或补充边界标记，形成模型真正接收的 token 序列。",
+      "importance": "它直接影响 chat template、工具消息和结构化输出的稳定性。",
+      "minimumDemo": "检查同一对话在 post-processing 前后 special tokens 的插入位置和顺序。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Tokenization pipeline/Model（BPE / WordPiece / Unigram）",
+        "G/G1. 语言建模基础/Tokenization pipeline/Special tokens / chat templates"
+      ],
+      "coreMetrics": [
+        "special token correctness",
+        "sequence validity"
+      ],
+      "next": [
+        "G/G1. 语言建模基础/Tokenization pipeline/Decoding",
+        "J/J1. 模型接口层/System / user / tool messages"
+      ]
+    },
+    "G/G1. 语言建模基础/Tokenization pipeline/Decoding": {
+      "status": "draft",
+      "definition": "Decoding 把 token 序列还原为可读文本，并决定空格、拼接和特殊标记如何被处理。",
+      "importance": "很多看似奇怪的输出问题，实际发生在 decode 这一层，而不是模型本身。",
+      "minimumDemo": "对几段包含特殊符号或多语言文本的 token 序列做 decode，观察 round-trip 是否稳定。",
+      "prerequisites": [
+        "G/G1. 语言建模基础/Tokenization pipeline/Post-processing"
+      ],
+      "coreMetrics": [
+        "round-trip fidelity",
+        "decode stability"
+      ],
+      "next": [
+        "G/G4. 生成与解码/Greedy",
+        "G/G4. 生成与解码/Sampling"
+      ]
+    },
     "G/G1. 语言建模基础/Tokenization pipeline/Special tokens / chat templates": {
-      "status": "seed",
+      "status": "draft",
       "definition": "Special tokens / chat templates 决定 role、分隔符、系统提示和对话历史最终如何落到模型真实可见的 token 序列里。",
       "importance": "很多“模型突然不听话”并不是 prompt 本身的问题，而是 chat template、role token 或结束标记处理不一致导致的上下文错位。",
       "minimumDemo": "对同一段 system/user 对话分别用不同 chat template 渲染，比较最终 token 序列、special token 插入位置和输出差异。",

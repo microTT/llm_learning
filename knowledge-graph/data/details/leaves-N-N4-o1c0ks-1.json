@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-N-N4-o1c0ks-1",
     "type": "leaf-batch",
     "label": "N4. 体验设计 / Leaves",
@@ -22,15 +22,134 @@
       "长任务可见性"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "N/N4. 体验设计/信任": {},
-    "N/N4. 体验设计/透明度": {},
-    "N/N4. 体验设计/引用": {},
-    "N/N4. 体验设计/控制权": {},
-    "N/N4. 体验设计/可撤销": {},
-    "N/N4. 体验设计/纠错入口": {},
-    "N/N4. 体验设计/长任务可见性": {}
+    "N/N4. 体验设计/信任": {
+      "status": "draft",
+      "definition": "信任指用户是否愿意把 AI 结果纳入正式工作流，并在关键时刻依赖它而不是完全绕开它。",
+      "importance": "没有信任，系统再强也只会停留在演示和偶尔尝试阶段。",
+      "minimumDemo": "通过依据展示、边界说明和稳定行为让用户敢在低风险任务里持续使用系统。",
+      "prerequisites": [
+        "N/N1. 场景类型",
+        "N/N4. 体验设计/透明度"
+      ],
+      "coreMetrics": [
+        "acceptance rate",
+        "repeat usage"
+      ],
+      "next": [
+        "N/N4. 体验设计/引用",
+        "N/N4. 体验设计/控制权"
+      ]
+    },
+    "N/N4. 体验设计/透明度": {
+      "status": "draft",
+      "definition": "透明度要求系统让用户看见当前做了什么、依据是什么、哪里不确定，而不是只丢出一个结论。",
+      "importance": "透明度是建立信任和支持纠错的前提，尤其在复杂检索或 agent 场景里。",
+      "minimumDemo": "在结果旁展示依据来源、关键步骤或当前状态，而不是纯黑盒输出。",
+      "prerequisites": [
+        "K/K9. Agent 观测与控制/Tracing",
+        "J/J9. 应用形态/Search / QA"
+      ],
+      "coreMetrics": [
+        "evidence visibility",
+        "user comprehension"
+      ],
+      "next": [
+        "N/N4. 体验设计/引用",
+        "N/N4. 体验设计/长任务可见性"
+      ]
+    },
+    "N/N4. 体验设计/引用": {
+      "status": "draft",
+      "definition": "引用是在答案或结果里明确告诉用户依据来自哪里，并支持跳回原文核查。",
+      "importance": "对知识型和文档型任务，引用往往比文案本身更重要，因为它决定结果能否被信任和复用。",
+      "minimumDemo": "让用户点击结果中的引用后，能直接回到支撑当前结论的原始片段。",
+      "prerequisites": [
+        "J/J9. 应用形态/Search / QA",
+        "M/M2. 应用级评测/引用真实性"
+      ],
+      "coreMetrics": [
+        "citation click-through usefulness",
+        "citation trustworthiness"
+      ],
+      "next": [
+        "N/N4. 体验设计/信任",
+        "N/N4. 体验设计/纠错入口"
+      ]
+    },
+    "N/N4. 体验设计/控制权": {
+      "status": "draft",
+      "definition": "控制权指用户是否能决定何时接受、修改、拒绝或暂停系统建议与执行。",
+      "importance": "AI 产品一旦让用户觉得失去控制，采纳率和容错空间都会迅速下降。",
+      "minimumDemo": "为关键结果提供接受、编辑、拒绝和继续的明确入口，而不是自动替用户完成。",
+      "prerequisites": [
+        "N/N2. 自动化等级/Draft and review",
+        "J/J8. 安全与权限/Sensitive action approval"
+      ],
+      "coreMetrics": [
+        "manual override rate",
+        "user confidence"
+      ],
+      "next": [
+        "N/N4. 体验设计/可撤销",
+        "N/N4. 体验设计/纠错入口"
+      ]
+    },
+    "N/N4. 体验设计/可撤销": {
+      "status": "draft",
+      "definition": "可撤销要求用户在结果已经采纳或动作已经执行后，仍有回退或补救路径。",
+      "importance": "有撤销路径，用户才更愿意尝试更高自动化级别。",
+      "minimumDemo": "对一个高风险动作提供取消、回滚或补偿流程，并验证状态可恢复。",
+      "prerequisites": [
+        "J/J7. 工程可靠性/Idempotency",
+        "K/K8. 人在回路/Human override"
+      ],
+      "coreMetrics": [
+        "rollback success rate",
+        "recovery latency"
+      ],
+      "next": [
+        "N/N4. 体验设计/控制权",
+        "N/N4. 体验设计/长任务可见性"
+      ]
+    },
+    "N/N4. 体验设计/纠错入口": {
+      "status": "draft",
+      "definition": "纠错入口让用户能快速指出哪里错了、补充上下文或修正结果，而不是只能放弃这次交互。",
+      "importance": "AI 产品不是一次性正确，而是要把用户纠错转成系统改进机会。",
+      "minimumDemo": "在结果旁提供简短纠错表单或编辑入口，并把反馈绑定到对应 trace。",
+      "prerequisites": [
+        "N/N4. 体验设计/控制权",
+        "M/M4. 在线评测/Human feedback"
+      ],
+      "coreMetrics": [
+        "correction submission rate",
+        "correction usefulness"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/用户问题 / 场景",
+        "N/N6. 持续改进闭环/数据沉淀"
+      ]
+    },
+    "N/N4. 体验设计/长任务可见性": {
+      "status": "draft",
+      "definition": "长任务可见性要求用户能看到系统当前在做什么、做到哪一步、为什么在等待，以及何时需要自己介入。",
+      "importance": "长任务一旦不可见，用户会把等待误解成卡死或胡乱执行，从而失去信任。",
+      "minimumDemo": "为多步任务展示进度、关键步骤、等待原因和下一次需要用户介入的时机。",
+      "prerequisites": [
+        "K/K9. Agent 观测与控制/Tracing",
+        "K/K8. 人在回路/HITL checkpoints"
+      ],
+      "coreMetrics": [
+        "drop-off rate in long tasks",
+        "status clarity"
+      ],
+      "next": [
+        "N/N2. 自动化等级/Human-supervised autonomy",
+        "N/N4. 体验设计/透明度"
+      ]
+    }
   }
 }

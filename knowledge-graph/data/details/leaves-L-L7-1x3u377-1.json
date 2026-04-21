@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-L-L7-1x3u377-1",
     "type": "leaf-batch",
     "label": "L7. 生产运行指标 / Leaves",
@@ -23,16 +23,156 @@
       "Context pressure"
     ],
     "nodeCount": 8,
-    "filledNodeCount": 0
+    "filledNodeCount": 8
   },
   "nodes": {
-    "L/L7. 生产运行指标/Latency": {},
-    "L/L7. 生产运行指标/Throughput": {},
-    "L/L7. 生产运行指标/Cost": {},
-    "L/L7. 生产运行指标/Error rate": {},
-    "L/L7. 生产运行指标/Availability": {},
-    "L/L7. 生产运行指标/Token usage": {},
-    "L/L7. 生产运行指标/GPU utilization": {},
-    "L/L7. 生产运行指标/Context pressure": {}
+    "L/L7. 生产运行指标/Latency": {
+      "status": "draft",
+      "definition": "Latency 衡量请求从进入系统到返回结果所需时间，通常要区分首 token、总响应和 p95/p99 尾延迟。",
+      "importance": "用户体验首先感知到的就是延迟，而尾延迟往往比平均值更能暴露系统问题。",
+      "minimumDemo": "记录服务的 p50/p95 首 token 和总时延，并对比配置变化后的波动。",
+      "prerequisites": [
+        "L/L3. 推理优化/Throughput / latency tuning",
+        "M/M4. 在线评测/Acceptance rate"
+      ],
+      "coreMetrics": [
+        "ttft",
+        "p95 latency",
+        "p99 latency"
+      ],
+      "next": [
+        "L/L7. 生产运行指标/Throughput",
+        "L/L7. 生产运行指标/Error rate"
+      ]
+    },
+    "L/L7. 生产运行指标/Throughput": {
+      "status": "draft",
+      "definition": "Throughput 衡量单位时间内系统能处理多少请求或多少 token，是容量规划和成本优化的核心指标。",
+      "importance": "没有吞吐视角，只盯单请求速度会误判系统整体承载能力。",
+      "minimumDemo": "在固定负载生成器下记录不同并发时的请求吞吐和 token 吞吐。",
+      "prerequisites": [
+        "L/L3. 推理优化/Continuous batching",
+        "L/L6. 硬件层/GPU"
+      ],
+      "coreMetrics": [
+        "req/sec",
+        "tokens/sec"
+      ],
+      "next": [
+        "L/L7. 生产运行指标/Cost",
+        "L/L7. 生产运行指标/GPU utilization"
+      ]
+    },
+    "L/L7. 生产运行指标/Cost": {
+      "status": "draft",
+      "definition": "Cost 衡量模型调用、硬件资源、缓存、存储和运维综合后的单位任务或单位 token 成本。",
+      "importance": "很多方案不是做不到，而是做到的成本不可接受；成本指标决定方案能否长期运行。",
+      "minimumDemo": "计算一次成功任务的总成本，并拆分模型、存储、缓存和运维开销。",
+      "prerequisites": [
+        "L/L7. 生产运行指标/Throughput",
+        "M/M4. 在线评测/Business KPIs"
+      ],
+      "coreMetrics": [
+        "cost per successful task",
+        "cost per 1k tokens"
+      ],
+      "next": [
+        "L/L7. 生产运行指标/Token usage",
+        "N/N3. 决策变量/成本预算"
+      ]
+    },
+    "L/L7. 生产运行指标/Error rate": {
+      "status": "draft",
+      "definition": "Error rate 记录调用失败、超时、OOM、工具异常和协议错误的比例，是系统健康的基础红线指标。",
+      "importance": "错误率通常会先于用户投诉暴露系统退化，是运维和容量告警的第一信号。",
+      "minimumDemo": "按错误类型统计调用失败，并在流量变化时观察错误率是否飙升。",
+      "prerequisites": [
+        "J/J7. 工程可靠性/Error classes",
+        "L/L5. 系统基础设施/Queue"
+      ],
+      "coreMetrics": [
+        "error rate",
+        "timeout rate",
+        "oom rate"
+      ],
+      "next": [
+        "L/L7. 生产运行指标/Availability",
+        "M/M8. 对抗测试与审计/Incident review"
+      ]
+    },
+    "L/L7. 生产运行指标/Availability": {
+      "status": "draft",
+      "definition": "Availability 衡量服务在一段时间内是否可访问、是否满足既定 SLA/SLO，以及故障后恢复有多快。",
+      "importance": "AI 系统一旦接业务流程，可用性就和模型质量一样重要；偶发不可用会直接破坏信任。",
+      "minimumDemo": "记录服务 uptime、故障窗口和恢复时间，并做一次失败演练。",
+      "prerequisites": [
+        "L/L5. 系统基础设施/Container / deployment layer",
+        "L/L7. 生产运行指标/Error rate"
+      ],
+      "coreMetrics": [
+        "uptime",
+        "mttr"
+      ],
+      "next": [
+        "M/M4. 在线评测/Canary / regression set",
+        "N/N6. 持续改进闭环/部署新版本"
+      ]
+    },
+    "L/L7. 生产运行指标/Token usage": {
+      "status": "draft",
+      "definition": "Token usage 跟踪输入、输出和缓存命中前后的 token 消耗，是成本和上下文管理的直接代理指标。",
+      "importance": "很多隐藏成本都来自无效 token；不看 token 用量，很难优化提示和上下文结构。",
+      "minimumDemo": "统计不同场景的输入/输出 token，并比较裁剪、缓存和 RAG 打包策略的影响。",
+      "prerequisites": [
+        "J/J4. 会话与状态/Token budgeting",
+        "L/L3. 推理优化/Context length management"
+      ],
+      "coreMetrics": [
+        "input tokens",
+        "output tokens",
+        "wasted tokens"
+      ],
+      "next": [
+        "L/L7. 生产运行指标/Cost",
+        "L/L7. 生产运行指标/Context pressure"
+      ]
+    },
+    "L/L7. 生产运行指标/GPU utilization": {
+      "status": "draft",
+      "definition": "GPU utilization 衡量 GPU 是否被持续有效利用，而不是空转、抖动或被等待拖住。",
+      "importance": "GPU 利用率直接决定自托管推理和训练的经济性，是很多优化动作的核心反馈信号。",
+      "minimumDemo": "在不同 batch 和并发配置下记录 GPU 利用率，并和吞吐、延迟一起对照分析。",
+      "prerequisites": [
+        "L/L3. 推理优化/Continuous batching",
+        "L/L6. 硬件层/GPU"
+      ],
+      "coreMetrics": [
+        "gpu utilization",
+        "idle ratio"
+      ],
+      "next": [
+        "L/L3. 推理优化/Throughput / latency tuning",
+        "L/L7. 生产运行指标/Throughput"
+      ]
+    },
+    "L/L7. 生产运行指标/Context pressure": {
+      "status": "draft",
+      "definition": "Context pressure 描述上下文长度、缓存占用和内存压力对性能、成本和质量造成的综合张力。",
+      "importance": "很多系统随着上下文增长会同时出现更慢、更贵和更差的现象，这个指标就是用来盯住这种退化。",
+      "minimumDemo": "随上下文长度递增记录时延、内存和质量变化，找出退化拐点。",
+      "prerequisites": [
+        "L/L3. 推理优化/Context length management",
+        "L/L6. 硬件层/VRAM / RAM / disk constraints"
+      ],
+      "coreMetrics": [
+        "latency vs context",
+        "memory pressure",
+        "quality degradation"
+      ],
+      "next": [
+        "I/I3. RAG 管线/Context packing",
+        "N/N3. 决策变量/延迟要求"
+      ]
+    }
   }
 }

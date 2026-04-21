@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-N-N5-1anvi4w-1",
     "type": "leaf-batch",
     "label": "N5. 团队与流程 / Leaves",
@@ -22,15 +22,134 @@
       "运维 / 平台"
     ],
     "nodeCount": 7,
-    "filledNodeCount": 0
+    "filledNodeCount": 7
   },
   "nodes": {
-    "N/N5. 团队与流程/产品经理": {},
-    "N/N5. 团队与流程/应用工程师": {},
-    "N/N5. 团队与流程/模型工程师": {},
-    "N/N5. 团队与流程/数据工程师": {},
-    "N/N5. 团队与流程/Eval / QA": {},
-    "N/N5. 团队与流程/安全 / Policy": {},
-    "N/N5. 团队与流程/运维 / 平台": {}
+    "N/N5. 团队与流程/产品经理": {
+      "status": "draft",
+      "definition": "产品经理负责定义场景、用户、成功标准、上线边界和优先级，而不是只写一个模糊的“加 AI”。",
+      "importance": "AI 项目最容易在目标不清时失控，产品角色必须先把价值和边界说清楚。",
+      "minimumDemo": "为一个 AI 功能写清楚目标用户、任务成功标准、错误代价和自动化上限。",
+      "prerequisites": [
+        "N/N1. 场景类型",
+        "N/N3. 决策变量"
+      ],
+      "coreMetrics": [
+        "goal clarity",
+        "scope stability"
+      ],
+      "next": [
+        "N/N5. 团队与流程/应用工程师",
+        "N/N5. 团队与流程/Eval / QA"
+      ]
+    },
+    "N/N5. 团队与流程/应用工程师": {
+      "status": "draft",
+      "definition": "应用工程师负责把模型、工具、状态、交互和基础设施组装成可运行的产品系统。",
+      "importance": "很多 AI 价值最后都落在应用工程质量上，而不是单纯模型能力。",
+      "minimumDemo": "把一个 AI 场景做成可部署原型，包含输入、输出、状态、日志和失败恢复。",
+      "prerequisites": [
+        "J",
+        "L/L5. 系统基础设施"
+      ],
+      "coreMetrics": [
+        "delivery velocity",
+        "runtime reliability"
+      ],
+      "next": [
+        "N/N5. 团队与流程/运维 / 平台",
+        "N/N5. 团队与流程/Eval / QA"
+      ]
+    },
+    "N/N5. 团队与流程/模型工程师": {
+      "status": "draft",
+      "definition": "模型工程师负责模型选型、后训练、路由、蒸馏和模型层优化，确保底层能力与任务匹配。",
+      "importance": "当问题超出 prompt 或工作流调整范围时，模型工程角色决定系统还能往前走多远。",
+      "minimumDemo": "比较两个模型或一次后训练前后的任务表现，并给出适配建议。",
+      "prerequisites": [
+        "H",
+        "L/L4. 训练基础设施"
+      ],
+      "coreMetrics": [
+        "model fit",
+        "quality lift"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/Fine-tuning / distillation",
+        "N/N5. 团队与流程/Eval / QA"
+      ]
+    },
+    "N/N5. 团队与流程/数据工程师": {
+      "status": "draft",
+      "definition": "数据工程师负责数据接入、清洗、解析、索引和数据质量保障，让上游资料能被稳定用于检索、训练和评测。",
+      "importance": "很多 AI 系统问题都不是模型不够，而是数据管道不稳、格式不齐或质量失控。",
+      "minimumDemo": "搭建一个从原始文件到可检索或可训练数据的最小 pipeline，并记录质量检查点。",
+      "prerequisites": [
+        "F/F3. 数据工程",
+        "I/I2. 知识库构建"
+      ],
+      "coreMetrics": [
+        "pipeline reliability",
+        "data freshness"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/数据沉淀",
+        "N/N5. 团队与流程/Eval / QA"
+      ]
+    },
+    "N/N5. 团队与流程/Eval / QA": {
+      "status": "draft",
+      "definition": "Eval / QA 负责把功能目标转成可测样本、rubric、回归集和线上监控，守住版本演进时的质量底线。",
+      "importance": "没有这条角色线，AI 系统很容易每次升级都回到拍脑袋验收。",
+      "minimumDemo": "为一个功能维护离线样本集、回归集和线上失败样本回流机制。",
+      "prerequisites": [
+        "M/M2. 应用级评测",
+        "M/M4. 在线评测"
+      ],
+      "coreMetrics": [
+        "regression catch rate",
+        "test coverage"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/新 evals",
+        "N/N6. 持续改进闭环/再评测"
+      ]
+    },
+    "N/N5. 团队与流程/安全 / Policy": {
+      "status": "draft",
+      "definition": "安全 / Policy 负责权限边界、风险分级、策略落地、审计要求和事故处理准入。",
+      "importance": "AI 一旦能接真实数据和动作，安全与策略不再是上线后补丁，而是设计前置条件。",
+      "minimumDemo": "为一个场景定义敏感数据、敏感动作、审批要求和审计字段。",
+      "prerequisites": [
+        "M/M5. 安全控制",
+        "M/M7. 隐私与合规"
+      ],
+      "coreMetrics": [
+        "policy coverage",
+        "security incident rate"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/再评测",
+        "N/N5. 团队与流程/运维 / 平台"
+      ]
+    },
+    "N/N5. 团队与流程/运维 / 平台": {
+      "status": "draft",
+      "definition": "运维 / 平台负责部署、观测、扩容、故障恢复和服务稳定性，让 AI 能力真正成为可运营系统。",
+      "importance": "再好的模型和产品设计，如果没有稳定平台支撑，也无法长期服务真实用户。",
+      "minimumDemo": "为一个 AI 服务接入部署流水线、监控看板和回滚机制。",
+      "prerequisites": [
+        "L/L5. 系统基础设施/Container / deployment layer",
+        "L/L7. 生产运行指标/Availability"
+      ],
+      "coreMetrics": [
+        "deploy success rate",
+        "mttr"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/部署新版本",
+        "N/N6. 持续改进闭环/日志与 traces"
+      ]
+    }
   }
 }

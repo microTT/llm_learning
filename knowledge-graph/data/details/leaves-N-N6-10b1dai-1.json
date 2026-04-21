@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-N-N6-10b1dai-1",
     "type": "leaf-batch",
     "label": "N6. 持续改进闭环 / Leaves",
@@ -23,16 +23,154 @@
       "再评测"
     ],
     "nodeCount": 8,
-    "filledNodeCount": 0
+    "filledNodeCount": 8
   },
   "nodes": {
-    "N/N6. 持续改进闭环/用户问题 / 场景": {},
-    "N/N6. 持续改进闭环/日志与 traces": {},
-    "N/N6. 持续改进闭环/数据沉淀": {},
-    "N/N6. 持续改进闭环/新 evals": {},
-    "N/N6. 持续改进闭环/Prompt / tool / routing 改进": {},
-    "N/N6. 持续改进闭环/Fine-tuning / distillation": {},
-    "N/N6. 持续改进闭环/部署新版本": {},
-    "N/N6. 持续改进闭环/再评测": {}
+    "N/N6. 持续改进闭环/用户问题 / 场景": {
+      "status": "draft",
+      "definition": "持续改进闭环首先从真实用户问题和场景出发，而不是只盯着模型分数或实验室 benchmark。",
+      "importance": "如果改进不从真实问题开始，系统很容易越做越复杂却不解决真正痛点。",
+      "minimumDemo": "收集真实用户最常失败或最常抱怨的场景，并将其整理成明确问题列表。",
+      "prerequisites": [
+        "M/M4. 在线评测/Human feedback",
+        "N/N4. 体验设计/纠错入口"
+      ],
+      "coreMetrics": [
+        "problem discovery rate",
+        "user pain-point coverage"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/日志与 traces",
+        "N/N6. 持续改进闭环/数据沉淀"
+      ]
+    },
+    "N/N6. 持续改进闭环/日志与 traces": {
+      "status": "draft",
+      "definition": "日志与 traces 把线上行为转成可分析证据，帮助定位问题到底出在检索、路由、工具、模型还是体验层。",
+      "importance": "没有观测证据，团队只能重复主观争论，难以形成可执行修复。",
+      "minimumDemo": "把线上失败样本与对应 trace、工具记录和版本信息串起来做复盘。",
+      "prerequisites": [
+        "K/K9. Agent 观测与控制/Tracing",
+        "M/M4. 在线评测/Real-user failure mining"
+      ],
+      "coreMetrics": [
+        "trace coverage",
+        "time to triage"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/数据沉淀",
+        "N/N6. 持续改进闭环/新 evals"
+      ]
+    },
+    "N/N6. 持续改进闭环/数据沉淀": {
+      "status": "draft",
+      "definition": "数据沉淀是把真实问题、纠错、失败样例和高价值交互转成可用于训练、检索和评测的资产。",
+      "importance": "没有数据沉淀，线上经验无法积累，系统每次都像从零开始。",
+      "minimumDemo": "把一批高价值失败样例整理成结构化数据，并按用途分为 eval、训练和知识更新材料。",
+      "prerequisites": [
+        "F/F7. 后训练数据构建",
+        "N/N6. 持续改进闭环/日志与 traces"
+      ],
+      "coreMetrics": [
+        "data reuse rate",
+        "labeled sample growth"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/新 evals",
+        "N/N6. 持续改进闭环/Fine-tuning / distillation"
+      ]
+    },
+    "N/N6. 持续改进闭环/新 evals": {
+      "status": "draft",
+      "definition": "新 evals 是把新发现的问题转成离线评测和回归集，让它们以后不再悄悄复发。",
+      "importance": "只有问题被沉淀为 eval，改进才真正进入可重复工程流程。",
+      "minimumDemo": "把最新失败样例加入回归集，并为其写出清晰 rubric 和判定方式。",
+      "prerequisites": [
+        "M/M4. 在线评测/Canary / regression set",
+        "M/M8. 对抗测试与审计/Safety regression tests"
+      ],
+      "coreMetrics": [
+        "eval growth rate",
+        "regression catch rate"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/Prompt / tool / routing 改进",
+        "N/N6. 持续改进闭环/再评测"
+      ]
+    },
+    "N/N6. 持续改进闭环/Prompt / tool / routing 改进": {
+      "status": "draft",
+      "definition": "很多问题并不需要重新训练，先改 prompt、工具设计、工具路由或执行骨架往往收益更快。",
+      "importance": "这是 AI 系统最常见也最便宜的改进入口，适合高频迭代。",
+      "minimumDemo": "针对一类失败先改 prompt 或工具路由，再验证是否显著降低重复失败。",
+      "prerequisites": [
+        "J/J1. 模型接口层/Prompt composition",
+        "J/J3. 工具调用/Tool routing",
+        "M/M3. Agent 级评测/Routing quality"
+      ],
+      "coreMetrics": [
+        "fix turnaround time",
+        "failure reduction rate"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/部署新版本",
+        "N/N6. 持续改进闭环/再评测"
+      ]
+    },
+    "N/N6. 持续改进闭环/Fine-tuning / distillation": {
+      "status": "draft",
+      "definition": "当 prompt、路由和工具改进不再够用时，才进入 fine-tuning、RFT 或 distillation 等模型层改造。",
+      "importance": "这一步成本更高，但在重复性强、风格稳定或知识密集任务中可能带来结构性收益。",
+      "minimumDemo": "为一类反复失败的场景准备训练数据，比较模型层改造前后的质量与成本。",
+      "prerequisites": [
+        "H/H4. 参数高效适配",
+        "H/H5. 压缩与效率优化",
+        "L/L4. 训练基础设施"
+      ],
+      "coreMetrics": [
+        "quality lift",
+        "inference cost change"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/部署新版本",
+        "N/N6. 持续改进闭环/再评测"
+      ]
+    },
+    "N/N6. 持续改进闭环/部署新版本": {
+      "status": "draft",
+      "definition": "部署新版本把已验证的 prompt、工具、模型或基础设施改动安全地推到真实环境中，并控制风险暴露面。",
+      "importance": "如果没有稳定部署路径，前面的所有改进都很难真正产生业务价值。",
+      "minimumDemo": "通过灰度或 canary 部署一个新版本，并持续观察关键指标。",
+      "prerequisites": [
+        "L/L5. 系统基础设施/Container / deployment layer",
+        "M/M4. 在线评测/A/B tests"
+      ],
+      "coreMetrics": [
+        "deploy success rate",
+        "rollback readiness"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/再评测",
+        "M/M4. 在线评测/Canary / regression set"
+      ]
+    },
+    "N/N6. 持续改进闭环/再评测": {
+      "status": "draft",
+      "definition": "再评测要求每次改动后都回到离线、在线和安全三条评测线上验证，确认没有引入回归或新风险。",
+      "importance": "没有再评测，持续改进就会变成持续引入新问题。",
+      "minimumDemo": "在每次上线前后统一跑离线回归、关键线上指标检查和安全回归测试。",
+      "prerequisites": [
+        "M/M4. 在线评测/Canary / regression set",
+        "M/M8. 对抗测试与审计/Safety regression tests"
+      ],
+      "coreMetrics": [
+        "regression pass rate",
+        "post-release incident rate"
+      ],
+      "next": [
+        "N/N6. 持续改进闭环/用户问题 / 场景",
+        "N/N6. 持续改进闭环/新 evals"
+      ]
+    }
   }
 }

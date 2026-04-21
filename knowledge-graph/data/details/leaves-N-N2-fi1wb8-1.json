@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-N-N2-fi1wb8-1",
     "type": "leaf-batch",
     "label": "N2. 自动化等级 / Leaves",
@@ -20,13 +20,98 @@
       "Human-supervised autonomy"
     ],
     "nodeCount": 5,
-    "filledNodeCount": 0
+    "filledNodeCount": 5
   },
   "nodes": {
-    "N/N2. 自动化等级/Suggestion only": {},
-    "N/N2. 自动化等级/Draft and review": {},
-    "N/N2. 自动化等级/Execute with approval": {},
-    "N/N2. 自动化等级/Narrow autonomous execution": {},
-    "N/N2. 自动化等级/Human-supervised autonomy": {}
+    "N/N2. 自动化等级/Suggestion only": {
+      "status": "draft",
+      "definition": "Suggestion only 只提供建议，不自动修改外部状态，也不代表用户执行高风险动作。",
+      "importance": "这是错误代价高、信任尚未建立时最稳的起点。",
+      "minimumDemo": "让系统只输出建议和解释，不直接执行任何副作用操作。",
+      "prerequisites": [
+        "N/N1. 场景类型",
+        "N/N3. 决策变量/错误代价"
+      ],
+      "coreMetrics": [
+        "acceptance rate",
+        "human edit rate"
+      ],
+      "next": [
+        "N/N2. 自动化等级/Draft and review",
+        "N/N4. 体验设计/控制权"
+      ]
+    },
+    "N/N2. 自动化等级/Draft and review": {
+      "status": "draft",
+      "definition": "Draft and review 让系统生成草稿或计划，由人决定是否采纳、修改或丢弃。",
+      "importance": "这是很多 Copilot 和文档型应用的最佳平衡点，能兼顾效率和可控性。",
+      "minimumDemo": "让系统先生成邮件、文档或代码草稿，用户确认后再进入正式流程。",
+      "prerequisites": [
+        "N/N2. 自动化等级/Suggestion only",
+        "J/J9. 应用形态/Copilot"
+      ],
+      "coreMetrics": [
+        "draft acceptance rate",
+        "review time saved"
+      ],
+      "next": [
+        "N/N2. 自动化等级/Execute with approval",
+        "N/N4. 体验设计/可撤销"
+      ]
+    },
+    "N/N2. 自动化等级/Execute with approval": {
+      "status": "draft",
+      "definition": "Execute with approval 允许系统在获得显式审批后执行外部动作，例如发消息、改数据或运行命令。",
+      "importance": "它是工作流自动化和 coding agent 等高价值场景的关键中间态。",
+      "minimumDemo": "为一个高风险动作加审批门，验证批准后执行、拒绝后回退和状态保留都稳定。",
+      "prerequisites": [
+        "K/K8. 人在回路/Approval before side effects",
+        "J/J8. 安全与权限/Sensitive action approval"
+      ],
+      "coreMetrics": [
+        "approval precision",
+        "blocked risky action rate"
+      ],
+      "next": [
+        "N/N2. 自动化等级/Narrow autonomous execution",
+        "N/N3. 决策变量/是否需要外部动作"
+      ]
+    },
+    "N/N2. 自动化等级/Narrow autonomous execution": {
+      "status": "draft",
+      "definition": "Narrow autonomous execution 指系统在边界清晰、影响面小的任务上可以自动执行，而不要求每次都审批。",
+      "importance": "它能释放 AI 的真实效率，但前提是任务范围足够窄、失败恢复清晰、审计完整。",
+      "minimumDemo": "为一个低风险重复任务设置受限自治执行，并观察成功率和异常升级比例。",
+      "prerequisites": [
+        "N/N2. 自动化等级/Execute with approval",
+        "M/M3. Agent 级评测/Workflow completion rate"
+      ],
+      "coreMetrics": [
+        "autonomous completion rate",
+        "escalation rate"
+      ],
+      "next": [
+        "N/N2. 自动化等级/Human-supervised autonomy",
+        "N/N3. 决策变量/安全风险"
+      ]
+    },
+    "N/N2. 自动化等级/Human-supervised autonomy": {
+      "status": "draft",
+      "definition": "Human-supervised autonomy 允许系统在更长链路中自主推进，但始终保持人可见、可接管和可审计。",
+      "importance": "这是长任务 agent 真正进入生产环境时最常见的终态之一。",
+      "minimumDemo": "让一个长任务 agent 自主推进多步流程，但对关键节点保留人工接管和中途终止能力。",
+      "prerequisites": [
+        "K/K8. 人在回路/HITL checkpoints",
+        "K/K9. Agent 观测与控制/Auditability"
+      ],
+      "coreMetrics": [
+        "human override rate",
+        "long-task completion rate"
+      ],
+      "next": [
+        "N/N4. 体验设计/长任务可见性",
+        "N/N5. 团队与流程/运维 / 平台"
+      ]
+    }
   }
 }

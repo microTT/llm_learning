@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-K-K7-didu6d-1",
     "type": "leaf-batch",
     "label": "MCP protocol stack / Leaves",
@@ -21,12 +21,29 @@
       "Logging / argument completion"
     ],
     "nodeCount": 6,
-    "filledNodeCount": 1
+    "filledNodeCount": 6
   },
   "nodes": {
-    "K/K7. 工具与外部连接/MCP protocol stack/Base protocol（JSON-RPC）": {},
+    "K/K7. 工具与外部连接/MCP protocol stack/Base protocol（JSON-RPC）": {
+      "status": "draft",
+      "definition": "Base protocol（JSON-RPC）是 MCP 的消息传输基座，规定请求、响应、通知和错误对象的基本形态。",
+      "importance": "不理解这层，就很难定位 transport、能力协商和 tool 调用里哪些问题是协议层错误，哪些是业务层错误。",
+      "minimumDemo": "抓一段 MCP 初始化与工具调用流量，区分 request、response、notification 和 error 的结构。",
+      "prerequisites": [
+        "A/A2. 计算机基础/网络与协议/RPC / JSON-RPC",
+        "K/K7. 工具与外部连接/MCP protocol stack"
+      ],
+      "coreMetrics": [
+        "protocol parse correctness",
+        "error envelope quality"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/MCP protocol stack/Lifecycle & capability negotiation",
+        "K/K7. 工具与外部连接/MCP protocol stack/Transports（stdio / HTTP）"
+      ]
+    },
     "K/K7. 工具与外部连接/MCP protocol stack/Lifecycle & capability negotiation": {
-      "status": "seed",
+      "status": "draft",
       "definition": "Lifecycle & capability negotiation 决定 client 和 server 在连接建立后如何宣布自己支持的能力、版本和可调用对象，以及何时刷新这些能力。",
       "importance": "这一步是 MCP 和“裸 JSON-RPC 工具调用”最大的差别之一；没有能力协商，client 无法可靠发现 resources、prompts、tools 与扩展能力。",
       "minimumDemo": "让一个最小 client 连接 server，打印 initialize / capability negotiation 结果，并在能力变更后重新同步一次。",
@@ -50,13 +67,81 @@
         "server 重启后 client 状态没刷新，继续拿旧能力集执行"
       ],
       "next": [
-        "K/K7. 工具与外部连接/MCP protocol stack",
-        "K/K7. 工具与外部连接/MCP servers"
+        "K/K7. 工具与外部连接/MCP servers",
+        "K/K7. 工具与外部连接/MCP protocol stack/Authorization"
       ]
     },
-    "K/K7. 工具与外部连接/MCP protocol stack/Authorization": {},
-    "K/K7. 工具与外部连接/MCP protocol stack/Transports（stdio / HTTP）": {},
-    "K/K7. 工具与外部连接/MCP protocol stack/Roots / sampling": {},
-    "K/K7. 工具与外部连接/MCP protocol stack/Logging / argument completion": {}
+    "K/K7. 工具与外部连接/MCP protocol stack/Authorization": {
+      "status": "draft",
+      "definition": "Authorization 处理 client 连接 server 时的身份、权限、scope 和可见能力边界，不是简单的“能不能连上”。",
+      "importance": "MCP 一旦接到真实系统，授权层就决定了资源、提示和工具能否按身份和租户被隔离暴露。",
+      "minimumDemo": "准备两个不同 scope 的 client，验证它们对同一 server 可见的 tools/resources 集不同。",
+      "prerequisites": [
+        "J/J8. 安全与权限/Auth",
+        "J/J8. 安全与权限/Permission scopes",
+        "K/K7. 工具与外部连接/MCP protocol stack/Lifecycle & capability negotiation"
+      ],
+      "coreMetrics": [
+        "auth success rate",
+        "scope enforcement rate"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/MCP servers/Tools",
+        "K/K7. 工具与外部连接/Connectors"
+      ]
+    },
+    "K/K7. 工具与外部连接/MCP protocol stack/Transports（stdio / HTTP）": {
+      "status": "draft",
+      "definition": "Transports（stdio / HTTP）定义 MCP 消息如何在进程间或网络间传输，影响部署形态、调试方式和可靠性。",
+      "importance": "很多连接问题其实不是协议对象错，而是 transport 选择与运行环境不匹配。",
+      "minimumDemo": "分别用 stdio 和 HTTP 跑通一个最小 server，比较本地集成和远程部署的差异。",
+      "prerequisites": [
+        "K/K7. 工具与外部连接/MCP protocol stack/Base protocol（JSON-RPC）"
+      ],
+      "coreMetrics": [
+        "transport stability",
+        "reconnect success rate"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/MCP protocol stack/Logging / argument completion",
+        "K/K7. 工具与外部连接/MCP protocol stack/Roots / sampling"
+      ]
+    },
+    "K/K7. 工具与外部连接/MCP protocol stack/Roots / sampling": {
+      "status": "draft",
+      "definition": "Roots / sampling 处理 client 暴露哪些工作区根目录或采样能力给 server，以及 server 如何在这些边界内工作。",
+      "importance": "这层直接关系到 server 能看到什么、能在哪些目录操作，以及是否把运行边界显式化。",
+      "minimumDemo": "为一个 MCP server 配置受限 roots，并验证它只能访问允许范围内的文件或上下文。",
+      "prerequisites": [
+        "K/K7. 工具与外部连接/MCP protocol stack/Lifecycle & capability negotiation",
+        "K/K7. 工具与外部连接/Sandbox workspace/Workspace filesystem"
+      ],
+      "coreMetrics": [
+        "root boundary correctness",
+        "sampling usefulness"
+      ],
+      "next": [
+        "K/K7. 工具与外部连接/Sandbox workspace",
+        "M/M5. 安全控制/Sandboxing"
+      ]
+    },
+    "K/K7. 工具与外部连接/MCP protocol stack/Logging / argument completion": {
+      "status": "draft",
+      "definition": "Logging / argument completion 关注协议层如何暴露调试信息、执行日志和参数补全能力，帮助 client 更稳定地消费 server。",
+      "importance": "协议接入最难的往往不是‘能不能调’，而是出问题时有没有足够的可观测性和开发体验支持。",
+      "minimumDemo": "让 client 读取 server 日志和参数补全信息，并检查这些信息能否帮助定位调用失败。",
+      "prerequisites": [
+        "J/J7. 工程可靠性/Observability hooks",
+        "K/K7. 工具与外部连接/MCP protocol stack/Transports（stdio / HTTP）"
+      ],
+      "coreMetrics": [
+        "debuggability",
+        "argument completion usefulness"
+      ],
+      "next": [
+        "K/K9. Agent 观测与控制/Tracing",
+        "K/K7. 工具与外部连接/MCP servers/Tools"
+      ]
+    }
   }
 }

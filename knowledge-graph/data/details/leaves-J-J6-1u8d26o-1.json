@@ -1,7 +1,7 @@
 {
   "meta": {
     "version": 1,
-    "updatedAt": "2026-04-17",
+    "updatedAt": "2026-04-21",
     "shardId": "leaves-J-J6-1u8d26o-1",
     "type": "leaf-batch",
     "label": "J6. 多模态应用 / Leaves",
@@ -19,12 +19,86 @@
       "Mixed-modal interfaces"
     ],
     "nodeCount": 4,
-    "filledNodeCount": 0
+    "filledNodeCount": 4
   },
   "nodes": {
-    "J/J6. 多模态应用/Image input": {},
-    "J/J6. 多模态应用/Audio input/output": {},
-    "J/J6. 多模态应用/File input": {},
-    "J/J6. 多模态应用/Mixed-modal interfaces": {}
+    "J/J6. 多模态应用/Image input": {
+      "status": "draft",
+      "definition": "Image input 指应用如何接收截图、照片、图表、UI 截图和文档图片，并把它们稳定转成模型可消费的视觉输入。",
+      "importance": "很多多模态体验从上传图片开始就失败了：尺寸、格式、方向、压缩和预览链路没处理好，后面的视觉能力根本发挥不出来。",
+      "minimumDemo": "实现一条图片上传链路，支持预览、压缩和错误提示，并验证模型能稳定消费同一张图片。",
+      "prerequisites": [
+        "E/E2. 视觉（CV）/OCR / 文档理解",
+        "E/E5. 多模态/视觉语言模型（VLM）"
+      ],
+      "coreMetrics": [
+        "image upload success rate",
+        "processing latency",
+        "visual task success rate"
+      ],
+      "next": [
+        "J/J6. 多模态应用/Mixed-modal interfaces",
+        "J/J9. 应用形态/Document assistant"
+      ]
+    },
+    "J/J6. 多模态应用/Audio input/output": {
+      "status": "draft",
+      "definition": "Audio input/output 关注应用如何接收语音、播放语音、处理音频文件和控制音频状态，而不仅仅是模型是否支持 ASR 或 TTS。",
+      "importance": "音频链路天然更实时、更易受设备和网络影响，应用层必须处理麦克风权限、转码、播放控制和打断恢复。",
+      "minimumDemo": "实现一条录音上传和语音播报链路，验证麦克风权限、转写、播报和中断都能稳定工作。",
+      "prerequisites": [
+        "E/E3. 音频 / 语音/自动语音识别（ASR）",
+        "E/E3. 音频 / 语音/文本转语音（TTS）",
+        "J/J5. 流式与实时/Voice interaction"
+      ],
+      "coreMetrics": [
+        "speech round-trip latency",
+        "audio glitch rate",
+        "barge-in success rate"
+      ],
+      "next": [
+        "J/J6. 多模态应用/Mixed-modal interfaces",
+        "J/J9. 应用形态/Voice assistant"
+      ]
+    },
+    "J/J6. 多模态应用/File input": {
+      "status": "draft",
+      "definition": "File input 指应用如何接收 PDF、表格、文档、代码包等文件，并把内容抽取、权限、生命周期和模型调用串成稳定链路。",
+      "importance": "文件类输入往往是业务价值最高的一类多模态入口，但它同时引入文件解析、存储、权限和异步处理复杂度。",
+      "minimumDemo": "实现文件上传、摘要提取和失败提示流程，验证大文件、坏文件和权限不足时的处理路径。",
+      "prerequisites": [
+        "I/I2. 知识库构建/Parser types/PDF / Office",
+        "J/J6. 多模态应用/Image input"
+      ],
+      "coreMetrics": [
+        "file parse success rate",
+        "ingestion latency",
+        "file-linked task success rate"
+      ],
+      "next": [
+        "J/J6. 多模态应用/Mixed-modal interfaces",
+        "J/J9. 应用形态/Document assistant"
+      ]
+    },
+    "J/J6. 多模态应用/Mixed-modal interfaces": {
+      "status": "draft",
+      "definition": "Mixed-modal interfaces 是把图像、音频、文件和文本统一组织在同一个交互界面和消息协议里，让用户能围绕同一任务连续操作。",
+      "importance": "真正的多模态应用很少只处理单一模态；难点在于界面、消息结构和状态管理要能承载多种输入同时存在。",
+      "minimumDemo": "实现一个既能上传图片又能追问文本、还能回显工具结果的界面，检查不同模态是否共享同一会话状态。",
+      "prerequisites": [
+        "J/J6. 多模态应用/Image input",
+        "J/J6. 多模态应用/Audio input/output",
+        "J/J6. 多模态应用/File input"
+      ],
+      "coreMetrics": [
+        "cross-modal continuity",
+        "UI consistency",
+        "session coherence"
+      ],
+      "next": [
+        "J/J9. 应用形态/Chat app",
+        "J/J9. 应用形态/Workflow assistant"
+      ]
+    }
   }
 }
